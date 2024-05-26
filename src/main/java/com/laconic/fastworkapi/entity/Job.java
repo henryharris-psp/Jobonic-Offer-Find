@@ -1,10 +1,8 @@
 package com.laconic.fastworkapi.entity;
 
 import com.laconic.fastworkapi.entity.audit.Auditable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.laconic.fastworkapi.enums.JobStatus;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,4 +20,13 @@ public class Job extends Auditable<UUID> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    private String title;
+    @Column(columnDefinition = "TEXT")
+    private String description;
+    private JobStatus jobStatus;
+    private UUID clientId;
+    private UUID freelancerId;
+    private Double budget;
+    private String location;
+    private String skills;
 }
