@@ -4,7 +4,6 @@ import InputField from "@/components/InputField"
 import React from "react"
 import Form from "./Form"
 import * as Yup from "yup"
-import { Field } from "formik"
 
 interface FormValues {
     email: string
@@ -44,14 +43,14 @@ const JobDescription = (): React.ReactElement => {
               <p className="text-black">Acme Inc. - San Francisco, CA</p>
             </div>
             <div className="mt-4 md:mt-0 md:ml-auto">
-              <Button size="xl">
+              <Button size="xl bg-blue-500 text-white hover:bg-blue-600">
                 Apply Now
               </Button>
             </div>
           </div>
         </div>
       </header>
-      <section className="py-12 px-4 md:px-6 lg:px-8 bg-gray-200 ">
+      <section className="py-12 px-4 md:px-6 lg:px-8 bg-gray-100 ">
         <div className="container mx-auto grid gap-8 lg:grid-cols-[2fr_1fr]">
           <div>
             <h2 className="text-2xl font-bold mb-4">Job Description</h2>
@@ -79,7 +78,7 @@ const JobDescription = (): React.ReactElement => {
               <li>Excellent communication and collaboration skills</li>
             </ul>
           </div>
-          <div className="bg-gray-100 rounded-lg p-6 h-[80%]">
+          <div className="bg-white rounded-lg p-6 h-[80%]">
             <h2 className="text-2xl font-bold mb-4">Apply for this role</h2>
             <Form
             initialValues={initialValues}
@@ -104,7 +103,7 @@ const JobDescription = (): React.ReactElement => {
               <div>
                 <InputField as="textarea" className="min-h-[150px] w-full" name="coverLetter" label="Cover Letter" placeholder="Write your cover letter" />
               </div>
-              <Button size="lg" type="submit" variant="btn-primary w-full">
+              <Button size="lg" type="submit" variant="btn-primary w-full hover:bg-blue-500">
                 Submit Application
               </Button>
             </Form>

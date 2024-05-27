@@ -1,7 +1,7 @@
-import TopSection from "./section/TopSection";
-import SearchBar from "./section/SearchBar";
+import TopSection from "../components/TopSection";
+import SearchBar from "../components/SearchBar";
 import CategoryCard from "@/components/CategoryCard";
-import NavBar from "./section/navBar/NavBar";
+import NavBar from "../components/NavBar";
 
 import ai from "@/../public/ai.svg";
 import hr from "@/../public/hr.svg";

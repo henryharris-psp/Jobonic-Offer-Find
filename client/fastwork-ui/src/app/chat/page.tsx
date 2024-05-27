@@ -1,7 +1,7 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import ChatMessage from '@/components/ChatMessage';
-import NavBar from '../section/navBar/NavBar';
+import NavBar from '../../components/NavBar';
 
 const Home = () => {
   const [newMessage, setNewMessage] = useState('');

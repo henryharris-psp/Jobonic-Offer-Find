@@ -1,6 +1,6 @@
 import FormContainer from '@/components/FormContainer'
 import { LoginForm } from '@/app/login/LoginForm'
-import NavBar from '../section/navBar/NavBar'
+import NavBar from '../../components/NavBar'
 
 export default function LoginPage (): React.ReactNode {
   return (

@@ -1,7 +1,7 @@
 import FormContainer from '@/components/FormContainer'
 import { RegisterForm } from './RegisterForm'
 import Footer from '../footer'
-import NavBar from '../section/navBar/NavBar'
+import NavBar from '../../components/NavBar'
 
 const RegisterPage = (): React.ReactNode => {
   return (

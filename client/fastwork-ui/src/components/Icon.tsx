@@ -6,7 +6,7 @@ interface Props {
 }
 const Icon = ({ name, className = '' }: Props): React.ReactNode => {
   try {
-    const iconImage = require(`@/public/${name}.svg`)
+    const iconImage = require(`@/../public/${name}.svg`)
 
     return (
       <Image src={iconImage} alt='icon' priority className={className} />

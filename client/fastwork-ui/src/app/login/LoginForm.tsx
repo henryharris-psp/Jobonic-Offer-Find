@@ -20,6 +20,11 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required().label('Password')
 })
 
+const loginDetails = {
+  email: 'test@test.com',
+  password: 'test'
+}
+
 export const LoginForm = (): React.ReactNode => {
 
   const onSubmit = async (
@@ -27,6 +32,11 @@ export const LoginForm = (): React.ReactNode => {
   ): Promise<void> => {
     try {
         console.log('Log in form submitted:', values)
+        if(values.email === loginDetails.email && values.password === loginDetails.password) {
+          window.location.href = '/jobList'
+        } else {
+          alert('Invalid Credentials')
+        }
     } catch (error: any) {
       console.log('Error logging in:', error.message)
     }

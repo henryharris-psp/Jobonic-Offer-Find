@@ -1,5 +1,5 @@
 
-import NavBar from '../section/navBar/NavBar'
+import NavBar from '../../components/NavBar'
 import JobDescription from '@/components/JobDescription'
 
 export default function LoginPage (): React.ReactNode {

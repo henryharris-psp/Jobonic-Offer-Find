@@ -6,9 +6,10 @@ import InputField from "@/components/InputField"
 import Link from "next/link"
 import { useRef, useState } from "react"
 import * as Yup from "yup"
+import axios from "axios"
 
 const validationSchema = Yup.object().shape({
-    name: Yup.string().required().label('Full Name'),
+    username: Yup.string().required().label('Full Name'),
     email: Yup.string().email().required().label('Email'),
     password: Yup.string().min(8).required().label('Password'),
     confirmPassword: Yup.string()
@@ -19,49 +20,40 @@ const validationSchema = Yup.object().shape({
 
 export const RegisterForm = (): React.ReactNode => {
     const [formValues, setFormValues] = useState({
-        name: '',
+        username: '',
         email: '',
         password: '',
         confirmPassword: '',
       })
     const ref = useRef()
-  const [showDropDown, setShowDropDown] = useState(false)
-  const [requirements, setRequirements] = useState({
-    length: false,
-    uppercase: false,
-    lowercase: false,
-    number: false,
-    specialChar: false
-  })
 
   const handlePasswordChange = (event: { target: any }): any => {
     const { name, value } = event.target
     setFormValues({ ...formValues, [name]: value })
-
-    if (value.trim() !== '') {
-      const updatedRequirements = {
-        length: value.length >= 8 && value.length <= 12,
-        uppercase: /[A-Z]/.test(value),
-        lowercase: /[a-z]/.test(value),
-        number: /\d/.test(value),
-        specialChar: /[!@#$%^&*]/.test(value)
-      }
-      setRequirements(updatedRequirements)
-
-      const allRequirementsMet = Object.values(updatedRequirements).every(req => req)
-
-      setShowDropDown(!allRequirementsMet)
-    } else {
-      setShowDropDown(false)
-    }
   }
+
+  const handleOnsubmit = async (values: { [key: string]: any }): Promise<any> => {
+    const URL = 'http://localhost:8080/api/v1/user';
+    try {
+      const response = await axios.postForm(URL, values, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log('Response:', response);
+      return response
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+    }
+  };
 
     return(
         <Form
-        onSubmit={() => console.log('Register Form submitted')}
+        onSubmit={handleOnsubmit}
         validationSchema={validationSchema}
         initialValues={{
-        name: '',
+        username: '',
         email: '',
         password: '',
         confirmPassword: '',
@@ -75,7 +67,7 @@ export const RegisterForm = (): React.ReactNode => {
       <p className='mb-10 text-black text-base'>Let's get started by signing up our app.</p>
 
       <div className='mb-6'>
-        <InputField label='Full Name' type='text' name='name' placeholder='Your Full Name' />
+        <InputField label='Full Name' type='text' name='username' placeholder='Your Full Name' />
       </div>
 
       <div className='mb-6'>

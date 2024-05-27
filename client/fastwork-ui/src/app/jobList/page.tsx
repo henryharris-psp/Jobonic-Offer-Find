@@ -1,6 +1,6 @@
 import React from 'react';
-import SearchBar from '../section/SearchBar';
-import NavBar from '../section/navBar/NavBar';
+import SearchBar from '../../components/SearchBar';
+import NavBar from '../../components/NavBar';
 import JobCard from '@/components/JobCard';
 
 export default function JobPage(): React.ReactNode {
@@ -49,7 +49,7 @@ export default function JobPage(): React.ReactNode {
   ];
 
   return (
-    <div className='bg-gray-200'>
+    <div className='bg-gray-100'>
       <NavBar/>
       <SearchBar style={{
         background: 'linear-gradient( 89.5deg,  rgba(66,144,251,1) 0.4%, rgba(131,204,255,1) 100.3% )',
