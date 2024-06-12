@@ -1,35 +1,72 @@
 'use client'
 import Button from "@/components/Button"
 import InputField from "@/components/InputField"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import Form from "./Form"
 import * as Yup from "yup"
+import { useSearchParams } from "next/navigation"
+import axios from "axios"
 
 interface FormValues {
-    email: string
-    name: string
-    coverLetter: string
-  }
-  
-  const initialValues: FormValues = {
-    email: '',
-    name: '',
-    coverLetter: ''
-  }
-  
-  const validationSchema = Yup.object().shape({
-    email: Yup.string().email().required().label('Email'),
-    name: Yup.string().required().label('Name'),
-    coverLetter: Yup.string().required().label('Cover Letter')
-  })
+  email: string
+  name: string
+  coverLetter: string
+}
 
-const JobDescription = (): React.ReactElement => {
+const initialValues: FormValues = {
+  email: '',
+  name: '',
+  coverLetter: ''
+}
 
-    const handleSubmit =async (
+const validationSchema = Yup.object().shape({
+  email: Yup.string().email().required().label('Email'),
+  name: Yup.string().required().label('Name'),
+  coverLetter: Yup.string().required().label('Cover Letter')
+})
+
+interface JobDescriptionData {
+  title: string,
+  company: string,
+  location: string,
+  description: string,
+  responsibilities: string[],
+  requirements: string[],
+  formTitle: string
+}
+
+interface JobDescriptionProps {
+  data: JobDescriptionData
+}
+
+const JobDescription = ({ data }: JobDescriptionProps): React.ReactElement => {
+  const [job, setJob] = useState<JobDescriptionData | null>(null);
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
+
+  const getJobById = async (id: string) => {
+    const URL = `http://localhost:8080/api/v1/job?id=${id}`;
+
+    try {
+      const response = await axios.get(URL);
+      console.log('Job:', response.data);
+      setJob(response.data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      getJobById(id);
+    }
+  }, [id]);
+
+  const handleSubmit = async (
     values: { [key: string]: any }
-  ): Promise<void>  => {
-        console.log('Form submitted:', values)
-      }
+  ): Promise<void> => {
+    console.log('Form submitted:', values)
+  }
 
   return (
     <>
@@ -39,8 +76,8 @@ const JobDescription = (): React.ReactElement => {
         <div className="container mx-auto">
           <div className="flex flex-col items-center text-center md:flex-row md:items-start md:text-left">
             <div className="mr-8">
-              <h1 className="text-3xl font-bold text-black">Senior Frontend Developer</h1>
-              <p className="text-black">Acme Inc. - San Francisco, CA</p>
+              <h1 className="text-3xl font-bold text-black">{data.title}</h1>
+              <p className="text-black">{data.company} - {data.location}</p>
             </div>
             <div className="mt-4 md:mt-0 md:ml-auto">
               <Button size="xl bg-blue-500 text-white hover:bg-blue-600">
@@ -55,35 +92,27 @@ const JobDescription = (): React.ReactElement => {
           <div>
             <h2 className="text-2xl font-bold mb-4">Job Description</h2>
             <p className="text-black mb-8">
-              We are seeking an experienced Frontend Developer to join our growing team. In this role, you will be
-              responsible for building and maintaining high-performance, scalable web applications using modern
-              JavaScript frameworks and libraries.
+              {data.description}
             </p>
             <h3 className="text-xl font-bold mb-4">Responsibilities</h3>
             <ul className="list-disc pl-6 text-black space-y-2">
-              <li>Develop and implement complex user interfaces using React, Vue.js, or Angular</li>
-              <li>Optimize web applications for performance, accessibility, and cross-browser compatibility</li>
-              <li>Collaborate with designers and backend developers to ensure seamless integration</li>
-              <li>Participate in code reviews and provide feedback to improve code quality</li>
-              <li>Stay up-to-date with the latest frontend technologies and best practices</li>
+              {data.responsibilities.map((responsibility, index) => (
+                <li key={index}>{responsibility}</li>
+              ))}
             </ul>
             <h3 className="text-xl font-bold mb-4 mt-8">Requirements</h3>
             <ul className="list-disc pl-6 text-black space-y-2">
-              <li>Bachelor's degree in Computer Science or a related field</li>
-              <li>5+ years of experience in frontend web development</li>
-              <li>Proficient in JavaScript, HTML, and CSS</li>
-              <li>Extensive experience with React, Vue.js, or Angular</li>
-              <li>Familiarity with modern frontend tooling and build processes</li>
-              <li>Strong problem-solving and critical thinking skills</li>
-              <li>Excellent communication and collaboration skills</li>
+              {data.requirements.map((requirement, index) => (
+                <li key={index}>{requirement}</li>
+              ))}
             </ul>
           </div>
           <div className="bg-white rounded-lg p-6 h-[80%]">
-            <h2 className="text-2xl font-bold mb-4">Apply for this role</h2>
+            <h2 className="text-2xl font-bold mb-4">{data.formTitle}</h2>
             <Form
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
             >
               <div>
                 <InputField name="name" label="Name" placeholder="Enter your name" />
@@ -91,7 +120,7 @@ const JobDescription = (): React.ReactElement => {
               <div>
                 <InputField name="email" label="Email" placeholder="Enter your email" type="email" />
               </div>
-                <div className="flex items-center space-x-4 h-16">
+              <div className="flex items-center space-x-4 h-16">
                 <label htmlFor="resume" className="text-gray-700">Resume:</label>
                 <input
                   type="file"
@@ -113,4 +142,5 @@ const JobDescription = (): React.ReactElement => {
     </>
   )
 }
- export default JobDescription
+
+export default JobDescription

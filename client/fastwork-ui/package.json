@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "update-api-schema": "npx openapi-typescript http://localhost:8080/v3/api-docs -o src/api/schema.d.ts"
   },
   "dependencies": {
     "@nextui-org/react": "^2.3.5",
@@ -21,6 +22,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@types/next": "^9.0.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

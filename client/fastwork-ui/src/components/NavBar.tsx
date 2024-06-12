@@ -83,6 +83,11 @@ const Navbar = ({ showOnlyLogo = false, isEmployer = false }: NavBarProps) => {
                   <p>Messages</p>
                 </Link>
               </li>
+              <li>
+                <Link href="/description/createJob">
+                  <p>Create Job</p>
+                </Link>
+              </li>
             </ul>
           </div>
           <div className="flex flex-1 justify-end items-center mr-[-200px]">

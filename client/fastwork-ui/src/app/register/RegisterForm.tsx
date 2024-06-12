@@ -35,7 +35,7 @@ export const RegisterForm = (): React.ReactNode => {
   const handleOnsubmit = async (values: { [key: string]: any }): Promise<any> => {
     const URL = 'http://localhost:8080/api/v1/user';
     try {
-      const response = await axios.postForm(URL, values, {
+      const response = await axios.post(URL, values, {
         headers: {
           'Content-Type': 'application/json',
         },
