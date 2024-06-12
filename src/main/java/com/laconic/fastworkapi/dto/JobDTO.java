@@ -32,7 +32,8 @@ public class JobDTO implements Serializable {
 
     public JobDTO(Job job) {
         this.id = job.getId();
-        this.title = job.getDescription();
+        this.title = job.getTitle();
+        this.description = job.getDescription();
         this.jobStatus = job.getJobStatus();
         this.clientId = job.getClientId();
         this.freelancerId = job.getFreelancerId();
