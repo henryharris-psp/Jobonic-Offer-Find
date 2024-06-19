@@ -1,5 +1,4 @@
 'use client'
-
 import React, { useState, ChangeEvent } from 'react'
 import Image from 'next/image'
 import eye from '@/../public/eye-on.svg'
@@ -28,23 +27,23 @@ const InputField = ({
   value,
   isDisabled = false,
   onChange
-}: InputFieldProps): React.ReactElement => {
+}: InputFieldProps): React.ReactNode => {
   const [showPassword, setShowPassword] = useState(false)
-  const formik = useFormikContext<any>()
-  const { setFieldValue, values, errors, touched } = formik
+  const formik: any = useFormikContext()
+  const { setFieldValue, errors } = useFormikContext()
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>): Promise<void> => {
-    const { name, value } = event.target
+    const { name, value } = event.target;
     try {
-      await setFieldValue(name, value.trim() === '' ? '' : value)
+      await setFieldValue(name, value.trim() === '' ? '' : value);
       if (typeof onChange === 'function') {
-        onChange(event)
+        onChange(event);
       }
     } catch (error) {
-      console.error('Error setting field value:', error)
+      console.error('Error setting field value:', error);
     }
-  }
-
+  };
+  
   return (
     <div>
       <label htmlFor={name} className='block text-sm font-medium text-black mb-1'>
@@ -55,11 +54,9 @@ const InputField = ({
           as={as}
           disabled={isDisabled}
           type={showPassword ? 'text' : type}
-          id={name}
-          name={name}
-          value={values[name] || value || ''}
+          id={name} name={name} value={formik.values[name] || value || ''}
           className={`${className} text-black ${
-            errors[name] && touched[name]
+            formik?.errors[name] && formik?.touched[name]
               ? 'border border-red-500 hover:border-red-500 focus:border-red-500 hover:outline-0 focus:outline-0'
               : 'border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 hover:border-gray-400'
           } h-10 rounded-md`}
@@ -68,9 +65,9 @@ const InputField = ({
         />
         {type === 'password' && (
           <button
-            type='button'
             className='absolute inset-y-0 right-0 px-3 flex items-center cursor-pointer hover:bg-gray-200 rounded-r-md'
-            onClick={() => setShowPassword(!showPassword)}
+            onClick={() =>
+              setShowPassword(!showPassword)}
           >
             {showPassword ? <Image src={eye} alt='' /> : <Image src={eyeOff} alt='' />}
           </button>
