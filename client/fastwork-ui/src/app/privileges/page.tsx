@@ -8,7 +8,7 @@ import Link from "next/link";
 export default function PrivilegesPage(): React.ReactNode {
     const [couponStorage, setCouponStorage] = useState({});
     const router = useRouter();
-      
+
     useEffect(() => {
         const tabs = document.querySelectorAll('[role="tab"]') as NodeListOf<HTMLElement>;
         const tabPanels = document.querySelectorAll('[role="tabpanel"]') as NodeListOf<HTMLElement>;
@@ -43,10 +43,10 @@ export default function PrivilegesPage(): React.ReactNode {
             });
         };
     }, []);
-      
+
     return (
         <>
-            <div className="p-16" style={{ backgroundColor: '#CFEDF4', color: 'black' }} >
+            <div className="p-16" style={{ backgroundColor: '#CFEDF4', color: 'black' }}>
                 <h1 className="text-3xl font-bold mb-1">Special Privileges and Promotions</h1>
                 <h2>From Jobonic and participating partners</h2>
             </div>
@@ -59,7 +59,7 @@ export default function PrivilegesPage(): React.ReactNode {
                             <svg className="w-6 h-6 text-gray-400 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M18.045 3.007 12.31 3a1.965 1.965 0 0 0-1.4.585l-7.33 7.394a2 2 0 0 0 0 2.805l6.573 6.631a1.957 1.957 0 0 0 1.4.585 1.965 1.965 0 0 0 1.4-.585l7.409-7.477A2 2 0 0 0 21 11.479v-5.5a2.972 2.972 0 0 0-2.955-2.972Zm-2.452 6.438a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/>
                             </svg>
-                            <h2>You don't have a discount coupon yet.</h2>
+                            <h2>You don&apos;t have a discount coupon yet.</h2>
                         </div>
                     ) : null}
                 </div>
@@ -78,10 +78,10 @@ export default function PrivilegesPage(): React.ReactNode {
                         </li>
                         <li className="w-1/2 focus-within:z-10" role="presentation">
                             <button id="freelancer-tab" data-tabs-target="#freelancer" type="button" role="tab" aria-controls="freelancer" aria-selected="false"
-                            className="inline-block w-full p-4 bg-white 
-                            border-r border-gray-200 dark:border-gray-700 hover:text-gray-700 hover:bg-gray-50 
-                            focus:ring-4 focus:ring-blue-300 focus:outline-none 
-                            dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700 rounded-r-lg">For freelancers</button>
+                                className="inline-block w-full p-4 bg-white 
+                                border-r border-gray-200 dark:border-gray-700 hover:text-gray-700 hover:bg-gray-50 
+                                focus:ring-4 focus:ring-blue-300 focus:outline-none 
+                                dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700 rounded-r-lg">For freelancers</button>
                         </li>
                     </ul>
 

@@ -30,7 +30,7 @@ export default function AIServiceMatches(): React.ReactNode {
 
     return (
         <div className="m-16">
-            <h3 className="text-xl font-medium text-gray-900 mb-4 text-center">From your profile and the information you've provided</h3>
+            <h3 className="text-xl font-medium text-gray-900 mb-4 text-center">From your profile and the information you&apos;ve provided</h3>
             <h2 className="text-4xl font-bold text-gray-900 mb-8 text-center">AI has written a description for you</h2>
 
             {/* MyServiceCard Component */}

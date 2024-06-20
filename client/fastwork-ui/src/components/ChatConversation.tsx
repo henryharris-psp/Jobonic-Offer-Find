@@ -1,12 +1,39 @@
+// ChatConversation.tsx
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
 import ChatMessageBig from '@/components/ChatMessageBig';
-import DealCard from './DealCard'; // Import the DealCard component
+import DealCard from '@/components/DealCard';
 
-const ChatConversation = ({ activeChat }) => {
+interface Message {
+  id: number | string;
+  sender?: string;
+  avatar?: string;
+  text?: string;
+  type?: 'deal' | 'message';
+  image?: string;
+  title?: string;
+  rating?: number;
+  description?: string[];
+  price?: string;
+  sentByCurrentUser?: boolean;
+}
+
+interface ActiveChat {
+  id: number;
+  name: string;
+  avatar: string;
+  messages: Message[];
+  type: 'client' | 'service_provider';
+}
+
+interface ChatConversationProps {
+  activeChat: ActiveChat;
+}
+
+const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat }) => {
   const [newMessage, setNewMessage] = useState('');
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     ...activeChat.messages,
     {
       id: 'deal',
@@ -44,7 +71,7 @@ const ChatConversation = ({ activeChat }) => {
 
   const handleMessageSubmit = () => {
     if (newMessage.trim() !== '') {
-      const newMessageObj = {
+      const newMessageObj: Message = {
         id: messages.length + 1,
         sender: 'You',
         avatar: '/avatar.svg',
@@ -57,7 +84,7 @@ const ChatConversation = ({ activeChat }) => {
   };
 
   const handleDeclineAndSendMessage = () => {
-    const newMessageObj = {
+    const newMessageObj: Message = {
       id: messages.length + 1,
       sender: 'You',
       avatar: '/avatar.svg',
@@ -78,13 +105,13 @@ const ChatConversation = ({ activeChat }) => {
           message.type === 'deal' ? (
             <DealCard
               key={message.id}
-              image={message.image}
-              title={message.title}
-              rating={message.rating}
-              description={message.description}
-              price={message.price}
+              image={message.image!}
+              title={message.title!}
+              rating={message.rating!}
+              description={message.description!}
+              price={message.price!}
               onAccept={() => alert('Deal Accepted')}
-              onEditOffer={() => alert('Edit Offer')}
+              onEditOffer={(newPrice) => alert(`Edit Offer: ${newPrice}`)}
               onDeclineAndSendMessage={handleDeclineAndSendMessage}
             />
           ) : (
@@ -96,8 +123,22 @@ const ChatConversation = ({ activeChat }) => {
         <div className="flex flex-col lg:flex-row mx-4 my-4">
           <input type="file" id="file-input" className="hidden" />
           <label htmlFor="file-input" className="file-input-label">
-            <svg className="cursor-pointer w-8 h-10 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 8v8a5 5 0 1 0 10 0V6.5a3.5 3.5 0 1 0-7 0V15a2 2 0 0 0 4 0V8" />
+            <svg
+              className="cursor-pointer w-8 h-10 text-gray-800 dark:text-white"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.5"
+                d="M7 8v8a5 5 0 1 0 10 0V6.5a3.5 3.5 0 1 0-7 0V15a2 2 0 0 0 4 0V8"
+              />
             </svg>
           </label>
 
@@ -121,7 +162,6 @@ const ChatConversation = ({ activeChat }) => {
 };
 
 export default ChatConversation;
-
 
 
 

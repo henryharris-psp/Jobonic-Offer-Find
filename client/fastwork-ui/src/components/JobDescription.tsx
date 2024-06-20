@@ -1,35 +1,35 @@
-'use client'
-import Button from "@/components/Button"
-import InputField from "@/components/InputField"
-import React from "react"
-import Form from "./Form"
-import * as Yup from "yup"
+'use client';
+import Button from "@/components/Button";
+import InputField from "@/components/InputField";
+import React from "react";
+import Form from "./Form";
+import * as Yup from "yup";
 
 interface FormValues {
-    email: string
-    name: string
-    coverLetter: string
-  }
-  
-  const initialValues: FormValues = {
-    email: '',
-    name: '',
-    coverLetter: ''
-  }
-  
-  const validationSchema = Yup.object().shape({
-    email: Yup.string().email().required().label('Email'),
-    name: Yup.string().required().label('Name'),
-    coverLetter: Yup.string().required().label('Cover Letter')
-  })
+  email: string;
+  name: string;
+  coverLetter: string;
+}
+
+const initialValues: FormValues = {
+  email: '',
+  name: '',
+  coverLetter: ''
+};
+
+const validationSchema = Yup.object().shape({
+  email: Yup.string().email().required().label('Email'),
+  name: Yup.string().required().label('Name'),
+  coverLetter: Yup.string().required().label('Cover Letter')
+});
 
 const JobDescription = (): React.ReactElement => {
 
-    const handleSubmit =async (
+  const handleSubmit = async (
     values: { [key: string]: any }
-  ): Promise<void>  => {
-        console.log('Form submitted:', values)
-      }
+  ): Promise<void> => {
+    console.log('Form submitted:', values);
+  };
 
   return (
     <>
@@ -45,7 +45,7 @@ const JobDescription = (): React.ReactElement => {
           </div>
         </div>
       </header>
-      <section className="py-12 px-4 md:px-6 lg:px-8 bg-gray-100 ">
+      <section className="py-12 px-4 md:px-6 lg:px-8 bg-gray-100">
         <div className="container mx-auto grid gap-8 lg:grid-cols-[2fr_1fr]">
           <div>
             <h2 className="text-2xl font-bold mb-4">Job Description</h2>
@@ -64,7 +64,7 @@ const JobDescription = (): React.ReactElement => {
             </ul>
             <h3 className="text-xl font-bold mb-4 mt-8">Requirements</h3>
             <ul className="list-disc pl-6 text-black space-y-2">
-              <li>Bachelor's degree in Computer Science or a related field</li>
+              <li>Bachelor&apos;s degree in Computer Science or a related field</li>
               <li>5+ years of experience in frontend web development</li>
               <li>Proficient in JavaScript, HTML, and CSS</li>
               <li>Extensive experience with React, Vue.js, or Angular</li>
@@ -107,9 +107,9 @@ const JobDescription = (): React.ReactElement => {
           <div className="bg-white rounded-lg p-4 h-[40%]">
             <h2 className="text-2xl font-bold mb-4">Apply for this role</h2>
             <Form
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
             >
               <div className="mb-2">
                 <InputField name="name" label="Name" placeholder="Enter your name" />
@@ -139,6 +139,7 @@ const JobDescription = (): React.ReactElement => {
         </div>
       </section>
     </>
-  )
-}
- export default JobDescription
+  );
+};
+
+export default JobDescription;

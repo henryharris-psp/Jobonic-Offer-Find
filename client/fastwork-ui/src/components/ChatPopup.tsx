@@ -22,7 +22,7 @@ const ChatPopup = () => {
   ]);
   const [isChatOpen, setIsChatOpen] = useState(false);
 
-  const chatContainerRef = useRef(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (chatContainerRef.current) {

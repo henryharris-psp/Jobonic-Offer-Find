@@ -1,13 +1,13 @@
 'use client'
 
 import React, { ReactEventHandler, RefObject } from 'react';
-import {useState, useRef, useEffect} from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { set } from 'firebase/database';
 
 export default function MyProfile(): React.ReactNode {
     const [manualProfile, setManualProfile] = useState(true);
-    
+
     const [aboutMeField, setAboutMeField] = useState<string>('');
     const [skillsField, setSkillsField] = useState<string>('');
     const [experienceField, setExperienceField] = useState<string>('');
@@ -26,9 +26,9 @@ export default function MyProfile(): React.ReactNode {
         "experience": false,
         "education": false,
         "otherInfo": false,
-      });
+    });
 
-    const handleEdit = (ref: RefObject<HTMLDivElement>, inputKey: string, event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+    const handleEdit = (ref: RefObject<HTMLInputElement>, inputKey: string, event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
         event.stopPropagation();
         setEnabledInputs((prevState) => ({
             ...prevState,
@@ -36,7 +36,7 @@ export default function MyProfile(): React.ReactNode {
         }));
         if (ref.current) {
             ref.current.focus();
-        };
+        }
     };
 
     const handleClickInside = (inputKey: string) => {
@@ -71,9 +71,9 @@ export default function MyProfile(): React.ReactNode {
     return (
         <div className="m-16">
             {manualProfile ? 
-                <h2 className="text-2xl font-medium text-gray-400 mb-4 text-center">Here's what we found from your profile</h2>
+                <h2 className="text-2xl font-medium text-gray-400 mb-4 text-center">Here&apos;s what we found from your profile</h2>
             : null}
-            <h3 className="text-3xl font-bold text-gray-900 mb-4 text-center">Let's create your Jobonic profile!</h3>
+            <h3 className="text-3xl font-bold text-gray-900 mb-4 text-center">Let&apos;s create your Jobonic profile!</h3>
 
             {/* Profile Picture and Name */}
             <div className="flex items-center justify-start w-full max-w-md mb-16">
@@ -81,9 +81,9 @@ export default function MyProfile(): React.ReactNode {
                 <h3 className="text-2xl font-semibold text-gray-900 ml-8">emm</h3>
             </div>
 
-            {/* My Services Offers*/}
+            {/* My Services Offers */}
 
-            {/* About Me*/}
+            {/* About Me */}
             <div className="flex flex-col justify-start w-full pb-16">
                 <div className="flex space-x-2">
                     <h2 className="text-2xl font-bold text-gray-900">About Me</h2>
@@ -91,7 +91,7 @@ export default function MyProfile(): React.ReactNode {
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
                     </svg>
                 </div>
-                <h3 className="text-lg font-medium text-gray-400">This was written with AI from what you've written. Click to edit and make it more you!</h3>
+                <h3 className="text-lg font-medium text-gray-400">This was written with AI from what you&apos;ve written. Click to edit and make it more you!</h3>
                 <input type="text" id="about-me" placeholder={!aboutMeField ? 'incoming bza student from nus' : aboutMeField}
                     className={`text-black ${(enabledInputs["aboutMe"]) ? 'border bg-white' : 'border-none bg-transparent'} rounded`}
                     ref={aboutMeRef}
@@ -155,4 +155,3 @@ export default function MyProfile(): React.ReactNode {
         </div>
     )
 }
-

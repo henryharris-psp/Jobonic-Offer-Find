@@ -2,14 +2,19 @@
 
 import React from 'react';
 
-const FAQItem = ({ question, answer }) => (
+interface FAQItemProps {
+  question: string;
+  answer: string;
+}
+
+const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => (
   <div className="mb-6">
     <h4 className="text-lg font-semibold mb-2">{question}</h4>
     <p className="text-gray-600">{answer}</p>
   </div>
 );
 
-const EmployerRewardsFAQSection = () => {
+const EmployerRewardsFAQSection: React.FC = () => {
   const faqData = [
     {
       question: "How can I join the Jobonic Rewards Program?",

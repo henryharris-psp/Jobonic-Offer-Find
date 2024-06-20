@@ -1,6 +1,16 @@
 import React from 'react';
 
-const ChatMessage = ({ message }) => {
+interface MessageProps {
+  message: {
+    id: number | string;
+    sender?: string;
+    avatar?: string;
+    text?: string;
+    sentByCurrentUser?: boolean;
+  };
+}
+
+const ChatMessage: React.FC<MessageProps> = ({ message }) => {
   return (
     <div className={`flex items-start ${message.sentByCurrentUser ? 'justify-end' : ''}`}>
       {!message.sentByCurrentUser && (
@@ -26,3 +36,4 @@ const ChatMessage = ({ message }) => {
 };
 
 export default ChatMessage;
+

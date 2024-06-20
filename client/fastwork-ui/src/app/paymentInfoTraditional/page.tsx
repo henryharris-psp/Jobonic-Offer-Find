@@ -6,7 +6,7 @@ const PaymentInfoTraditional = () => {
   const router = useRouter();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
 
-  const handleNext = (event) => {
+  const handleNext = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Handle form submission logic here
     setIsPopupVisible(true);
@@ -117,5 +117,3 @@ const PaymentInfoTraditional = () => {
 };
 
 export default PaymentInfoTraditional;
-
-

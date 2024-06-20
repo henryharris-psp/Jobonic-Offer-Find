@@ -1,11 +1,12 @@
 'use client';
+
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
 const Payment = () => {
   const router = useRouter();
 
-  const handleNext = (event) => {
+  const handleNext = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     router.push('/paymentType');
   };

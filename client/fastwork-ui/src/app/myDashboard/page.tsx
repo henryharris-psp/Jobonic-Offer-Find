@@ -390,8 +390,6 @@ const MyDashboard = () => {
                         key={index}
                         title={job.title}
                         description={job.description}
-                        avatar={job.avatar}
-                        username={job.username}
                       />
                     ))}
                   </div>
@@ -520,3 +518,4 @@ const MyDashboard = () => {
 };
 
 export default MyDashboard;
+

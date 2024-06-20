@@ -1,6 +1,11 @@
 import React from 'react';
 
-const SuccessModal = ({ message, onClose }) => {
+interface SuccessModalProps {
+  message: string;
+  onClose: () => void;
+}
+
+const SuccessModal: React.FC<SuccessModalProps> = ({ message, onClose }) => {
   return (
     <div className="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded shadow-lg flex items-center">
       <span className="mr-4">{message}</span>
@@ -12,3 +17,4 @@ const SuccessModal = ({ message, onClose }) => {
 };
 
 export default SuccessModal;
+

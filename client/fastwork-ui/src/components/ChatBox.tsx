@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import MessageBox from './MessageBox';
 
 const Avatar: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <div className="w-10 h-10 mr-2">{children}</div>

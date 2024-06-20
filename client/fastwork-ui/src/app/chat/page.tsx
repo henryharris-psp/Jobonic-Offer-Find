@@ -1,81 +1,114 @@
 // ChatPage component
 
-"use client";
-import { useState, useEffect } from "react";
-import ChatConversation from "../../components/ChatConversation"; // Import the new ChatConversation component
+'use client';
+import { useState, useEffect } from 'react';
+import ChatConversation from '../../components/ChatConversation'; // Import the new ChatConversation component
 
-const ChatPage = () => {
-  const allPeoples = [
-    {
-      id: 1,
-      name: "John Chamlington",
-      avatar: "/avatar.svg",
-      messages: [
-        { id: 1, sender: "John", avatar: "/avatar.svg", text: "Hey there!", sentByCurrentUser: false },
-        { id: 2, sender: "You", avatar: "/avatar.svg", text: "Hello!", sentByCurrentUser: true }
-      ],
-      type: "client"
-    },
-    {
-      id: 2,
-      name: "Alice Brown",
-      avatar: "/avatar.svg",
-      messages: [
-        { id: 1, sender: "Alice", avatar: "/avatar.svg", text: "Hi, how are you?", sentByCurrentUser: false },
-        { id: 2, sender: "You", avatar: "/avatar.svg", text: "I'm good, thanks!", sentByCurrentUser: true }
-      ],
-      type: "service_provider"
-    },
-    {
-      id: 3,
-      name: "Bob Smith",
-      avatar: "/avatar.svg",
-      messages: [
-        { id: 1, sender: "Bob", avatar: "/avatar.svg", text: "Hello!", sentByCurrentUser: false },
-        { id: 2, sender: "You", avatar: "/avatar.svg", text: "Hi Bob!", sentByCurrentUser: true }
-      ],
-      type: "client"
-    },
-  ];
+export interface Message {
+  id: number | string;
+  sender?: string;
+  avatar?: string;
+  text?: string;
+  type?: 'deal' | 'message';
+  image?: string;
+  title?: string;
+  rating?: number;
+  description?: string[];
+  price?: string;
+  sentByCurrentUser?: boolean;
+}
 
-  const [activeChat, setActiveChat] = useState(allPeoples[0]);
+export interface ActiveChat {
+  id: number;
+  name: string;
+  avatar: string;
+  messages: Message[];
+  type: 'client' | 'service_provider';
+}
+
+export interface Service {
+  name: string;
+  image: string;
+  bullet1: string;
+  bullet2: string;
+  bullet3: string;
+  rating: number;
+  reviews: number;
+  price: string;
+  description: string;
+  reviewsDetail: { reviewer: string; comment: string; rating: number }[];
+  numSold: number;
+}
+
+const allPeoples: ActiveChat[] = [
+  {
+    id: 1,
+    name: 'John Chamlington',
+    avatar: '/avatar.svg',
+    messages: [
+      { id: 1, sender: 'John', avatar: '/avatar.svg', text: 'Hey there!', sentByCurrentUser: false },
+      { id: 2, sender: 'You', avatar: '/avatar.svg', text: 'Hello!', sentByCurrentUser: true }
+    ],
+    type: 'client'
+  },
+  {
+    id: 2,
+    name: 'Alice Brown',
+    avatar: '/avatar.svg',
+    messages: [
+      { id: 1, sender: 'Alice', avatar: '/avatar.svg', text: 'Hi, how are you?', sentByCurrentUser: false },
+      { id: 2, sender: 'You', avatar: '/avatar.svg', text: "I'm good, thanks!", sentByCurrentUser: true }
+    ],
+    type: 'service_provider'
+  },
+  {
+    id: 3,
+    name: 'Bob Smith',
+    avatar: '/avatar.svg',
+    messages: [
+      { id: 1, sender: 'Bob', avatar: '/avatar.svg', text: 'Hello!', sentByCurrentUser: false },
+      { id: 2, sender: 'You', avatar: '/avatar.svg', text: 'Hi Bob!', sentByCurrentUser: true }
+    ],
+    type: 'client'
+  }
+];
+
+const ChatPage: React.FC = () => {
+  const [activeChat, setActiveChat] = useState<ActiveChat>(allPeoples[0]);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(500);
   const [isResizing, setIsResizing] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState("All");
+  const [selectedFilter, setSelectedFilter] = useState('All');
 
-  const filteredPeoples = selectedFilter === "All" 
-    ? allPeoples 
-    : allPeoples.filter(people => 
-        selectedFilter === "From clients" 
-        ? people.type === "client"
-        : people.type === "service_provider"
-    );
+  const filteredPeoples =
+    selectedFilter === 'All'
+      ? allPeoples
+      : allPeoples.filter(people =>
+          selectedFilter === 'From clients'
+            ? people.type === 'client'
+            : people.type === 'service_provider'
+        );
 
   const messagetypes = [
-    "All",
-    "Waiting for payment",
-    "Waiting for inspection",
-    "Waiting for confirmation",
-    "Waiting for review",
-    "I want to cancel.",
-    "Cancelled",
-    "Old order",
-    "Suspended",
-    "Completed"
+    'All',
+    'Waiting for payment',
+    'Waiting for inspection',
+    'Waiting for confirmation',
+    'Waiting for review',
+    'I want to cancel.',
+    'Cancelled',
+    'Old order',
+    'Suspended',
+    'Completed'
   ];
 
-  const chatFilters = [
-    "All",
-    "From clients",
-    "From service providers"
-  ];
+  const chatFilters = ['All', 'From clients', 'From service providers'];
 
-  const handleMouseDown = (e) => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsResizing(true);
   };
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: MouseEvent) => {
     if (isResizing) {
       setSidebarWidth(e.clientX);
     }
@@ -86,48 +119,46 @@ const ChatPage = () => {
   };
 
   useEffect(() => {
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isResizing]);
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden">
-      {/*Navbar should show only logo.*/}
+      {/* Navbar should show only logo. */}
       <div
         className="flex flex-grow"
         style={{
-          background:
-            "linear-gradient( 89.5deg, rgba(66,144,251,1) 0.4%, rgba(131,204,255,1) 100.3% )",
+          background: 'linear-gradient( 89.5deg, rgba(66,144,251,1) 0.4%, rgba(131,204,255,1) 100.3% )'
         }}
       >
-        <div
-          className="bg-[#CFEDF4]"
-          style={{ width: sidebarWidth, minWidth: "150px" }}
-        >
+        <div className="bg-[#CFEDF4]" style={{ width: sidebarWidth, minWidth: '150px' }}>
           <div className="px-4 pt-2">
             <div className="text-lg font-semibold mb-4 text-center">
               Chats
               <div className="w-full h-0.5 mt-3 bg-gray-300"></div>
             </div>
-            
+
             {/* New Toggle */}
             <div className="flex justify-center mb-4">
               {chatFilters.map(filter => (
-                <button 
-                  key={filter} 
+                <button
+                  key={filter}
                   onClick={() => setSelectedFilter(filter)}
-                  className={`px-4 py-2 text-xs font-medium ${selectedFilter === filter ? 'bg-[#0B2147] text-white' : 'bg-gray-200 text-gray-600'}`}
+                  className={`px-4 py-2 text-xs font-medium ${
+                    selectedFilter === filter ? 'bg-[#0B2147] text-white' : 'bg-gray-200 text-gray-600'
+                  }`}
                   style={{ borderRadius: '4px 4px 0 0', marginRight: '-1px' }}
                 >
                   {filter}
                 </button>
               ))}
             </div>
-            
+
             <form className="max-w-lg mx-auto">
               <div className="flex flex-col pb-4 space-y-0">
                 <select
@@ -135,9 +166,9 @@ const ChatPage = () => {
                   className="cursor-pointer py-2.5 px-4 text-sm font-medium text-gray-900 bg-gray-50 border border-gray-300 rounded-t-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100"
                   required
                   value={selectedFilter}
-                  onChange={(e) => setSelectedFilter(e.target.value)}
+                  onChange={e => setSelectedFilter(e.target.value)}
                 >
-                  {messagetypes.map((type) => (
+                  {messagetypes.map(type => (
                     <option key={type} value={type}>
                       {type}
                     </option>
@@ -149,7 +180,7 @@ const ChatPage = () => {
                     id="search-dropdown"
                     className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 border border-t-0 border-gray-300 rounded-b-lg focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Search for Orders."
-                    style={{ paddingRight: "2.5rem" }} // Ensure space for the button
+                    style={{ paddingRight: '2.5rem' }} // Ensure space for the button
                   />
                   <button
                     type="submit"
@@ -165,9 +196,9 @@ const ChatPage = () => {
                     >
                       <path
                         stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
                         d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
                       />
                     </svg>
@@ -176,27 +207,19 @@ const ChatPage = () => {
                 </div>
               </div>
             </form>
-            {filteredPeoples.map((people) => (
+            {filteredPeoples.map(people => (
               <div
                 className="flex p-2 hover:bg-blue-300 rounded-md justify-between"
                 key={people.id}
                 onClick={() => setActiveChat(people)}
               >
                 <div className="flex">
-                  <img
-                    className="w-10 h-10 rounded-full mr-4"
-                    src={people.avatar}
-                    alt={people.name}
-                  />
-                  <div className="text-black mt-2 flex items-center">
-                    {people.name}
-                  </div>
+                  <img className="w-10 h-10 rounded-full mr-4" src={people.avatar} alt={people.name} />
+                  <div className="text-black mt-2 flex items-center">{people.name}</div>
                 </div>
                 <div className="flex items-center">
                   {sidebarWidth > 200 && (
-                    <div className="bg-[#0B2147] text-center text-white px-2 py-1 text-xs rounded-md">
-                      Completed
-                    </div>
+                    <div className="bg-[#0B2147] text-center text-white px-2 py-1 text-xs rounded-md">Completed</div>
                   )}
                 </div>
               </div>
@@ -206,7 +229,7 @@ const ChatPage = () => {
 
         <div
           className="resizer bg-gray-500"
-          style={{ width: "5px", cursor: "col-resize" }}
+          style={{ width: '5px', cursor: 'col-resize' }}
           onMouseDown={handleMouseDown}
         ></div>
 
@@ -217,6 +240,7 @@ const ChatPage = () => {
 };
 
 export default ChatPage;
+
 
 
 

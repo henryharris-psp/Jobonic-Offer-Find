@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 const PaymentType = () => {
   const router = useRouter();
 
-  const handleNext = (event, route) => {
+  const handleNext = (event: React.MouseEvent<HTMLButtonElement>, route: string) => {
     event.preventDefault();
     router.push(route);
   };

@@ -77,7 +77,7 @@ export const LoginForm = (): React.ReactNode => {
             </button>
           </div>
           <div className="mt-4 text-center text-black">
-            Don't have an account?
+          Don&apos;t have an account?
             <Link href="/register" className="text-blue-600 hover:text-blue-400 underline pl-2">
               Sign up now!
             </Link>

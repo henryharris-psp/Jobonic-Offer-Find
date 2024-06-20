@@ -2,7 +2,17 @@
 
 import React from 'react';
 
-const ChatMessageBig = ({ message }) => {
+interface MessageProps {
+  message: {
+    id: number | string;
+    sender?: string;
+    avatar?: string;
+    text?: string;
+    sentByCurrentUser?: boolean;
+  };
+}
+
+const ChatMessageBig: React.FC<MessageProps> = ({ message }) => {
   const isCurrentUser = message.sentByCurrentUser;
   return (
     <div className={`flex items-start mb-4 ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
