@@ -72,11 +72,10 @@ export default function OfferServicesPage(): React.ReactNode {
     },
   ];
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    // Perform any other actions here, like form validation or API calls
-    router.push('/serviceMatches');
-  }
+  // const handleSubmit = (event: React.FormEvent) => {
+  //   event.preventDefault();
+  //   router.push('/serviceMatches');
+  // }
 
   const handleSortClick = () => {
     setIsSortDropdownOpen(!isSortDropdownOpen);
@@ -121,7 +120,7 @@ export default function OfferServicesPage(): React.ReactNode {
     <div>
       <div className="p-16">
         <h2 className="flex flex-col justify-center items-center font-bold text-5xl text-black">Service Requests</h2>
-        <form className="max-w-2xl mx-auto pt-8" onSubmit={handleSubmit}>   
+        <form className="max-w-2xl mx-auto pt-8">   
           <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
           <div className="relative">
             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
