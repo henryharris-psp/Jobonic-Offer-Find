@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import 'flowbite';
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -17,13 +19,11 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  /* color: rgb(var(--foreground-rgb)); */
+  margin: 0;
+  padding: 0;
+  background: url('/jobonicbackground2.svg') no-repeat top center;
+  background-size: cover;
 }
 
 @layer utilities {
@@ -34,13 +34,14 @@ body {
 
 .job-div {
   align-items: self-end;
-  width: 80%;
+  width: 100%;
 }
 
 .job-card {
   width: 100%;
+  height: 400px;
   padding: 20px;
-  margin: 10px;
+  /* margin: 10px; */
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -48,7 +49,6 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-bottom: 20px;
   color: black;
 }
 
@@ -73,7 +73,104 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 30px;
   margin-top: 60px;
-  margin-left: 80px;
-  margin-right: 60px;
+  margin-left: 0px;
+  margin-right: 20px;
   max-height: 400px;
 }
+
+.navbar-logo {
+  height: 100%;
+  object-fit: contain;
+  display: flex;
+  align-items: center;
+}
+
+/* flipcard */
+
+.flip-card-container {
+  perspective: 1000px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.flip-card {
+  width: 300px; /* Adjust width as needed */
+  height: 300px; /* Adjust height as needed */
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease-in-out;
+}
+
+.card-content {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 35px;
+  box-sizing: border-box; /* Ensures padding is included in the element's total width and height */
+}
+
+.flip-card-front {
+  background-color: #71BAC7;
+  transform: rotateY(0deg);
+}
+
+.flip-card-back {
+  background-color: #71BAC7;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.text-content {
+  text-align: center;
+}
+
+.required:after {
+  content: ' *';
+  color: #e32;
+  display: inline;
+}
+
+/* img {
+  margin-bottom: 16px;
+} */
+
+/* JObonic hoME */
+.canvas {
+  position: absolute; /* Fix the position */
+  margin-top: 0%;
+  top: 400px;
+  left: 0;
+  width: 100%; 
+  height: 235%;
+  z-index: -1; /* Send it to the background */
+  min-height: 100%;
+  min-height: 100%;
+
+}
+
+.canvas-container {
+  width: 100%;
+  max-width: 100%; /* Ensure the image does not exceed the width of its container */
+  overflow: hidden; /* Hide any overflow to prevent scrollbars */
+}
+
+
+
+
+

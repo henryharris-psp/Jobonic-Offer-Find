@@ -1,107 +1,213 @@
-'use client'
+'use client';
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import Link from "next/link";
-import logo from "@/app/assets/logo.png";
-import Image from "next/image"
 import Drawer from "@/components/Drawer";
 import Settings from "@/components/Settings";
-import Dropdown, { DropdownItem } from "@/components/Dropdown";
-import Icon from "@/components/Icon";
-import { useRouter } from "next/navigation";
-import avatar from "@/../public/avatar.svg"
+import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 
 interface NavBarProps {
-  showOnlyLogo?: boolean
-  isEmployer?: boolean
+  showOnlyLogo?: boolean;
+  isEmployer?: boolean;
+  signedIn?: boolean;
 }
 
-const Navbar = ({ showOnlyLogo = false, isEmployer = false }: NavBarProps) => {
+const NavbarComponent = ({ showOnlyLogo = false, isEmployer = false, signedIn = true }: NavBarProps) => {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState('English');
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const router = useRouter()
+  const handleDropdownToggle = useCallback(() => {
+    setIsDropdownOpen((prev) => !prev);
+  }, []);
 
-  const dropdownItems: DropdownItem[] = [
-    {
-      icon: <Icon name='profile' />,
-      content: 'Profile',
-      onClick: () => setIsDrawerOpen(true),
-    },
-    {
-      icon: <Icon name='fi-rr-settings' />,
-      content: 'Settings',
-      onClick: () => setIsDrawerOpen(true),
-    },
-    {
-      icon: <Icon name='fi-rr-sign-out' />,
-      content: 'Log Out',
-      onClick: () => {
-        router.push('/login')
-      },
+  const handleLanguageDropdownToggle = useCallback(() => {
+    setIsLanguageDropdownOpen((prev) => !prev);
+  }, []);
 
-    }
-  ]
+  const handleSignOut = useCallback(() => {
+    setIsDropdownOpen(false);
+    router.push("/login");
+  }, [router]);
 
+  const handleLogoClick = useCallback(() => {
+    router.push("/");
+  }, [router]);
 
-    const handleLogoClick = () => {
-        window.location.href = '/'
-    }
+  const handleLanguageChange = useCallback((language: string) => {
+    setSelectedLanguage(language);
+    setIsLanguageDropdownOpen(false);
+  }, []);
 
-    const handleDrawerCloseClicked = (): void => {
-      setIsDrawerOpen(false)
-    }
+  const handleDrawerCloseClicked = useCallback((): void => {
+    setIsDrawerOpen(false);
+  }, []);
+
+  const getLinkClass = useCallback((path: string) => {
+    return pathname === path ? "bg-white text-[#35617C]" : "";
+  }, [pathname]);
+
   return (
-      <section className="h-16 sticky top-0 z-50"
+    <div
+      className="h-16 p-4 sticky top-0 z-50"
       style={{
-        background: 'linear-gradient( 89.5deg, rgba(131,204,255,1) 0.4%, rgba(66,144,251,1) 100.3% )',
+        background: "linear-gradient(to right, #35617C, #10294D)",
       }}
-      >
-        <div className="flex container h-full w-full">
-          <div className="flex h-full">
-            <Image src={logo} alt="logo" className="w-24 h-26 hover:cursor-pointer" onClick={handleLogoClick}></Image>
-          </div>
-          {!showOnlyLogo &&
-          <><div className="flex h-full ml-6">
-            <ul className="hidden md:flex gap-x-6 text-white justify-between items-center">
-              <li>
+    >
+      <div className="container mx-auto flex h-full items-center justify-between">
+        <div className="flex items-center justify-center">
+          <span 
+            className="text-2xl font-semibold text-white cursor-pointer flex items-center"
+            onClick={handleLogoClick}
+          >
+            <img src="/jobonic.svg" alt="Jobonic Logo" className="h-8 w-auto" />
+          </span>
+        </div>
+        {!showOnlyLogo && (
+          <div className="flex items-center space-x-4 text-sm">
+            <ul className="flex gap-x-4 text-white items-center font-medium">
+              <li className={`p-2 hover:bg-white hover:text-[#35617C] rounded-md ${getLinkClass('/about')}`}>
                 <Link href="/about">
                   <p>About Us</p>
                 </Link>
               </li>
-              <li>
-                <Link href="/services">
-                  <p>Services</p>
+              <li className={`p-2 hover:bg-white hover:text-[#35617C] rounded-md ${getLinkClass('/findServices')}`}>
+                <Link href="/findServices">
+                  <p>Find Services</p>
                 </Link>
               </li>
-              <li>
-                <Link href="/contacts">
-                  <p>Contacts</p>
+              <li className={`p-2 hover:bg-white hover:text-[#35617C] rounded-md ${getLinkClass('/offerServices')}`}>
+                <Link href="/offerServices">
+                  <p>Offer Services</p>
                 </Link>
               </li>
-              <li>
+              <li className={`p-2 hover:bg-white hover:text-[#35617C] rounded-md ${getLinkClass('/chat')}`}>
                 <Link href="/chat">
                   <p>Messages</p>
                 </Link>
               </li>
-              <li>
-                <Link href="/description/createJob">
-                  <p>Create Job</p>
+              <li className={`p-2 hover:bg-white hover:text-[#35617C] rounded-md ${getLinkClass('/privileges')}`}>
+                <Link href="/privileges">
+                  <p>Privileges</p>
                 </Link>
               </li>
+              <li className="p-2 hover:bg-white hover:text-[#35617C] rounded-md relative"
+                onMouseEnter={() => setIsLanguageDropdownOpen(true)}
+                onMouseLeave={() => setIsLanguageDropdownOpen(false)}>
+                <button 
+                  className="flex items-center space-x-2">
+                  <p>{selectedLanguage}</p>
+                  <svg
+                    className={`w-4 h-4 transition-transform ${
+                      isLanguageDropdownOpen ? 'rotate-180' : ''
+                    }`}
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5.292 7.292a1 1 0 011.414 0L10 10.586l3.293-3.294a1 1 111.414 1.414l-4 4a1 1 01-1.414 0l-4-4a1 1 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+                {isLanguageDropdownOpen && (
+                  <ul className="text-black absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10"
+                    onMouseEnter={() => setIsLanguageDropdownOpen(true)}
+                    onMouseLeave={() => setIsLanguageDropdownOpen(false)}>
+                    <li className="p-2 hover:bg-gray-100 hover:rounded-t-md cursor-pointer" onClick={() => handleLanguageChange('English')}>
+                      <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        English
+                      </a>
+                    </li>
+                    <li className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleLanguageChange('中文 (Chinese)')}>
+                      <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        中文 (Chinese)
+                      </a>
+                    </li>
+                    <li className="p-2 hover:bg-gray-100 hover:rounded-b-md cursor-pointer" onClick={() => handleLanguageChange('ไทย (Thai)')}>
+                      <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        ไทย (Thai)
+                      </a>
+                    </li>
+                  </ul>
+                )}
+              </li>
+              {!signedIn && (
+                <li className={`p-2 hover:bg-white hover:text-[#35617C] rounded-md ${getLinkClass('/login')}`}>
+                  <Link href="/login">
+                    <p>Sign In</p>
+                  </Link>
+                </li>
+              )}
+              {signedIn && (
+                <li className="p-2 hover:bg-white hover:text-[#35617C] rounded-md relative"
+                onMouseEnter={() => setIsDropdownOpen(true)}
+                onMouseLeave={() => setIsDropdownOpen(false)}>
+                  <button 
+                    className="flex items-center space-x-2"
+                  >
+                    <img src="/group-image.jpg" alt="User Avatar" className="lg:w-8 lg:h-8 sm:w-6 sm:h-6 rounded-full object-cover" />
+                    <svg
+                      className={`w-4 h-4 transition-transform ${
+                        isDropdownOpen ? 'rotate-180' : ''
+                      }`}
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5.292 7.292a1 1 0 011.414 0L10 10.586l3.293-3.294a1 1 111.414 1.414l-4 4a1 1 01-1.414 0l-4-4a1 1 010-1.414z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                  {isDropdownOpen && (
+                    <ul className="text-black absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10"
+                      onMouseEnter={() => setIsDropdownOpen(true)}
+                      onMouseLeave={() => setIsDropdownOpen(false)}>
+                      <li className="p-2 hover:bg-gray-100 hover:rounded-t-md cursor-pointer">
+                        <Link href="/myDashboard">My Dashboard</Link>
+                      </li>
+                      <li className="p-2 hover:bg-gray-100 text-black cursor-pointer">
+                        <Link href="/myProfile">My Profile</Link>
+                      </li>
+                      <li className="p-2 hover:bg-gray-100 text-black cursor-pointer">
+                        <Link href="/myRewardsEmployer">My Rewards</Link>
+                      </li>
+                      <li className="p-2 hover:bg-gray-100 hover:rounded-b-md cursor-pointer" onClick={handleSignOut}>
+                        Sign Out
+                      </li>
+                    </ul>
+                  )}
+                </li>
+              )}
             </ul>
           </div>
-          <div className="flex flex-1 justify-end items-center mr-[-200px]">
-            <Dropdown icon='caret-down' items={dropdownItems} className="hover:bg-blue-300" />
-          </div>
-            </>
-          }
-
-            <Drawer drawerOpen={isDrawerOpen} title='Settings' handleClose={handleDrawerCloseClicked} showBackArrow width='w-full sm:w-1/3'>
-              <Settings />
-            </Drawer>
-        </div>
-      </section>
+        )}
+        <Drawer
+          drawerOpen={isDrawerOpen}
+          title="Settings"
+          handleClose={handleDrawerCloseClicked}
+          showBackArrow
+          width="w-full sm:w-1/3"
+        >
+          <Settings />
+        </Drawer>
+      </div>
+    </div>
   );
 };
 
-export default Navbar;
+export default NavbarComponent;
+
+
+
+
+

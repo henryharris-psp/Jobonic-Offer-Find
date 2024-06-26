@@ -12,6 +12,7 @@ interface ButtonProps {
   tabIndex?: number
   role?: 'button'
   children: ReactNode
+  onClick?: () => void
 }
 
 const Button = ({
@@ -23,7 +24,8 @@ const Button = ({
   variant,
   tabIndex,
   role,
-  children
+  children,
+  onClick,
 }: ButtonProps): React.ReactElement => {
   const submitButton = useFormikContext()
   const buttonClasses = [border, block, size, variant].filter(Boolean).join(' ')
