@@ -139,17 +139,15 @@ export default function OfferServicesPage(): React.ReactNode {
             </button>
           </div>
         </form>
-        <div className="flex flex-col items-center justify-center pt-8 text-black">
-          <h2 className="text-xl font-semibold">
-            No matches for your skills?
+        <div className="flex items-center justify-center pt-8 text-black">
+            <h2 className="text-xl font-semibold">No requests match your skills?</h2>
             <span>
               <Link href="/createProfile" passHref>
-                <button className="px-2 py-1 bg-[#0C2348] text-white rounded-lg font-semibold hover:bg-[#D0693B] focus:outline-none ml-2">
-                  Create Profile
+                <button className="text-md px-3 py-2 bg-[#0C2348] text-white rounded-lg font-medium hover:bg-[#D0693B] focus:outline-none ml-2">
+                  Personalise your service offer
                 </button>
               </Link>
             </span>
-          </h2>
         </div>
 
         {/* Filter and Sort buttons */}
