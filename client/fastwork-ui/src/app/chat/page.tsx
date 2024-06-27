@@ -128,17 +128,11 @@ const ChatPage: React.FC = () => {
   }, [isResizing]);
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden">
+    <div className="flex h-screen w-screen">
       {/* Navbar should show only logo. */}
-      <div
-        className="flex flex-grow"
-        style={{
-          background: 'linear-gradient( 89.5deg, rgba(66,144,251,1) 0.4%, rgba(131,204,255,1) 100.3% )'
-        }}
-      >
-        <div className="bg-[#CFEDF4]" style={{ width: sidebarWidth, minWidth: '150px' }}>
+        <div className="bg-[#CFEDF4]">
           <div className="px-4 pt-2">
-            <div className="text-lg font-semibold mb-4 text-center">
+            <div className="text-lg font-semibold mb-4 text-center overflow-hidden">
               Chats
               <div className="w-full h-0.5 mt-3 bg-gray-300"></div>
             </div>
@@ -215,7 +209,7 @@ const ChatPage: React.FC = () => {
               >
                 <div className="flex">
                   <img className="w-10 h-10 rounded-full mr-4" src={people.avatar} alt={people.name} />
-                  <div className="text-black mt-2 flex items-center">{people.name}</div>
+                  <div className="text-black mt-2 flex items-center text-sm">{people.name}</div>
                 </div>
                 <div className="flex items-center">
                   {sidebarWidth > 200 && (
@@ -232,9 +226,7 @@ const ChatPage: React.FC = () => {
           style={{ width: '5px', cursor: 'col-resize' }}
           onMouseDown={handleMouseDown}
         ></div>
-
         <ChatConversation activeChat={activeChat} />
-      </div>
     </div>
   );
 };
