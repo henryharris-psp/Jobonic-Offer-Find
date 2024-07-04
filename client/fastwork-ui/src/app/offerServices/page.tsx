@@ -72,11 +72,6 @@ export default function OfferServicesPage(): React.ReactNode {
     },
   ];
 
-  // const handleSubmit = (event: React.FormEvent) => {
-  //   event.preventDefault();
-  //   router.push('/serviceMatches');
-  // }
-
   const handleSortClick = () => {
     setIsSortDropdownOpen(!isSortDropdownOpen);
   };
@@ -117,10 +112,10 @@ export default function OfferServicesPage(): React.ReactNode {
   const areFiltersApplied = appliedFilters.minPrice !== '' || appliedFilters.maxPrice !== '' || appliedFilters.deadline !== '';
 
   return (
-    <div>
-      <div className="p-16">
-        <h2 className="flex flex-col justify-center items-center font-bold text-5xl text-black">Service Requests</h2>
-        <form className="max-w-2xl mx-auto pt-8">   
+    <div className="flex flex-col items-center w-full">
+      <div className="w-full max-w-7xl px-8">
+        <h2 className="flex flex-col justify-center items-center font-bold text-5xl text-black pt-16">Service Requests</h2>
+        <form className="max-w-2xl mx-auto pt-8">
           <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
           <div className="relative">
             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -133,7 +128,6 @@ export default function OfferServicesPage(): React.ReactNode {
             focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
             dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
             placeholder="e.g. I have a service to offer" required />
-            {/*Supposed to submit search details to AI and bring to a page which lists recommended jobs*/}
             <button type="submit" onClick={() => router.push("/offerServices")} className="text-white absolute right-2.5 bottom-2.5 bg-[#0B2147] hover:bg-[#D0693B] focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-black dark:hover:bg-gray-700 dark:focus:ring-gray-800">
               Search
             </button>
@@ -152,7 +146,6 @@ export default function OfferServicesPage(): React.ReactNode {
           </h2>
         </div>
 
-        {/* Filter and Sort buttons */}
         <div className="flex justify-end space-x-4 pt-4">
           <div className="relative">
             <button
@@ -257,18 +250,17 @@ export default function OfferServicesPage(): React.ReactNode {
           </div>
         </div>
 
-        {/* Work Category Sidebar and Service Requests */}
-        <div className='flex justify-between pt-8'>
-          <div className="job-category overflow-y-auto">
-            <h2 className='font-semibold text-center'>Work Category</h2>
+        <div className="flex flex-wrap justify-center items-start pt-8 w-full">
+          <div className="w-full max-w-xs job-category overflow-y-auto">
+            <h2 className="font-semibold text-center">Work Category</h2>
             {categories.map((category, index) => (
               <div key={index} className="py-2 border-b border-gray-400 hover:text-blue-500 cursor-pointer">{category}</div>
             ))}
           </div>
-          <div className="flex flex-wrap pr-0 mr-0">
+          <div className="w-full max-w-3xl">
             {jobDataList.map((jobData, index) => (
-              <div key={index} className="w-full sm:w-1/2 md:w-1/3 px-3 pb-4 flex justify-stretch">
-                <ServiceRequestCard serviceRequest={jobData} key={index} hasProfile={true} />
+              <div key={index} className="w-full pb-4 flex justify-center">
+                <ServiceRequestCard serviceRequest={jobData} hasProfile={true} />
               </div>
             ))}
           </div>
@@ -277,3 +269,4 @@ export default function OfferServicesPage(): React.ReactNode {
     </div>
   );
 }
+
