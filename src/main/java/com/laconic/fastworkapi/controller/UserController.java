@@ -1,11 +1,11 @@
 package com.laconic.fastworkapi.controller;
 
-import com.laconic.fastworkapi.dto.UserDTO;
+import com.laconic.fastworkapi.dto.ProfileDTO;
 import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
 import com.laconic.fastworkapi.helper.APIDocsHelper;
-import com.laconic.fastworkapi.service.IUserService;
+import com.laconic.fastworkapi.service.IProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,33 +16,33 @@ import java.util.UUID;
 @RequestMapping("/api/v1/user")
 public class UserController {
 
-    public UserController(IUserService userService) {
+    public UserController(IProfileService userService) {
         this.userService = userService;
     }
 
-    private final IUserService userService;
+    private final IProfileService userService;
 
     @PostMapping
     @Operation(summary = APIDocsHelper.UserAPI.SAVE_USER)
-    public UserDTO save(@RequestBody UserDTO userDTO) {
-        return this.userService.save(userDTO);
+    public ProfileDTO save(@RequestBody ProfileDTO profileDTO) {
+        return this.userService.save(profileDTO);
     }
 
     @PutMapping
     @Operation(summary = APIDocsHelper.UserAPI.UPDATE_USER)
-    public UserDTO update(@RequestParam UUID id, @RequestBody UserDTO userDTO) {
-        return this.userService.update(id, userDTO);
+    public ProfileDTO update(@RequestParam UUID id, @RequestBody ProfileDTO profileDTO) {
+        return this.userService.update(id, profileDTO);
     }
 
     @GetMapping("/all")
     @Operation(summary = APIDocsHelper.UserAPI.GET_ALL_USERS)
-    public Collection<UserDTO> getAllUsers() {
+    public Collection<ProfileDTO> getAllUsers() {
         return this.userService.getAllUsers();
     }
 
     @PostMapping("/all")
     @Operation(summary = APIDocsHelper.UserAPI.GET_USERS)
-    public PaginationDTO<UserDTO> getUsers(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+    public PaginationDTO<ProfileDTO> getUsers(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         return this.userService.getAllUsers(pageAndFilterDTO);
     }
 

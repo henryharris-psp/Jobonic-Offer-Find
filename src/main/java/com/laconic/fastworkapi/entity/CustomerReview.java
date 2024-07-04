@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -15,14 +14,13 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Proposal  extends Auditable<UUID> {
+public class CustomerReview  extends Auditable<UUID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    private UUID taskId;
-    private UUID profileId;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "serviceId")
-    private List<Attachment> attachments;
+    @OneToOne
+    private Profile profile;
+    private double noOfStar = 0;
+    private String review;
 }

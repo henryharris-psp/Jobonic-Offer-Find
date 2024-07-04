@@ -1,13 +1,15 @@
 package com.laconic.fastworkapi.entity;
 
 import com.laconic.fastworkapi.entity.audit.Auditable;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -15,14 +17,13 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Proposal  extends Auditable<UUID> {
+public class Attachment extends Auditable<UUID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    private UUID taskId;
-    private UUID profileId;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "serviceId")
-    private List<Attachment> attachments;
+    private UUID serviceId;
+    private String contentType;
+    private String name;
+    private String location;
 }

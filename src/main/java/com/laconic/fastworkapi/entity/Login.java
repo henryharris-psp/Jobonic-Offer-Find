@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -15,14 +15,15 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Proposal  extends Auditable<UUID> {
+public class Login extends Auditable<UUID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    private UUID taskId;
     private UUID profileId;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "serviceId")
-    private List<Attachment> attachments;
+    private String deviceId;
+    private String deviceType;
+    private Instant loginTimeStamp;
+    private Instant logoutTimeStamp;
+    private String ipAddress;
 }
