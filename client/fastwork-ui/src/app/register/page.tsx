@@ -1,16 +1,13 @@
-import FormContainer from '@/components/FormContainer'
-import { RegisterForm } from './RegisterForm'
-import NavBar from '../../components/NavBar'
+import FormContainer from '@/components/FormContainer';
+import { RegisterForm } from './RegisterForm';
 
 const RegisterPage = (): React.ReactNode => {
   return (
-    <div className='min-h-screen w-full'>
-      <NavBar showOnlyLogo></NavBar>
-      <FormContainer className='mx-auto'>
-        <RegisterForm />
-      </FormContainer>
-    </div>
-  )
+    <div className='py-10'>
+    <RegisterForm />
+  </div>
+  );
 }
 
-export default RegisterPage
+export default RegisterPage;
+
