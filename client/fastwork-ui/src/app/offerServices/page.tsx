@@ -1,12 +1,35 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ServiceRequestCard from '@/components/ServiceRequestCard';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import useFetch from '@/hooks/useFetch';
+import axios from 'axios';
+
+interface JobData {
+  title: string;
+  company: string;
+  work_category: string;
+  employment_type: string;
+  description_1: string;
+  description_2: string;
+  description_3: string;
+  examples_of_work: string;
+  submission_deadline: Date;
+  budget: number;
+  language: string;
+  location: string;
+  days_left: number
+};
 
 export default function OfferServicesPage(): React.ReactNode {
   const router = useRouter();
+  const [jobDataList, setJobDataList] = useState<JobData[]>([]);
+  const { fetchCsvData } = useFetch();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [error, setError] = useState('');
+
   const [hasProfile, setHasProfile] = useState(true);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [selectedSortOption, setSelectedSortOption] = useState('Best Match');
@@ -20,6 +43,36 @@ export default function OfferServicesPage(): React.ReactNode {
     deadline: ''
   });
 
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:3000/api/search', { query: searchQuery });
+      const { results } = response.data;
+      console.log('Search results:', results); // Update with how you handle the results
+      // Redirect or update state based on search results
+    } catch (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error('Server responded with an error:', error.response.data);
+        setError('Error fetching search results. Please try again later.');
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('No response received:', error.request);
+        setError('No response received from server. Please try again later.');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error('Error setting up the request:', error.message);
+        setError('Failed to send request. Please check your network connection.');
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchCsvData("/updated_sample_data.csv", setJobDataList)
+  }, []);
+  console.log(jobDataList);
+
   const categories = [
     "Development and IT",
     "AI Services",
@@ -28,54 +81,6 @@ export default function OfferServicesPage(): React.ReactNode {
     "Marketing and Advertising",
     "Write and Translate"
   ];
-
-  const jobDataList = [
-    {
-      title: 'Software Engineer',
-      category: 'Programming and Tech',
-      company: 'ABC Technologies',
-      location: 'New York',
-      type: 'Freelance',
-      bullet1: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      bullet2: 'Minimum 3 years of experience in software development.',
-      bullet3: 'Proficiency in Python, R, and machine learning algorithms.'
-    },
-    {
-      title: 'Data Scientist',
-      category: 'Programming and Tech',
-      company: 'XYZ Brothers Ultimate Corporation',
-      location: 'San Francisco',
-      type: 'Part-Time',
-      bullet1: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      bullet2: 'Minimum 3 years of experience in software development.',
-      bullet3: 'Proficiency in Python, R, and machine learning algorithms.'
-    },
-    {
-      title: 'AI Scientist',
-      category: 'Programming and Tech',
-      company: 'ABC Brothers Corporation',
-      location: 'Kathmandu',
-      type: 'Contract',
-      bullet1: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      bullet2: 'Minimum 3 years of experience in software development.',
-      bullet3: 'Proficiency in Python, R, and machine learning algorithms.'
-    },
-    {
-      title: 'Content Writer',
-      category: 'Marketing and Advertising',
-      company: 'KGF Publishing',
-      location: 'Pokhara',
-      type: 'Freelance',
-      bullet1: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      bullet2: 'Minimum 3 years of experience in software development.',
-      bullet3: 'Proficiency in Python, R, and machine learning algorithms.'
-    },
-  ];
-
-  // const handleSubmit = (event: React.FormEvent) => {
-  //   event.preventDefault();
-  //   router.push('/serviceMatches');
-  // }
 
   const handleSortClick = () => {
     setIsSortDropdownOpen(!isSortDropdownOpen);
@@ -120,7 +125,7 @@ export default function OfferServicesPage(): React.ReactNode {
     <div>
       <div className="p-16">
         <h2 className="flex flex-col justify-center items-center font-bold text-5xl text-black">Service Requests</h2>
-        <form className="max-w-2xl mx-auto pt-8">   
+        <form className="max-w-2xl mx-auto pt-8" onSubmit={handleSearch}>   
           <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
           <div className="relative">
             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -132,9 +137,11 @@ export default function OfferServicesPage(): React.ReactNode {
             className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 
             focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
             dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-            placeholder="e.g. I have a service to offer" required />
+            placeholder="e.g. I have a service to offer"
+            value={searchQuery} 
+            onChange={(e) => setSearchQuery(e.target.value)} required />
             {/*Supposed to submit search details to AI and bring to a page which lists recommended jobs*/}
-            <button type="submit" onClick={() => router.push("/offerServices")} className="text-white absolute right-2.5 bottom-2.5 bg-[#0B2147] hover:bg-[#D0693B] focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-black dark:hover:bg-gray-700 dark:focus:ring-gray-800">
+            <button type="submit" className="text-white absolute right-2.5 bottom-2.5 bg-[#0B2147] hover:bg-[#D0693B] focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-black dark:hover:bg-gray-700 dark:focus:ring-gray-800">
               Search
             </button>
           </div>

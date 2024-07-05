@@ -6,7 +6,7 @@ import torch
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
 # Load data from PyTorch file
-embeddings2 = torch.load('updated_sample_data.pt')
+embeddings2 = torch.load('text_sample_data.pt')
 
 # Function to perform search and retrieve top results
 def search_jobs(query, embeddings2, df, title_weight=2.0):

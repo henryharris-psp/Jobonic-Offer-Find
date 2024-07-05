@@ -7,13 +7,13 @@ import { useRouter } from "next/navigation";
 
 interface ServiceRequest {
   title: string;
-  category: string;
+  work_category: string;
   company: string;
   location: string;
-  type: string;
-  bullet1: string;
-  bullet2: string;
-  bullet3: string;
+  employment_type: string;
+  description_1: string;
+  description_2: string;
+  description_3: string;
 }
 
 interface ServiceRequestCardProps {
@@ -47,7 +47,7 @@ const ServiceRequestCard = ({ serviceRequest, hasProfile }: ServiceRequestCardPr
     <div className="job-div">
       <div className="job-card hover:cursor-pointer bg-[#CFEDF4] p-4 rounded-lg shadow-md" onClick={handleServiceRequestClick}>
         <h2 className="text-lg font-bold mb-2">{serviceRequest.title}</h2>
-        <p className="text-sm text-gray-500 mb-1">{serviceRequest.category}</p>
+        <p className="text-sm text-gray-500 mb-1">{serviceRequest.work_category}</p>
         <div className="flex flex-row justify-between">
           <p className="font-semibold text-sm">{serviceRequest.company}</p>
           <div className="flex flex-row mb-1 pr-2">
@@ -56,11 +56,11 @@ const ServiceRequestCard = ({ serviceRequest, hasProfile }: ServiceRequestCardPr
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <p className="text-xs" style={styles.chip}>{serviceRequest.type}</p>
+          <p className="text-xs" style={styles.chip}>{serviceRequest.employment_type}</p>
         </div>
-        <p className="job-description text-md">{serviceRequest.bullet1}</p>
-        <p className="job-description text-md">{serviceRequest.bullet2}</p>
-        <p className="job-description text-md">{serviceRequest.bullet3}</p>
+        <p className="job-description text-md">{serviceRequest.description_1}</p>
+        <p className="job-description text-md">{serviceRequest.description_2}</p>
+        <p className="job-description text-md">{serviceRequest.description_3}</p>
         <div className="flex items-center justify-center mt-2 space-x-2">
           <button onClick={handleChat}>
             <svg className="w-10 h-10 text-[#0B2147] dark:text-white hover:text-[#D0693B]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
