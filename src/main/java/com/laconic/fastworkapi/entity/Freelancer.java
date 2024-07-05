@@ -32,9 +32,9 @@ public class Freelancer extends Auditable<UUID> {
     private double noOfJobs = 0;
     private String company;
     private String skills;
-    private double hourlyRate;
+    private double hourlyRate = 0;
     private String degree;
-    private double experience;
+    private double experience = 0;
     private String designation;
     private String accountNumber;
     private String bankName;

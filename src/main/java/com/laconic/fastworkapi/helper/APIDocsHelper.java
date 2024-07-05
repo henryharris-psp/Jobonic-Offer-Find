@@ -54,4 +54,30 @@ public class APIDocsHelper {
         public static final String DELETE_FREELANCER = "Removes a freelancer";
     }
 
+    @UtilityClass
+    public static class SkillAPI {
+        public static final String SAVE_SKILL = "Saves and returns a skill";
+        public static final String UPDATE_SKILL = "Updates and returns a skill";
+        public static final String GET_ALL_SKILLS = "Get all skills with pagination and sorting. Filters " +
+                "skill by name";
+        public static final String GET_ALL_SKILL = "Get all skills without pagination and sorting.";
+        public static final String DELETE_SKILL = "Removes a skill";
+    }
+
+    @UtilityClass
+    public static class UserEducationAPI {
+        public static final String SAVE_USER_EDUCATION = "Saves and returns a user education";
+        public static final String UPDATE_USER_EDUCATION = "Updates and returns a user education";
+        public static final String GET_ALL_USER_EDUCATION = "Get all user education without pagination and sorting.";
+        public static final String DELETE_USER_EDUCATION = "Removes a user education";
+    }
+
+    @UtilityClass
+    public static class UserExperienceAPI {
+        public static final String SAVE_USER_EXPERIENCE = "Saves and returns a user experience";
+        public static final String UPDATE_USER_EXPERIENCE = "Updates and returns a user experience";
+        public static final String GET_ALL_USER_EXPERIENCE = "Get all user experience without pagination and sorting.";
+        public static final String DELETE_USER_EXPERIENCE = "Removes a user experience";
+    }
+
 }

@@ -1,12 +1,12 @@
 package com.laconic.fastworkapi.repo.specification;
 
-import com.laconic.fastworkapi.entity.User;
+import com.laconic.fastworkapi.entity.Profile;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 
 @UtilityClass
 public class UserSpecification {
-    public static Specification<User> hasKeyword(String keyword) {
+    public static Specification<Profile> hasKeyword(String keyword) {
         return (root, query, criteriaBuilder) -> {
             if(keyword == null || keyword.isEmpty()) {
                 return criteriaBuilder.conjunction();

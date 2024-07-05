@@ -6,12 +6,14 @@ import com.laconic.fastworkapi.helper.APIDocsHelper;
 import com.laconic.fastworkapi.service.ICategoryService;
 import com.laconic.fastworkapi.service.impl.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+@Tag(name = "category", description = "Category related APIs")
 @RestController
 @RequestMapping("/api/v1/category")
 public class CategoryController {

@@ -1,6 +1,6 @@
 package com.laconic.fastworkapi.repo;
 
-import com.laconic.fastworkapi.entity.User;
+import com.laconic.fastworkapi.entity.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface IUserRepo extends JpaRepository<User, UUID>, JpaSpecificationExecutor<User> {
+public interface IUserRepo extends JpaRepository<Profile, UUID>, JpaSpecificationExecutor<Profile> {
 }
