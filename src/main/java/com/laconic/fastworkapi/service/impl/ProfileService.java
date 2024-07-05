@@ -31,8 +31,8 @@ public class ProfileService implements IProfileService {
     @Override
     public ProfileDTO save(ProfileDTO profileDTO) {
         var profile = profileDTO.updateUser(new Profile());
-        profile.getUserEducationList().forEach(profile::addEducation);
-        profile.getUserExperienceList().forEach(profile::addExperience);
+//        profile.getUserEducationList().forEach(profile::addEducation);
+//        profile.getUserExperienceList().forEach(profile::addExperience);
         return new ProfileDTO(this.userRepo.save(profile));
     }
 
