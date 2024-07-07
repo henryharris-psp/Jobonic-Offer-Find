@@ -35,10 +35,10 @@ public class UserEducationDTO implements Serializable {
     }
 
     public UserEducation updateUserEducation(UserEducation userEducation) {
-        userEducation.setInstitute(userEducation.getInstitute());
-        userEducation.setDegree(userEducation.getDegree());
-        userEducation.setStartDate(userEducation.getStartDate());
-        userEducation.setEndDate(userEducation.getEndDate());
+        userEducation.setInstitute(this.getInstitute());
+        userEducation.setDegree(this.getDegree());
+        userEducation.setStartDate(this.getStartDate());
+        userEducation.setEndDate(this.getEndDate());
         return userEducation;
     }
 }

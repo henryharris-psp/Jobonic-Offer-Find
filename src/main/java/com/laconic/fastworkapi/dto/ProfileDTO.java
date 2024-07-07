@@ -51,14 +51,6 @@ public class ProfileDTO implements Serializable {
         this.cardExpiryDate = profile.getCardExpiryDate();
         this.walletAddress = profile.getWalletAddress();
         this.review = profile.getReview();
-//        if(profile.getUserEducationList() != null && !profile.getUserEducationList().isEmpty()) {
-//            this.userEducationList.addAll(profile.getUserEducationList()
-//                                                   .stream().map(UserEducationDTO::new).collect(Collectors.toSet()));
-//        }
-//        if(profile.getUserExperienceList() != null && !profile.getUserExperienceList().isEmpty()) {
-//            this.userExperienceList.addAll(profile.getUserExperienceList().
-//                                                   stream().map(UserExperienceDTO::new).collect(Collectors.toSet()));
-//        }
     }
 
     public Profile updateUser(Profile profile) {

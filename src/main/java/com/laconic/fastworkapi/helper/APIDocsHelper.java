@@ -11,6 +11,7 @@ public class APIDocsHelper {
         public static final String GET_USERS = "Get all users with sorting and pagination. Filters user by username " +
                 "and email";
         public static final String GET_ALL_USERS = "Get all users";
+        public static final String GET_USER = "Get single user by id";
         public static final String DELETE_USER = "Removes a user";
     }
 

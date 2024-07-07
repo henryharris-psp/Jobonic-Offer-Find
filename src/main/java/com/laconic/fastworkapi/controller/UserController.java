@@ -34,6 +34,12 @@ public class UserController {
         return this.userService.update(id, profileDTO);
     }
 
+    @GetMapping("/{id}")
+    @Operation(summary = APIDocsHelper.UserAPI.GET_USER)
+    public ProfileDTO getUser(@RequestParam UUID id) {
+        return this.userService.get(id);
+    }
+
     @GetMapping("/all")
     @Operation(summary = APIDocsHelper.UserAPI.GET_ALL_USERS)
     public Collection<ProfileDTO> getAllUsers() {

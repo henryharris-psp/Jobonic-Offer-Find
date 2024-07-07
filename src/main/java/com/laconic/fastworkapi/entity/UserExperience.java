@@ -1,6 +1,7 @@
 package com.laconic.fastworkapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.laconic.fastworkapi.dto.UserExperienceDTO;
 import com.laconic.fastworkapi.entity.audit.Auditable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -31,4 +32,11 @@ public class UserExperience extends Auditable<UUID> {
     @JsonIgnore
     private Profile profile;
     private boolean isActive = true;
+
+    public UserExperience(UserExperienceDTO userExperienceDTO) {
+        this.id = userExperienceDTO.getId();
+        this.company = userExperienceDTO.getCompany();
+        this.startDate = userExperienceDTO.getStartDate();
+        this.endDate = userExperienceDTO.getEndDate();
+    }
 }
