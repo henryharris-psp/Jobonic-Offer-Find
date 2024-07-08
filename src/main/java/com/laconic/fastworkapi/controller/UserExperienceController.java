@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.controller;
 
+import com.laconic.fastworkapi.constants.AppMessage;
 import com.laconic.fastworkapi.dto.UserExperienceDTO;
 import com.laconic.fastworkapi.helper.APIDocsHelper;
 import com.laconic.fastworkapi.service.IUserExperienceService;
@@ -29,7 +30,7 @@ public class UserExperienceController {
     @DeleteMapping
     public String delete(@RequestParam UUID id) {
         this.userExperienceService.delete(id);
-        return "OK";
+        return String.format(AppMessage.DELETE_MESSAGE, AppMessage.USER_EXPERIENCE);
     }
 
     @Operation(summary = APIDocsHelper.UserExperienceAPI.GET_ALL_USER_EXPERIENCE)

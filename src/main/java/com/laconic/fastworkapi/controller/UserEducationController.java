@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.controller;
 
+import com.laconic.fastworkapi.constants.AppMessage;
 import com.laconic.fastworkapi.dto.UserEducationDTO;
 import com.laconic.fastworkapi.helper.APIDocsHelper;
 import com.laconic.fastworkapi.service.IUserEducationService;
@@ -30,7 +31,7 @@ public class UserEducationController {
     @DeleteMapping
     public String delete(@RequestParam UUID id) {
         this.userEducationService.delete(id);
-        return "OK";
+        return String.format(AppMessage.DELETE_MESSAGE, AppMessage.USER_EDUCATION);
     }
 
     @Operation(summary = APIDocsHelper.UserEducationAPI.GET_ALL_USER_EDUCATION)

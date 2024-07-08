@@ -66,6 +66,12 @@ public class APIDocsHelper {
     }
 
     @UtilityClass
+    public static class RoleAPI {
+        public static final String SAVE_ROLE = "Saves and returns a role";
+        public static final String DELETE_SKILL = "Removes a role";
+    }
+
+    @UtilityClass
     public static class UserEducationAPI {
         public static final String SAVE_USER_EDUCATION = "Saves and returns a user education";
         public static final String UPDATE_USER_EDUCATION = "Updates and returns a user education";

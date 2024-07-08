@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.controller;
 
+import com.laconic.fastworkapi.constants.AppMessage;
 import com.laconic.fastworkapi.dto.SkillDTO;
 import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
@@ -39,7 +40,7 @@ public class SkillController {
     @DeleteMapping
     public String delete(@RequestParam UUID id) {
         this.skillService.delete(id);
-        return "OK";
+        return String.format(AppMessage.DELETE_MESSAGE, AppMessage.SKILL);
     }
 
     @Operation(summary = APIDocsHelper.SkillAPI.GET_ALL_SKILL)

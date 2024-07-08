@@ -2,17 +2,18 @@ package com.laconic.fastworkapi.service.impl;
 
 import com.laconic.fastworkapi.constants.AppMessage;
 import com.laconic.fastworkapi.dto.ProfileDTO;
-import com.laconic.fastworkapi.dto.UserEducationDTO;
-import com.laconic.fastworkapi.dto.UserExperienceDTO;
+import com.laconic.fastworkapi.dto.SkillDTO;
+import com.laconic.fastworkapi.dto.UserRoleDTO;
 import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
 import com.laconic.fastworkapi.entity.Profile;
-import com.laconic.fastworkapi.entity.UserEducation;
-import com.laconic.fastworkapi.entity.UserExperience;
+import com.laconic.fastworkapi.entity.Skill;
+import com.laconic.fastworkapi.entity.UserRole;
+import com.laconic.fastworkapi.entity.UserSkill;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.helper.PaginationHelper;
-import com.laconic.fastworkapi.repo.IUserRepo;
+import com.laconic.fastworkapi.repo.*;
 import com.laconic.fastworkapi.repo.specification.GenericSpecification;
 import com.laconic.fastworkapi.service.IProfileService;
 import com.laconic.fastworkapi.utils.EntityMapper;
@@ -27,11 +28,19 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProfileService implements IProfileService {
-    public ProfileService(IUserRepo userRepo) {
-        this.userRepo = userRepo;
-    }
 
     private final IUserRepo userRepo;
+    private final ISkillRepo skillRepo;
+    private final IUserRoleRepo userRoleRepo;
+    private final IUserSkillRepo userSkillRepo;
+    private final IRoleRepo roleRepo;
+    public ProfileService(IUserRepo userRepo, ISkillRepo skillRepo, IUserRoleRepo userRoleRepo, IUserSkillRepo userSkillRepo, IRoleRepo roleRepo) {
+        this.userRepo = userRepo;
+        this.skillRepo = skillRepo;
+        this.userRoleRepo = userRoleRepo;
+        this.userSkillRepo = userSkillRepo;
+        this.roleRepo = roleRepo;
+    }
 
     @Override
     @Transactional
@@ -39,7 +48,36 @@ public class ProfileService implements IProfileService {
         var profile = EntityMapper.mapToEntity(profileDTO, Profile.class);
         profile.getUserEducationList().forEach(profile::addEducation);
         profile.getUserExperienceList().forEach(profile::addExperience);
-        return EntityMapper.mapToResponse(this.userRepo.save(profile), ProfileDTO.class);
+        profile = this.userRepo.save(profile);
+        var response = EntityMapper.mapToResponse(profile, ProfileDTO.class);
+        if(profileDTO.getSkills() != null && !profileDTO.getSkills().isEmpty()) {
+            response.setSkills(addSkillsToProfile(profileDTO.getSkills(), profile.getId()));
+        }
+        if(profileDTO.getRoles() != null && !profileDTO.getRoles().isEmpty()) {
+            response.setRoles(addRolesToProfile(profileDTO.getRoles(), profile.getId()));
+        }
+        return response;
+    }
+
+    private Set<UserRoleDTO> addRolesToProfile(Set<UserRoleDTO> roles, UUID id) {
+        var userRoles = roles.stream().map(r -> UserRole.builder()
+                .roleId(r.getId())
+                .userId(id)
+                .build()).toList();
+        this.userRoleRepo.saveAll(userRoles);
+        var roleIds = this.userRoleRepo.findAllByUserId(id).stream().map(UserRole::getRoleId).collect(Collectors.toSet());
+        return this.roleRepo.findAllById(roleIds).stream().map(UserRoleDTO::new).collect(Collectors.toSet());
+    }
+
+    private Set<SkillDTO> addSkillsToProfile(Set<SkillDTO> skills, UUID id) {
+        var userSkills = skills.stream().map(s -> UserSkill.builder()
+                .skillId(s.getId())
+                .userId(id)
+                .build()).toList();
+        this.userSkillRepo.saveAll(userSkills);
+        var skillIds =
+                this.userSkillRepo.findAllByUserId(id).stream().map(UserSkill::getSkillId).collect(Collectors.toSet());
+        return this.skillRepo.findAllById(skillIds).stream().map(SkillDTO::new).collect(Collectors.toSet());
     }
 
 
