@@ -1,8 +1,6 @@
 package com.laconic.fastworkapi.dto;
 
 import com.laconic.fastworkapi.entity.Profile;
-import com.laconic.fastworkapi.entity.UserEducation;
-import com.laconic.fastworkapi.entity.UserExperience;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +11,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,6 +34,8 @@ public class ProfileDTO implements Serializable {
     private double review;
     private Set<UserExperienceDTO> userExperienceList;
     private Set<UserEducationDTO> userEducationList;
+    private Set<SkillDTO> skills;
+    private Set<UserRoleDTO> roles;
 
     public ProfileDTO(Profile profile) {
         this.id = profile.getId();
