@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.laconic.fastworkapi.entity.UserExperience;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +22,9 @@ public class UserExperienceDTO implements Serializable {
     private UUID id;
     private UUID profileId;
     private String company;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate startDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
     public UserExperienceDTO(UserExperience userExperience) {

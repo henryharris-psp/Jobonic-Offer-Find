@@ -6,6 +6,7 @@ import com.laconic.fastworkapi.entity.Role;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.IRoleRepo;
 import com.laconic.fastworkapi.service.IRoleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -14,6 +15,7 @@ import java.util.UUID;
 public class RoleService implements IRoleService {
     private final IRoleRepo roleRepo;
 
+    @Autowired
     public RoleService(IRoleRepo roleRepo) {
         this.roleRepo = roleRepo;
     }

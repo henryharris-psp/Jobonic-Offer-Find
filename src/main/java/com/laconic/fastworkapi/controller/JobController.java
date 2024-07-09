@@ -9,6 +9,7 @@ import com.laconic.fastworkapi.enums.JobStatus;
 import com.laconic.fastworkapi.helper.APIDocsHelper;
 import com.laconic.fastworkapi.service.IJobService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public class JobController {
     private final IJobService jobService;
 
+    @Autowired
     public JobController(IJobService jobService) {
         this.jobService = jobService;
     }
