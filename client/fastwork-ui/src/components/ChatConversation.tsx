@@ -96,11 +96,11 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat }) => {
 
   return (
     <div className="flex flex-col w-full h-full bg-white">
-      <div className="text-xl font-bold mb-4 text-center mt-4">
+      <div className="text-xl font-bold my-4 text-center">
         Messages
-        <div className="w-full h-0.5 mt-1 bg-gray-300 m-4"></div>
+        <div className="h-0.5 mt-1 bg-gray-300 m-4"></div>
       </div>
-      <div ref={chatContainerRef} className="flex-grow overflow-y-auto p-6 bg-white">
+      <div ref={chatContainerRef} className="overflow-y-auto p-6 bg-white">
         {messages.map((message) =>
           message.type === 'deal' ? (
             <DealCard
@@ -119,8 +119,8 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat }) => {
           )
         )}
       </div>
-      <div className="w-full p-4 bg-white">
-        <div className="flex flex-col lg:flex-row mx-4 my-4">
+      <div className="w-full bg-white">
+        <div className="flex flex-col lg:flex-row">
           <input type="file" id="file-input" className="hidden" />
           <label htmlFor="file-input" className="file-input-label">
             <svg
@@ -144,13 +144,13 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat }) => {
 
           <input
             type="text"
-            className="flex-grow rounded-lg px-4 py-2 border text-black border-gray-100 focus:outline-none focus:border-[#0C2348] mb-2 lg:mb-0"
+            className="flex-grow rounded-lg border text-black border-gray-300 focus:outline-none focus:border-[#0C2348] mb-2 px-2 mr-2 lg:mb-0"
             placeholder="Type your message..."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
           />
           <button
-            className="w-full lg:w-auto px-4 py-2 bg-[#0C2348] text-white rounded-lg font-semibold hover:bg-[#D0693B] focus:outline-none"
+            className="lg:w-auto px-4 py-2 bg-[#0C2348] text-white rounded-lg font-semibold hover:bg-[#D0693B] focus:outline-none"
             onClick={handleMessageSubmit}
           >
             Send

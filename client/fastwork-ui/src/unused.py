@@ -33,7 +33,7 @@ def search_jobs(query, embeddings2, df, title_weight=2.0):
 df = pd.read_csv('updated_sample_data.csv')
 
 # Example usage
-query = "market research"
+query = "code a website"
 results = search_jobs(query, embeddings2, df)
 
 # Display top 5 results

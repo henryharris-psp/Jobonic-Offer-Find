@@ -19,14 +19,6 @@ export default function CreateProfile(): React.ReactNode {
           <h2 className="text-3xl font-medium text-gray-900 mb-4 text-center">It seems like you do not have a profile yet.</h2>
           <h2 className="text-3xl font-medium text-gray-900 mb-4 text-center">Let&apos;s make a jobonic profile!</h2>
           <div className="max-w-4xl mx-auto w-full mt-8 grid grid-cols-2 e-disabled">
-            <input type="text" id="full-name" placeholder="Your Full Name"
-              className="p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base
-              focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
-              dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4 ml-2 mr-2" />
-            <input type="text" id="other-name" placeholder="How do you want others to call you?"
-              className="p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base
-              focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
-              dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-4 ml-2 mr-2" />
             <input type="tel" id="contact-number" placeholder="Contact Number"
               className="p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base
               focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
