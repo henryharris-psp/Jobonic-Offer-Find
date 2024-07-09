@@ -4,24 +4,24 @@ import React, { useState, useEffect } from 'react';
 import ServiceRequestCard from '@/components/ServiceRequestCard';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import useFetch from '@/hooks/useFetch';
+import Papa from 'papaparse';
 import axios from 'axios';
 
 interface JobData {
   title: string;
-  company: string;
   work_category: string;
+  company: string;
+  location: string;
   employment_type: string;
   description_1: string;
   description_2: string;
   description_3: string;
   examples_of_work: string;
-  submission_deadline: Date;
-  budget: number;
+  submission_deadline: string;
+  budget: string;
   language: string;
-  location: string;
-  days_left: number
-};
+  days_left: string;
+}
 
 export default function OfferServicesPage(): React.ReactNode {
   const router = useRouter();
@@ -43,35 +43,10 @@ export default function OfferServicesPage(): React.ReactNode {
     deadline: ''
   });
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:3000/api/search', { query: searchQuery });
-      const { results } = response.data;
-      console.log('Search results:', results); // Update with how you handle the results
-      // Redirect or update state based on search results
-    } catch (error) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error('Server responded with an error:', error.response.data);
-        setError('Error fetching search results. Please try again later.');
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.error('No response received:', error.request);
-        setError('No response received from server. Please try again later.');
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error('Error setting up the request:', error.message);
-        setError('Failed to send request. Please check your network connection.');
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchCsvData("/updated_sample_data.csv", setJobDataList)
-  }, []);
-  console.log(jobDataList);
+  const [jobDataList, setJobDataList] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [inputValue, setInputValue] = useState('');
 
   const categories = [
     "Development and IT",
@@ -81,6 +56,34 @@ export default function OfferServicesPage(): React.ReactNode {
     "Marketing and Advertising",
     "Write and Translate"
   ];
+
+  useEffect(() => {
+    fetch('/updated_sample_data.csv')
+      .then(response => response.text())
+      .then(csvData => {
+        Papa.parse(csvData, {
+          header: true,
+          complete: function (results: Papa.ParseResult<JobData>) {
+            setJobDataList(results.data);
+          }
+        });
+      })
+      .catch(error => console.error('Error fetching CSV file:', error));
+  }, []);
+
+  const handleSearchSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    // if (inputValue.trim() === '') {
+    //   setSearchResults([]);
+    //   return;
+    // }
+    try {
+      const response = await axios.get(`http://localhost:5000/search?query=${encodeURIComponent(searchQuery)}`);
+      setSearchResults(response.data.results);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
+  };
 
   const handleSortClick = () => {
     setIsSortDropdownOpen(!isSortDropdownOpen);
@@ -125,7 +128,7 @@ export default function OfferServicesPage(): React.ReactNode {
     <div>
       <div className="p-16">
         <h2 className="flex flex-col justify-center items-center font-bold text-5xl text-black">Service Requests</h2>
-        <form className="max-w-2xl mx-auto pt-8" onSubmit={handleSearch}>   
+        <form className="max-w-2xl mx-auto pt-8" onSubmit={handleSearchSubmit}>   
           <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
           <div className="relative">
             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -138,10 +141,10 @@ export default function OfferServicesPage(): React.ReactNode {
             focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
             dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
             placeholder="e.g. I have a service to offer"
-            value={searchQuery} 
-            onChange={(e) => setSearchQuery(e.target.value)} required />
-            {/*Supposed to submit search details to AI and bring to a page which lists recommended jobs*/}
-            <button type="submit" className="text-white absolute right-2.5 bottom-2.5 bg-[#0B2147] hover:bg-[#D0693B] focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-black dark:hover:bg-gray-700 dark:focus:ring-gray-800">
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            required/>
+            <button type="submit" onClick={() => setSearchQuery(inputValue)} className="text-white absolute right-2.5 bottom-2.5 bg-[#0B2147] hover:bg-[#D0693B] focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-black dark:hover:bg-gray-700 dark:focus:ring-gray-800">
               Search
             </button>
           </div>
@@ -157,7 +160,6 @@ export default function OfferServicesPage(): React.ReactNode {
             </span>
         </div>
 
-        {/* Filter and Sort buttons */}
         <div className="flex justify-end space-x-4 pt-4">
           <div className="relative">
             <button
@@ -263,22 +265,34 @@ export default function OfferServicesPage(): React.ReactNode {
         </div>
 
         {/* Work Category Sidebar and Service Requests */}
-        <div className='flex justify-between pt-8'>
-          <div className="job-category overflow-y-auto">
+        <div className='flex pt-8'>
+          <div className="job-category overflow-y-auto w-1/5">
             <h2 className='font-semibold text-center'>Work Category</h2>
             {categories.map((category, index) => (
-              <div key={index} className="py-2 border-b border-gray-400 hover:text-blue-500 cursor-pointer">{category}</div>
+              <div key={index} className="py-1 border-b border-gray-400 hover:text-blue-500 cursor-pointer text-sm">{category}</div>
             ))}
           </div>
-          <div className="flex flex-wrap pr-0 mr-0">
-            {jobDataList.map((jobData, index) => (
-              <div key={index} className="w-full sm:w-1/2 md:w-1/3 px-3 pb-4 flex justify-stretch">
-                <ServiceRequestCard serviceRequest={jobData} key={index} hasProfile={true} />
-              </div>
-            ))}
-          </div>
+
+          {searchQuery.trim() === '' ? (
+            <div className="flex flex-wrap pr-0 mr-0 w-4/5">
+              {jobDataList.map((jobData, index) => (
+                <div key={index} className="w-full sm:w-1/2 md:w-1/3 pb-4 flex justify-stretch">
+                  <ServiceRequestCard serviceRequest={jobData} key={index} hasProfile={true} profilePic={'/jobonic.svg'}/>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex pr-0 mr-0 w-4/5">
+              {searchResults.map((result, index) => (
+                <div key={index} className="w-full sm:w-1/2 md:w-1/3 px-2 pb-4 flex justify-end">
+                  <ServiceRequestCard serviceRequest={result} key={index} hasProfile={true} profilePic={'/jobonic.svg'}/>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
+

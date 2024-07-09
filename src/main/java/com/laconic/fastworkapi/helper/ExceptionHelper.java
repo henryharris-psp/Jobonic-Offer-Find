@@ -13,8 +13,8 @@ public class ExceptionHelper {
      * Provide search attribute, entityName and search parameter
      */
     public static Supplier<NotFoundException> throwNotFoundException(String attribute, String placeholder, String parameter) {
-        return () -> new NotFoundException(String.format(AppMessage.NOT_FOUND_FORMAT, placeholder, parameter,
-                                                         attribute));
+        return () -> new NotFoundException(String.format(AppMessage.NOT_FOUND_FORMAT, attribute, placeholder,
+                                                         parameter));
     }
 
 }
