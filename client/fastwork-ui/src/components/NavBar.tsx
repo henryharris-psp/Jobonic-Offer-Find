@@ -60,10 +60,8 @@ const NavbarComponent = ({ showOnlyLogo = false, isEmployer = false, signedIn = 
     >
       <div className="container mx-auto flex h-full items-center justify-between">
         <div className="flex items-center justify-center">
-          <span 
-            className="text-2xl font-semibold text-white cursor-pointer flex items-center"
-            onClick={handleLogoClick}
-          >
+          <span className="text-2xl font-semibold text-white cursor-pointer flex items-center"
+            onClick={handleLogoClick}>
             <img src="/jobonic.svg" alt="Jobonic Logo" className="h-8 w-auto" />
           </span>
         </div>
@@ -117,7 +115,7 @@ const NavbarComponent = ({ showOnlyLogo = false, isEmployer = false, signedIn = 
                   </svg>
                 </button>
                 {isLanguageDropdownOpen && (
-                  <ul className="text-black absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10"
+                  <ul className="text-black absolute right-0 mt-2 w-28 bg-white border border-gray-200 rounded-md shadow-lg z-10"
                     onMouseEnter={() => setIsLanguageDropdownOpen(true)}
                     onMouseLeave={() => setIsLanguageDropdownOpen(false)}>
                     <li className="p-2 hover:bg-gray-100 hover:rounded-t-md cursor-pointer" onClick={() => handleLanguageChange('English')}>
@@ -125,14 +123,14 @@ const NavbarComponent = ({ showOnlyLogo = false, isEmployer = false, signedIn = 
                         English
                       </a>
                     </li>
-                    <li className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleLanguageChange('中文 (Chinese)')}>
+                    <li className="p-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleLanguageChange('中文')}>
                       <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        中文 (Chinese)
+                        中文
                       </a>
                     </li>
-                    <li className="p-2 hover:bg-gray-100 hover:rounded-b-md cursor-pointer" onClick={() => handleLanguageChange('ไทย (Thai)')}>
+                    <li className="p-2 hover:bg-gray-100 hover:rounded-b-md cursor-pointer" onClick={() => handleLanguageChange('ไทย')}>
                       <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        ไทย (Thai)
+                        ไทย
                       </a>
                     </li>
                   </ul>

@@ -76,7 +76,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                 id="title"
                 name="title"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="e.g. Math Tutor"
+                placeholder="Math Tutor"
               />
             </div>
             <div>
@@ -86,7 +86,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                 id="work-category"
                 name="work-category"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="e.g. Web Development"
+                placeholder="Web Development"
               />
             </div>
             <div>
@@ -105,33 +105,33 @@ const CustomiseJobRequestForm: React.FC = () => {
             </div>
             <div>For the fields below, please fill in the necessary job information e.g. job scope, skills requirement, personality fit.</div>
             <div>
-              <label className="required block text-lg font-semibold mb-2" htmlFor="requirement1">1.</label>
+              <label className="required block text-lg font-semibold mb-2" htmlFor="requirement1">Job Description 1</label>
               <input
                 type="text"
                 id="requirement1"
                 name="requirement1"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="e.g. Teach Middle School students"
+                placeholder="Teach Middle School students"
               />
             </div>
             <div>
-              <label className="required block text-lg font-semibold mb-2" htmlFor="requirement2">2.</label>
+              <label className="required block text-lg font-semibold mb-2" htmlFor="requirement2">Job Description 2</label>
               <input
                 type="text"
                 id="requirement2"
                 name="requirement2"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="e.g. Familiar with GCE O Levels"
+                placeholder="Familiar with GCE O Levels"
               />
             </div>
             <div>
-              <label className="required block text-lg font-semibold mb-2" htmlFor="requirement3">3.</label>
+              <label className="required block text-lg font-semibold mb-2" htmlFor="requirement3">Job Description 3</label>
               <input
                 type="text"
                 id="requirement3"
                 name="requirement3"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="e.g. Able to travel to my house"
+                placeholder="Able to travel to my house"
               />
             </div>
             <div>
@@ -141,7 +141,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                 id="example-work"
                 name="example-work"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="e.g. https://www.netflix.com"
+                placeholder="https://www.netflix.com"
               />
             </div>
             <div>
@@ -161,7 +161,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                 id="budget"
                 name="budget"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="e.g. $14 / hour"
+                placeholder="$14 / hour"
               />
             </div>
             <div>
@@ -173,9 +173,9 @@ const CustomiseJobRequestForm: React.FC = () => {
                 defaultValue={[]}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg">
                   <option value={[]} disabled>Select a language</option>
-                  <option value="Thai">Thai</option>
+                  <option value="Thai">ภาษาไทย</option>
                   <option value="English">English</option>
-                  <option value="Chinese">Chinese</option>
+                  <option value="Chinese">中文</option>
               </select>
             </div>
             <div>
@@ -185,7 +185,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                 id="location"
                 name="location"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="e.g. Online / Phra Khanong / On Nut"
+                placeholder="Online / Phra Khanong / On Nut"
               />
             </div>
             <div className="text-center">
@@ -195,9 +195,10 @@ const CustomiseJobRequestForm: React.FC = () => {
             </div>
           </form>
         </div>
-        <div className="w-1/3 flex items-center justify-center">
+        <div className="w-1/3 flex flex-col items-center justify-center">
             {/*Card should update as formed is filled in*/}
           <CreateServiceRequestCard {...cardProps}/>
+          <h3 className="px-6 text-gray-500 text-justify text-xs">* how your service request card will look like</h3>
         </div>
       </div>
   );
