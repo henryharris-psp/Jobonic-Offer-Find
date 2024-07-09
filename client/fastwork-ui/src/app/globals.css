@@ -169,6 +169,7 @@ body {
   width: 100%;
   max-width: 100%; /* Ensure the image does not exceed the width of its container */
   overflow: hidden; /* Hide any overflow to prevent scrollbars */
+  
 }
 
 

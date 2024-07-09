@@ -66,7 +66,6 @@ export default function OfferServicesPage(): React.ReactNode {
       .catch(error => console.error('Error fetching CSV file:', error));
   }, []);
 
-
   const handleSearchSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     // if (inputValue.trim() === '') {
@@ -156,7 +155,6 @@ export default function OfferServicesPage(): React.ReactNode {
             </span>
         </div>
 
-        {/* Filter and Sort buttons */}
         <div className="flex justify-end space-x-4 pt-4">
           <div className="relative">
             <button
@@ -292,3 +290,4 @@ export default function OfferServicesPage(): React.ReactNode {
     </div>
   );
 }
+
