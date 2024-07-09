@@ -34,7 +34,7 @@ public class UserController {
         return this.userService.update(id, profileDTO);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping
     @Operation(summary = APIDocsHelper.UserAPI.GET_USER)
     public ProfileDTO getUser(@RequestParam UUID id) {
         return this.userService.get(id);

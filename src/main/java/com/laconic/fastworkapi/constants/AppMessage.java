@@ -7,6 +7,7 @@ public class AppMessage {
     public final static String USER = "USER";
     public final static String CATEGORY = "CATEGORY";
     public final static String CLIENT = "CLIENT";
+    public final static String ROLE = "ROLE";
     public final static String JOB = "JOB";
     public final static String FREELANCER = "FREELANCER";
     public final static String SKILL = "SKILL";

@@ -1,6 +1,6 @@
 package com.laconic.fastworkapi.enums;
 
-public enum Role {
+public enum RoleType {
     ADMIN,
     CLIENT,
     FREELANCER,
