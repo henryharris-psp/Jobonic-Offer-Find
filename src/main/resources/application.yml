@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:oracle:thin:@//localhost:1521/orcl
+    username: jobonic
+    password: jobonic
     driver-class-name: oracle.jdbc.OracleDriver
   jpa:
     hibernate:
@@ -18,5 +18,7 @@ springdoc:
   swagger-ui:
     filter: true
 server:
+  port: 8081
   file:
     basePath: ${DOCUMENT_BASE_PATH}
+
