@@ -25,11 +25,6 @@ interface JobData {
 
 export default function OfferServicesPage(): React.ReactNode {
   const router = useRouter();
-  const [jobDataList, setJobDataList] = useState<JobData[]>([]);
-  const { fetchCsvData } = useFetch();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [error, setError] = useState('');
-
   const [hasProfile, setHasProfile] = useState(true);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [selectedSortOption, setSelectedSortOption] = useState('Best Match');

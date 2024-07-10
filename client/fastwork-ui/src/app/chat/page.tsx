@@ -78,13 +78,16 @@ const ChatPage: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(500);
   const [isResizing, setIsResizing] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState('All');
+
+  const [roleFilter, setRoleFilter] = useState('All');
+  const [fromClientStatusFilter, setFromClientStatusFilter] = useState('All');
+  const [fromServiceProviderStatusFilter, setFromServiceProviderStatusFilter] = useState('All');
 
   const filteredPeoples =
-    selectedFilter === 'All'
+    roleFilter === 'All'
       ? allPeoples
       : allPeoples.filter(people =>
-          selectedFilter === 'From clients'
+          roleFilter === 'From clients'
             ? people.type === 'client'
             : people.type === 'service_provider'
         );
@@ -99,6 +102,28 @@ const ChatPage: React.FC = () => {
     'Cancelled',
     'Old order',
     'Suspended',
+    'Completed'
+  ];
+
+  const fromClientStatus = [
+    'All',
+    'Enquiring',
+    'Applied',
+    'To submit',
+    'Waiting for review',
+    'Waiting for final review',
+    'Cancelled',
+    'Completed'
+  ];
+
+  const fromServiceProviderStatus = [
+    'All',
+    'Enquiring',
+    'Applicant',
+    'Waiting for submission',
+    'To review',
+    'Waiting for final submission',
+    'Rejected',
     'Completed'
   ];
 
@@ -142,9 +167,9 @@ const ChatPage: React.FC = () => {
               {chatFilters.map(filter => (
                 <button
                   key={filter}
-                  onClick={() => setSelectedFilter(filter)}
+                  onClick={() => setRoleFilter(filter)}
                   className={`px-4 py-2 text-xs font-medium ${
-                    selectedFilter === filter ? 'bg-[#0B2147] text-white' : 'bg-gray-200 text-gray-600'
+                    roleFilter === filter ? 'bg-[#0B2147] text-white' : 'bg-gray-200 text-gray-600'
                   }`}
                   style={{ borderRadius: '4px 4px 0 0', marginRight: '-1px' }}
                 >
@@ -155,7 +180,122 @@ const ChatPage: React.FC = () => {
 
             <form className="max-w-lg mx-auto">
               <div className="flex flex-col pb-4 space-y-0">
-                <select
+                {roleFilter === 'All' && (
+                  <div className="flex flex-row relative">
+                    <input
+                      type="search"
+                      id="search-dropdown"
+                      className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Search for Orders"
+                      style={{ paddingRight: '2.5rem' }}/>
+                    <button
+                      type="submit"
+                      className="absolute top-0 right-0 p-2.5 text-sm font-medium h-1/2 bg-gray-50 text-[#828282] border-l border-gray-300 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg"
+                      style={{ borderLeft: 'none' }}>
+                      <svg
+                        className="w-4 h-4"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 20">
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+                {roleFilter === 'From clients' && (
+                  <div className="flex flex-col ">
+                    <select
+                    id="type"
+                    className="cursor-pointer py-2.5 px-4 text-sm font-medium text-gray-900 bg-gray-50 border border-gray-300 rounded-t-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100"
+                    required
+                    value={fromClientStatusFilter}
+                    onChange={e => setFromClientStatusFilter(e.target.value)}>
+                      {fromClientStatus.map(type => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="flex flex-row relative">
+                      <input
+                        type="search"
+                        id="search-dropdown"
+                        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 border border-t-0 border-gray-300 rounded-b-lg focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Search for Orders"
+                        style={{ paddingRight: '2.5rem' }}/>
+                      <button
+                        type="submit"
+                        className="absolute top-0 right-0 p-2.5 text-sm font-medium h-full bg-gray-50 text-[#828282] border-l border-gray-300 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-br-lg"
+                        style={{ borderLeft: 'none' }}>
+                        <svg
+                          className="w-4 h-4"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 20 20">
+                          <path
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {roleFilter === 'From service providers' && (
+                  <div className="flex flex-col relative">
+                    <select
+                    id="type"
+                    className="cursor-pointer py-2.5 px-4 text-sm font-medium text-gray-900 bg-gray-50 border border-gray-300 rounded-t-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100"
+                    required
+                    value={fromServiceProviderStatusFilter}
+                    onChange={e => setFromServiceProviderStatusFilter(e.target.value)}>
+                      {fromServiceProviderStatus.map(type => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="flex flex-row relative">
+                      <input
+                        type="search"
+                        id="search-dropdown"
+                        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 border border-t-0 border-gray-300 rounded-b-lg focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Search for Orders"
+                        style={{ paddingRight: '2.5rem' }}/>
+                      <button
+                        type="submit"
+                        className="absolute top-0 right-0 p-2.5 text-sm font-medium h-full bg-gray-50 text-[#828282] border-l border-gray-300 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-br-lg"
+                        style={{ borderLeft: 'none' }}>
+                        <svg
+                          className="w-4 h-4"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 20 20">
+                          <path
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {/* <select
                   id="type"
                   className="cursor-pointer py-2.5 px-4 text-sm font-medium text-gray-900 bg-gray-50 border border-gray-300 rounded-t-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100"
                   required
@@ -167,38 +307,8 @@ const ChatPage: React.FC = () => {
                       {type}
                     </option>
                   ))}
-                </select>
-                <div className="relative">
-                  <input
-                    type="search"
-                    id="search-dropdown"
-                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 border border-t-0 border-gray-300 rounded-b-lg focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Search for Orders."
-                    style={{ paddingRight: '2.5rem' }} // Ensure space for the button
-                  />
-                  <button
-                    type="submit"
-                    className="absolute top-0 right-0 p-2.5 text-sm font-medium h-full bg-gray-50 text-[#828282] border-l border-gray-300 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-br-lg"
-                    style={{ borderLeft: 'none' }} // Match the border styles
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                      />
-                    </svg>
-                    <span className="sr-only">Search</span>
-                  </button>
-                </div>
+                </select> */}
+
               </div>
             </form>
             {filteredPeoples.map(people => (
