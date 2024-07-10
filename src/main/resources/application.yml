@@ -4,6 +4,11 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: oracle.jdbc.OracleDriver
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}
   jpa:
     hibernate:
       ddl-auto: update
