@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.UUID;
 
@@ -14,7 +15,8 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Service extends Auditable<UUID> {
+@SQLRestriction("is_active=true")
+public class ServiceManagement extends Auditable<UUID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,7 +26,9 @@ public class Service extends Auditable<UUID> {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private ServiceRequest serviceRequest;
     // client or freelancer profile
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "profileId")
     private Profile profile;
     private String title;
+    private boolean isActive = true;
 }

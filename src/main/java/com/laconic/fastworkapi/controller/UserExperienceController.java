@@ -6,6 +6,7 @@ import com.laconic.fastworkapi.helper.APIDocsHelper;
 import com.laconic.fastworkapi.service.IUserExperienceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/user-experience")
 public class UserExperienceController {
     private final IUserExperienceService userExperienceService;
+    @Autowired
     public UserExperienceController(IUserExperienceService userExperienceService) {
         this.userExperienceService = userExperienceService;
     }

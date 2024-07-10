@@ -13,6 +13,7 @@ import com.laconic.fastworkapi.helper.PaginationHelper;
 import com.laconic.fastworkapi.repo.ISkillRepo;
 import com.laconic.fastworkapi.repo.specification.GenericSpecification;
 import com.laconic.fastworkapi.service.ISkillService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ import java.util.UUID;
 public class SkillService implements ISkillService {
     private final ISkillRepo skillRepo;
 
+    @Autowired
     public SkillService(ISkillRepo skillRepo) {
         this.skillRepo = skillRepo;
     }

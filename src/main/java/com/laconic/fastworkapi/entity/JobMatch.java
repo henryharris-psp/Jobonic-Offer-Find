@@ -21,7 +21,7 @@ public class JobMatch extends Auditable<UUID> {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     @OneToOne
-    private Service service;
+    private ServiceManagement serviceManagement;
     @OneToOne
     private Profile profile;
     private JobStatus jobStatus;

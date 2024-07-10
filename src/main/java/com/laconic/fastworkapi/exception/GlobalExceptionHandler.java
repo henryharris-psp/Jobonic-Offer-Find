@@ -20,6 +20,12 @@ public class GlobalExceptionHandler {
         return getProblemDetail(ex, request, problemDetail);
     }
 
+    @ExceptionHandler(DocumentException.class)
+    public ProblemDetail handleDocumentException(RuntimeException ex, WebRequest request) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.PAYLOAD_TOO_LARGE);
+        return getProblemDetail(ex, request, problemDetail);
+    }
+
     private ProblemDetail getProblemDetail(Exception ex, WebRequest request, ProblemDetail problemDetail) {
         problemDetail.setType(URI.create("Exception"));
         problemDetail.setProperty("message", ex.getMessage());
