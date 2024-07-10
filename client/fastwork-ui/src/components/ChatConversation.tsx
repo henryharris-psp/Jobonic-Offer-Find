@@ -96,9 +96,21 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat }) => {
 
   return (
     <div className="flex flex-col w-full h-full bg-white">
-      <div className="text-xl font-bold my-4 text-center">
-        Messages
-        <div className="h-0.5 mt-1 bg-gray-300 m-4"></div>
+      <div className="my-4 px-4">
+        <div className="flex flex-row">
+          <div className="text-xl font-bold justify-self-start mr-60">{activeChat.name}</div>
+          <button className="bg-[#E1824F] text-white rounded-lg text-sm p-2 mr-4">
+            View Contract Details
+          </button>
+          <button className="bg-[#71BAC7] text-white rounded-lg text-sm p-2 mr-4">
+            Offering you a service
+          </button>
+          <button className="bg-[#71BAC7] text-white rounded-lg text-sm p-2">
+            Applicant
+          </button>
+        </div>
+
+        <div className="h-0.5 mt-1 bg-gray-300"></div>
       </div>
       <div ref={chatContainerRef} className="overflow-y-auto p-6 bg-white">
         {messages.map((message) =>

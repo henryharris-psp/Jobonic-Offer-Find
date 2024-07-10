@@ -46,8 +46,8 @@ const allPeoples: ActiveChat[] = [
     name: 'John Chamlington',
     avatar: '/avatar.svg',
     messages: [
-      { id: 1, sender: 'John', avatar: '/avatar.svg', text: 'Hey there!', sentByCurrentUser: false },
-      { id: 2, sender: 'You', avatar: '/avatar.svg', text: 'Hello!', sentByCurrentUser: true }
+      { id: 1, sender: 'You', avatar: '/avatar.svg', text: 'Hello Google, I would like to apply for your service request below!', sentByCurrentUser: true },
+      { id: 2, sender: 'John', avatar: '/avatar.svg', text: 'Let me take a look!', sentByCurrentUser: false }
     ],
     type: 'client'
   },
@@ -66,8 +66,8 @@ const allPeoples: ActiveChat[] = [
     name: 'Bob Smith',
     avatar: '/avatar.svg',
     messages: [
-      { id: 1, sender: 'Bob', avatar: '/avatar.svg', text: 'Hello!', sentByCurrentUser: false },
-      { id: 2, sender: 'You', avatar: '/avatar.svg', text: 'Hi Bob!', sentByCurrentUser: true }
+      { id: 1, sender: 'Bob', avatar: '/avatar.svg', text: 'Hello Ella, I am interested in your Software Engineer service.', sentByCurrentUser: false },
+      { id: 2, sender: 'You', avatar: '/avatar.svg', text: 'Hi! Which deliverable are you look for?', sentByCurrentUser: true }
     ],
     type: 'client'
   }
@@ -91,19 +91,6 @@ const ChatPage: React.FC = () => {
             ? people.type === 'client'
             : people.type === 'service_provider'
         );
-
-  const messagetypes = [
-    'All',
-    'Waiting for payment',
-    'Waiting for inspection',
-    'Waiting for confirmation',
-    'Waiting for review',
-    'I want to cancel.',
-    'Cancelled',
-    'Old order',
-    'Suspended',
-    'Completed'
-  ];
 
   const fromClientStatus = [
     'All',
@@ -165,13 +152,13 @@ const ChatPage: React.FC = () => {
             {/* New Toggle */}
             <div className="flex justify-center mb-4">
               {chatFilters.map(filter => (
-                <button
+                  <button
                   key={filter}
                   onClick={() => setRoleFilter(filter)}
                   className={`px-4 py-2 text-xs font-medium ${
                     roleFilter === filter ? 'bg-[#0B2147] text-white' : 'bg-gray-200 text-gray-600'
                   }`}
-                  style={{ borderRadius: '4px 4px 0 0', marginRight: '-1px' }}
+                  style={{ marginRight: '-1px' }}
                 >
                   {filter}
                 </button>
@@ -295,25 +282,11 @@ const ChatPage: React.FC = () => {
                     </div>
                   </div>
                 )}
-                {/* <select
-                  id="type"
-                  className="cursor-pointer py-2.5 px-4 text-sm font-medium text-gray-900 bg-gray-50 border border-gray-300 rounded-t-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100"
-                  required
-                  value={selectedFilter}
-                  onChange={e => setSelectedFilter(e.target.value)}
-                >
-                  {messagetypes.map(type => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </select> */}
-
               </div>
             </form>
             {filteredPeoples.map(people => (
               <div
-                className="flex p-2 hover:bg-blue-300 rounded-md justify-between"
+                className="flex p-2 hover:bg-blue-300 rounded-md justify-between cursor-pointer"
                 key={people.id}
                 onClick={() => setActiveChat(people)}
               >
