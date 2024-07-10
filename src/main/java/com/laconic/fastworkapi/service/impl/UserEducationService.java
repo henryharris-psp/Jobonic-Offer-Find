@@ -7,6 +7,7 @@ import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.IUserEducationRepo;
 import com.laconic.fastworkapi.repo.IUserRepo;
 import com.laconic.fastworkapi.service.IUserEducationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class UserEducationService implements IUserEducationService {
     private final IUserRepo userRepo;
     private final IUserEducationRepo userEducationRepo;
 
+    @Autowired
     public UserEducationService(IUserRepo userRepo, IUserEducationRepo userEducationRepo) {
         this.userRepo = userRepo;
         this.userEducationRepo = userEducationRepo;

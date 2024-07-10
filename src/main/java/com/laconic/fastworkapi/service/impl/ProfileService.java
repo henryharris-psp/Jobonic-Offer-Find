@@ -18,6 +18,7 @@ import com.laconic.fastworkapi.repo.specification.GenericSpecification;
 import com.laconic.fastworkapi.service.IProfileService;
 import com.laconic.fastworkapi.utils.EntityMapper;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,7 @@ public class ProfileService implements IProfileService {
     private final IUserRoleRepo userRoleRepo;
     private final IUserSkillRepo userSkillRepo;
     private final IRoleRepo roleRepo;
+    @Autowired
     public ProfileService(IUserRepo userRepo, ISkillRepo skillRepo, IUserRoleRepo userRoleRepo, IUserSkillRepo userSkillRepo, IRoleRepo roleRepo) {
         this.userRepo = userRepo;
         this.skillRepo = skillRepo;
@@ -46,8 +48,12 @@ public class ProfileService implements IProfileService {
     @Transactional
     public ProfileDTO save(ProfileDTO profileDTO) {
         var profile = EntityMapper.mapToEntity(profileDTO, Profile.class);
-        profile.getUserEducationList().forEach(profile::addEducation);
-        profile.getUserExperienceList().forEach(profile::addExperience);
+        if(profile.getUserEducationList() != null && !profile.getUserEducationList().isEmpty()) {
+            profile.getUserEducationList().forEach(profile::addEducation);
+        }
+        if(profile.getUserExperienceList() != null && !profile.getUserExperienceList().isEmpty()) {
+            profile.getUserExperienceList().forEach(profile::addExperience);
+        }
         profile = this.userRepo.save(profile);
         var response = EntityMapper.mapToResponse(profile, ProfileDTO.class);
         if(profileDTO.getSkills() != null && !profileDTO.getSkills().isEmpty()) {

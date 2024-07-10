@@ -7,6 +7,7 @@ import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.IUserExperienceRepo;
 import com.laconic.fastworkapi.repo.IUserRepo;
 import com.laconic.fastworkapi.service.IUserExperienceService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class UserExperienceService implements IUserExperienceService {
     private final IUserExperienceRepo userExperienceRepo;
     private final IUserRepo userRepo;
 
+    @Autowired
     public UserExperienceService(IUserExperienceRepo userExperienceRepo, IUserRepo userRepo) {
         this.userExperienceRepo = userExperienceRepo;
         this.userRepo = userRepo;

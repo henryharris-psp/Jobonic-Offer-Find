@@ -10,8 +10,15 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.OracleDialect
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 springdoc:
   swagger-ui:
     filter: true
 server:
   port: 8081
+  file:
+    basePath: ${DOCUMENT_BASE_PATH}
+

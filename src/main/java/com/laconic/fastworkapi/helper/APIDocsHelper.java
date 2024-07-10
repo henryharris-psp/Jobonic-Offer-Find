@@ -25,6 +25,37 @@ public class APIDocsHelper {
     }
 
     @UtilityClass
+    public static class AttachmentAPI {
+        public static final String SAVE_ATTACHMENT = "Saves and returns an attachment";
+        public static final String GET_USER_ATTACHMENTS = "Returns a list of attachments for a user";
+        public static final String GET_SERVICE_ATTACHMENTS = "Returns a list of attachments for a service";
+        public static final String GET_PROPOSAL_ATTACHMENTS = "Returns a list of attachments for a service";
+        public static final String REMOVE_ATTACHMENT = "Removes an attachment";
+        public static final String DOWNLOAD_ATTACHMENT = "Downloads an attachment";
+        public static final String SHOW_ATTACHMENT = "Show/Preview an attachment";
+    }
+
+    @UtilityClass
+    public static class ServiceAPI {
+        public static final String SAVE_SERVICE = "Saves and returns a service";
+        public static final String DELETE_SERVICE = "Removes a service";
+        public static final String GET_ALL = "Get all services with pagination and sorting";
+        public static final String GET_ALL_BY_USER = "List all services by user id";
+        public static final String UPDATE_REQUEST = "Updates service request";
+        public static final String UPDATE_OFFER = "Updates service offer";
+        public static final String DELETE_REQUEST = "Deletes service request";
+        public static final String DELETE_OFFER = "Deletes service offer";
+    }
+
+    @UtilityClass
+    public static class ProposalAPI {
+        public static final String SAVE_PROPOSAL = "Saves and returns a proposal with user and service";
+        public static final String REMOVE_PROPOSAL = "Removes a proposal";
+        public static final String GET_SERVICE_PROPOSALS = "Returns all proposals for a service";
+        public static final String GET_USER_PROPOSALS = "Returns all proposals for a user";
+    }
+
+    @UtilityClass
     public static class JobAPI {
         public static final String SAVE_JOB = "Saves and returns a job";
         public static final String UPDATE_JOB = "Updates and returns a job";
