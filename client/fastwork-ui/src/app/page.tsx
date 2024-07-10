@@ -5,6 +5,7 @@ import Link from "next/link"; // Import Link from next/link
 import "./globals.css";
 import CanvasComponent from "../components/HomeAniBG";
 import ChatBox from "@/components/ChatBox";
+import axios from "axios";
 
 export default function Home() {
   const testimonials = [
