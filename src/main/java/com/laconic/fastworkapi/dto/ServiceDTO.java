@@ -17,4 +17,11 @@ public class ServiceDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -8805087936102565403L;
     private UUID id;
+    private ServiceOfferDTO serviceOfferDTO;
+    private ServiceRequestDTO serviceRequestDTO;
+    private UUID profileId;
+    private String title;
+
+    public record WithProfile(UUID id, ServiceOfferDTO serviceOfferDTO, ServiceRequestDTO serviceRequestDTO,
+                              ProfileDTO profileDTO, String title) implements Serializable {}
 }

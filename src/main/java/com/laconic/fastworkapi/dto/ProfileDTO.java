@@ -1,8 +1,7 @@
 package com.laconic.fastworkapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.laconic.fastworkapi.entity.Profile;
-import com.laconic.fastworkapi.entity.UserEducation;
-import com.laconic.fastworkapi.entity.UserExperience;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,34 +30,14 @@ public class ProfileDTO implements Serializable {
     private String phoneNumber;
     private String image;
     private String cardNumber;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate cardExpiryDate;
     private String walletAddress;
     private double review;
     private Set<UserExperienceDTO> userExperienceList;
     private Set<UserEducationDTO> userEducationList;
-
-    public ProfileDTO(Profile profile) {
-        this.id = profile.getId();
-        this.username = profile.getUsername();
-        this.email = profile.getEmail();
-        this.firstName = profile.getFirstName();
-        this.lastName = profile.getLastName();
-        this.companyName = profile.getCompanyName();
-        this.phoneNumber = profile.getPhoneNumber();
-        this.image = profile.getImage();
-        this.cardNumber = profile.getCardNumber();
-        this.cardExpiryDate = profile.getCardExpiryDate();
-        this.walletAddress = profile.getWalletAddress();
-        this.review = profile.getReview();
-        if(profile.getUserEducationList() != null && !profile.getUserEducationList().isEmpty()) {
-            this.userEducationList.addAll(profile.getUserEducationList()
-                                                   .stream().map(UserEducationDTO::new).collect(Collectors.toSet()));
-        }
-        if(profile.getUserExperienceList() != null && !profile.getUserExperienceList().isEmpty()) {
-            this.userExperienceList.addAll(profile.getUserExperienceList().
-                                                   stream().map(UserExperienceDTO::new).collect(Collectors.toSet()));
-        }
-    }
+    private Set<SkillDTO> skills;
+    private Set<UserRoleDTO> roles;
 
     public Profile updateUser(Profile profile) {
         profile.setUsername(this.username);

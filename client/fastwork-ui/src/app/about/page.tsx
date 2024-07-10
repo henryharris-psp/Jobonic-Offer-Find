@@ -4,9 +4,9 @@ import "flowbite/dist/flowbite.css";
 
 const About = () => {
   return (
-    <div className="space-y-16">
-      <div className="flex flex-col items-center border border-gray-200 rounded-lg shadow dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 md:flex-row md:w-full">
-        <div className="mr-16 flex flex-col justify-between p-4 leading-normal w-full">
+    <div className="p-16">
+      <div className="flex flex-col items-center md:flex-row md:w-full mb-16">
+        <div className="flex flex-col justify-between leading-normal w-full">
           <h5 className="mb-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
             Who are we?
           </h5>
@@ -22,8 +22,8 @@ const About = () => {
         </div>
       </div>
 
-      <section className="dark:bg-gray-900 mx-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <section className="dark:bg-gray-900">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-justify">
           <div>
             <h3 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">Offering services?</h3>
             <p className="mb-2 font-normal text-gray-700 dark:text-gray-400 text-justify">

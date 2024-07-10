@@ -39,9 +39,9 @@ public class Profile extends Auditable<UUID> {
     private String walletAddress;
     private double review = 0;
     private boolean isActive = true;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userExperience", orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile", orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<UserExperience> userExperienceList = new HashSet<>();
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userEducation", orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile", orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<UserEducation> userEducationList = new HashSet<>();
 
     public void addEducation(UserEducation education) {

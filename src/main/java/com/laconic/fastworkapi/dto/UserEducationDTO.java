@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.laconic.fastworkapi.entity.UserEducation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +23,9 @@ public class UserEducationDTO implements Serializable {
     private UUID profileId;
     private String institute;
     private String degree;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate startDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
     public UserEducationDTO(UserEducation userEducation) {
@@ -35,10 +38,10 @@ public class UserEducationDTO implements Serializable {
     }
 
     public UserEducation updateUserEducation(UserEducation userEducation) {
-        userEducation.setInstitute(userEducation.getInstitute());
-        userEducation.setDegree(userEducation.getDegree());
-        userEducation.setStartDate(userEducation.getStartDate());
-        userEducation.setEndDate(userEducation.getEndDate());
+        userEducation.setInstitute(this.getInstitute());
+        userEducation.setDegree(this.getDegree());
+        userEducation.setStartDate(this.getStartDate());
+        userEducation.setEndDate(this.getEndDate());
         return userEducation;
     }
 }

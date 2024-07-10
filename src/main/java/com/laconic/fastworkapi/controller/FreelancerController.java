@@ -8,6 +8,7 @@ import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
 import com.laconic.fastworkapi.helper.APIDocsHelper;
 import com.laconic.fastworkapi.service.IFreelancerService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -17,6 +18,7 @@ import java.util.UUID;
 public class FreelancerController {
     private final IFreelancerService freelancerService;
 
+    @Autowired
     public FreelancerController(IFreelancerService freelancerService) {
         this.freelancerService = freelancerService;
     }

@@ -11,6 +11,7 @@ import java.util.UUID;
 public interface IProfileService {
     ProfileDTO save(ProfileDTO profileDTO);
     ProfileDTO update(UUID id, ProfileDTO profileDTO);
+    ProfileDTO get(UUID id);
     PaginationDTO<ProfileDTO> getAllUsers(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
     List<ProfileDTO> getAllUsers();
     String removeUser(UUID id);

@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -20,6 +21,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLRestriction("is_active=true")
 public class ServiceRequest extends Auditable<UUID> {
 
     @Id
@@ -35,4 +37,5 @@ public class ServiceRequest extends Auditable<UUID> {
     private String workExample;
     private String languageSpoken;
     private String location;
+    private boolean isActive = true;
 }
