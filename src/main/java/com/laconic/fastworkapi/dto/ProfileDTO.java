@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.laconic.fastworkapi.entity.Profile;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class ProfileDTO implements Serializable {
     private String phoneNumber;
     private String image;
     private String cardNumber;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate cardExpiryDate;
     private String walletAddress;
     private double review;
@@ -36,21 +38,6 @@ public class ProfileDTO implements Serializable {
     private Set<UserEducationDTO> userEducationList;
     private Set<SkillDTO> skills;
     private Set<UserRoleDTO> roles;
-
-    public ProfileDTO(Profile profile) {
-        this.id = profile.getId();
-        this.username = profile.getUsername();
-        this.email = profile.getEmail();
-        this.firstName = profile.getFirstName();
-        this.lastName = profile.getLastName();
-        this.companyName = profile.getCompanyName();
-        this.phoneNumber = profile.getPhoneNumber();
-        this.image = profile.getImage();
-        this.cardNumber = profile.getCardNumber();
-        this.cardExpiryDate = profile.getCardExpiryDate();
-        this.walletAddress = profile.getWalletAddress();
-        this.review = profile.getReview();
-    }
 
     public Profile updateUser(Profile profile) {
         profile.setUsername(this.username);

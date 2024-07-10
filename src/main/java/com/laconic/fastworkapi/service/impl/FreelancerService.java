@@ -11,6 +11,7 @@ import com.laconic.fastworkapi.helper.PaginationHelper;
 import com.laconic.fastworkapi.repo.IFreelancerRepo;
 import com.laconic.fastworkapi.repo.specification.GenericSpecification;
 import com.laconic.fastworkapi.service.IFreelancerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class FreelancerService implements IFreelancerService {
     private final IFreelancerRepo freelancerRepo;
 
+    @Autowired
     public FreelancerService(IFreelancerRepo freelancerRepo) {
         this.freelancerRepo = freelancerRepo;
     }

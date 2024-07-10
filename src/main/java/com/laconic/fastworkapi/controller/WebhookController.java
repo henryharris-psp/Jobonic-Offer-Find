@@ -18,7 +18,7 @@ public class WebhookController {
                                       @JsonProperty(value = "decimals")  String decimals,
                                       @JsonProperty(value = "currency")  String currency,
                                       @JsonProperty(value = "chain") String chain,
-                                      @JsonProperty(value = "paid_at")  String paidAt){}
+                                      @JsonProperty(value = "paid_at")  String paidAt) {}
     @PostMapping
     public String test(@RequestBody NotificationPayload notificationPayload) {
         if (notificationPayload != null) System.out.println(notificationPayload);

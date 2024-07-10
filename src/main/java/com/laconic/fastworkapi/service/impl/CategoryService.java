@@ -6,6 +6,7 @@ import com.laconic.fastworkapi.entity.Category;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.ICategoryRepo;
 import com.laconic.fastworkapi.service.ICategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.UUID;
 public class CategoryService implements ICategoryService {
     private final ICategoryRepo categoryRepo;
 
+    @Autowired
     public CategoryService(ICategoryRepo categoryRepo) {
         this.categoryRepo = categoryRepo;
     }

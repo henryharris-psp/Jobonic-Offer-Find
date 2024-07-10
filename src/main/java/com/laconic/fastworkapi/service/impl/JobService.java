@@ -12,6 +12,7 @@ import com.laconic.fastworkapi.helper.PaginationHelper;
 import com.laconic.fastworkapi.repo.IJobRepo;
 import com.laconic.fastworkapi.repo.specification.GenericSpecification;
 import com.laconic.fastworkapi.service.IJobService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import java.util.UUID;
 public class JobService implements IJobService {
     private final IJobRepo jobRepo;
 
+    @Autowired
     public JobService(IJobRepo jobRepo) {
         this.jobRepo = jobRepo;
     }

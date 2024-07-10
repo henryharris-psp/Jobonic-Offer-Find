@@ -11,6 +11,7 @@ import com.laconic.fastworkapi.helper.PaginationHelper;
 import com.laconic.fastworkapi.repo.IClientRepo;
 import com.laconic.fastworkapi.repo.specification.GenericSpecification;
 import com.laconic.fastworkapi.service.IClientService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class ClientService implements IClientService {
     private final IClientRepo clientRepo;
 
+    @Autowired
     public ClientService(IClientRepo clientRepo) {
         this.clientRepo = clientRepo;
     }
