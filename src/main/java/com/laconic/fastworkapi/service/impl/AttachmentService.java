@@ -9,6 +9,7 @@ import com.laconic.fastworkapi.repo.IAttachmentRepo;
 import com.laconic.fastworkapi.service.IAttachmentService;
 import com.laconic.fastworkapi.utils.DocumentUtil;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -34,6 +35,7 @@ public class AttachmentService implements IAttachmentService {
     private final IAttachmentRepo attachmentRepo;
     DecimalFormat df = new DecimalFormat("#####################.##");
 
+    @Autowired
     public AttachmentService(IAttachmentRepo attachmentRepo) {
         this.attachmentRepo = attachmentRepo;
     }
