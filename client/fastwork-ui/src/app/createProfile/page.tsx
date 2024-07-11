@@ -7,8 +7,8 @@ import axios from 'axios';
 import {baseURL, token} from "@/baseURL";
 
 const countryCodes = [
-    { code: '+1', name: 'United States' },
-    { code: '+44', name: 'United Kingdom' },
+    { code: '+65', name: 'Singapore' },
+    { code: '+66', name: 'Thailand' },
     { code: '+91', name: 'India' },
     // Add more country codes here
 ];
@@ -21,6 +21,7 @@ export default function CreateProfile(): React.ReactNode {
 
     const [countryCode, setCountryCode] = useState(countryCodes[0].code);
     const [contactNumber, setContactNumber] = useState('');
+    //const [companyName, setCompanyName] = useState('');
     const [address, setAddress] = useState('');
     const [phoneOtp, setPhoneOtp] = useState('');
     const [emailOtp, setEmailOtp] = useState('');

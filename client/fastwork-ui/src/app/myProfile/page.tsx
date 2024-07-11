@@ -4,6 +4,7 @@ import React, { RefObject, useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
 import { baseURL, token } from "@/baseURL";
+import { useRouter } from 'next/navigation';
 
 export default function MyProfile(): React.ReactNode {
     const [manualProfile, setManualProfile] = useState(true);
@@ -35,7 +36,7 @@ export default function MyProfile(): React.ReactNode {
         education: '',
         otherInfo: '',
     });
-
+    const router = useRouter();
     // const handleEdit = (ref: RefObject<HTMLInputElement>, inputKey: string, event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
     //     event.stopPropagation();
     //     setEnabledInputs((prevState) => ({
@@ -58,7 +59,7 @@ export default function MyProfile(): React.ReactNode {
                 fieldData = aboutMeField;
                 data = { "id": userId, "aboutMe": fieldData };
                 break;
-            case 'skills':
+            case 'skill':
                 console.log(skillsField);
 
                 fieldData = skillsField;
@@ -68,7 +69,7 @@ export default function MyProfile(): React.ReactNode {
                     "name": fieldData
                 };
                 break;
-            case 'experience':
+            case 'user-experience':
                 fieldData = experienceField;
                 data = {
                     "id": userId,
@@ -83,7 +84,7 @@ export default function MyProfile(): React.ReactNode {
                     ]
                 };
                 break;
-            case 'education':
+            case 'user-education':
                 fieldData = educationField;
                 data = {
                     "id": userId,
@@ -108,14 +109,11 @@ export default function MyProfile(): React.ReactNode {
         }
 
         try {
-            const response = await axios.put(`${baseURL}/api/v1/skill`, data, {
+            const response = await axios.post(`${baseURL}/api/v1/${inputKey}`, data, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-                params: {
-                    id: 'a57364dc-c556-41ec-8322-9f7975a872bc',
-                }
             });
             console.log('Save successful:', response.data);
             setEnabledInputs((prevState) => ({
@@ -135,6 +133,30 @@ export default function MyProfile(): React.ReactNode {
             }));
         }
     };
+
+    // useEffect(() => {
+    //     // Fetch initial data
+    //     const fetchData = async () => {
+    //         try {
+    //             const response = await axios.get(`${baseURL}/api/v1/user`, {
+    //                 headers: {
+    //                     'Authorization': `Bearer ${token}`,
+    //                     'Content-Type': 'application/json',
+    //                 },
+    //                 params: { id: "3fa85f64-5717-4562-b3fc-2c963f66afa6" }
+    //             });
+    //             const userData = response.data;
+    //             setAboutMeField(userData.aboutMe || '');
+    //             setSkillsField(userData.skills || '');
+    //             setExperienceField(userData.experience || '');
+    //             setEducationField(userData.education || '');
+    //             setOtherInfoField(userData.otherInfo || '');
+    //         } catch (error) {
+    //             console.error('Error fetching initial data:', error);
+    //         }
+    //     };
+    //     fetchData();
+    // }, []);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -204,7 +226,7 @@ export default function MyProfile(): React.ReactNode {
                        disabled={!enabledInputs["skills"]}
                        onChange={(e) => setSkillsField(e.target.value)}
                 />
-                {enabledInputs["skills"] && <button onClick={() => handleSave("skills")} className="mt-2 bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 px-4 rounded">Save</button>}
+                {enabledInputs["skills"] && <button onClick={() => handleSave("skill")} className="mt-2 bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 px-4 rounded">Save</button>}
                 {feedbackMessage["skills"] && <p className="text-sm mt-2">{feedbackMessage["skills"]}</p>}
             </div>
 
