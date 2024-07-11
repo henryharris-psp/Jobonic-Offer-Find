@@ -28,6 +28,7 @@ public class ProfileDTO implements Serializable {
     private String email;
     private String companyName;
     private String phoneNumber;
+    private String address;
     private String image;
     private String cardNumber;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -46,6 +47,7 @@ public class ProfileDTO implements Serializable {
         profile.setLastName(this.lastName);
         profile.setCompanyName(this.companyName);
         profile.setPhoneNumber(this.phoneNumber);
+        profile.setAddress(this.address);
         profile.setImage(this.image);
         profile.setCardNumber(this.cardNumber);
         profile.setCardExpiryDate(this.cardExpiryDate);

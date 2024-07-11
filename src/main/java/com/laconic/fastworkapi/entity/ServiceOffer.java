@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.UUID;
 
 @Entity
@@ -28,6 +29,9 @@ public class ServiceOffer extends Auditable<UUID> {
     private LocalDate startDate;
     private String phone;
     private String address;
+    private String skills;
+    private String experience;
+
     private int draftCount;
     private boolean isActive = true;
 }

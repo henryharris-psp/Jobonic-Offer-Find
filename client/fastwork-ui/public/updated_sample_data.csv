@@ -1,16 +1,16 @@
 title,company,work_category,employment_type,description_1,description_2,description_3,examples_of_work,submission_deadline,budget,language,location,days_left
-Software Engineer,Google,IT,Full-time,Design and develop software,Troubleshoot and debug issues,Collaborate with cross-functional teams,GitHub link,30/7/2024,80000,English,Remote,34
-Data Analyst,Google,Analytics,Part-time,Collect and analyze data,Generate and present reports,Use statistical tools for data interpretation,Portfolio,15/8/2024,45000,English,New York,50
-Graphic Designer,Google,Design,Freelance,Create visual content,Design marketing materials,Ensure brand consistency,Behance portfolio,10/7/2024,30000,English,Remote,14
-Marketing Specialist,Google,Marketing,Full-time,Develop and execute marketing campaigns,Conduct market research,Optimize content for SEO,Campaign examples,1/9/2024,60000,English,San Francisco,67
-Project Manager,Google,Management,Contract,Plan and oversee projects,Manage project timelines,Coordinate with stakeholders,Project plans,20/7/2024,90000,English,Chicago,24
-Content Writer,Google,Writing,Part-time,Research and write articles,Edit and proofread content,Optimize content for SEO,Writing samples,25/7/2024,25000,English,Remote,29
-Customer Support,Google,Support,Full-time,Provide customer assistance,Resolve customer issues,Maintain customer satisfaction,Customer feedback,5/8/2024,40000,English,Remote,40
-UX/UI Designer,Google,Design,Freelance,Design user-friendly interfaces,Conduct user research,Create wireframes and prototypes,Design portfolio,10/8/2024,35000,English,Remote,45
-Sales Manager,Google,Sales,Full-time,Lead and manage sales team,Develop sales strategies,Achieve sales targets,Sales records,15/9/2024,70000,English,Boston,81
-HR Specialist,Google,Human Resources,Part-time,Recruit and onboard employees,Maintain employee records,Develop and implement HR policies,HR reports,1/8/2024,50000,English,Remote,36
-Web Developer,Google,IT,Contract,Develop and maintain websites,Fix bugs and improve performance,Collaborate with designers and developers,GitHub link,15/7/2024,75000,English,Los Angeles,19
-Data Scientist,Google,Analytics,Full-time,Analyze complex data sets,Build predictive models,Communicate insights to stakeholders,Portfolio,20/8/2024,95000,English,San Francisco,55
-Translator,Google,Language,Freelance,Translate written documents,Proofread and edit translations,Ensure cultural relevance,Translation samples,18/7/2024,20000,Spanish,Remote,22
-SEO Specialist,Google,Marketing,Contract,Optimize website content,Conduct keyword research,Monitor and analyze SEO metrics,SEO reports,5/9/2024,65000,English,Remote,71
-Product Manager,Google,Management,Full-time,Oversee product development,Coordinate with various teams,Conduct market analysis,Product examples,25/8/2024,85000,English,New York,60
+Software Engineer,Google,Development & IT,Full-time,Design and develop software,Troubleshoot and debug issues,Collaborate with cross-functional teams,GitHub link,30/7/2024,80000,English,Remote,34
+Data Analyst,Google,Development & IT,Part-time,Collect and analyze data,Generate and present reports,Use statistical tools for data interpretation,Portfolio,15/8/2024,45000,English,New York,50
+Graphic Designer,Google,Graphic & Design,Freelance,Create visual content,Design marketing materials,Ensure brand consistency,Behance portfolio,10/7/2024,30000,English,Remote,14
+Marketing Specialist,Google,Marketing & Advertising,Full-time,Develop and execute marketing campaigns,Conduct market research,Optimize content for SEO,Campaign examples,1/9/2024,60000,English,San Francisco,67
+Project Manager,Google,Admin & Customer Support,Contract,Plan and oversee projects,Manage project timelines,Coordinate with stakeholders,Project plans,20/7/2024,90000,English,Chicago,24
+Content Writer,Google,Writing & Translation,Part-time,Research and write articles,Edit and proofread content,Optimize content for SEO,Writing samples,25/7/2024,25000,English,Remote,29
+Customer Support,Google,Admin & Customer Support,Full-time,Provide customer assistance,Resolve customer issues,Maintain customer satisfaction,Customer feedback,5/8/2024,40000,English,Remote,40
+UX/UI Designer,Google,Graphic & Design,Freelance,Design user-friendly interfaces,Conduct user research,Create wireframes and prototypes,Design portfolio,10/8/2024,35000,English,Remote,45
+Sales Manager,Google,Marketing & Advertising,Full-time,Lead and manage sales team,Develop sales strategies,Achieve sales targets,Sales records,15/9/2024,70000,English,Boston,81
+HR Specialist,Google,HR & Training,Part-time,Recruit and onboard employees,Maintain employee records,Develop and implement HR policies,HR reports,1/8/2024,50000,English,Remote,36
+Web Developer,Google,Development & IT,Contract,Develop and maintain websites,Fix bugs and improve performance,Collaborate with designers and developers,GitHub link,15/7/2024,75000,English,Los Angeles,19
+Data Scientist,Google,Development & IT,Full-time,Analyze complex data sets,Build predictive models,Communicate insights to stakeholders,Portfolio,20/8/2024,95000,English,San Francisco,55
+Translator,Google,Writing & Translation,Freelance,Translate written documents,Proofread and edit translations,Ensure cultural relevance,Translation samples,18/7/2024,20000,Spanish,Remote,22
+SEO Specialist,Google,Marketing & Advertising,Contract,Optimize website content,Conduct keyword research,Monitor and analyze SEO metrics,SEO reports,5/9/2024,65000,English,Remote,71
+Product Manager,Google,Marketing & Advertising,Full-time,Oversee product development,Coordinate with various teams,Conduct market analysis,Product examples,25/8/2024,85000,English,New York,60

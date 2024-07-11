@@ -45,12 +45,13 @@ export default function OfferServicesPage(): React.ReactNode {
   const [inputValue, setInputValue] = useState('');
 
   const categories = [
-    "Development and IT",
-    "AI Services",
-    "HR and Training",
-    "Graphic and Design",
-    "Marketing and Advertising",
-    "Write and Translate"
+      "Development & IT",
+      "Admin & Customer Support",
+      "HR & Training",
+      "Graphic & Design",
+      "Marketing & Advertising",
+      "Writing & Translation",
+      "Finance & Accounting"
   ];
 
   useEffect(() => {
@@ -294,7 +295,7 @@ export default function OfferServicesPage(): React.ReactNode {
               ))}
             </div>
           ) : (
-            <div className="flex pr-0 mr-0 w-4/5">
+            <div className="flex flex-wrap pr-0 mr-0 w-4/5">
               {searchResults.map((result, index) => (
                 <div key={index} className="w-full sm:w-1/2 md:w-1/3 px-2 pb-4 flex justify-end">
                   <ServiceRequestCard serviceRequest={result} key={index} hasProfile={true} profilePic={'/jobonic.svg'}/>
