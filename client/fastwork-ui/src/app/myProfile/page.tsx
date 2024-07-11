@@ -3,6 +3,7 @@
 import React, { RefObject, useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
+import { baseURL } from "@/baseURL";
 
 export default function MyProfile(): React.ReactNode {
     const [manualProfile, setManualProfile] = useState(true);
@@ -50,37 +51,41 @@ export default function MyProfile(): React.ReactNode {
         console.log(`handleSave called for ${inputKey}`);
         let fieldData = '';
         let apiUrl = '';
+        let data = {};
+        const userId = "06875ada-8149-4637-8dfe-3e3ef969389b"; // Same ID as in CreateProfile
+
         switch (inputKey) {
             case 'aboutMe':
                 fieldData = aboutMeField;
                 apiUrl = 'user';
+                data = { "id": userId, "aboutMe": fieldData };
                 break;
             case 'skills':
                 fieldData = skillsField;
                 apiUrl = 'skill';
-                console.log(fieldData);
+                data = { "name": fieldData };
                 break;
             case 'experience':
                 fieldData = experienceField;
                 apiUrl = 'user-experience';
+                data = { "profileId": userId, "company": fieldData, "startDate": "2024-07-10", "endDate": "2024-07-10" };
                 break;
             case 'education':
                 fieldData = educationField;
                 apiUrl = 'user-education';
+                data = { "profileId": userId, "institute": fieldData, "degree": "string", "startDate": "2024-07-10", "endDate": "2024-07-10" };
                 break;
             case 'otherInfo':
                 fieldData = otherInfoField;
                 apiUrl = 'user'; // Assuming otherInfo is part of the user profile
+                data = { "id": userId, "otherInfo": fieldData };
                 break;
             default:
                 return;
         }
 
         try {
-            const response = await axios.post(`http://localhost:8081/api/v1/${apiUrl}`, {
-                "id": "3af85f64-5717-4562-b3fc-2c963f66afa6",
-                "name": fieldData,
-            });
+            const response = await axios.put(`${baseURL}/api/v1/user?id=${userId}`, data);
             console.log('Save successful:', response.data);
             setEnabledInputs((prevState) => ({
                 ...prevState,
@@ -162,7 +167,7 @@ export default function MyProfile(): React.ReactNode {
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14.304 4.844L17.156 7.696M7 7H4a1 1 0 00-1 1v10a1 1 0 001 1h11a1 1 0 001-1v-4.5M19.409 3.59a2.017 2.017 0 010 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 012.852 0z"/>
                     </svg> */}
                 </div>
-                <input type="text" id="skills" placeholder={!skillsField ? 'Enter something about yourself' : skillsField}
+                <input type="text" id="skills" placeholder={!skillsField ? 'Enter your skills' : skillsField}
                        className={`text-black ${(enabledInputs["skills"]) ? 'border bg-white' : 'border-none bg-transparent'} rounded`}
                        ref={skillsRef}
                        disabled={!enabledInputs["skills"]}
@@ -180,7 +185,7 @@ export default function MyProfile(): React.ReactNode {
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14.304 4.844L17.156 7.696M7 7H4a1 1 0 00-1 1v10a1 1 0 001 1h11a1 1 0 001-1v-4.5M19.409 3.59a2.017 2.017 0 010 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 012.852 0z"/>
                     </svg> */}
                 </div>
-                <input type="text" id="education" placeholder={!educationField ? 'Enter something about yourself' : educationField}
+                <input type="text" id="education" placeholder={!educationField ? 'Enter your education' : educationField}
                        className={`text-black ${(enabledInputs["education"]) ? 'border bg-white' : 'border-none bg-transparent'} rounded`}
                        ref={educationRef}
                        disabled={!enabledInputs["education"]}
@@ -198,7 +203,7 @@ export default function MyProfile(): React.ReactNode {
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14.304 4.844L17.156 7.696M7 7H4a1 1 0 00-1 1v10a1 1 0 001 1h11a1 1 0 001-1v-4.5M19.409 3.59a2.017 2.017 0 010 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 012.852 0z"/>
                     </svg> */}
                 </div>
-                <input type="text" id="experience" placeholder={!experienceField ? 'Enter something about yourself' : experienceField}
+                <input type="text" id="experience" placeholder={!experienceField ? 'Enter your experience' : experienceField}
                        className={`text-black ${(enabledInputs["experience"]) ? 'border bg-white' : 'border-none bg-transparent'} rounded`}
                        ref={experienceRef}
                        disabled={!enabledInputs["experience"]}
@@ -228,3 +233,5 @@ export default function MyProfile(): React.ReactNode {
         </div>
     )
 }
+
+
