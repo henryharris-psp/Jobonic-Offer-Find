@@ -1,16 +1,32 @@
-// ChatConversation.tsx
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
 import ChatMessageBig from '@/components/ChatMessageBig';
 import DealCard from '@/components/DealCard';
+import ServiceRequestCard from './ServiceRequestCard';
+
+interface ServiceRequest {
+  title: string;
+  work_category: string;
+  company: string;
+  location: string;
+  employment_type: string;
+  description_1: string;
+  description_2: string;
+  description_3: string;
+  examples_of_work: string;
+  submission_deadline: string;
+  budget: string;
+  language: string;
+  days_left: string;
+}
 
 interface Message {
   id: number | string;
   sender?: string;
   avatar?: string;
   text?: string;
-  type?: 'deal' | 'message';
+  type?: 'deal' | 'message' | 'service offer';
   image?: string;
   title?: string;
   rating?: number;
@@ -30,37 +46,57 @@ interface ActiveChat {
 
 interface ChatConversationProps {
   activeChat: ActiveChat;
+  jobData?: ServiceRequest;
 }
 
-const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat }) => {
+const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData }) => {
   const [newMessage, setNewMessage] = useState('');
-  const [messages, setMessages] = useState<Message[]>([
-    ...activeChat.messages,
-    {
-      id: 'deal',
-      type: 'deal',
-      image: '/group-image.jpg',
-      title: 'Sample Deal',
-      rating: 4.5,
-      description: ['This is a great deal.', "Don't miss out!"],
-      price: '$99.99',
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>(activeChat.messages);
+  // const [messages, setMessages] = useState<Message[]>([
+  //   ...activeChat.messages,
+  //   {
+  //     id: 'deal',
+  //     type: 'deal',
+  //     image: '/group-image.jpg',
+  //     title: 'Sample Deal',
+  //     rating: 4.5,
+  //     description: ['This is a great deal.', "Don't miss out!"],
+  //     price: '$99.99',
+  //   },
+  // ]);
+
+  const sampleData = {
+    title: "Marketing Specialist",
+    work_category: "Analytics",
+    company: "Google",
+    location: "New York",
+    employment_type: "Part-time",
+    description_1: "Collect and analyze data",
+    description_2: "Generate and present reports",
+    description_3: "Use statistical tools for data interpretation",
+    examples_of_work: "Portfolio",
+    submission_deadline: "15/8/2024",
+    budget: "45000",
+    language: "English",
+    days_left: "50",
+  };
+
+  const deal =
+  {
+    id: 'deal',
+    type: 'deal',
+    image: '/group-image.jpg',
+    title: 'Sample Deal',
+    rating: 4.5,
+    description: ['This is a great deal.', "Don't miss out!"],
+    price: '$99.99',
+  };
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMessages([
       ...activeChat.messages,
-      {
-        id: 'deal',
-        type: 'deal',
-        image: '/group-image.jpg',
-        title: 'Sample Deal',
-        rating: 4.5,
-        description: ['This is a great deal.', "Don't miss out!"],
-        price: '$99.99',
-      },
     ]);
   }, [activeChat]);
 
@@ -126,9 +162,12 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat }) => {
               onAccept={() => alert('Deal Accepted')}
               onEditOffer={(newPrice) => alert(`Edit Offer: ${newPrice}`)}
               onDeclineAndSendMessage={handleDeclineAndSendMessage}/>
-          ) : (
+          ) :
+          message.type === 'message' ? (
             <ChatMessageBig key={message.id} message={message} />
-          )
+          ) : (
+            <ServiceRequestCard serviceRequest={sampleData} hasProfile={true} profilePic={'/jobonic.svg'} />
+          ) 
         )}
       </div>
 

@@ -15,7 +15,7 @@ interface MessageProps {
 const ChatMessageBig: React.FC<MessageProps> = ({ message }) => {
   const isCurrentUser = message.sentByCurrentUser;
   return (
-    <div className={`flex items-start mb-4 ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex items-start my-4 ${isCurrentUser ? 'justify-end' : 'justify-start'}`}>
       {!isCurrentUser && (
         <img
           className="w-10 h-10 rounded-full mr-4"

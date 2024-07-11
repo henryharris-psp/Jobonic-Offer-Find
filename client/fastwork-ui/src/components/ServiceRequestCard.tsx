@@ -22,7 +22,7 @@ interface ServiceRequest {
 }
 
 interface ServiceRequestCardProps {
-  serviceRequest: ServiceRequest;
+  serviceRequest?: ServiceRequest;
   hasProfile: boolean;
   profilePic: string;
 }
@@ -58,24 +58,24 @@ const ServiceRequestCard = ({ serviceRequest, hasProfile, profilePic }: ServiceR
           <span>
             <img src="client/fastwork-ui/public/jobonic.svg" alt="Profile Pic" className="h-8 w-8 border rounded-full mr-1"/>
           </span>
-          <span className="font-semibold text-sm underline">{serviceRequest.company}</span>
+          <span className="font-semibold text-sm underline">{serviceRequest?.company}</span>
           <p className="font-semibold text-sm">is looking for</p>
         </div>
 
-        <h2 className="text-lg font-bold">{serviceRequest.title}</h2> 
+        <h2 className="text-lg font-bold">{serviceRequest?.title}</h2> 
         <div className="flex flex-row justify-between">
           <div className="flex space-x-2">
-            <p className="text-sm text-gray-500">{serviceRequest.work_category}</p>
-            <p className="text-xs" style={styles.chip}>{serviceRequest.employment_type}</p>
+            <p className="text-sm text-gray-500">{serviceRequest?.work_category}</p>
+            <p className="text-xs" style={styles.chip}>{serviceRequest?.employment_type}</p>
           </div>
           <div className="flex flex-row mb-1 pr-2">
             <Image className="w-5 h-5" src={location} alt={location} />
-            <p className="text-xs">{serviceRequest.location}</p>
+            <p className="text-xs">{serviceRequest?.location}</p>
           </div>
         </div>
-        <p className="job-description text-sm">{serviceRequest.description_1}</p>
-        <p className="job-description text-sm">{serviceRequest.description_2}</p>
-        <p className="job-description text-sm">{serviceRequest.description_3}</p>
+        <p className="job-description text-sm">{serviceRequest?.description_1}</p>
+        <p className="job-description text-sm">{serviceRequest?.description_2}</p>
+        <p className="job-description text-sm">{serviceRequest?.description_3}</p>
         <div className="flex items-center justify-center mt-2 space-x-2">
           <button onClick={handleChat}>
             <svg className="w-10 h-10 text-[#0B2147] dark:text-white hover:text-[#D0693B]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
