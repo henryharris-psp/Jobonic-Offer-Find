@@ -25,6 +25,7 @@ interface ActiveChat {
   avatar: string;
   messages: Message[];
   type: 'client' | 'service_provider';
+  status: string;
 }
 
 interface ChatConversationProps {
@@ -102,17 +103,17 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat }) => {
           <button className="bg-[#E1824F] text-white rounded-lg text-sm p-2 mr-4">
             View Contract Details
           </button>
-          <button className="bg-[#71BAC7] text-white rounded-lg text-sm p-2 mr-4">
-            Offering you a service
+          <button className="bg-[#71BAC7] text-white rounded-lg text-sm p-2 mr-4" disabled>
+            { activeChat.type === 'client' ? 'Hiring' : 'Offering'}
           </button>
-          <button className="bg-[#71BAC7] text-white rounded-lg text-sm p-2">
-            Applicant
+          <button className="bg-[#71BAC7] text-white rounded-lg text-sm p-2"  disabled>
+            {activeChat.status}
           </button>
         </div>
 
         <div className="h-0.5 mt-1 bg-gray-300"></div>
       </div>
-      <div ref={chatContainerRef} className="overflow-y-auto p-6 bg-white">
+      <div ref={chatContainerRef} className={`overflow-y-auto p-6 bg-white flex" ${activeChat.status === 'Applied' ? 'justify-end' : 'justify-start'}`}>
         {messages.map((message) =>
           message.type === 'deal' ? (
             <DealCard
@@ -124,13 +125,13 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat }) => {
               price={message.price!}
               onAccept={() => alert('Deal Accepted')}
               onEditOffer={(newPrice) => alert(`Edit Offer: ${newPrice}`)}
-              onDeclineAndSendMessage={handleDeclineAndSendMessage}
-            />
+              onDeclineAndSendMessage={handleDeclineAndSendMessage}/>
           ) : (
             <ChatMessageBig key={message.id} message={message} />
           )
         )}
       </div>
+
       <div className="w-full bg-white">
         <div className="flex flex-col lg:flex-row">
           <input type="file" id="file-input" className="hidden" />
@@ -142,15 +143,12 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat }) => {
               width="24"
               height="24"
               fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke="currentColor"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="1.5"
-                d="M7 8v8a5 5 0 1 0 10 0V6.5a3.5 3.5 0 1 0-7 0V15a2 2 0 0 0 4 0V8"
-              />
+                d="M7 8v8a5 5 0 1 0 10 0V6.5a3.5 3.5 0 1 0-7 0V15a2 2 0 0 0 4 0V8"/>
             </svg>
           </label>
 
@@ -161,10 +159,8 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat }) => {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
           />
-          <button
-            className="lg:w-auto px-4 py-2 bg-[#0C2348] text-white rounded-lg font-semibold hover:bg-[#D0693B] focus:outline-none"
-            onClick={handleMessageSubmit}
-          >
+          <button className="lg:w-auto px-4 py-2 bg-[#0C2348] text-white rounded-lg font-semibold hover:bg-[#D0693B] focus:outline-none"
+            onClick={handleMessageSubmit}>
             Send
           </button>
         </div>

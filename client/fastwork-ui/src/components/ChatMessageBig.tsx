@@ -24,9 +24,7 @@ const ChatMessageBig: React.FC<MessageProps> = ({ message }) => {
         />
       )}
       <div className={`max-w-xs ${isCurrentUser ? 'text-right' : 'text-left'}`}>
-        <p
-          className={`px-4 py-2 rounded-lg ${isCurrentUser ? 'bg-[#0C2348] text-white' : 'bg-[#E9E9EB] text-black'}`}
-        >
+        <p className={`px-4 py-2 rounded-lg ${isCurrentUser ? 'bg-[#0C2348] text-white' : 'bg-[#E9E9EB] text-black'}`}>
           {message.text}
         </p>
       </div>

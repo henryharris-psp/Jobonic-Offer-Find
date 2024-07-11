@@ -24,6 +24,7 @@ export interface ActiveChat {
   avatar: string;
   messages: Message[];
   type: 'client' | 'service_provider';
+  status: string;
 }
 
 export interface Service {
@@ -49,7 +50,8 @@ const allPeoples: ActiveChat[] = [
       { id: 1, sender: 'You', avatar: '/avatar.svg', text: 'Hello Google, I would like to apply for your service request below!', sentByCurrentUser: true },
       { id: 2, sender: 'John', avatar: '/avatar.svg', text: 'Let me take a look!', sentByCurrentUser: false }
     ],
-    type: 'client'
+    type: 'client',
+    status: 'Applied',
   },
   {
     id: 2,
@@ -59,7 +61,8 @@ const allPeoples: ActiveChat[] = [
       { id: 1, sender: 'Alice', avatar: '/avatar.svg', text: 'Hi, how are you?', sentByCurrentUser: false },
       { id: 2, sender: 'You', avatar: '/avatar.svg', text: "I'm good, thanks!", sentByCurrentUser: true }
     ],
-    type: 'service_provider'
+    type: 'service_provider',
+    status: 'Applicant',
   },
   {
     id: 3,
@@ -69,7 +72,8 @@ const allPeoples: ActiveChat[] = [
       { id: 1, sender: 'Bob', avatar: '/avatar.svg', text: 'Hello Ella, I am interested in your Software Engineer service.', sentByCurrentUser: false },
       { id: 2, sender: 'You', avatar: '/avatar.svg', text: 'Hi! Which deliverable are you look for?', sentByCurrentUser: true }
     ],
-    type: 'client'
+    type: 'client',
+    status: 'Enquiring',
   }
 ];
 
