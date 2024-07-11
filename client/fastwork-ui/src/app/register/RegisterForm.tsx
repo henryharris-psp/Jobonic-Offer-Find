@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import * as Yup from "yup";
 import axios from "axios";
+import {token} from "@/baseURL";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().required().label('Full Name'),
@@ -37,6 +38,7 @@ export const RegisterForm = (): React.ReactNode => {
     try {
       const response = await axios.postForm(URL, values, {
         headers: {
+          'Authorization' : `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });

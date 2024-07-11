@@ -3,7 +3,7 @@
 import React, { RefObject, useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
-import { baseURL } from "@/baseURL";
+import {baseURL, token} from "@/baseURL";
 
 export default function MyProfile(): React.ReactNode {
     const [manualProfile, setManualProfile] = useState(true);
@@ -85,7 +85,13 @@ export default function MyProfile(): React.ReactNode {
         }
 
         try {
-            const response = await axios.put(`${baseURL}/api/v1/user?id=${userId}`, data);
+            const response = await axios.put(`${baseURL}/api/v1/user?id=${userId}`, data,
+            {
+                headers: {
+                    'Authorization' : `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                },
+            });
             console.log('Save successful:', response.data);
             setEnabledInputs((prevState) => ({
                 ...prevState,
