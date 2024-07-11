@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import axios from 'axios';
-import {baseURL} from "@/baseURL";
+import {baseURL, token} from "@/baseURL";
 
 const countryCodes = [
     { code: '+1', name: 'United States' },
@@ -39,7 +39,14 @@ export default function CreateProfile(): React.ReactNode {
         };
 
         try {
-            const response = await axios.post(`${baseURL}/api/v1/user`, userData);
+            const response = await axios.post(`${baseURL}/api/v1/user`, userData,{
+            headers: {
+                'Authorization' : `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+
             console.log('User created successfully:', response.data);
             //router.push('/myProfile');
         } catch (error) {
