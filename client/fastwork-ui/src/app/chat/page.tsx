@@ -9,7 +9,7 @@ export interface Message {
   sender?: string;
   avatar?: string;
   text?: string;
-  type?: 'deal' | 'message';
+  type?: 'deal' | 'message' | 'service offer';
   image?: string;
   title?: string;
   rating?: number;
@@ -47,8 +47,8 @@ const allPeoples: ActiveChat[] = [
     name: 'John Chamlington',
     avatar: '/avatar.svg',
     messages: [
-      { id: 1, sender: 'You', avatar: '/avatar.svg', text: 'Hello Google, I would like to apply for your service request below!', sentByCurrentUser: true },
-      { id: 2, sender: 'John', avatar: '/avatar.svg', text: 'Let me take a look!', sentByCurrentUser: false }
+      { id: 1, sender: 'You', type: 'message', avatar: '/avatar.svg', text: 'Hello Google, I would like to apply for your service request below!', sentByCurrentUser: true },
+      { id: 2, sender: 'You', type: 'service offer', avatar: '/avatar.svg', sentByCurrentUser: true },
     ],
     type: 'client',
     status: 'Applied',
@@ -58,8 +58,8 @@ const allPeoples: ActiveChat[] = [
     name: 'Alice Brown',
     avatar: '/avatar.svg',
     messages: [
-      { id: 1, sender: 'Alice', avatar: '/avatar.svg', text: 'Hi, how are you?', sentByCurrentUser: false },
-      { id: 2, sender: 'You', avatar: '/avatar.svg', text: "I'm good, thanks!", sentByCurrentUser: true }
+      { id: 1, sender: 'Alice', type: 'message', avatar: '/avatar.svg', text: 'Hi, how are you?', sentByCurrentUser: false },
+      { id: 2, sender: 'You', type: 'message', avatar: '/avatar.svg', text: "I'm good, thanks!", sentByCurrentUser: true }
     ],
     type: 'service_provider',
     status: 'Applicant',
@@ -69,8 +69,9 @@ const allPeoples: ActiveChat[] = [
     name: 'Bob Smith',
     avatar: '/avatar.svg',
     messages: [
-      { id: 1, sender: 'Bob', avatar: '/avatar.svg', text: 'Hello Ella, I am interested in your Software Engineer service.', sentByCurrentUser: false },
-      { id: 2, sender: 'You', avatar: '/avatar.svg', text: 'Hi! Which deliverable are you look for?', sentByCurrentUser: true }
+      { id: 1, sender: 'Bob', type: 'message', avatar: '/avatar.svg', text: 'Hello Ella, I am interested in your Software Engineer service.', sentByCurrentUser: false },
+      { id: 2, sender: 'Bob', type: 'service offer', avatar: '/avatar.svg', sentByCurrentUser: false },
+      { id: 2, sender: 'You', type: 'message', avatar: '/avatar.svg', text: 'Hi! Which deliverable are you look for?', sentByCurrentUser: true }
     ],
     type: 'client',
     status: 'Enquiring',
