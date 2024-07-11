@@ -9,7 +9,7 @@ export interface Message {
   sender?: string;
   avatar?: string;
   text?: string;
-  type?: 'deal' | 'message' | 'service offer';
+  type?: 'deal' | 'message' | 'apply' | 'service offer';
   image?: string;
   title?: string;
   rating?: number;
@@ -48,7 +48,7 @@ const allPeoples: ActiveChat[] = [
     avatar: '/avatar.svg',
     messages: [
       { id: 1, sender: 'You', type: 'message', avatar: '/avatar.svg', text: 'Hello Google, I would like to apply for your service request below!', sentByCurrentUser: true },
-      { id: 2, sender: 'You', type: 'service offer', avatar: '/avatar.svg', sentByCurrentUser: true },
+      { id: 2, sender: 'You', type: 'apply', avatar: '/avatar.svg', sentByCurrentUser: true },
     ],
     type: 'client',
     status: 'Applied',
@@ -69,7 +69,7 @@ const allPeoples: ActiveChat[] = [
     name: 'Bob Smith',
     avatar: '/avatar.svg',
     messages: [
-      { id: 1, sender: 'Bob', type: 'message', avatar: '/avatar.svg', text: 'Hello Ella, I am interested in your Software Engineer service.', sentByCurrentUser: false },
+      { id: 1, sender: 'Bob', type: 'message', avatar: '/avatar.svg', text: 'Hello Ella, I am interested in your Middle School Math tutor service.', sentByCurrentUser: false },
       { id: 2, sender: 'Bob', type: 'service offer', avatar: '/avatar.svg', sentByCurrentUser: false },
       { id: 2, sender: 'You', type: 'message', avatar: '/avatar.svg', text: 'Hi! Which deliverable are you look for?', sentByCurrentUser: true }
     ],
