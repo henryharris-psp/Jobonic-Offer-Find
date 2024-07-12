@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Papa from 'papaparse';
 import axios from 'axios';
+import {baseURL, token} from "@/baseURL";
 
 interface JobData {
   title: string;
@@ -25,7 +26,7 @@ interface JobData {
 
 export default function OfferServicesPage(): React.ReactNode {
   const router = useRouter();
-  const [hasProfile, setHasProfile] = useState(true);
+  const [hasProfile, setHasProfile] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [selectedSortOption, setSelectedSortOption] = useState('Best Match');
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
@@ -44,12 +45,13 @@ export default function OfferServicesPage(): React.ReactNode {
   const [inputValue, setInputValue] = useState('');
 
   const categories = [
-    "Development and IT",
-    "AI Services",
-    "HR and Training",
-    "Graphic and Design",
-    "Marketing and Advertising",
-    "Write and Translate"
+      "Development & IT",
+      "Admin & Customer Support",
+      "HR & Training",
+      "Graphic & Design",
+      "Marketing & Advertising",
+      "Writing & Translation",
+      "Finance & Accounting"
   ];
 
   useEffect(() => {
@@ -75,6 +77,24 @@ export default function OfferServicesPage(): React.ReactNode {
     try {
       const response = await axios.get(`http://localhost:5000/search?query=${encodeURIComponent(searchQuery)}`);
       setSearchResults(response.data.results);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
+  };
+
+  const handleCreateServiceOffer = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      const response = await axios.get(`${baseURL}/api/v1/user`,
+          {headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            }, params: {
+            id: '9bf58ef5-9b61-4cdd-808d-3c6ceb5c16f1'}
+      });
+      console.log(response.data.username);
+      setHasProfile(true);
+      router.push('/customiseService');
     } catch (error) {
       console.error('Error fetching search results:', error);
     }
@@ -147,11 +167,9 @@ export default function OfferServicesPage(): React.ReactNode {
         <div className="flex items-center justify-center pt-8 text-black">
             <h2 className="text-xl font-semibold">No requests match your skills?</h2>
             <span>
-              <Link href="/createProfile" passHref>
-                <button className="text-md px-3 py-2 bg-[#0C2348] text-white rounded-lg font-medium hover:bg-[#D0693B] focus:outline-none ml-2">
+                <button onClick={(e) => handleCreateServiceOffer(e)} className="text-md px-3 py-2 bg-[#0C2348] text-white rounded-lg font-medium hover:bg-[#D0693B] focus:outline-none ml-2">
                   Personalise your service offer
                 </button>
-              </Link>
             </span>
         </div>
 
@@ -277,7 +295,7 @@ export default function OfferServicesPage(): React.ReactNode {
               ))}
             </div>
           ) : (
-            <div className="flex pr-0 mr-0 w-4/5">
+            <div className="flex flex-wrap pr-0 mr-0 w-4/5">
               {searchResults.map((result, index) => (
                 <div key={index} className="w-full sm:w-1/2 md:w-1/3 px-2 pb-4 flex justify-end">
                   <ServiceRequestCard serviceRequest={result} key={index} hasProfile={true} profilePic={'/jobonic.svg'}/>

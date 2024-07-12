@@ -34,12 +34,12 @@ const ServiceMatches = (): React.ReactElement => {
       bullet3: 'Proficiency in Python, R, and machine learning algorithms.',
     },
     {
-      name: 'Ella, Middle School Math tutor',
+      name: 'Evan, Software Developer',
       image: '/group-image.jpg', // Replace with actual image path
       rating: 4.5,
-      reviews: 20,
-      price: '$15/hr',
-      description: 'Taught in mainstream school for 5 years. Specializes in boosting grades of failing math students through personalized home tutoring.',
+      reviews: 24,
+      price: '$30/hr',
+      description: 'Specialising in backend development. Well-versed in Oracle database and Spring Boot framework. 2 years of experience in Google.',
       reviewsDetail: [
         {
           reviewer: 'John',
@@ -52,7 +52,7 @@ const ServiceMatches = (): React.ReactElement => {
           rating: 4,
         },
       ],
-      numSold: 10,
+      numSold: 3,
       bullet1: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
       bullet2: 'Minimum 3 years of experience in software development.',
       bullet3: 'Proficiency in Python, R, and machine learning algorithms.',

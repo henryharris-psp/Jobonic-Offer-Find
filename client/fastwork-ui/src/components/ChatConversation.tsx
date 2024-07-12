@@ -1,16 +1,33 @@
-// ChatConversation.tsx
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
 import ChatMessageBig from '@/components/ChatMessageBig';
 import DealCard from '@/components/DealCard';
+import ServiceRequestCard from './ServiceRequestCard';
+import ServiceMatchCard from "@/components/ServiceMatchCard";
+
+interface ServiceRequest {
+  title: string;
+  work_category: string;
+  company: string;
+  location: string;
+  employment_type: string;
+  description_1: string;
+  description_2: string;
+  description_3: string;
+  examples_of_work: string;
+  submission_deadline: string;
+  budget: string;
+  language: string;
+  days_left: string;
+}
 
 interface Message {
   id: number | string;
   sender?: string;
   avatar?: string;
   text?: string;
-  type?: 'deal' | 'message';
+  type?: 'deal' | 'message' | 'apply';
   image?: string;
   title?: string;
   rating?: number;
@@ -25,41 +42,89 @@ interface ActiveChat {
   avatar: string;
   messages: Message[];
   type: 'client' | 'service_provider';
+  status: string;
 }
 
 interface ChatConversationProps {
   activeChat: ActiveChat;
+  jobData?: ServiceRequest;
 }
 
-const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat }) => {
+const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData }) => {
   const [newMessage, setNewMessage] = useState('');
-  const [messages, setMessages] = useState<Message[]>([
-    ...activeChat.messages,
-    {
-      id: 'deal',
-      type: 'deal',
-      image: '/group-image.jpg',
-      title: 'Sample Deal',
+  const [messages, setMessages] = useState<Message[]>(activeChat.messages);
+  // const [messages, setMessages] = useState<Message[]>([
+  //   ...activeChat.messages,
+  //   {
+  //     id: 'deal',
+  //     type: 'deal',
+  //     image: '/group-image.jpg',
+  //     title: 'Sample Deal',
+  //     rating: 4.5,
+  //     description: ['This is a great deal.', "Don't miss out!"],
+  //     price: '$99.99',
+  //   },
+  // ]);
+
+  const sampleService =
+  {
+    name: 'Ella, Middle School Math tutor',
+        image: '/group-image.jpg', // Replace with actual image path
       rating: 4.5,
-      description: ['This is a great deal.', "Don't miss out!"],
-      price: '$99.99',
+      reviews: 20,
+      price: '$15/hr',
+      description: 'Taught in mainstream school for 5 years. Specializes in boosting grades of failing math students through personalized home tutoring.',
+      reviewsDetail: [
+    {
+      reviewer: 'John',
+      comment: 'Oliver provided excellent tutoring for my son, and his grades improved significantly in just a month.',
+      rating: 5,
     },
-  ]);
+    {
+      reviewer: 'Timmy',
+      comment: 'Oliver provided excellent tutoring for my son, and his grades improved significantly in just a month.',
+      rating: 4,
+    },
+    // Add more reviews as needed
+  ],
+      numSold: 10,
+      bullet1: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      bullet2: 'Minimum 3 years of experience in software development.',
+      bullet3: 'Proficiency in Python, R, and machine learning algorithms.',
+  };
+
+  const sampleData = {
+    title: "Marketing Specialist",
+    work_category: "Analytics",
+    company: "Google",
+    location: "New York",
+    employment_type: "Part-time",
+    description_1: "Collect and analyze data",
+    description_2: "Generate and present reports",
+    description_3: "Use statistical tools for data interpretation",
+    examples_of_work: "Portfolio",
+    submission_deadline: "15/8/2024",
+    budget: "45000",
+    language: "English",
+    days_left: "50",
+  };
+
+  const deal =
+  {
+    id: 'deal',
+    type: 'deal',
+    image: '/group-image.jpg',
+    title: 'Sample Deal',
+    rating: 4.5,
+    description: ['This is a great deal.', "Don't miss out!"],
+    price: '$99.99',
+  };
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMessages([
       ...activeChat.messages,
-      {
-        id: 'deal',
-        type: 'deal',
-        image: '/group-image.jpg',
-        title: 'Sample Deal',
-        rating: 4.5,
-        description: ['This is a great deal.', "Don't miss out!"],
-        price: '$99.99',
-      },
     ]);
   }, [activeChat]);
 
@@ -102,17 +167,17 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat }) => {
           <button className="bg-[#E1824F] text-white rounded-lg text-sm p-2 mr-4">
             View Contract Details
           </button>
-          <button className="bg-[#71BAC7] text-white rounded-lg text-sm p-2 mr-4">
-            Offering you a service
+          <button className="bg-[#71BAC7] text-white rounded-lg text-sm p-2 mr-4" disabled>
+            { activeChat.type === 'client' ? 'Hiring' : 'Offering'}
           </button>
-          <button className="bg-[#71BAC7] text-white rounded-lg text-sm p-2">
-            Applicant
+          <button className="bg-[#71BAC7] text-white rounded-lg text-sm p-2"  disabled>
+            {activeChat.status}
           </button>
         </div>
 
         <div className="h-0.5 mt-1 bg-gray-300"></div>
       </div>
-      <div ref={chatContainerRef} className="overflow-y-auto p-6 bg-white">
+      <div ref={chatContainerRef} className={`overflow-y-auto p-6 bg-white flex" ${activeChat.status === 'Applied' ? 'justify-end' : 'justify-start'}`}>
         {messages.map((message) =>
           message.type === 'deal' ? (
             <DealCard
@@ -124,13 +189,23 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat }) => {
               price={message.price!}
               onAccept={() => alert('Deal Accepted')}
               onEditOffer={(newPrice) => alert(`Edit Offer: ${newPrice}`)}
-              onDeclineAndSendMessage={handleDeclineAndSendMessage}
-            />
-          ) : (
+              onDeclineAndSendMessage={handleDeclineAndSendMessage}/>
+          ) :
+          message.type === 'message' ? (
             <ChatMessageBig key={message.id} message={message} />
+          ) :
+          message.type === 'apply' ? (
+            <ServiceRequestCard serviceRequest={sampleData} hasProfile={true} profilePic={'/jobonic.svg'} applyDisplay={false}/>
+          ) : (
+              <ServiceMatchCard
+                  service={sampleService}
+                  onClick={() => console.log('clicked')}
+                  onChatClick={() => console.log('clicked')}
+              />
           )
         )}
       </div>
+
       <div className="w-full bg-white">
         <div className="flex flex-col lg:flex-row">
           <input type="file" id="file-input" className="hidden" />
@@ -142,15 +217,12 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat }) => {
               width="24"
               height="24"
               fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke="currentColor"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="1.5"
-                d="M7 8v8a5 5 0 1 0 10 0V6.5a3.5 3.5 0 1 0-7 0V15a2 2 0 0 0 4 0V8"
-              />
+                d="M7 8v8a5 5 0 1 0 10 0V6.5a3.5 3.5 0 1 0-7 0V15a2 2 0 0 0 4 0V8"/>
             </svg>
           </label>
 
@@ -161,10 +233,8 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat }) => {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
           />
-          <button
-            className="lg:w-auto px-4 py-2 bg-[#0C2348] text-white rounded-lg font-semibold hover:bg-[#D0693B] focus:outline-none"
-            onClick={handleMessageSubmit}
-          >
+          <button className="lg:w-auto px-4 py-2 bg-[#0C2348] text-white rounded-lg font-semibold hover:bg-[#D0693B] focus:outline-none"
+            onClick={handleMessageSubmit}>
             Send
           </button>
         </div>

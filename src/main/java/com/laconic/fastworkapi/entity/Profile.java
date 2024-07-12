@@ -32,6 +32,7 @@ public class Profile extends Auditable<UUID> {
     private String companyName;
     private String phoneNumber;
     private String email;
+    private String address;
     // either location or byte
     private String image;
     private String cardNumber;
