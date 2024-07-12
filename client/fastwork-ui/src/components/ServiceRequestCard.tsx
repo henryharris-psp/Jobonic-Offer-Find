@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { useState } from "react";
 import Image from 'next/image';
@@ -46,11 +46,23 @@ const ServiceRequestCard = ({
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [newPrice, setNewPrice] = useState('');
+  const [deliverable, setDeliverable] = useState('');
+  const [checkpoints, setCheckpoints] = useState<{ id: number; deliverable: string; payment: string }[]>([]);
+
+  const handleAddCheckpoint = () => {
+    setCheckpoints([...checkpoints, { id: checkpoints.length + 1, deliverable: '', payment: '' }]);
+  };
+
+  const handleCheckpointChange = (index: number, field: string, value: string) => {
+    const newCheckpoints = [...checkpoints];
+    newCheckpoints[index] = { ...newCheckpoints[index], [field]: value };
+    setCheckpoints(newCheckpoints);
+  };
 
   const handleServiceRequestClick = () => {
     console.log('Service request card clicked');
     router.push('/description');
-  }
+  };
 
   const handleApply = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -98,15 +110,20 @@ const ServiceRequestCard = ({
     }
   };
 
+  const handleConfirmAccept = () => {
+    // Logic to handle the confirmation with price and deliverable
+    console.log(`Price: ${newPrice}, Deliverable: ${deliverable}`);
+    setShowAcceptModal(false);
+  };
+
   return (
       <>
         <div className="job-div">
-          <div className="job-card hover:cursor-pointer bg-[#CFEDF4] p-4 rounded-lg shadow-md"
-               onClick={handleServiceRequestClick}>
+          <div className="job-card hover:cursor-pointer bg-[#CFEDF4] p-4 rounded-lg shadow-md" onClick={handleServiceRequestClick}>
             {/* Profile Pic */}
             <div className="flex items-center space-x-1">
             <span>
-              <img src="/jobonic.svg" alt="Profile Pic" className="h-8 w-8 border rounded-full mr-1"/>
+              <img src="/jobonic.svg" alt="Profile Pic" className="h-8 w-8 border rounded-full mr-1" />
             </span>
               <span className="font-semibold text-sm underline">{serviceRequest?.company}</span>
               <p className="font-semibold text-sm">is looking for</p>
@@ -119,14 +136,14 @@ const ServiceRequestCard = ({
                 <p className="text-xs" style={styles.chip}>{serviceRequest?.employment_type}</p>
               </div>
               <div className="flex flex-row mb-1 pr-2">
-                <Image className="w-5 h-5" src={location} alt="Location"/>
+                <Image className="w-5 h-5" src={location} alt="Location" />
                 <p className="text-xs">{serviceRequest?.location}</p>
               </div>
             </div>
             <p className="job-description text-sm">{serviceRequest?.description_1}</p>
             <p className="job-description text-sm">{serviceRequest?.description_2}</p>
             <p className="job-description text-sm">{serviceRequest?.description_3}</p>
-            {/*chat and apply buttons*/}
+            {/* chat and apply buttons */}
             {applyDisplay && (
                 <div className="flex items-center justify-center mt-2 space-x-2">
                   <button onClick={handleChat}>
@@ -155,7 +172,7 @@ const ServiceRequestCard = ({
                   </button>
                 </div>
             )}
-            {/*accept, edit offer, and decline buttons*/}
+            {/* accept, edit offer, and decline buttons */}
             {!applyDisplay && (
                 <div className="flex items-center justify-center mt-2 space-x-2">
                   <button
@@ -187,55 +204,104 @@ const ServiceRequestCard = ({
         {/* Accept Modal */}
         {showAcceptModal && (
             <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg p-6 shadow-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold">Proceed to Payment</h2>
-                  <button
-                      className="text-gray-500 hover:text-gray-700"
-                      onClick={handleCloseAcceptModal}
+              <div className="bg-white rounded-lg p-6 shadow-lg w-[40rem] relative">
+                <button
+                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                    onClick={handleCloseAcceptModal}
+                >
+                  <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
                   >
-                    <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+                <h2 className="text-xl font-bold mb-4 text-center">Logo designer</h2>
+                <div className="flex items-center mb-4">
+                  <img src={profilePic} alt="Profile Pic" className="h-12 w-12 rounded-full mr-4" />
+                  <h3 className="text-lg font-semibold">Logo designer</h3>
                 </div>
-                <p className="mb-4">Are you sure you want to proceed to payment?</p>
-                <div className="flex space-x-2">
-                  <a
-                      href="/payment"
-                      className="px-4 py-2 bg-[#0C2348] text-white rounded-lg font-semibold hover:bg-[#D0693B]"
-                  >
-                    Proceed to Payment
-                  </a>
-                  <button
-                      className="px-4 py-2 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600"
-                      onClick={handleCloseAcceptModal}
-                  >
-                    Cancel
-                  </button>
-                  {/* Add Checkpoint Button */}
-                  <button
-                      className="px-4 py-2 bg-[#0C2348] text-white rounded-lg font-semibold hover:bg-[#D0693B]"
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  <div className="col-span-2">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Price</label>
+                      <input
+                          type="text"
+                          value={newPrice}
+                          onChange={(e) => setNewPrice(e.target.value)}
+                          className="w-full px-3 py-2 border rounded-lg mt-1"
+                          placeholder="$200"
+                      />
+                    </div>
+                    <div className="mt-4">
+                      <label className="block text-sm font-medium text-gray-700">Deliverable</label>
+                      <textarea
+                          value={deliverable}
+                          onChange={(e) => setDeliverable(e.target.value)}
+                          className="w-full px-3 py-2 border rounded-lg mt-1"
+                          placeholder="3 sets of logo design"
+                          rows="2"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-col justify-center items-center">
+                    <button className="flex items-center bg-[#E1824F] text-white rounded-lg p-2 mb-2" onClick={handleAddCheckpoint}>
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                    </button>
+                    <p className="text-sm text-gray-700">Add checkpoints</p>
+                  </div>
+                </div>
 
+                {/* Checkpoints */}
+                <div className="overflow-y-auto max-h-60 mb-4">
+                  {checkpoints.map((checkpoint, index) => (
+                      <div key={checkpoint.id} className="grid grid-cols-3 gap-4 mb-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Checkpoint {checkpoint.id}</label>
+                        </div>
+                        <div>
+                          <input
+                              type="text"
+                              value={checkpoint.deliverable}
+                              onChange={(e) => handleCheckpointChange(index, 'deliverable', e.target.value)}
+                              className="w-full px-3 py-2 border rounded-lg mt-1"
+                              placeholder="deliverable"
+                          />
+                        </div>
+                        <div>
+                          <input
+                              type="text"
+                              value={checkpoint.payment}
+                              onChange={(e) => handleCheckpointChange(index, 'payment', e.target.value)}
+                              className="w-full px-3 py-2 border rounded-lg mt-1"
+                              placeholder="Payment"
+                          />
+                        </div>
+                      </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-center mt-4">
+                  <button
+                      className="bg-[#E1824F] text-white rounded-lg px-4 py-2"
+                      onClick={handleConfirmAccept}
                   >
-                    Add Checkpoint
+                    Confirm
                   </button>
                 </div>
               </div>
             </div>
         )}
-
 
         {/* Edit Offer Modal */}
         {showEditModal && (
@@ -285,5 +351,9 @@ const styles = {
 };
 
 export default ServiceRequestCard;
+
+
+
+
 
 
