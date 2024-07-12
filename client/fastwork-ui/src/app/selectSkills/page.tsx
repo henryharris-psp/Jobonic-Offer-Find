@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import {baseURL, token} from "@/baseURL";
 
 type User = {
   name: string;
@@ -29,26 +31,64 @@ export default function SelectSkills() {
     otherInformation: ["random", "languages", "certifications"],
   };
 
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
-  const [selectedExperience, setSelectedExperience] = useState<string[]>([]);
+  const [selectedSkills, setSelectedSkills] = useState<String>('');
+  const [selectedExperience, setSelectedExperience] = useState<String>('');
 
   const handleSkillClick = (skill: string) => {
-    if (selectedSkills.includes(skill)) {
-      setSelectedSkills(selectedSkills.filter((s) => s !== skill));
-    } else {
-      setSelectedSkills([...selectedSkills, skill]);
-    }
+    // if (selectedSkills.includes(skill)) {
+    //   setSelectedSkills(selectedSkills.filter((s) => s !== skill));
+    // } else {
+    //   setSelectedSkills([...selectedSkills, skill]);
+    // }
+    setSelectedSkills(skill);
   };
 
   const handleExperienceClick = (experience: string) => {
-    if (selectedExperience.includes(experience)) {
-      setSelectedExperience(
-        selectedExperience.filter((exp) => exp !== experience)
-      );
-    } else {
-      setSelectedExperience([...selectedExperience, experience]);
-    }
+    // if (selectedExperience.includes(experience)) {
+    //   setSelectedExperience(
+    //     selectedExperience.filter((exp) => exp !== experience)
+    //   );
+    // } else {
+    //   setSelectedExperience([...selectedExperience, experience]);
+    // }
+    setSelectedExperience(experience);
   };
+
+  const handleSaveSkillsExperience = async (e: React.MouseEvent) => {
+      e.preventDefault();
+      // const test = await axios.get(`${baseURL}/api/v1/service`,
+      //     {headers: {
+      //             'Authorization': `Bearer ${token}`,
+      //             'Content-Type': 'application/json',
+      //         }, params: {
+      //             id: '9bf58ef5-9b61-4cdd-808d-3c6ceb5c16f1'}
+      //     });
+      // console.log(test.data);
+        console.log(selectedSkills);
+      const savedData =
+          {
+              "id": "36a02172-b48c-496e-a234-7684939e1cf4",
+              "description": "string",
+              "bankCardNumber": "string",
+              "email": "string",
+              "startDate": "2024-07-11",
+              "phone": "string",
+              "address": "string",
+              "skills": selectedSkills,
+              "experience": selectedExperience,
+              "draftCount": 0
+          }
+
+    // const response = await axios.put(`${baseURL}/api/v1/service/updateOffer`, savedData,
+    //     {headers: {
+    //         'Authorization': `Bearer ${token}`,
+    //         'Content-Type': 'application/json',
+    //       }, params: {
+    //         id: '023065b7-35ef-4b5d-8c88-6bc7ca677e3c'}
+    //     });
+    // console.log(response.data);
+    router.push("/aiServiceMatches")
+  }
 
   return (
     <div className="m-16">
@@ -99,7 +139,7 @@ export default function SelectSkills() {
       </div>
       <div className="flex justify-center w-full mt-4">
         <button
-          onClick={() => router.push("/aiServiceMatches")}
+          onClick={(e) => handleSaveSkillsExperience(e)}
           className="text-white bg-[#0B2147] hover:bg-[#D0693B] py-2 px-6 rounded-lg text-lg"
         >
           Next

@@ -10,6 +10,7 @@ import lombok.Setter;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -27,6 +28,8 @@ public class ServiceOfferDTO implements Serializable {
     private LocalDate startDate;
     private String phone;
     private String address;
+    private String skills;
+    private String experience;
     private int draftCount;
 
     public ServiceOfferDTO(ServiceOffer serviceOffer) {
@@ -38,6 +41,8 @@ public class ServiceOfferDTO implements Serializable {
         this.phone = serviceOffer.getPhone();
         this.address = serviceOffer.getAddress();
         this.draftCount = serviceOffer.getDraftCount();
+        this.skills = serviceOffer.getSkills();
+        this.experience = serviceOffer.getExperience();
     }
 
     public ServiceOffer updateServiceOffer(ServiceOffer serviceOffer) {
@@ -48,6 +53,8 @@ public class ServiceOfferDTO implements Serializable {
         serviceOffer.setPhone(this.phone);
         serviceOffer.setAddress(this.address);
         serviceOffer.setDraftCount(this.draftCount);
+        serviceOffer.setSkills(this.skills);
+        serviceOffer.setExperience(this.experience);
         return serviceOffer;
     }
 }

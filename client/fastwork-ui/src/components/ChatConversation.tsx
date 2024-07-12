@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import ChatMessageBig from '@/components/ChatMessageBig';
 import DealCard from '@/components/DealCard';
 import ServiceRequestCard from './ServiceRequestCard';
+import ServiceMatchCard from "@/components/ServiceMatchCard";
 
 interface ServiceRequest {
   title: string;
@@ -26,7 +27,7 @@ interface Message {
   sender?: string;
   avatar?: string;
   text?: string;
-  type?: 'deal' | 'message' | 'service offer';
+  type?: 'deal' | 'message' | 'apply';
   image?: string;
   title?: string;
   rating?: number;
@@ -64,6 +65,33 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
   //     price: '$99.99',
   //   },
   // ]);
+
+  const sampleService =
+  {
+    name: 'Ella, Middle School Math tutor',
+        image: '/group-image.jpg', // Replace with actual image path
+      rating: 4.5,
+      reviews: 20,
+      price: '$15/hr',
+      description: 'Taught in mainstream school for 5 years. Specializes in boosting grades of failing math students through personalized home tutoring.',
+      reviewsDetail: [
+    {
+      reviewer: 'John',
+      comment: 'Oliver provided excellent tutoring for my son, and his grades improved significantly in just a month.',
+      rating: 5,
+    },
+    {
+      reviewer: 'Timmy',
+      comment: 'Oliver provided excellent tutoring for my son, and his grades improved significantly in just a month.',
+      rating: 4,
+    },
+    // Add more reviews as needed
+  ],
+      numSold: 10,
+      bullet1: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      bullet2: 'Minimum 3 years of experience in software development.',
+      bullet3: 'Proficiency in Python, R, and machine learning algorithms.',
+  };
 
   const sampleData = {
     title: "Marketing Specialist",
@@ -165,9 +193,16 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
           ) :
           message.type === 'message' ? (
             <ChatMessageBig key={message.id} message={message} />
+          ) :
+          message.type === 'apply' ? (
+            <ServiceRequestCard serviceRequest={sampleData} hasProfile={true} profilePic={'/jobonic.svg'} applyDisplay={false}/>
           ) : (
-            <ServiceRequestCard serviceRequest={sampleData} hasProfile={true} profilePic={'/jobonic.svg'} />
-          ) 
+              <ServiceMatchCard
+                  service={sampleService}
+                  onClick={() => console.log('clicked')}
+                  onChatClick={() => console.log('clicked')}
+              />
+          )
         )}
       </div>
 
