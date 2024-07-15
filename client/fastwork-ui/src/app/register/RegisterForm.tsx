@@ -7,10 +7,12 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import * as Yup from "yup";
 import axios from "axios";
-import {token} from "@/baseURL";
+import {token, baseURL} from "@/baseURL";
+import { useRouter } from "next/navigation";
 
 const validationSchema = Yup.object().shape({
-  username: Yup.string().required().label('Full Name'),
+  firstname: Yup.string().required().label('First Name'),
+  lastname: Yup.string().required().label('Last Name'),
   email: Yup.string().email().required().label('Email'),
   password: Yup.string().min(8).required().label('Password'),
   confirmPassword: Yup.string()
@@ -20,8 +22,10 @@ const validationSchema = Yup.object().shape({
 });
 
 export const RegisterForm = (): React.ReactNode => {
+  const router = useRouter();
   const [formValues, setFormValues] = useState({
-    username: '',
+    firstname: '',
+    lastname: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -34,16 +38,38 @@ export const RegisterForm = (): React.ReactNode => {
   };
 
   const handleOnsubmit = async (values: { [key: string]: any }): Promise<any> => {
-    const URL = 'http://localhost:8080/api/v1/user';
+    const URL = `${baseURL}/api/v1/user`;
+    const payload = {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "username": "string",
+      "firstName": values.firstname,
+      "lastName": values.lastname,
+      "email": values.email,
+      "companyName": "string",
+      "phoneNumber": "string",
+      "address": "string",
+      "image": "string",
+      "cardNumber": "string",
+      "cardExpiryDate": "2024-07-12",
+      "walletAddress": "string",
+      "review": 0,
+      "roles": [
+        {
+          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "roleType": "ADMIN"
+        }
+      ]
+    };
     try {
-      const response = await axios.postForm(URL, values, {
+      const response = await axios.post(URL, payload, {
         headers: {
           'Authorization' : `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
-      console.log('Response:', response);
-      return response;
+      console.log('Response:', response.data);
+      router.push('/');
+      //return response;
     } catch (error) {
       console.error('Error:', error);
     } finally {
