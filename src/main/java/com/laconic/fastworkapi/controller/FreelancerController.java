@@ -1,7 +1,7 @@
 package com.laconic.fastworkapi.controller;
 
-import com.laconic.fastworkapi.dto.ClientDTO;
 import com.laconic.fastworkapi.dto.FreelancerDTO;
+import com.laconic.fastworkapi.dto.FreelancerReceiptDTO;
 import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
@@ -51,5 +51,17 @@ public class FreelancerController {
     @DeleteMapping
     public String delete(UUID id) {
         return this.freelancerService.delete(id);
+    }
+
+    @Operation(summary = APIDocsHelper.FreelancerReceiptAPI.GET_ALL_FREELANCER_RECEIPT)
+    @PostMapping("/all-receipt")
+    public PaginationDTO<FreelancerReceiptDTO> getAll(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        return this.freelancerService.getAll(pageAndFilterDTO);
+    }
+
+    @Operation(summary = APIDocsHelper.FreelancerReceiptAPI.GET_FREELANCER_RECEIPT)
+    @GetMapping("/receipt")
+    public FreelancerReceiptDTO getByReceiptId(@RequestParam UUID id) {
+        return this.freelancerService.getByReceiptId(id);
     }
 }

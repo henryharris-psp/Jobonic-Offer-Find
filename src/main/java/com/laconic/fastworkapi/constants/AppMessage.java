@@ -20,6 +20,9 @@ public class AppMessage {
     public final static String SERVICE_REQUEST = "SERVICE REQUEST";
     public final static String SERVICE_OFFER = "SERVICE OFFER";
 
+    public final static String FREELANCER_RECEIPT = "FREELANCER RECEIPT";
+    public final static String EMPLOYER_PAYMENT = "EMPLOYER PAYMENT";
+
     public final static String NOT_FOUND_FORMAT = "[%s] NOT FOUND WITH %s [%s]";
     public final static String DELETE_MESSAGE = "[%s] deleted successfully";
     public final static String SAVE_MESSAGE = "[%s] saved successfully";

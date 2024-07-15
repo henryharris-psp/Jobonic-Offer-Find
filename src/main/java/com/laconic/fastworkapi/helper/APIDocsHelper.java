@@ -87,6 +87,23 @@ public class APIDocsHelper {
     }
 
     @UtilityClass
+    public static class FreelancerReceiptAPI {
+        public static final String GET_ALL_FREELANCER_RECEIPT = "Get all freelancer receipts with pagination and sorting. Filters " +
+                "freelancer receipts by release date";
+        public static final String GET_FREELANCER_RECEIPT = "Get single freelancer receipt by id";
+
+    }
+
+    @UtilityClass
+    public static class EmployerPaymentAPI {
+        public static final String GET_ALL_EMPLOYER_PAYMENT = "Get all employer payments with pagination and sorting. Filters " +
+                "payments by payment date";
+        public static final String GET_EMPLOYER_PAYMENT = "Get single employer payment by id";
+
+    }
+
+
+    @UtilityClass
     public static class SkillAPI {
         public static final String SAVE_SKILL = "Saves and returns a skill";
         public static final String UPDATE_SKILL = "Updates and returns a skill";
