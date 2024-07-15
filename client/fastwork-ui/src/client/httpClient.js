@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { SERVER_AUTH, baseURL, token } from '@utils/baseURL';
-=======
 import { SERVER_AUTH, baseURL, token } from '@utils/baseUrl';
->>>>>>> 7213fdca65490b8fd518107e13100fac0ad2d83a
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
 const ENDPOINT_LOGIN = `${SERVER_AUTH}/v1/login`;
