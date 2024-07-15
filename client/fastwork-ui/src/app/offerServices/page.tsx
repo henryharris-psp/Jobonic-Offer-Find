@@ -96,7 +96,11 @@ export default function OfferServicesPage(): React.ReactNode {
       setHasProfile(true);
       router.push('/customiseService');
     } catch (error) {
-      console.error('Error fetching search results:', error);
+      if (error.response && error.response.status === 404) {
+        router.push('/createProfile');
+      } else {
+        console.error('Error fetching search results:', error);
+      }
     }
   };
 

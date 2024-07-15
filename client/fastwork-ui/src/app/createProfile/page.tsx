@@ -52,7 +52,7 @@ export default function CreateProfile(): React.ReactNode {
             //router.push('/myProfile');
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                console.error('Error creating user:', error.response?.data || error.message);
+                console.error('Error creating user from Axios:', error.response?.data || error.message);
             } else {
                 console.error('Error creating user:', error);
             }
