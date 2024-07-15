@@ -49,6 +49,7 @@ export default function CreateProfile(): React.ReactNode {
 
 
     const handleSubmit = async (event) => {
+        setPage3(true);
         event.preventDefault();
 
         if (!userId) {
