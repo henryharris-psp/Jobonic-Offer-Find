@@ -21,8 +21,8 @@ public class EmployerPaymentDTO implements Serializable {
     private static final long serialVersionUID = -5595001474187733297L;
     private UUID id;
     private UUID serviceId;
-    private UUID clientId;
-    private UUID freelancerId;
+    private Long clientId;
+    private Long freelancerId;
     private double amount = 0;
     private double remainingAmount = 0;
     private LocalDate paymentDate;

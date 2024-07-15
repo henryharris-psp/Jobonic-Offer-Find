@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +33,7 @@ public class ProfileService implements IProfileService {
     private final IUserRoleRepo userRoleRepo;
     private final IUserSkillRepo userSkillRepo;
     private final IRoleRepo roleRepo;
+
     @Autowired
     public ProfileService(IUserRepo userRepo, ISkillRepo skillRepo, IUserRoleRepo userRoleRepo, IUserSkillRepo userSkillRepo, IRoleRepo roleRepo) {
         this.userRepo = userRepo;
@@ -47,24 +47,24 @@ public class ProfileService implements IProfileService {
     @Transactional
     public ProfileDTO save(ProfileDTO profileDTO) {
         var profile = EntityMapper.mapToEntity(profileDTO, Profile.class);
-        if(profile.getUserEducationList() != null && !profile.getUserEducationList().isEmpty()) {
+        if (profile.getUserEducationList() != null && !profile.getUserEducationList().isEmpty()) {
             profile.getUserEducationList().forEach(profile::addEducation);
         }
-        if(profile.getUserExperienceList() != null && !profile.getUserExperienceList().isEmpty()) {
+        if (profile.getUserExperienceList() != null && !profile.getUserExperienceList().isEmpty()) {
             profile.getUserExperienceList().forEach(profile::addExperience);
         }
         profile = this.userRepo.save(profile);
         var response = EntityMapper.mapToResponse(profile, ProfileDTO.class);
-        if(profileDTO.getSkills() != null && !profileDTO.getSkills().isEmpty()) {
+        if (profileDTO.getSkills() != null && !profileDTO.getSkills().isEmpty()) {
             response.setSkills(addSkillsToProfile(profileDTO.getSkills(), profile.getId()));
         }
-        if(profileDTO.getRoles() != null && !profileDTO.getRoles().isEmpty()) {
+        if (profileDTO.getRoles() != null && !profileDTO.getRoles().isEmpty()) {
             response.setRoles(addRolesToProfile(profileDTO.getRoles(), profile.getId()));
         }
         return response;
     }
 
-    private Set<UserRoleDTO> addRolesToProfile(Set<UserRoleDTO> roles, UUID id) {
+    private Set<UserRoleDTO> addRolesToProfile(Set<UserRoleDTO> roles, Long id) {
         var userRoles = roles.stream().map(r -> UserRole.builder()
                 .roleId(r.getId())
                 .userId(id)
@@ -74,7 +74,7 @@ public class ProfileService implements IProfileService {
         return this.roleRepo.findAllById(roleIds).stream().map(UserRoleDTO::new).collect(Collectors.toSet());
     }
 
-    private Set<SkillDTO> addSkillsToProfile(Set<SkillDTO> skills, UUID id) {
+    private Set<SkillDTO> addSkillsToProfile(Set<SkillDTO> skills, Long id) {
         var userSkills = skills.stream().map(s -> UserSkill.builder()
                 .skillId(s.getId())
                 .userId(id)
@@ -87,18 +87,18 @@ public class ProfileService implements IProfileService {
 
 
     @Override
-    public ProfileDTO update(UUID id, ProfileDTO profileDTO) {
+    public ProfileDTO update(Long id, ProfileDTO profileDTO) {
         var existingUser =
                 this.userRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
-                                                                                              id.toString()));
+                        id.toString()));
         return EntityMapper.mapToResponse(this.userRepo.save(profileDTO.updateUser(existingUser)), ProfileDTO.class);
     }
 
     @Override
-    public ProfileDTO get(UUID id) {
+    public ProfileDTO get(Long id) {
         var existingUser =
                 this.userRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
-                                                                                              id.toString()));
+                        id.toString()));
         return EntityMapper.mapToResponse(existingUser, ProfileDTO.class);
     }
 
@@ -109,21 +109,21 @@ public class ProfileService implements IProfileService {
                         "username", "email"));
         var result = this.userRepo.findAll(specification, pageAndFilterDTO.getPageRequest());
         return PaginationHelper.getResponse(result,
-                                            result.getContent().stream().map(data -> EntityMapper.mapToResponse(data,
-                                                                                                                ProfileDTO.class)).toList());
+                result.getContent().stream().map(data -> EntityMapper.mapToResponse(data,
+                        ProfileDTO.class)).toList());
     }
 
     @Override
     public List<ProfileDTO> getAllUsers() {
         return this.userRepo.findAll().stream().map(data -> EntityMapper.mapToResponse(data,
-                                                                                       ProfileDTO.class)).toList();
+                ProfileDTO.class)).toList();
     }
 
     @Override
-    public String removeUser(UUID id) {
+    public String removeUser(Long id) {
         var existingUser =
                 this.userRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
-                                                                                              id.toString()));
+                        id.toString()));
         existingUser.setActive(false);
         this.userRepo.save(existingUser);
         return String.format(AppMessage.DELETE_MESSAGE, AppMessage.USER);

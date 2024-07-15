@@ -29,7 +29,7 @@ public class UserExperienceService implements IUserExperienceService {
         var profile =
                 this.userRepo.findById(userExperienceDTO.getProfileId())
                         .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
-                                                                            userExperienceDTO.getProfileId().toString()));
+                                userExperienceDTO.getProfileId().toString()));
         var userExperience = this.getUserExperience(id);
         return new UserExperienceDTO(this.userExperienceRepo.save(userExperienceDTO.updateUserExperience(userExperience)));
     }
@@ -42,13 +42,13 @@ public class UserExperienceService implements IUserExperienceService {
     }
 
     @Override
-    public List<UserExperienceDTO> getAll(UUID profileId) {
+    public List<UserExperienceDTO> getAll(Long profileId) {
         return this.userExperienceRepo.findAllByProfile_Id(profileId).stream().map(UserExperienceDTO::new).toList();
     }
 
     private UserExperience getUserExperience(UUID id) {
         return this.userExperienceRepo.findById(id)
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER_EXPERIENCE, "id",
-                                                                    id.toString()));
+                        id.toString()));
     }
 }

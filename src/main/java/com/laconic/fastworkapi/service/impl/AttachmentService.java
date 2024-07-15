@@ -20,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,9 +29,9 @@ import java.util.UUID;
 
 @Service
 public class AttachmentService implements IAttachmentService {
+    private final IAttachmentRepo attachmentRepo;
     @Value("${server.file.basePath}")
     String filePath;
-    private final IAttachmentRepo attachmentRepo;
     DecimalFormat df = new DecimalFormat("#####################.##");
 
     @Autowired
@@ -46,13 +45,13 @@ public class AttachmentService implements IAttachmentService {
         DocumentUtil.validateDocumentSize(attachmentDTO.getFile());
         var extension = DocumentUtil.getFileExtension(attachmentDTO.getFile());
         String size = df.format((double) attachmentDTO.getFile().getSize() / (1000f * 1000)) + " MB";
-        var id = switch(attachmentDTO.getDocumentType()) {
+        var id = switch (attachmentDTO.getDocumentType()) {
             case SERVICE -> attachmentDTO.getServiceId();
             case PROPOSAL -> attachmentDTO.getProposalId();
             case RESUME -> attachmentDTO.getUserId();
         };
-        var location = DocumentUtil.getDocumentDestination(filePath, id,
-                                                           attachmentDTO.getDocumentType().name(), false);
+        var location = DocumentUtil.getDocumentDestination(filePath, (UUID) id,
+                attachmentDTO.getDocumentType().name(), false);
         var fileName = attachmentDTO.getFile().getName();
         var attachment = Attachment.builder()
                 .name(attachmentDTO.getFile().getName())
@@ -75,8 +74,8 @@ public class AttachmentService implements IAttachmentService {
     }
 
     @Override
-    public List<AttachmentDTO> getUserAttachments(UUID userId) {
-        return  this.attachmentRepo.findAllByUserId(userId).stream().map(AttachmentDTO::new).toList();
+    public List<AttachmentDTO> getUserAttachments(Long userId) {
+        return this.attachmentRepo.findAllByUserId(userId).stream().map(AttachmentDTO::new).toList();
     }
 
     @Override
@@ -88,10 +87,10 @@ public class AttachmentService implements IAttachmentService {
     public String remove(UUID id) throws Exception {
         var attachment =
                 this.attachmentRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.ATTACHMENT, "id",
-                                                                                                              id.toString()));
+                        id.toString()));
         var source = attachment.getLocation();
         var destination = DocumentUtil.getDocumentDestination(filePath, id,
-                                                         attachment.getDocumentType().name(), false);
+                attachment.getDocumentType().name(), false);
         DocumentUtil.moveFile(source, destination);
         attachment.setActive(false);
         attachment.setLocation(destination);
@@ -103,18 +102,18 @@ public class AttachmentService implements IAttachmentService {
     public ResponseEntity<Resource> download(UUID id) throws IOException {
         var document =
                 this.attachmentRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.ATTACHMENT, "id",
-                                                                                                    id.toString()));
-            Path file = Paths.get(document.getLocation());
-            Resource resource = new UrlResource(file.toUri());
-            if (resource.exists() || resource.isReadable()) {
-                var mediaType = MediaType.parseMediaType(Files.probeContentType(file));
-                return ResponseEntity.ok()
-                        .contentType(mediaType)
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=\"" + resource.getFilename() + "\"")
-                        .body(resource);
-            } else {
-                throw new NotFoundException(AppMessage.DOCUMENT_NOT_FOUND);
-            }
+                        id.toString()));
+        Path file = Paths.get(document.getLocation());
+        Resource resource = new UrlResource(file.toUri());
+        if (resource.exists() || resource.isReadable()) {
+            var mediaType = MediaType.parseMediaType(Files.probeContentType(file));
+            return ResponseEntity.ok()
+                    .contentType(mediaType)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } else {
+            throw new NotFoundException(AppMessage.DOCUMENT_NOT_FOUND);
+        }
     }
 
     @Override

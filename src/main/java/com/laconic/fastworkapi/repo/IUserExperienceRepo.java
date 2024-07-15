@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface IUserExperienceRepo extends JpaRepository<UserExperience, UUID> {
-    List<UserExperience> findAllByProfile_Id(UUID profileId);
+    List<UserExperience> findAllByProfile_Id(Long profileId);
 }

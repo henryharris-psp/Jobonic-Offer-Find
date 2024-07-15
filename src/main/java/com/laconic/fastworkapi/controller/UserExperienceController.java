@@ -17,6 +17,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/user-experience")
 public class UserExperienceController {
     private final IUserExperienceService userExperienceService;
+
     @Autowired
     public UserExperienceController(IUserExperienceService userExperienceService) {
         this.userExperienceService = userExperienceService;
@@ -37,7 +38,7 @@ public class UserExperienceController {
 
     @Operation(summary = APIDocsHelper.UserExperienceAPI.GET_ALL_USER_EXPERIENCE)
     @GetMapping("/all")
-    public Collection<UserExperienceDTO> getAll(@RequestParam UUID userId) {
+    public Collection<UserExperienceDTO> getAll(@RequestParam Long userId) {
         return this.userExperienceService.getAll(userId);
     }
 }

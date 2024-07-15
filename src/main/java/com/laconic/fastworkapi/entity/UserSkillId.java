@@ -16,6 +16,6 @@ import java.util.UUID;
 public class UserSkillId implements Serializable {
     @Serial
     private static final long serialVersionUID = -3053766200048697525L;
-    private UUID userId;
+    private Long userId;
     private UUID skillId;
 }

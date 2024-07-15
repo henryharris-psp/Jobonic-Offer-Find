@@ -16,6 +16,6 @@ import java.util.UUID;
 public class UserRoleId implements Serializable {
     @Serial
     private static final long serialVersionUID = 361150452106709213L;
-    private UUID userId;
+    private Long userId;
     private UUID roleId;
 }

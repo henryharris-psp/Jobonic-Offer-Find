@@ -36,11 +36,19 @@ public class ManagementService implements IManagementService {
         this.userRepo = userRepo;
     }
 
+    private static ServiceDTO.WithProfile getServiceWithProfile(ServiceManagement service, Profile user) {
+        return new ServiceDTO.WithProfile(service.getId(),
+                EntityMapper.mapToResponse(service.getServiceOffer(), ServiceOfferDTO.class),
+                EntityMapper.mapToResponse(service.getServiceRequest(), ServiceRequestDTO.class),
+                EntityMapper.mapToEntity(user, ProfileDTO.class),
+                service.getTitle());
+    }
+
     @Override
     public ServiceDTO.WithProfile save(ServiceDTO serviceDTO) {
         var user = this.userRepo.findById(serviceDTO.getProfileId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
-                                                                    serviceDTO.getProfileId().toString()));
+                        serviceDTO.getProfileId().toString()));
         var serviceManagement = EntityMapper.mapToEntity(serviceDTO, ServiceManagement.class);
         serviceManagement.setProfile(user);
         var service = this.serviceRepo.save(serviceManagement);
@@ -51,17 +59,17 @@ public class ManagementService implements IManagementService {
     public String remove(UUID id) {
         var service = this.serviceRepo.findById(id)
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
-                                                                    id.toString()));
+                        id.toString()));
         service.setActive(false);
         this.serviceRepo.save(service);
         return String.format(AppMessage.DELETE_MESSAGE, AppMessage.SERVICE);
     }
 
     @Override
-    public List<ServiceDTO.WithProfile> getAllByUser(UUID profileId) {
+    public List<ServiceDTO.WithProfile> getAllByUser(Long profileId) {
         var user = this.userRepo.findById(profileId)
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
-                                                                    profileId.toString()));
+                        profileId.toString()));
         var services = this.serviceRepo.findAllByProfileId(profileId);
         return services.stream().map(s -> getServiceWithProfile(s, user)).toList();
     }
@@ -76,15 +84,7 @@ public class ManagementService implements IManagementService {
                 this.serviceRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
                 : this.serviceRepo.findAll(pageAndFilterDTO.getPageRequest());
         return PaginationHelper.getResponse(result,
-                                            result.getContent().stream().map(data -> EntityMapper.mapToResponse(data,
-                                                                                                                ServiceDTO.class)).toList());
-    }
-
-    private static ServiceDTO.WithProfile getServiceWithProfile(ServiceManagement service, Profile user) {
-        return new ServiceDTO.WithProfile(service.getId(),
-                                          EntityMapper.mapToResponse(service.getServiceOffer(), ServiceOfferDTO.class),
-                                          EntityMapper.mapToResponse(service.getServiceRequest(), ServiceRequestDTO.class),
-                                          EntityMapper.mapToEntity(user, ProfileDTO.class),
-                                          service.getTitle());
+                result.getContent().stream().map(data -> EntityMapper.mapToResponse(data,
+                        ServiceDTO.class)).toList());
     }
 }

@@ -19,9 +19,10 @@ public class ServiceDTO implements Serializable {
     private UUID id;
     private ServiceOfferDTO serviceOfferDTO;
     private ServiceRequestDTO serviceRequestDTO;
-    private UUID profileId;
+    private Long profileId;
     private String title;
 
     public record WithProfile(UUID id, ServiceOfferDTO serviceOfferDTO, ServiceRequestDTO serviceRequestDTO,
-                              ProfileDTO profileDTO, String title) implements Serializable {}
+                              ProfileDTO profileDTO, String title) implements Serializable {
+    }
 }

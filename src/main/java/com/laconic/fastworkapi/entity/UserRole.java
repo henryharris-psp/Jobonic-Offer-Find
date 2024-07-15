@@ -17,7 +17,7 @@ import java.util.UUID;
 @IdClass(UserRoleId.class)
 public class UserRole extends Auditable<UUID> {
     @Id
-    private UUID userId;
+    private Long userId;
 
     @Id
     private UUID roleId;

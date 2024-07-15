@@ -24,7 +24,7 @@ public class Attachment extends Auditable<UUID> {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private UUID serviceId;
-    private UUID userId;
+    private Long userId;
     private UUID proposalId;
     private String contentType;
     private String name;

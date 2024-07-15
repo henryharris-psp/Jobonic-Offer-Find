@@ -53,7 +53,7 @@ public class ServiceManagementController {
 
     @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL_BY_USER)
     @GetMapping("/user")
-    public List<ServiceDTO.WithProfile> getAllByUser(UUID profileId) {
+    public List<ServiceDTO.WithProfile> getAllByUser(Long profileId) {
         return this.managementService.getAllByUser(profileId);
     }
 
@@ -79,7 +79,7 @@ public class ServiceManagementController {
     @Operation(summary = APIDocsHelper.ServiceAPI.UPDATE_REQUEST)
     @PutMapping("/updateRequest")
     public ServiceRequestDTO updateRequest(@RequestParam UUID serviceRequestId,
-    @RequestBody ServiceRequestDTO serviceRequestDTO) {
+                                           @RequestBody ServiceRequestDTO serviceRequestDTO) {
         return this.requestService.update(serviceRequestId, serviceRequestDTO);
     }
 

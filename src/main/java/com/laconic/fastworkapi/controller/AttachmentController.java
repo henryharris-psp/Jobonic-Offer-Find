@@ -40,7 +40,7 @@ public class AttachmentController {
 
     @Operation(summary = APIDocsHelper.AttachmentAPI.GET_USER_ATTACHMENTS)
     @GetMapping("/user")
-    public List<AttachmentDTO> getUserAttachments(@RequestParam UUID userId) {
+    public List<AttachmentDTO> getUserAttachments(@RequestParam Long userId) {
         return this.attachmentService.getUserAttachments(userId);
     }
 

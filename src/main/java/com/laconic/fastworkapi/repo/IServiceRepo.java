@@ -10,6 +10,6 @@ import java.util.UUID;
 
 @Repository
 public interface IServiceRepo extends JpaRepository<ServiceManagement, UUID>, JpaSpecificationExecutor<ServiceManagement> {
-    List<ServiceManagement> findAllByProfileId(UUID profileId);
+    List<ServiceManagement> findAllByProfileId(Long profileId);
 
 }

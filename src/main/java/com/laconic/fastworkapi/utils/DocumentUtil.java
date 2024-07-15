@@ -33,7 +33,8 @@ public class DocumentUtil {
         int month = calendar.get(Calendar.MONTH) + 1; // Months are zero-based
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         String fileDirectory = year + "\\" + month + "\\" + day + "\\";
-        if(isDeleted) return String.format("/%s/%s/deleted/%s/%s/document/", filePath, fileDirectory, documentType, id);
+        if (isDeleted)
+            return String.format("/%s/%s/deleted/%s/%s/document/", filePath, fileDirectory, documentType, id);
         return String.format("%s/%s/%s/%s/document/", filePath, fileDirectory, documentType, id);
     }
 

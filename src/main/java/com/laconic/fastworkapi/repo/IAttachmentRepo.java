@@ -10,6 +10,8 @@ import java.util.UUID;
 @Repository
 public interface IAttachmentRepo extends JpaRepository<Attachment, UUID> {
     List<Attachment> findAllByServiceId(UUID serviceId);
-    List<Attachment> findAllByUserId(UUID userId);
+
+    List<Attachment> findAllByUserId(Long userId);
+
     List<Attachment> findAllByProposalId(UUID proposalId);
 }

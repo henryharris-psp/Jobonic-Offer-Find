@@ -10,5 +10,6 @@ import java.util.UUID;
 @Repository
 public interface IProposalRepo extends JpaRepository<Proposal, UUID> {
     List<Proposal> findAllByServiceId(UUID serviceId);
-    List<Proposal> findAllByProfileId(UUID profileId);
+
+    List<Proposal> findAllByProfileId(Long profileId);
 }

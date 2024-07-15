@@ -20,7 +20,7 @@ public class UserExperienceDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 7395305627407357359L;
     private UUID id;
-    private UUID profileId;
+    private Long profileId;
     private String company;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate startDate;

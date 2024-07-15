@@ -2,7 +2,6 @@ package com.laconic.fastworkapi.dto;
 
 import com.laconic.fastworkapi.entity.Attachment;
 import com.laconic.fastworkapi.enums.DocumentType;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +21,7 @@ public class AttachmentDTO implements Serializable {
     private static final long serialVersionUID = -5684968957512066889L;
     private UUID id;
     private UUID serviceId;
-    private UUID userId;
+    private Long userId;
     private UUID proposalId;
     private String contentType;
     private String name;

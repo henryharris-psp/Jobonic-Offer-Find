@@ -20,7 +20,7 @@ public class UserEducationDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -84465497181725405L;
     private UUID id;
-    private UUID profileId;
+    private Long profileId;
     private String institute;
     private String degree;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

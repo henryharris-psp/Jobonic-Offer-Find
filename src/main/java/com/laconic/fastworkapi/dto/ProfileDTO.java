@@ -11,7 +11,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
-import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,11 +20,11 @@ public class ProfileDTO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -4565041716760088438L;
-    private UUID id;
-    private String username;
-    private String firstName;
-    private String lastName;
-    private String email;
+    private Long id;
+    //    private String username;
+    //    private String firstName;
+    //    private String lastName;
+    //    private String email;
     private String companyName;
     private String phoneNumber;
     private String address;
@@ -41,10 +40,10 @@ public class ProfileDTO implements Serializable {
     private Set<UserRoleDTO> roles;
 
     public Profile updateUser(Profile profile) {
-        profile.setUsername(this.username);
-        profile.setEmail(this.email);
-        profile.setFirstName(this.firstName);
-        profile.setLastName(this.lastName);
+//        profile.setUsername(this.username);
+//        profile.setEmail(this.email);
+//        profile.setFirstName(this.firstName);
+//        profile.setLastName(this.lastName);
         profile.setCompanyName(this.companyName);
         profile.setPhoneNumber(this.phoneNumber);
         profile.setAddress(this.address);

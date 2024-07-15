@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -31,13 +30,13 @@ public class UserController {
 
     @PutMapping
     @Operation(summary = APIDocsHelper.UserAPI.UPDATE_USER)
-    public ProfileDTO update(@RequestParam UUID id, @RequestBody ProfileDTO profileDTO) {
+    public ProfileDTO update(@RequestParam Long id, @RequestBody ProfileDTO profileDTO) {
         return this.userService.update(id, profileDTO);
     }
 
     @GetMapping
     @Operation(summary = APIDocsHelper.UserAPI.GET_USER)
-    public ProfileDTO getUser(@RequestParam UUID id) {
+    public ProfileDTO getUser(@RequestParam Long id) {
         return this.userService.get(id);
     }
 
@@ -55,7 +54,7 @@ public class UserController {
 
     @DeleteMapping
     @Operation(summary = APIDocsHelper.UserAPI.DELETE_USER)
-    public String removeUser(@RequestParam UUID id) {
+    public String removeUser(@RequestParam Long id) {
         return this.userService.removeUser(id);
     }
 

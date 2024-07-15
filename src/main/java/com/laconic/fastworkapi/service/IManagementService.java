@@ -10,7 +10,10 @@ import java.util.UUID;
 
 public interface IManagementService {
     ServiceDTO.WithProfile save(ServiceDTO serviceDTO);
+
     String remove(UUID id);
-    List<ServiceDTO.WithProfile> getAllByUser(UUID profileId);
+
+    List<ServiceDTO.WithProfile> getAllByUser(Long profileId);
+
     PaginationDTO<ServiceDTO> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
 }

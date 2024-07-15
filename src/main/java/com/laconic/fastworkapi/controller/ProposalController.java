@@ -1,7 +1,6 @@
 package com.laconic.fastworkapi.controller;
 
 import com.laconic.fastworkapi.dto.ProposalDTO;
-import com.laconic.fastworkapi.dto.ServiceDTO;
 import com.laconic.fastworkapi.helper.APIDocsHelper;
 import com.laconic.fastworkapi.service.IProposalService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,7 +42,7 @@ public class ProposalController {
 
     @Operation(summary = APIDocsHelper.ProposalAPI.GET_USER_PROPOSALS)
     @GetMapping("/user")
-    public List<ProposalDTO> getUserProposals(@RequestParam UUID userId) {
+    public List<ProposalDTO> getUserProposals(@RequestParam Long userId) {
         return this.proposalService.getAllByUserId(userId);
     }
 }

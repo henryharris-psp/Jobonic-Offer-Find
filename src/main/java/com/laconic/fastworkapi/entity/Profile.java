@@ -1,6 +1,5 @@
 package com.laconic.fastworkapi.entity;
 
-import com.laconic.fastworkapi.dto.UserEducationDTO;
 import com.laconic.fastworkapi.entity.audit.Auditable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,13 +24,13 @@ public class Profile extends Auditable<UUID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
-    private String username;
-    private String firstName;
-    private String lastName;
+    private Long id;
+    //    private String username;
+    //    private String firstName;
+    //    private String lastName;
     private String companyName;
     private String phoneNumber;
-    private String email;
+    //    private String email;
     private String address;
     // either location or byte
     private String image;

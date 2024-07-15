@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import lombok.*;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.util.UUID;
 
@@ -18,7 +17,7 @@ import java.util.UUID;
 @IdClass(UserSkillId.class)
 public class UserSkill extends Auditable<UUID> {
     @Id
-    private UUID userId;
+    private Long userId;
 
     @Id
     private UUID skillId;

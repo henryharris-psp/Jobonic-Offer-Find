@@ -7,7 +7,10 @@ import java.util.UUID;
 
 public interface IProposalService {
     ProposalDTO save(ProposalDTO.ProposalRequest proposalDTO);
+
     String remove(UUID id);
+
     List<ProposalDTO> getAllByServiceId(UUID serviceId);
-    List<ProposalDTO> getAllByUserId(UUID userId);
+
+    List<ProposalDTO> getAllByUserId(Long userId);
 }

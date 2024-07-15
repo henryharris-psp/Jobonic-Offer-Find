@@ -32,18 +32,24 @@ public class ProposalService implements IProposalService {
         this.serviceRepo = serviceRepo;
     }
 
+    private static ProposalDTO getProposalDTO(Proposal proposal, Profile user, ServiceManagement service) {
+        return new ProposalDTO(proposal,
+                EntityMapper.mapToResponse(user, ProfileDTO.class),
+                EntityMapper.mapToResponse(service, ServiceDTO.class));
+    }
+
     @Override
     public ProposalDTO save(ProposalDTO.ProposalRequest proposalDTO) {
         var user = this.userRepo.findById(proposalDTO.profileId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id", proposalDTO.profileId().toString()));
         var service = this.serviceRepo.findById(proposalDTO.serviceId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
-                                                                    proposalDTO.profileId().toString()));
+                        proposalDTO.profileId().toString()));
         var proposal = this.proposalRepo.save(Proposal.builder()
-                                                      .note(proposalDTO.note())
-                                                      .service(service)
-                                                      .profile(user)
-                                                      .build());
+                .note(proposalDTO.note())
+                .service(service)
+                .profile(user)
+                .build());
         return getProposalDTO(proposal, user, service);
     }
 
@@ -51,7 +57,7 @@ public class ProposalService implements IProposalService {
     public String remove(UUID id) {
         var proposal = this.proposalRepo.findById(id)
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.PROPOSAL, "id",
-                                                                    id.toString()));
+                        id.toString()));
         proposal.setActive(false);
         this.proposalRepo.save(proposal);
         return String.format(AppMessage.DELETE_MESSAGE, AppMessage.PROPOSAL);
@@ -64,14 +70,8 @@ public class ProposalService implements IProposalService {
     }
 
     @Override
-    public List<ProposalDTO> getAllByUserId(UUID userId) {
+    public List<ProposalDTO> getAllByUserId(Long userId) {
         return this.proposalRepo.findAllByProfileId(userId).stream()
                 .map(p -> getProposalDTO(p, p.getProfile(), p.getService())).toList();
-    }
-
-    private static ProposalDTO getProposalDTO(Proposal proposal, Profile user, ServiceManagement service) {
-        return new ProposalDTO(proposal,
-                               EntityMapper.mapToResponse(user, ProfileDTO.class),
-                               EntityMapper.mapToResponse(service, ServiceDTO.class));
     }
 }

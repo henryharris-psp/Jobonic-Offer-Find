@@ -28,7 +28,7 @@ public class UserEducationService implements IUserEducationService {
     public UserEducationDTO update(UUID id, UserEducationDTO userEducationDTO) {
         this.userRepo.findById(userEducationDTO.getProfileId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
-                                                                    userEducationDTO.getProfileId().toString()));
+                        userEducationDTO.getProfileId().toString()));
         var userEducation = getUserEducation(id);
         return new UserEducationDTO(this.userEducationRepo.save(userEducationDTO.updateUserEducation(userEducation)));
     }
@@ -41,13 +41,13 @@ public class UserEducationService implements IUserEducationService {
     }
 
     @Override
-    public List<UserEducationDTO> getAll(UUID profileId) {
+    public List<UserEducationDTO> getAll(Long profileId) {
         return this.userEducationRepo.findAllByProfile_Id(profileId).stream().map(UserEducationDTO::new).toList();
     }
 
     private UserEducation getUserEducation(UUID id) {
         return this.userEducationRepo.findById(id)
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER_EDUCATION, "id",
-                                                                    id.toString()));
+                        id.toString()));
     }
 }

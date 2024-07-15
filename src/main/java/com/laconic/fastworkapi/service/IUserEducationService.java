@@ -8,6 +8,8 @@ import java.util.UUID;
 public interface IUserEducationService {
 
     UserEducationDTO update(UUID id, UserEducationDTO userEducationDTO);
+
     void delete(UUID id);
-    List<UserEducationDTO> getAll(UUID profileId);
+
+    List<UserEducationDTO> getAll(Long profileId);
 }

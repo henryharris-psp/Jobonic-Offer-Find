@@ -38,7 +38,7 @@ public class UserEducationController {
 
     @Operation(summary = APIDocsHelper.UserEducationAPI.GET_ALL_USER_EDUCATION)
     @GetMapping("/all")
-    public Collection<UserEducationDTO> getAll(@RequestParam UUID userId) {
+    public Collection<UserEducationDTO> getAll(@RequestParam Long userId) {
         return this.userEducationService.getAll(userId);
     }
 }
