@@ -8,7 +8,6 @@ import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
 import com.laconic.fastworkapi.entity.Profile;
-import com.laconic.fastworkapi.entity.Skill;
 import com.laconic.fastworkapi.entity.UserRole;
 import com.laconic.fastworkapi.entity.UserSkill;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
