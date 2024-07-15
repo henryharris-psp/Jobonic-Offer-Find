@@ -52,7 +52,7 @@ export default function MyProfile(): React.ReactNode {
         console.log(`handleSave called for ${inputKey}`);
         let fieldData = '';
         let data = {};
-        const userId = "3fa85f64-5717-4562-b3fc-2c963f66afa6"; // Same ID as in CreateProfile
+        const userId = "9940d515-2a88-4d09-86e5-e39e226d2240"; // Same ID as in CreateProfile
 
         switch (inputKey) {
             case 'aboutMe':
@@ -84,37 +84,77 @@ export default function MyProfile(): React.ReactNode {
                     ]
                 };
                 break;
-            case 'user-education':
+            case 'education': // Change this to 'education' to match the function call
                 fieldData = educationField;
                 data = {
-                    "id": userId,
+                    "id": "9940d515-2a88-4d09-86e5-e39e226d2240",
+                    "username": "string",
+                    "firstName": "string",
+                    "lastName": "string",
+                    "email": "string",
+                    "companyName": "string",
+                    "phoneNumber": "string",
+                    "address": "string",
+                    "image": "string",
+                    "cardNumber": "string",
+                    "cardExpiryDate": "2024-07-15",
+                    "walletAddress": "string",
+                    "review": 0,
+                    "userExperienceList": [
+                        {
+                            "id": "9940d515-2a88-4d09-86e5-e39e226d2240",
+                            "profileId": "9940d515-2a88-4d09-86e5-e39e226d2240",
+                            "company": "string",
+                            "startDate": "2024-07-15",
+                            "endDate": "2024-07-15"
+                        }
+                    ],
                     "userEducationList": [
                         {
-                            "id": userId,
-                            "profileId": userId,
+                            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                            "profileId": "9940d515-2a88-4d09-86e5-e39e226d2240",
                             "institute": fieldData,
-                            "degree": "string",
-                            "startDate": "2024-07-10",
-                            "endDate": "2024-07-10"
+                            "degree": "Bachelor of Science",
+                            "startDate": "2020-01-01",
+                            "endDate": "2024-01-01"
+                        }
+                    ],
+                    "skills": [
+                        {
+                            "id": "9940d515-2a88-4d09-86e5-e39e226d2240",
+                            "name": "string"
+                        }
+                    ],
+                    "roles": [
+                        {
+                            "id": "9940d515-2a88-4d09-86e5-e39e226d2240",
+                            "roleType": "ADMIN"
                         }
                     ]
                 };
                 break;
             case 'otherInfo':
                 fieldData = otherInfoField;
-                data = { "id": userId, "otherInfo": fieldData };
+                data = { "id": "9940d515-2a88-4d09-86e5-e39e226d2240", "otherInfo": fieldData };
                 break;
             default:
                 return;
         }
 
         try {
-            const response = await axios.post(`${baseURL}/api/v1/${inputKey}`, data, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
+            const response = inputKey === 'education'
+                ? await axios.put(`${baseURL}/api/v1/user?id=${userId}`, data, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                })
+                : await axios.post(`${baseURL}/api/v1/${inputKey}`, data, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
             console.log('Save successful:', response.data);
             setEnabledInputs((prevState) => ({
                 ...prevState,
@@ -262,7 +302,7 @@ export default function MyProfile(): React.ReactNode {
                        disabled={!enabledInputs["experience"]}
                        onChange={(e) => setExperienceField(e.target.value)}
                 />
-                {enabledInputs["experience"] && <button onClick={() => handleSave("experience")} className="mt-2 bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 px-4 rounded">Save</button>}
+                {enabledInputs["experience"] && <button onClick={() => handleSave("user-experience")} className="mt-2 bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 px-4 rounded">Save</button>}
                 {feedbackMessage["experience"] && <p className="text-sm mt-2">{feedbackMessage["experience"]}</p>}
             </div>
 
@@ -286,6 +326,5 @@ export default function MyProfile(): React.ReactNode {
         </div>
     )
 }
-
 
 

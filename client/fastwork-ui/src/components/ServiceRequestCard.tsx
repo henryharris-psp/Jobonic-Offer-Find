@@ -48,9 +48,12 @@ const ServiceRequestCard = ({
   const [newPrice, setNewPrice] = useState('');
   const [deliverable, setDeliverable] = useState('');
   const [checkpoints, setCheckpoints] = useState<{ id: number; deliverable: string; payment: string }[]>([]);
+  const [focusStates, setFocusStates] = useState<{ [key: number]: boolean }>({});
 
   const handleAddCheckpoint = () => {
-    setCheckpoints([...checkpoints, { id: checkpoints.length + 1, deliverable: '', payment: '' }]);
+    const newId = checkpoints.length + 1;
+    setCheckpoints([...checkpoints, { id: newId, deliverable: '', payment: '' }]);
+    setFocusStates({ ...focusStates, [newId]: true });
   };
 
   const handleDeleteCheckpoint = (index: number) => {
@@ -63,6 +66,14 @@ const ServiceRequestCard = ({
     const newCheckpoints = [...checkpoints];
     newCheckpoints[index] = { ...newCheckpoints[index], [field]: value };
     setCheckpoints(newCheckpoints);
+  };
+
+  const handleFocus = (id: number) => {
+    setFocusStates({ ...focusStates, [id]: false });
+  };
+
+  const handleBlur = (id: number) => {
+    setFocusStates({ ...focusStates, [id]: false });
   };
 
   const handleServiceRequestClick = () => {
@@ -210,7 +221,7 @@ const ServiceRequestCard = ({
         {/* Accept Modal */}
         {showAcceptModal && (
             <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg p-6 shadow-lg w-[40rem] relative">
+              <div className="bg-white rounded-lg p-6 shadow-lg w-[50rem] relative">
                 <button
                     className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
                     onClick={handleCloseAcceptModal}
@@ -230,7 +241,6 @@ const ServiceRequestCard = ({
                     />
                   </svg>
                 </button>
-                <h2 className="text-xl font-bold mb-4 text-center">Logo designer</h2>
                 <div className="flex items-center mb-4">
                   <img src={profilePic} alt="Profile Pic" className="h-12 w-12 rounded-full mr-4" />
                   <h3 className="text-lg font-semibold">Logo designer</h3>
@@ -254,7 +264,7 @@ const ServiceRequestCard = ({
                           onChange={(e) => setDeliverable(e.target.value)}
                           className="w-full px-3 py-2 border rounded-lg mt-1"
                           placeholder="3 sets of logo design"
-                          rows="2"
+                          rows={2}
                       />
                     </div>
                   </div>
@@ -272,38 +282,38 @@ const ServiceRequestCard = ({
                 <div className="overflow-y-auto max-h-60 mb-4">
                   {checkpoints.map((checkpoint, index) => (
                       <div key={checkpoint.id} className="grid grid-cols-4 gap-4 mb-4">
-                        <div className="col-span-3">
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700">Checkpoint {checkpoint.id}</label>
-                            </div>
-                            <div>
-                              <input
-                                  type="text"
-                                  value={checkpoint.deliverable}
-                                  onChange={(e) => handleCheckpointChange(index, 'deliverable', e.target.value)}
-                                  className="w-full px-3 py-2 border rounded-lg mt-1"
-                                  placeholder="deliverable"
-                              />
-                            </div>
-                            <div>
-                              <input
-                                  type="text"
-                                  value={checkpoint.payment}
-                                  onChange={(e) => handleCheckpointChange(index, 'payment', e.target.value)}
-                                  className="w-full px-3 py-2 border rounded-lg mt-1"
-                                  placeholder="Payment"
-                              />
-                            </div>
-                          </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Checkpoint {checkpoint.id}</label>
                         </div>
-                        <div className="flex items-center">
-                          <button className="flex items-center bg-red-500 text-white rounded-lg p-2 mb-2" onClick={() => handleDeleteCheckpoint(index)}>
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-                            </svg>
-                          </button>
+                        <div className="col-span-2 flex gap-2">
+                          <input
+                              type="text"
+                              value={checkpoint.deliverable}
+                              onFocus={() => handleFocus(checkpoint.id)}
+                              onBlur={() => handleBlur(checkpoint.id)}
+                              onChange={(e) => handleCheckpointChange(index, 'deliverable', e.target.value)}
+                              className={`w-full px-3 py-2 border rounded-lg mt-1 ${focusStates[checkpoint.id] ? '' : 'border-none'}`}
+                              placeholder="deliverable"
+                          />
+                          <input
+                              type="text"
+                              value={checkpoint.payment}
+                              onFocus={() => handleFocus(checkpoint.id)}
+                              onBlur={() => handleBlur(checkpoint.id)}
+                              onChange={(e) => handleCheckpointChange(index, 'payment', e.target.value)}
+                              className={`w-full px-3 py-2 border rounded-lg mt-1 ${focusStates[checkpoint.id] ? '' : 'border-none'}`}
+                              placeholder="Payment"
+                          />
                         </div>
+                        {index === checkpoints.length - 1 && (
+                            <div className="flex items-end justify-center">
+                              <button className="flex items-center bg-[#E1824F] text-white rounded-lg p-2 mb-2" onClick={() => handleDeleteCheckpoint(index)}>
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                                </svg>
+                              </button>
+                            </div>
+                        )}
                       </div>
                   ))}
                 </div>
@@ -368,6 +378,8 @@ const styles = {
 };
 
 export default ServiceRequestCard;
+
+
 
 
 
