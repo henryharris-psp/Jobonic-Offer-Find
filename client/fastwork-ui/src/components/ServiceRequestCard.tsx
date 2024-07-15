@@ -53,6 +53,12 @@ const ServiceRequestCard = ({
     setCheckpoints([...checkpoints, { id: checkpoints.length + 1, deliverable: '', payment: '' }]);
   };
 
+  const handleDeleteCheckpoint = (index: number) => {
+    const newCheckpoints = [...checkpoints];
+    newCheckpoints.splice(index, 1);
+    setCheckpoints(newCheckpoints);
+  };
+
   const handleCheckpointChange = (index: number, field: string, value: string) => {
     const newCheckpoints = [...checkpoints];
     newCheckpoints[index] = { ...newCheckpoints[index], [field]: value };
@@ -265,27 +271,38 @@ const ServiceRequestCard = ({
                 {/* Checkpoints */}
                 <div className="overflow-y-auto max-h-60 mb-4">
                   {checkpoints.map((checkpoint, index) => (
-                      <div key={checkpoint.id} className="grid grid-cols-3 gap-4 mb-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700">Checkpoint {checkpoint.id}</label>
+                      <div key={checkpoint.id} className="grid grid-cols-4 gap-4 mb-4">
+                        <div className="col-span-3">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700">Checkpoint {checkpoint.id}</label>
+                            </div>
+                            <div>
+                              <input
+                                  type="text"
+                                  value={checkpoint.deliverable}
+                                  onChange={(e) => handleCheckpointChange(index, 'deliverable', e.target.value)}
+                                  className="w-full px-3 py-2 border rounded-lg mt-1"
+                                  placeholder="deliverable"
+                              />
+                            </div>
+                            <div>
+                              <input
+                                  type="text"
+                                  value={checkpoint.payment}
+                                  onChange={(e) => handleCheckpointChange(index, 'payment', e.target.value)}
+                                  className="w-full px-3 py-2 border rounded-lg mt-1"
+                                  placeholder="Payment"
+                              />
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <input
-                              type="text"
-                              value={checkpoint.deliverable}
-                              onChange={(e) => handleCheckpointChange(index, 'deliverable', e.target.value)}
-                              className="w-full px-3 py-2 border rounded-lg mt-1"
-                              placeholder="deliverable"
-                          />
-                        </div>
-                        <div>
-                          <input
-                              type="text"
-                              value={checkpoint.payment}
-                              onChange={(e) => handleCheckpointChange(index, 'payment', e.target.value)}
-                              className="w-full px-3 py-2 border rounded-lg mt-1"
-                              placeholder="Payment"
-                          />
+                        <div className="flex items-center">
+                          <button className="flex items-center bg-red-500 text-white rounded-lg p-2 mb-2" onClick={() => handleDeleteCheckpoint(index)}>
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                            </svg>
+                          </button>
                         </div>
                       </div>
                   ))}
@@ -351,6 +368,7 @@ const styles = {
 };
 
 export default ServiceRequestCard;
+
 
 
 
