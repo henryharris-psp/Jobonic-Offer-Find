@@ -12,13 +12,19 @@ export default function MyProfile(): React.ReactNode {
     const [aboutMeField, setAboutMeField] = useState<string>('');
     const [skillsField, setSkillsField] = useState<string>('');
     const [experienceField, setExperienceField] = useState<string>('');
-    const [educationField, setEducationField] = useState<string>('');
+    const [institutionField, setInstitutionField] = useState<string>('');
+    const [degreeField, setDegreeField] = useState<string>('');
+    const [startDateField, setStartDateField] = useState<string>('');
+    const [endDateField, setEndDateField] = useState<string>('');
     const [otherInfoField, setOtherInfoField] = useState<string>('');
 
     const aboutMeRef = useRef<HTMLInputElement>(null);
     const skillsRef = useRef<HTMLInputElement>(null);
     const experienceRef = useRef<HTMLInputElement>(null);
-    const educationRef = useRef<HTMLInputElement>(null);
+    const institutionRef = useRef<HTMLInputElement>(null);
+    const degreeRef = useRef<HTMLInputElement>(null);
+    const startDateRef = useRef<HTMLInputElement>(null);
+    const endDateRef = useRef<HTMLInputElement>(null);
     const otherInfoRef = useRef<HTMLInputElement>(null);
 
     const [enabledInputs, setEnabledInputs] = useState<{ [key: string]: boolean }>({
@@ -37,6 +43,7 @@ export default function MyProfile(): React.ReactNode {
         otherInfo: '',
     });
     const router = useRouter();
+
     // const handleEdit = (ref: RefObject<HTMLInputElement>, inputKey: string, event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
     //     event.stopPropagation();
     //     setEnabledInputs((prevState) => ({
@@ -85,9 +92,8 @@ export default function MyProfile(): React.ReactNode {
                 };
                 break;
             case 'education': // Change this to 'education' to match the function call
-                fieldData = educationField;
                 data = {
-                    "id": "9940d515-2a88-4d09-86e5-e39e226d2240",
+                    "id": userId,
                     "username": "string",
                     "firstName": "string",
                     "lastName": "string",
@@ -112,11 +118,11 @@ export default function MyProfile(): React.ReactNode {
                     "userEducationList": [
                         {
                             "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                            "profileId": "9940d515-2a88-4d09-86e5-e39e226d2240",
-                            "institute": fieldData,
-                            "degree": "Bachelor of Science",
-                            "startDate": "2020-01-01",
-                            "endDate": "2024-01-01"
+                            "profileId": userId,
+                            "institute": institutionField,
+                            "degree": degreeField,
+                            "startDate": startDateField,
+                            "endDate": endDateField
                         }
                     ],
                     "skills": [
@@ -135,7 +141,7 @@ export default function MyProfile(): React.ReactNode {
                 break;
             case 'otherInfo':
                 fieldData = otherInfoField;
-                data = { "id": "9940d515-2a88-4d09-86e5-e39e226d2240", "otherInfo": fieldData };
+                data = { "id": userId, "otherInfo": fieldData };
                 break;
             default:
                 return;
@@ -200,7 +206,7 @@ export default function MyProfile(): React.ReactNode {
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            const inputs = [aboutMeRef, skillsRef, experienceRef, educationRef, otherInfoRef];
+            const inputs = [aboutMeRef, skillsRef, experienceRef, institutionRef, degreeRef, startDateRef, endDateRef, otherInfoRef];
             const clickedOutside = inputs.every(ref => ref && !ref.current?.contains(event.target as Node));
 
             if (clickedOutside) {
@@ -278,11 +284,29 @@ export default function MyProfile(): React.ReactNode {
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14.304 4.844L17.156 7.696M7 7H4a1 1 0 00-1 1v10a1 1 0 001 1h11a1 1 0 001-1v-4.5M19.409 3.59a2.017 2.017 0 010 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 012.852 0z" />
                     </svg> */}
                 </div>
-                <input type="text" id="education" placeholder={!educationField ? 'Enter your education' : educationField}
+                <input type="text" id="institution" placeholder={!institutionField ? 'Enter your institution' : institutionField}
                        className={`text-black ${(enabledInputs["education"]) ? 'border bg-white' : 'border-none bg-transparent'} rounded`}
-                       ref={educationRef}
+                       ref={institutionRef}
                        disabled={!enabledInputs["education"]}
-                       onChange={(e) => setEducationField(e.target.value)}
+                       onChange={(e) => setInstitutionField(e.target.value)}
+                />
+                <input type="text" id="degree" placeholder={!degreeField ? 'Enter your degree' : degreeField}
+                       className={`text-black ${(enabledInputs["education"]) ? 'border bg-white' : 'border-none bg-transparent'} rounded`}
+                       ref={degreeRef}
+                       disabled={!enabledInputs["education"]}
+                       onChange={(e) => setDegreeField(e.target.value)}
+                />
+                <input type="date" id="start-date" placeholder={!startDateField ? 'Enter start date (YYYY-MM-DD)' : startDateField}
+                       className={`text-black ${(enabledInputs["education"]) ? 'border bg-white' : 'border-none bg-transparent'} rounded`}
+                       ref={startDateRef}
+                       disabled={!enabledInputs["education"]}
+                       onChange={(e) => setStartDateField(e.target.value)}
+                />
+                <input type="date" id="end-date" placeholder={!endDateField ? 'Enter end date (YYYY-MM-DD)' : endDateField}
+                       className={`text-black ${(enabledInputs["education"]) ? 'border bg-white' : 'border-none bg-transparent'} rounded`}
+                       ref={endDateRef}
+                       disabled={!enabledInputs["education"]}
+                       onChange={(e) => setEndDateField(e.target.value)}
                 />
                 {enabledInputs["education"] && <button onClick={() => handleSave("education")} className="mt-2 bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 px-4 rounded">Save</button>}
                 {feedbackMessage["education"] && <p className="text-sm mt-2">{feedbackMessage["education"]}</p>}
@@ -326,5 +350,7 @@ export default function MyProfile(): React.ReactNode {
         </div>
     )
 }
+
+
 
 
