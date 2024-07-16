@@ -59,7 +59,7 @@ export default function MyProfile(): React.ReactNode {
         console.log(`handleSave called for ${inputKey}`);
         let fieldData = '';
         let data = {};
-        const userId = "9940d515-2a88-4d09-86e5-e39e226d2240"; // Same ID as in CreateProfile
+        const userId = 0; // Same ID as in CreateProfile
 
         switch (inputKey) {
             case 'aboutMe':
@@ -94,10 +94,6 @@ export default function MyProfile(): React.ReactNode {
             case 'education': // Change this to 'education' to match the function call
                 data = {
                     "id": userId,
-                    "username": "string",
-                    "firstName": "string",
-                    "lastName": "string",
-                    "email": "string",
                     "companyName": "string",
                     "phoneNumber": "string",
                     "address": "string",
@@ -109,7 +105,7 @@ export default function MyProfile(): React.ReactNode {
                     "userExperienceList": [
                         {
                             "id": "9940d515-2a88-4d09-86e5-e39e226d2240",
-                            "profileId": "9940d515-2a88-4d09-86e5-e39e226d2240",
+                            "profileId": userId,
                             "company": "string",
                             "startDate": "2024-07-15",
                             "endDate": "2024-07-15"

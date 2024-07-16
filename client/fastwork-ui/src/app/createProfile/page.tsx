@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -26,18 +26,19 @@ export default function CreateProfile(): React.ReactNode {
     const [phoneOtp, setPhoneOtp] = useState('');
     const [emailOtp, setEmailOtp] = useState('');
 
-
     useEffect(() => {
         const fetchUserData = async () => {
             try {
                 const response = await axios.get(`https://api-auths.laconic.co.th/v1/user/init-data`, {
                     headers: {
-                        'Authorization': `Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJLR25UTGlha1FhMHFxZGQ4ck5HeXFCRS1sRGRoTGJfdUt0MGZ4RFoxN1c4In0.eyJleHAiOjE3MjEwNDgwNDgsImlhdCI6MTcyMTAzMDA0OCwianRpIjoiZGFiMjZjNzktMTJmNi00ZTY4LTg5ZDItNTI4ZDdmMjg3Njg1IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo5MDAxL3JlYWxtcy9MQUNPTklDIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjYyZWY4OGQzLWQyM2UtNDQ3Ni04MTVmLThjMjQxNzkxZDQ2YSIsInR5cCI6IkJlYXJlciIsImF6cCI6IkxBQ09OSUMiLCJzZXNzaW9uX3N0YXRlIjoiZWIxNmQ3NDctNjU1MS00MGE4LWE3YzctZWRjZDg1ZWYxYjQ1IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1sYWNvbmljIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6ImViMTZkNzQ3LTY1NTEtNDBhOC1hN2M3LWVkY2Q4NWVmMWI0NSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJpc2ZpcnN0dGltZSI6ZmFsc2UsIm5hbWUiOiJhZG1pbiBhZG1pbiIsInByZWZlcnJlZF91c2VybmFtZSI6ImFkbWluIiwiZ2l2ZW5fbmFtZSI6ImFkbWluIiwidXNlcmlkIjoxLCJmYW1pbHlfbmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20ifQ.HTluVYSYeKyrVDikSMyW_dG817OduJgcUNvyzwxSWpkFM8Np0loGid_Rbih1HlAcA6MwYSegv58zoAlWKDT3hZ0txkPwqs3jcwWZSVzk1O0jBnCpMW9mi4AmcIOW247hFy38Ld0MipbFIP43hQ_8Hhmy99IvVIPE63QjqkV2zUK1mL0dPR-t1yWyvzafMzm-un-kmvx86n8t9nT7ezecY2ISQaX6oE-nQovV-a3R4jQH4AjyYQmLJPOeSz3Cjfc8Ps8g0UhOz7Pb3F9tRlR16HbzQtiizobXkSm6V9Q4OpJktx4eT88Mbi3qzSpK8_CwI2rVxklrVUZRVot0Fbc2sA`,
+                        'Authorization': `Bearer ${token}`,
                         'accept': 'application/json'
                     }
                 });
                 const userData = response.data;
                 setUserId(userData.id);
+                setContactNumber(userData.phoneNumber);
+                setAddress(userData.address);
                 console.log(userData.id);
             } catch (error) {
                 console.error('Error fetching user data:', error);
@@ -45,8 +46,6 @@ export default function CreateProfile(): React.ReactNode {
         };
         fetchUserData();
     }, []);
-
-
 
     const handleSubmit = async (event) => {
         setPage3(true);
@@ -60,28 +59,64 @@ export default function CreateProfile(): React.ReactNode {
         const fullPhoneNumber = `${countryCode}${contactNumber}`;
 
         const userData = {
-            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "address": address,
+            "id": userId,
             "companyName": "string",
             "phoneNumber": fullPhoneNumber,
-            "image": "string"
+            "address": address,
+            "image": "string",
+            "cardNumber": "string",
+            "cardExpiryDate": "2024-07-16",
+            "walletAddress": "string",
+            "review": 0,
+            "userExperienceList": [
+                {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "profileId": userId,
+                    "company": "string",
+                    "startDate": "2024-07-16",
+                    "endDate": "2024-07-16"
+                }
+            ],
+            "userEducationList": [
+                {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "profileId": 0,
+                    "institute": "string",
+                    "degree": "string",
+                    "startDate": "2024-07-16",
+                    "endDate": "2024-07-16"
+                }
+            ],
+            "skills": [
+                {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "name": "string"
+                }
+            ],
+            "roles": [
+                {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "roleType": "ADMIN"
+                }
+            ]
         };
 
         try {
-            const response = await axios.post(`${baseURL}/api/v1/user`, userData, {
+            //console.log(userData);
+            const response = await axios.put(`${baseURL}/api/v1/user?id=${userId}`, userData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
             });
 
-            console.log('User created successfully:', response.data);
+            console.log('User updated successfully:', response.data);
             //router.push('/myProfile');
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                console.error('Error creating user from Axios:', error.response?.data || error.message);
+                console.error('Error updating user from Axios:', error.response?.data || error.message);
             } else {
-                console.error('Error creating user:', error);
+                console.error('Error updating user:', error);
             }
         }
     };
@@ -166,7 +201,7 @@ export default function CreateProfile(): React.ReactNode {
                 </div>
                 <Image src={'/thai-national-id.jpg'} alt="thai-id" width={200} height={200} />
                 <div className="mt-4">
-                    <button onClick={() => handleSubmit(event)} className="text-white bg-[#0B2147] hover:bg-[#D0693B] pt-2 pb-2 pl-4 pr-4 rounded-lg text-md" style={{ borderColor: 'transparent' }}>Next</button>
+                    <button onClick={(event) => handleSubmit(event)} className="text-white bg-[#0B2147] hover:bg-[#D0693B] pt-2 pb-2 pl-4 pr-4 rounded-lg text-md" style={{ borderColor: 'transparent' }}>Next</button>
                 </div>
             </div>
         );
