@@ -25,6 +25,7 @@ export default function CreateProfile(): React.ReactNode {
     const [address, setAddress] = useState('');
     const [phoneOtp, setPhoneOtp] = useState('');
     const [emailOtp, setEmailOtp] = useState('');
+    const [roles, setRoles] = useState([]);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -39,7 +40,9 @@ export default function CreateProfile(): React.ReactNode {
                 setUserId(userData.id);
                 setContactNumber(userData.phoneNumber);
                 setAddress(userData.address);
+                setRoles(userData.roles);
                 console.log(userData.id);
+                console.log(userData.roles);
             } catch (error) {
                 console.error('Error fetching user data:', error);
             }
