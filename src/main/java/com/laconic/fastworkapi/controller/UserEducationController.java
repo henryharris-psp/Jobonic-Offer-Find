@@ -41,4 +41,10 @@ public class UserEducationController {
     public Collection<UserEducationDTO> getAll(@RequestParam Long userId) {
         return this.userEducationService.getAll(userId);
     }
+
+    @Operation(summary = APIDocsHelper.UserEducationAPI.ADD_USER_EDUCATION)
+    @PostMapping
+    public UserEducationDTO add(@RequestBody UserEducationDTO userEducation) {
+        return this.userEducationService.addEducation(userEducation);
+    }
 }

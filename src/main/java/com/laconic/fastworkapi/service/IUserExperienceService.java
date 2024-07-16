@@ -11,4 +11,6 @@ public interface IUserExperienceService {
     void delete(UUID id);
 
     List<UserExperienceDTO> getAll(Long profileId);
+
+    UserExperienceDTO addExperience(UserExperienceDTO userExperience);
 }

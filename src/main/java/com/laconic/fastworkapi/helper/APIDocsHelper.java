@@ -125,6 +125,7 @@ public class APIDocsHelper {
         public static final String UPDATE_USER_EDUCATION = "Updates and returns a user education";
         public static final String GET_ALL_USER_EDUCATION = "Get all user education without pagination and sorting.";
         public static final String DELETE_USER_EDUCATION = "Removes a user education";
+        public static final String ADD_USER_EDUCATION = "Adds and returns a user education";
     }
 
     @UtilityClass
@@ -133,6 +134,7 @@ public class APIDocsHelper {
         public static final String UPDATE_USER_EXPERIENCE = "Updates and returns a user experience";
         public static final String GET_ALL_USER_EXPERIENCE = "Get all user experience without pagination and sorting.";
         public static final String DELETE_USER_EXPERIENCE = "Removes a user experience";
+        public static final String ADD_USER_EXPERIENCE = "Adds and returns a user experience";
     }
 
 }
