@@ -6,8 +6,13 @@ import "./globals.css";
 import CanvasComponent from "../components/HomeAniBG";
 import ChatBox from "@/components/ChatBox";
 import axios from "axios";
+import {checkProfile} from "@/functions/helperFunctions";
+import React from "react";
+import {token} from "@/baseURL";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const testimonials = [
     {
       quote:
@@ -59,6 +64,16 @@ export default function Home() {
     },
   ];
 
+  const handleCreateServiceOffer = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const profile = await checkProfile("9bf58ef5-9b61-4cdd-808d-3c6ceb5c16f1", token);
+    if (profile) {
+      router.push('/customiseService');
+    } else {
+      router.push('/createProfile');
+    }
+  };
+
   return (
     <div>
       {/* Top Section */}
@@ -107,11 +122,9 @@ export default function Home() {
             Offer your services at Jobonic at no cost!
           </p>
           <div className="flex space-x-4 justify-end">
-            <Link href="/customiseService">
-              <button className="bg-[#71BAC7] text-white py-2 px-4 rounded-lg">
-                Offer a service
-              </button>
-            </Link>
+            <button onClick={(e) => handleCreateServiceOffer(e)} className="bg-[#71BAC7] text-white py-2 px-4 rounded-lg">
+              Offer a service
+            </button>
             <Link href="/offerServices">
               <button className="bg-[#71BAC7] text-white py-2 px-4 rounded-lg">
                 View service requests
