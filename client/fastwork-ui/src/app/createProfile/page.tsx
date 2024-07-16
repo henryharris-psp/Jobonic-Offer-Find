@@ -50,7 +50,7 @@ export default function CreateProfile(): React.ReactNode {
         fetchUserData();
     }, []);
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         setPage3(true);
         event.preventDefault();
 
@@ -122,6 +122,11 @@ export default function CreateProfile(): React.ReactNode {
                 console.error('Error updating user:', error);
             }
         }
+    };
+
+    const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        handleSubmit(event as unknown as React.FormEvent<HTMLFormElement>);
     };
 
     if (!page1 && !page2 && !page3) {
@@ -204,7 +209,7 @@ export default function CreateProfile(): React.ReactNode {
                 </div>
                 <Image src={'/thai-national-id.jpg'} alt="thai-id" width={200} height={200} />
                 <div className="mt-4">
-                    <button onClick={(event) => handleSubmit(event)} className="text-white bg-[#0B2147] hover:bg-[#D0693B] pt-2 pb-2 pl-4 pr-4 rounded-lg text-md" style={{ borderColor: 'transparent' }}>Next</button>
+                    <button onClick={handleNextButtonClick} className="text-white bg-[#0B2147] hover:bg-[#D0693B] pt-2 pb-2 pl-4 pr-4 rounded-lg text-md" style={{ borderColor: 'transparent' }}>Next</button>
                 </div>
             </div>
         );
@@ -224,5 +229,3 @@ export default function CreateProfile(): React.ReactNode {
 
     return null;
 }
-
-
