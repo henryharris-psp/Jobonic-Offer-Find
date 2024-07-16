@@ -24,7 +24,7 @@ public class DocumentUtil {
         }
     }
 
-    public static String getDocumentDestination(String filePath, UUID id, String documentType,
+    public static String getDocumentDestination(String filePath, String id, String documentType,
                                                 boolean isDeleted) {
         Date date = new Date();
         Calendar calendar = Calendar.getInstance();
