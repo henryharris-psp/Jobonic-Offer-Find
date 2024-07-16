@@ -50,9 +50,10 @@ public class AttachmentService implements IAttachmentService {
             case PROPOSAL -> attachmentDTO.getProposalId();
             case RESUME -> attachmentDTO.getUserId();
         };
-        var location = DocumentUtil.getDocumentDestination(filePath, (UUID) id,
+        var location = DocumentUtil.getDocumentDestination(filePath, id.toString(),
                 attachmentDTO.getDocumentType().name(), false);
-        var fileName = attachmentDTO.getFile().getName();
+        assert extension != null;
+        var fileName = attachmentDTO.getFile().getName().concat(".").concat(extension);
         var attachment = Attachment.builder()
                 .name(attachmentDTO.getFile().getName())
                 .serviceId(attachmentDTO.getServiceId() != null ? attachmentDTO.getServiceId() : null)
@@ -89,7 +90,7 @@ public class AttachmentService implements IAttachmentService {
                 this.attachmentRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.ATTACHMENT, "id",
                         id.toString()));
         var source = attachment.getLocation();
-        var destination = DocumentUtil.getDocumentDestination(filePath, id,
+        var destination = DocumentUtil.getDocumentDestination(filePath, id.toString(),
                 attachment.getDocumentType().name(), false);
         DocumentUtil.moveFile(source, destination);
         attachment.setActive(false);

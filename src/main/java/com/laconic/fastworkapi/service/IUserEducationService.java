@@ -12,4 +12,6 @@ public interface IUserEducationService {
     void delete(UUID id);
 
     List<UserEducationDTO> getAll(Long profileId);
+
+    UserEducationDTO addEducation(UserEducationDTO userEducation);
 }

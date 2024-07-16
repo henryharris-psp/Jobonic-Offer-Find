@@ -29,6 +29,12 @@ public class UserExperienceController {
         return this.userExperienceService.update(id, userExperienceDTO);
     }
 
+    @Operation(summary = APIDocsHelper.UserExperienceAPI.ADD_USER_EXPERIENCE)
+    @PostMapping
+    public UserExperienceDTO add(@RequestBody UserExperienceDTO userExperience) {
+        return this.userExperienceService.addExperience(userExperience);
+    }
+
     @Operation(summary = APIDocsHelper.UserExperienceAPI.DELETE_USER_EXPERIENCE)
     @DeleteMapping
     public String delete(@RequestParam UUID id) {

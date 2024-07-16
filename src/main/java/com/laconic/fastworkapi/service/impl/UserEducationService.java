@@ -7,6 +7,7 @@ import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.IUserEducationRepo;
 import com.laconic.fastworkapi.repo.IUserRepo;
 import com.laconic.fastworkapi.service.IUserEducationService;
+import com.laconic.fastworkapi.utils.EntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +44,19 @@ public class UserEducationService implements IUserEducationService {
     @Override
     public List<UserEducationDTO> getAll(Long profileId) {
         return this.userEducationRepo.findAllByProfile_Id(profileId).stream().map(UserEducationDTO::new).toList();
+    }
+
+    @Override
+    public UserEducationDTO addEducation(UserEducationDTO userEducationDTO) {
+        var profile =
+                this.userRepo.findById(userEducationDTO.getProfileId())
+                        .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
+                                userEducationDTO.getProfileId().toString()));
+
+        var userEducation = EntityMapper.mapToEntity(userEducationDTO, UserEducation.class);
+        profile.addEducation(userEducation);
+        profile = userRepo.save(profile);
+        return new UserEducationDTO(userEducation);
     }
 
     private UserEducation getUserEducation(UUID id) {

@@ -28,5 +28,6 @@ public class Proposal  extends Auditable<UUID> {
     @JoinColumn(name = "serviceId")
     private List<Attachment> attachments;
     private String note;
+    @Builder.Default
     private boolean isActive = true;
 }
