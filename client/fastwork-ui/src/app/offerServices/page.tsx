@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Papa from 'papaparse';
 import axios from 'axios';
 import {baseURL, token} from "@/baseURL";
+import { checkProfile } from '@/functions/helperFunctions';
 
 interface JobData {
   title: string;
@@ -84,23 +85,29 @@ export default function OfferServicesPage(): React.ReactNode {
 
   const handleCreateServiceOffer = async (event: React.FormEvent) => {
     event.preventDefault();
-    try {
-      const response = await axios.get(`${baseURL}/api/v1/user`,
-          {headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            }, params: {
-            id: '9bf58ef5-9b61-4cdd-808d-3c6ceb5c16f1'}
-      });
-      console.log(response.data.username);
-      setHasProfile(true);
+    // try {
+    //   const response = await axios.get(`${baseURL}/api/v1/user`,
+    //       {headers: {
+    //           'Authorization': `Bearer ${token}`,
+    //           'Content-Type': 'application/json',
+    //         }, params: {
+    //         id: '9bf58ef5-9b61-4cdd-808d-3c6ceb5c16f1'}
+    //   });
+    //   console.log(response.data.username);
+    //   setHasProfile(true);
+    //   router.push('/customiseService');
+    // } catch (error) {
+    //   if (error.response && error.response.status === 404) {
+    //     router.push('/createProfile');
+    //   } else {
+    //     console.error('Error fetching search results:', error);
+    //   }
+    // }
+    const profile = await checkProfile("9bf58ef5-9b61-4cdd-808d-3c6ceb5c16f1", token);
+    if (profile) {
       router.push('/customiseService');
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        router.push('/createProfile');
-      } else {
-        console.error('Error fetching search results:', error);
-      }
+    } else {
+      router.push('/createProfile');
     }
   };
 
