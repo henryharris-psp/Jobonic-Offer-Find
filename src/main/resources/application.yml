@@ -4,17 +4,17 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: oracle.jdbc.OracleDriver
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.OracleDialect
+jwt:
+  public-key: |
+    -----BEGIN PUBLIC KEY-----
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA46B53gbtOwxNSSyBjGTXfuWovjckNEwkhaoVDJYp3Jsy3RfY7ftJybx9aTOMh+9+AWgQy9sfE5L6wdSnAxsimCJg6/F2rMR2xVlWp0JmFImimPzjJ7K+CxZfI1RiwJULU2hBn+d4+4XGU2mFyvkdWoR/gP+cujs2JCFYGt7VNzdnuFqsENv6Q6hDTXNvTMPp9aQWfXhnmpjobUdZBjbkUGTUsjv6sDGHzAwoAekT/oEFWlIJGlCo68xqPYjaUa5Njpj7raXcv7iW+fnYknFQPYYPZDV53uBSBlH0pFdqhkSXFLueeEUGWxJ3xeQ8gbV/Dm+gkjkV6Nh8zKslRsfO9QIDAQAB
+    -----END PUBLIC KEY-----
   servlet:
     multipart:
       max-file-size: 10MB
