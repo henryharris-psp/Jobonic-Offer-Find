@@ -7,8 +7,10 @@ import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.IUserExperienceRepo;
 import com.laconic.fastworkapi.repo.IUserRepo;
 import com.laconic.fastworkapi.service.IUserExperienceService;
+import com.laconic.fastworkapi.utils.EntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +46,19 @@ public class UserExperienceService implements IUserExperienceService {
     @Override
     public List<UserExperienceDTO> getAll(Long profileId) {
         return this.userExperienceRepo.findAllByProfile_Id(profileId).stream().map(UserExperienceDTO::new).toList();
+    }
+
+    @Override
+    @Transactional
+    public UserExperienceDTO addExperience(UserExperienceDTO userExperienceDTO) {
+        var profile =
+                this.userRepo.findById(userExperienceDTO.getProfileId())
+                        .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
+                                userExperienceDTO.getProfileId().toString()));
+        var userExperience = EntityMapper.mapToEntity(userExperienceDTO, UserExperience.class);
+        profile.addExperience(userExperience);
+        profile = userRepo.save(profile);
+        return new UserExperienceDTO(userExperience);
     }
 
     private UserExperience getUserExperience(UUID id) {
