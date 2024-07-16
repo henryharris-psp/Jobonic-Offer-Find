@@ -6,7 +6,7 @@ spring:
     driver-class-name: oracle.jdbc.OracleDriver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.OracleDialect
@@ -25,5 +25,5 @@ springdoc:
 server:
   port: 8081
   file:
-    basePath:
+    basePath: ${DOCUMENT_BASE_PATH}
 
