@@ -113,6 +113,8 @@ public class APIDocsHelper {
         public static final String DELETE_SKILL = "Removes a skill";
 
         public static final String ADD_SKILL = "Adds skills to user";
+
+        public static final String GET_ALL_USER_SKILL = "Get all user skills without pagination and sorting.";
     }
 
     @UtilityClass

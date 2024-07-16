@@ -6,7 +6,6 @@ import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 public interface ISkillService {
@@ -19,6 +18,4 @@ public interface ISkillService {
     List<SkillDTO> getAll();
 
     PaginationDTO<SkillDTO> getAll(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
-
-    List<SkillDTO> addSkills(Long profileId, Set<UUID> skillIds);
 }
