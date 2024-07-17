@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import axios from 'axios';
-import { baseURL, token } from "@/baseURL";
+import httpClient from '@/client/httpClient';
+import { baseURL } from '@/baseURL';
 
 const countryCodes = [
     { code: '+65', name: 'Singapore' },
@@ -30,12 +31,13 @@ export default function CreateProfile(): React.ReactNode {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get(`https://api-auths.laconic.co.th/v1/user/init-data`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'accept': 'application/json'
-                    }
-                });
+                // const response = await axios.get(`https://api-auths.laconic.co.th/v1/user/init-data`, {
+                //     headers: {
+                //         'Authorization': `Bearer ${token}`,
+                //         'accept': 'application/json'
+                //     }
+                // });
+                const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`);
                 const userData = response.data;
                 setUserId(userData.id);
                 setContactNumber(userData.phoneNumber);
@@ -50,7 +52,7 @@ export default function CreateProfile(): React.ReactNode {
         fetchUserData();
     }, []);
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => { 
         setPage3(true);
         event.preventDefault();
 
@@ -106,14 +108,17 @@ export default function CreateProfile(): React.ReactNode {
 
         try {
             //console.log(userData);
-            const response = await axios.put(`${baseURL}/api/v1/user?id=${userId}`, userData, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
+            // const response = await axios.put(`${baseURL}/api/v1/user?id=${userId}`, userData, {
+            //     headers: {
+            //         'Authorization': `Bearer ${token}`,
+            //         'Content-Type': 'application/json',
+            //     },
+            // });
 
-            console.log('User updated successfully:', response.data);
+            // console.log('User updated successfully:', response.data);
+
+            const response = await httpClient.post(`${baseURL}/api/v1/user?id=${userId}`, userData);
+            console.log('User created successfully:', response.data);
             //router.push('/myProfile');
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -145,21 +150,21 @@ export default function CreateProfile(): React.ReactNode {
                     </div>
                     <div className="flex-1">
                         <input type="tel" id="contact-number" placeholder="Contact Number"
-                               value={contactNumber}
-                               onChange={(e) => setContactNumber(e.target.value)}
-                               className="p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full"/>
+                            value={contactNumber}
+                            onChange={(e) => setContactNumber(e.target.value)}
+                            className="p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full" />
                     </div>
                 </div>
                 <div className="max-w-4xl mx-auto w-full mt-4">
                     <input type="text" id="address" placeholder="home/company address"
-                           value={address}
-                           onChange={(e) => setAddress(e.target.value)}
-                           className="p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full"/>
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        className="p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full" />
                 </div>
                 <div className="mt-4">
                     <button onClick={() => setPage1(true)}
-                            className="text-white bg-[#0B2147] hover:bg-[#D0693B] pt-3 pb-3 pl-8 pr-8 rounded-lg text-lg"
-                            style={{borderColor: 'transparent'}}>Next
+                        className="text-white bg-[#0B2147] hover:bg-[#D0693B] pt-3 pb-3 pl-8 pr-8 rounded-lg text-lg"
+                        style={{ borderColor: 'transparent' }}>Next
                     </button>
                 </div>
             </div>
@@ -170,18 +175,18 @@ export default function CreateProfile(): React.ReactNode {
                 <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">Verify your phone number</h2>
                 <div className="max-w-xl mx-auto w-full mt-8 mb-8 grid grid-cols-1">
                     <div className="max-w-4xl mx-auto w-full mb-4"
-                         style={{display: 'inline-grid', gridTemplateColumns: '3fr 1fr'}}>
+                        style={{ display: 'inline-grid', gridTemplateColumns: '3fr 1fr' }}>
                         <input type="text" id="phone-number-otp" placeholder="Phone number OTP"
                                value={phoneOtp}
                                onChange={(e) => setPhoneOtp(e.target.value)}
                                className="p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mr-4"/>
                         <button
                             className="text-white bg-[#0B2147] hover:bg-[#D0693B] pt-3 pb-3 pl-1 pr-1 rounded-lg text-lg"
-                            style={{borderColor: 'transparent'}}>Verify OTP
+                            style={{ borderColor: 'transparent' }}>Verify OTP
                         </button>
                     </div>
                     <div className="max-w-xl mx-auto w-full mb-4"
-                         style={{display: 'inline-grid', gridTemplateColumns: '3fr 1fr'}}>
+                        style={{ display: 'inline-grid', gridTemplateColumns: '3fr 1fr' }}>
                         <input type="text" id="email-otp" placeholder="Email OTP"
                                value={emailOtp}
                                onChange={(e) => setEmailOtp(e.target.value)}

@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Tag(name = "skill", description = "Skill related APIs")
@@ -57,11 +55,5 @@ public class SkillController {
     @PostMapping("/all")
     public PaginationDTO<SkillDTO> getAllSkill(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         return this.skillService.getAll(pageAndFilterDTO);
-    }
-
-    @Operation(summary = APIDocsHelper.SkillAPI.ADD_SKILL)
-    @PostMapping("/add")
-    public List<SkillDTO> add(@RequestParam Long profileId, @RequestParam Set<UUID> skillIds) {
-        return this.skillService.addSkills(profileId, skillIds);
     }
 }

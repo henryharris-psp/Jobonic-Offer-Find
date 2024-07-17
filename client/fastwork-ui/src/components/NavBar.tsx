@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import Drawer from "@/components/Drawer";
 import Settings from "@/components/Settings";
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
+import { AUTH_UI_URL } from "@/baseURL";
 
 interface NavBarProps {
   showOnlyLogo?: boolean;
@@ -20,6 +21,12 @@ const NavbarComponent = ({ showOnlyLogo = false, isEmployer = false, signedIn = 
   const [selectedLanguage, setSelectedLanguage] = useState('English');
   const router = useRouter();
   const pathname = usePathname();
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    setToken(localStorage.getItem('access_token'));
+  }, []);
+
 
   const handleDropdownToggle = useCallback(() => {
     setIsDropdownOpen((prev) => !prev);
@@ -30,8 +37,11 @@ const NavbarComponent = ({ showOnlyLogo = false, isEmployer = false, signedIn = 
   }, []);
 
   const handleSignOut = useCallback(() => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    setToken(null);
     setIsDropdownOpen(false);
-    router.push("/login");
+    router.push("/");
   }, [router]);
 
   const handleLogoClick = useCallback(() => {
@@ -46,6 +56,11 @@ const NavbarComponent = ({ showOnlyLogo = false, isEmployer = false, signedIn = 
   const handleDrawerCloseClicked = useCallback((): void => {
     setIsDrawerOpen(false);
   }, []);
+
+  const handleLogin = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.preventDefault();
+    window.location.href = `${AUTH_UI_URL}/authentication?page=logout`;
+  };
 
   const getLinkClass = useCallback((path: string) => {
     return pathname === path ? "bg-white text-[#35617C]" : "";
@@ -62,7 +77,7 @@ const NavbarComponent = ({ showOnlyLogo = false, isEmployer = false, signedIn = 
         <div className="flex items-center justify-center">
           <span className="text-2xl font-semibold text-white cursor-pointer flex items-center"
             onClick={handleLogoClick}>
-            <img src="/jobonic.svg" alt="Jobonic Logo" className="h-8 w-auto" />
+            <img  src="/jobonic.svg" alt="Jobonic Logo" className="h-8 w-auto" />
           </span>
         </div>
         {!showOnlyLogo && (
@@ -96,13 +111,12 @@ const NavbarComponent = ({ showOnlyLogo = false, isEmployer = false, signedIn = 
               <li className="p-2 hover:bg-white hover:text-[#35617C] rounded-md relative"
                 onMouseEnter={() => setIsLanguageDropdownOpen(true)}
                 onMouseLeave={() => setIsLanguageDropdownOpen(false)}>
-                <button 
+                <button
                   className="flex items-center space-x-2">
                   <p>{selectedLanguage}</p>
                   <svg
-                    className={`w-4 h-4 transition-transform ${
-                      isLanguageDropdownOpen ? 'rotate-180' : ''
-                    }`}
+                    className={`w-4 h-4 transition-transform ${isLanguageDropdownOpen ? 'rotate-180' : ''
+                      }`}
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -143,18 +157,28 @@ const NavbarComponent = ({ showOnlyLogo = false, isEmployer = false, signedIn = 
                   </Link>
                 </li>
               )}
-              {signedIn && (
+              {/* {signedIn &&  */}
+              {!token ? (
+                <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+                  <button
+                    type="button"
+                    className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                    onClick={(e) => void handleLogin(e)}
+                  >
+                    Log In
+                  </button>
+                </div>
+              ) : (
                 <li className="p-2 hover:bg-white hover:text-[#35617C] rounded-md relative"
-                onMouseEnter={() => setIsDropdownOpen(true)}
-                onMouseLeave={() => setIsDropdownOpen(false)}>
-                  <button 
+                  onMouseEnter={() => setIsDropdownOpen(true)}
+                  onMouseLeave={() => setIsDropdownOpen(false)}>
+                  <button
                     className="flex items-center space-x-2"
                   >
                     <img src="/group-image.jpg" alt="User Avatar" className="lg:w-8 lg:h-8 sm:w-6 sm:h-6 rounded-full object-cover" />
                     <svg
-                      className={`w-4 h-4 transition-transform ${
-                        isDropdownOpen ? 'rotate-180' : ''
-                      }`}
+                      className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''
+                        }`}
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 20 20"
                       fill="currentColor"
@@ -166,6 +190,7 @@ const NavbarComponent = ({ showOnlyLogo = false, isEmployer = false, signedIn = 
                       />
                     </svg>
                   </button>
+
                   {isDropdownOpen && (
                     <ul className="text-black absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10"
                       onMouseEnter={() => setIsDropdownOpen(true)}
