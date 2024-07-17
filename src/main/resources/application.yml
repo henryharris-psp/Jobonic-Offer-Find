@@ -25,5 +25,5 @@ springdoc:
 server:
   port: 8081
   file:
-    basePath: ${DOCUMENT_BASE_PATH}
+    basePath:
 
