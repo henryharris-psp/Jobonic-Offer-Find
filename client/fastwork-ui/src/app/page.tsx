@@ -9,6 +9,7 @@ import axios from "axios";
 import {checkProfile} from "@/functions/helperFunctions";
 import React from "react";
 import {token} from "@/baseURL";
+
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -73,6 +74,20 @@ export default function Home() {
       router.push('/createProfile');
     }
   };
+
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const refreshToken = urlParams.get('refresh_token');
+    const accessToken = urlParams.get('access_token');
+    console.log('refreshToken = ', refreshToken);
+    console.log('accessToken = ', accessToken);
+    if (accessToken && refreshToken) {
+      // ใช้ access token สำหรับเรียก API ใน PMS
+      localStorage.setItem('refresh_token', refreshToken);
+      localStorage.setItem('access_token', accessToken);
+      window.location.href = '/';
+    }
+  }, []);
 
   return (
     <div>
