@@ -37,6 +37,7 @@ public class ProfileDTO implements Serializable {
     private Set<UserExperienceDTO> userExperienceList;
     private Set<UserEducationDTO> userEducationList;
     private Set<SkillDTO> skills;
+    private Long userId;
 //    private Set<UserRoleDTO> roles;
 
     public Profile updateUser(Profile profile) {
