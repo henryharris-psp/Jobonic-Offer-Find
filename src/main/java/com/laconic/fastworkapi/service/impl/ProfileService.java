@@ -58,9 +58,9 @@ public class ProfileService implements IProfileService {
         if (profileDTO.getSkills() != null && !profileDTO.getSkills().isEmpty()) {
             response.setSkills(addSkillsToProfile(profileDTO.getSkills(), profile.getId()));
         }
-        if (profileDTO.getRoles() != null && !profileDTO.getRoles().isEmpty()) {
-            response.setRoles(addRolesToProfile(profileDTO.getRoles(), profile.getId()));
-        }
+//        if (profileDTO.getRoles() != null && !profileDTO.getRoles().isEmpty()) {
+//            response.setRoles(addRolesToProfile(profileDTO.getRoles(), profile.getId()));
+//        }
         return response;
     }
 
