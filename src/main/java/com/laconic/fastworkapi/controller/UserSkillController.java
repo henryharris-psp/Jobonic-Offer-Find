@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.controller;
 
+import com.laconic.fastworkapi.constants.AppMessage;
 import com.laconic.fastworkapi.dto.UserSkillDTO;
 import com.laconic.fastworkapi.helper.APIDocsHelper;
 import com.laconic.fastworkapi.service.IUserSkillService;
@@ -32,5 +33,12 @@ public class UserSkillController {
     @GetMapping("/all")
     public Collection<UserSkillDTO> getAllUserSkill(@RequestParam Long profileId) {
         return this.userSkillService.getAllUserSkill(profileId);
+    }
+
+    @Operation(summary = APIDocsHelper.SkillAPI.DELETE_USER_SKILL)
+    @DeleteMapping
+    public String delete(@RequestParam UUID skillId, Long profileId) {
+        this.userSkillService.delete(skillId, profileId);
+        return String.format(AppMessage.DELETE_MESSAGE, AppMessage.SKILL);
     }
 }

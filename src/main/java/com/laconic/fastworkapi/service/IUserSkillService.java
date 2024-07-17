@@ -10,4 +10,6 @@ public interface IUserSkillService {
     List<UserSkillDTO> addSkills(Long profileId, Set<UUID> skillIds);
 
     List<UserSkillDTO> getAllUserSkill(Long profileId);
+
+    void delete(UUID skillId, Long profileId);
 }

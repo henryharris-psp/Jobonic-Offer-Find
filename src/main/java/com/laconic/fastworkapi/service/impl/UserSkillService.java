@@ -3,6 +3,7 @@ package com.laconic.fastworkapi.service.impl;
 import com.laconic.fastworkapi.constants.AppMessage;
 import com.laconic.fastworkapi.dto.SkillDTO;
 import com.laconic.fastworkapi.dto.UserSkillDTO;
+import com.laconic.fastworkapi.entity.Skill;
 import com.laconic.fastworkapi.entity.UserSkill;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.ISkillRepo;
@@ -51,32 +52,33 @@ public class UserSkillService implements IUserSkillService {
 
     @Override
     public List<UserSkillDTO> getAllUserSkill(Long userId) {
-//        var userSkills = this.userSkillRepo.findAllByUserId(userId);
-//        var skillIds = userSkills.stream()
-//                .map(UserSkill::getSkillId)
-//                .collect(Collectors.toSet());
-//
-//        var skills = this.skillRepo.findAllById(skillIds);
-//        var skillDTOMap = new HashMap<Long, SkillDTO>();
-//
-//
-//        userSkills.forEach(userSkill -> {
-//            var skillDTO = new SkillDTO();
-//            skillDTO.setId(userSkill.getSkillId());
-//            skillDTOMap.put(userSkill.getSkillId(), skillDTO);
-//        });
-//
-//
-//        skills.forEach(skill -> {
-//            var skillDTO = skillDTOMap.get(skill.getId());
-//            if (skillDTO != null) {
-//                skillDTO.setName(skill.getName());
-//            }
-//        });
-//
-//        var allSkillDTOs = new HashSet<>(skillDTOMap.values());
-//
-//        return List.of(new UserSkillDTO(userId, allSkillDTOs));
-        return null;
+        var userSkills = this.userSkillRepo.findAllByUserId(userId);
+        var skillIds = userSkills.stream()
+                .map(UserSkill::getSkillId)
+                .collect(Collectors.toSet());
+
+        var skills = this.skillRepo.findAllById(skillIds);
+        var skillMap = skills.stream()
+                .collect(Collectors.toMap(Skill::getId, skill -> skill));
+
+        var skillDTOs = userSkills.stream()
+                .map(userSkill -> {
+                    var skill = skillMap.get(userSkill.getSkillId());
+                    return new SkillDTO(skill);
+                })
+                .collect(Collectors.toSet());
+
+        var userSkillDTO = new UserSkillDTO();
+        userSkillDTO.setUserId(userId);
+        userSkillDTO.setSkillList(skillDTOs);
+
+        return List.of(userSkillDTO);
+    }
+
+    @Override
+    public void delete(UUID skillId, Long profileId) {
+        UserSkill userSkill = this.userSkillRepo.findByUserIdAndSkillId(profileId, skillId);
+        userSkill.setActive(false);
+        this.userSkillRepo.save(userSkill);
     }
 }
