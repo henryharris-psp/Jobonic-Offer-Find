@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from "axios";
+import httpClient from '@/client/httpClient';
 import { baseURL, token } from "@/baseURL";
+import { AxiosError } from 'axios';
 
 type UserData = {
     "id"?: number;
@@ -21,7 +22,7 @@ export default function CustomiseService(): React.ReactNode {
         const fetchUserIdAndData = async () => {
             try {
                 // Fetch user ID and email from init-data
-                const response = await axios.get(`https://api-auths.laconic.co.th/v1/user/init-data`, {
+                const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'accept': 'application/json'
@@ -37,7 +38,7 @@ export default function CustomiseService(): React.ReactNode {
                 });
 
                 // Fetch additional user data using the userId
-                const userDetailsResponse = await axios.get(`${baseURL}/api/v1/user?id=${userId}`, {
+                const userDetailsResponse = await httpClient.get(`${baseURL}/api/v1/user?id=${userId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'accept': 'application/json'
@@ -100,7 +101,7 @@ export default function CustomiseService(): React.ReactNode {
         console.log('Service Data:', JSON.stringify(serviceData, null, 2)); // Log the service data to verify
 
         try {
-            const response = await axios.post(`${baseURL}/api/v1/service`, serviceData, {
+            const response = await httpClient.post(`${baseURL}/api/v1/service`, serviceData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
@@ -113,7 +114,7 @@ export default function CustomiseService(): React.ReactNode {
             console.log(savedServiceId);
             router.push(`/selectSkills?serviceId=${savedServiceId}`);
         } catch (error) {
-            if (axios.isAxiosError(error)) {
+            if (error instanceof AxiosError) {
                 console.error('Error posting service data:', error.response?.data || error.message);
             } else {
                 console.error('Error posting service data:', error);
