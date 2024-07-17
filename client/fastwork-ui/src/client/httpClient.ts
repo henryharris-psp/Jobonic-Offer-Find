@@ -1,5 +1,5 @@
 
-import { baseURL, SERVER_AUTH, token } from '@/baseURL';
+import { baseURL, SERVER_AUTH} from '@/baseURL';
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 const ENDPOINT_LOGIN = `${SERVER_AUTH}/v1/login`;
 const ENDPOINT_REFRESH_TOKEN = `${SERVER_AUTH}/v1/login/refresh-token`;
@@ -25,6 +25,7 @@ const httpClient = axios.create({
 });
 
 httpClient.interceptors.request.use((config) => {
+    const token = localStorage.getItem('access_token');
     if (token && config.url !== ENDPOINT_LOGIN && config.url !== ENDPOINT_REFRESH_TOKEN) {
         config.headers.Authorization = `Bearer ${token}`;
     }
