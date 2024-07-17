@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import ChatConversation from '../../components/ChatConversation'; // Import the new ChatConversation component
+import { supabase } from '../config/supabaseClient';
 
 export interface Message {
   id: number | string;
@@ -18,7 +19,16 @@ export interface Message {
 
 export interface ActiveChat {
   id: number;
-  name: string;
+  fullName: string;
+  avatar: string;
+  messages: Message[];
+  type: 'client' | 'service_provider';
+  status: string;
+}
+
+export interface People {
+  id: number;
+  fullName: string;
   avatar: string;
   messages: Message[];
   type: 'client' | 'service_provider';
@@ -39,10 +49,18 @@ export interface Service {
   numSold: number;
 }
 
-const allPeoples: ActiveChat[] = [
+export interface CurrentUser {
+  id: number;
+  email: string;
+  username: string;
+  avatar: string;
+}
+
+const allPeoples: ActiveChat[] = 
+[
   {
     id: 1,
-    name: 'John Chamlington',
+    fullName: 'John Chamlington',
     avatar: '/avatar.svg',
     messages: [
       { id: 1, sender: 'You', type: 'message', avatar: '/avatar.svg', text: 'Hello Google, I would like to apply for your service request below!', sentByCurrentUser: true },
@@ -53,7 +71,7 @@ const allPeoples: ActiveChat[] = [
   },
   {
     id: 2,
-    name: 'Alice Brown',
+    fullName: 'Alice Brown',
     avatar: '/avatar.svg',
     messages: [
       { id: 1, sender: 'Alice', type: 'message', avatar: '/avatar.svg', text: 'Hi, how are you?', sentByCurrentUser: false },
@@ -64,7 +82,7 @@ const allPeoples: ActiveChat[] = [
   },
   {
     id: 3,
-    name: 'Bob Smith',
+    fullName: 'Bob Smith',
     avatar: '/avatar.svg',
     messages: [
       { id: 1, sender: 'Bob', type: 'message', avatar: '/avatar.svg', text: 'Hello Ella, I am interested in your Middle School Math tutor service.', sentByCurrentUser: false },
@@ -78,9 +96,13 @@ const allPeoples: ActiveChat[] = [
 
 const ChatPage: React.FC = () => {
   const [activeChat, setActiveChat] = useState<ActiveChat>(allPeoples[0]);
+  const [peoples, setPeoples] = useState<People[]>([]);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(500);
   const [isResizing, setIsResizing] = useState(false);
+  const [currentUser, setCurrentUser] = useState<CurrentUser>()
+  const [recipient, setRecipient] = useState<any>(null);
+  const [messages, setMessages] = useState([]);
 
   const [roleFilter, setRoleFilter] = useState('All');
   const [fromClientStatusFilter, setFromClientStatusFilter] = useState('All');
@@ -132,6 +154,29 @@ const ChatPage: React.FC = () => {
   const handleMouseUp = () => {
     setIsResizing(false);
   };
+
+  useEffect(() => {
+    const userData = localStorage.getItem('userInfo')
+    if(userData){
+      const parsed = JSON.parse(userData)
+      setCurrentUser(parsed)
+    }
+  }, [])
+
+  useEffect(() => {
+    const getPeoples = async () => {
+      const { data, error } = await supabase
+        .from('user')
+        .select('*');
+
+      if (error) {
+        console.error('Error fetching data:', error);
+      } else {
+        setPeoples(data);
+      }
+    };
+    getPeoples();
+  }, []);
 
   useEffect(() => {
     document.addEventListener('mousemove', handleMouseMove);
@@ -287,22 +332,23 @@ const ChatPage: React.FC = () => {
                 )}
               </div>
             </form>
-            {filteredPeoples.map(people => (
-                <div
-                    className="flex p-2 hover:bg-blue-300 rounded-md justify-between cursor-pointer"
-                    key={people.id}
-                    onClick={() => setActiveChat(people)}
-                >
-                  <div className="flex">
-                    <img className="w-10 h-10 rounded-full mr-4" src={people.avatar} alt={people.name} />
-                    <div className="text-black mt-2 flex items-center text-sm">{people.name}</div>
-                  </div>
-                  <div className="flex items-center">
-                    {sidebarWidth > 200 && (
-                        <div className="bg-[#0B2147] text-center text-white px-2 py-1 text-xs rounded-md">Completed</div>
-                    )}
-                  </div>
+            {peoples.filter(people => people.id !== currentUser?.userid)
+            .map((people) => (
+              <div
+                className="flex p-2 hover:bg-blue-300 rounded-md justify-between cursor-pointer"
+                key={people.id}
+                onClick={() => setActiveChat(people)}
+              >
+                <div className="flex">
+                  <img className="w-10 h-10 rounded-full mr-4" src={people.avatar || '/avatar.svg'} alt={people.fullName} />
+                  <div className="text-black mt-2 flex items-center text-sm">{people.fullName}</div>
                 </div>
+                <div className="flex items-center">
+                  {sidebarWidth > 200 && (
+                    <div className="bg-[#0B2147] text-center text-white px-2 py-1 text-xs rounded-md">Completed</div>
+                  )}
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -312,8 +358,8 @@ const ChatPage: React.FC = () => {
             style={{ width: '5px', cursor: 'col-resize' }}
             onMouseDown={handleMouseDown}
         ></div>
-        <ChatConversation activeChat={activeChat} />
-      </div>
+        <ChatConversation activeChat={activeChat} recipientUser={activeChat} />
+    </div>
   );
 };
 

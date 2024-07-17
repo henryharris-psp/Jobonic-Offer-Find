@@ -11,6 +11,7 @@
   "dependencies": {
     "@mantine/rte": "^5.10.5",
     "@nextui-org/react": "^2.3.5",
+    "@supabase/supabase-js": "^2.44.4",
     "autoprefixer": "^10.4.19",
     "axios": "^1.7.2",
     "cors": "^2.8.5",
