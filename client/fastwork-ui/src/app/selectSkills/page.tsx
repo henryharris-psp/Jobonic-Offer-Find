@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import httpClient from "@/client/httpClient";
-import { baseURL, token } from "@/baseURL";
+import { baseURL, SERVER_AUTH, token } from "@/baseURL";
 
 type User = {
     name: string;
@@ -41,7 +41,7 @@ export default function SelectSkills() {
         const fetchServiceData = async () => {
             try {
                 // Fetch user ID and email from init-data
-                const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`, {
+                const response = await httpClient.get(`${SERVER_AUTH}/v1/user/init-data`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'accept': 'application/json'

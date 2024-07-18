@@ -1,14 +1,11 @@
 import { useRouter } from 'next/router';
 import { baseURL } from "@/baseURL";
 import axios from "axios";
+import httpClient from '@/client/httpClient';
 
 export const checkProfile = async (userID: number, token: string) => {
     try {
-        const response = await axios.get(`${baseURL}/api/v1/user`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
+        const response = await httpClient.get(`${baseURL}/api/v1/user`, {
             params: {
                 id: userID
             }

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import axios from 'axios';
 import httpClient from '@/client/httpClient';
-import { baseURL, token } from "@/baseURL";
+import { baseURL, SERVER_AUTH, token } from "@/baseURL";
 
 const countryCodes = [
     { code: '+65', name: 'Singapore' },
@@ -31,13 +31,7 @@ export default function CreateProfile(): React.ReactNode {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                // const response = await axios.get(`https://api-auths.laconic.co.th/v1/user/init-data`, {
-                //     headers: {
-                //         'Authorization': `Bearer ${token}`,
-                //         'accept': 'application/json'
-                //     }
-                // });
-                const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`);
+                const response = await httpClient.get(`${SERVER_AUTH}/v1/user/init-data`);
                 const userData = response.data;
                 setUserId(userData.id);
                 setContactNumber(userData.phoneNumber);

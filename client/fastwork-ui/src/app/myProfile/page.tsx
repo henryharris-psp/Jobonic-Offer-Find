@@ -2,7 +2,7 @@
 
 import React, { RefObject, useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { baseURL } from "@/baseURL";
+import { baseURL, SERVER_AUTH } from "@/baseURL";
 import { useRouter } from "next/navigation";
 import httpClient from '@/client/httpClient';
 
@@ -204,7 +204,7 @@ export default function MyProfile(): React.ReactNode {
         let abortController = new AbortController();
         const fetchUserData = async () => {
             try {
-                const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`);
+                const response = await httpClient.get(`${SERVER_AUTH}/v1/user/init-data`);
                 const userData = response.data;
                 setUserId(userData.id);
                 setCompanyName(userData.companyName);

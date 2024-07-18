@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import httpClient from '@/client/httpClient';
-import { baseURL, token } from "@/baseURL";
+import { baseURL, SERVER_AUTH } from "@/baseURL";
 import { AxiosError } from 'axios';
 
 type UserData = {
@@ -23,7 +23,7 @@ export default function CustomiseService(): React.ReactNode {
         const fetchUserIdAndData = async () => {
             try {
                 // Fetch user ID and email from init-data
-                const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`);
+                const response = await httpClient.get(`${SERVER_AUTH}/v1/user/init-data`);
                 const userData = response.data;
                 const userId = userData.id;
 

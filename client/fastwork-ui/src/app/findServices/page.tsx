@@ -8,41 +8,44 @@ import design from "@/../public/design.svg";
 import marketing from "@/../public/marketing.svg";
 import prog from "@/../public/prog.svg";
 import translate from "@/../public/translate.svg";
+import { useState } from "react";
+import httpClient from "@/client/httpClient";
+import { baseURL } from "@/baseURL";
 
 export default function FindServices() {
   //need to get from API
-  const categories = [
-    {
-      category: "Development and IT",
-      image: prog,
-      description: "Empower innovation in Development and IT.",
-    },
-    {
-      category: "AI Services",
-      image: ai,
-      description: "Explore exciting opportunities in AI services.",
-    },
-    {
-      category: "HR and Training",
-      image: hr,
-      description: "Transform organizations through HR and Training.",
-    },
-    {
-      category: "Graphic and Design",
-      image: design,
-      description: "Unlock your creative potential in Graphic Design.",
-    },
-    {
-      category: "Marketing and Advertising",
-      image: marketing,
-      description: "Dive into the dynamic world of Marketing and Advertising.",
-    },
-    {
-      category: "Write and Translate",
-      image: translate,
-      description: "Unlock your linguistic talents in Writing and Translation.",
-    },
-  ];
+  // const categories = [
+  //   {
+  //     category: "Development and IT",
+  //     image: prog,
+  //     description: "Empower innovation in Development and IT.",
+  //   },
+  //   {
+  //     category: "AI Services",
+  //     image: ai,
+  //     description: "Explore exciting opportunities in AI services.",
+  //   },
+  //   {
+  //     category: "HR and Training",
+  //     image: hr,
+  //     description: "Transform organizations through HR and Training.",
+  //   },
+  //   {
+  //     category: "Graphic and Design",
+  //     image: design,
+  //     description: "Unlock your creative potential in Graphic Design.",
+  //   },
+  //   {
+  //     category: "Marketing and Advertising",
+  //     image: marketing,
+  //     description: "Dive into the dynamic world of Marketing and Advertising.",
+  //   },
+  //   {
+  //     category: "Write and Translate",
+  //     image: translate,
+  //     description: "Unlock your linguistic talents in Writing and Translation.",
+  //   },
+  // ];
 
   //need to get from API
   const testimonials = [
@@ -90,7 +93,7 @@ export default function FindServices() {
       <TopSectionFindServices />
 
       {/* Suggests categories if employer does not know what he wants */}
-      <CategorySuggestions categories={categories} />
+      <CategorySuggestions />
 
       {/* Displays reviews of satisfied employers */}
       <SatisfiedCollaborators testimonials={testimonials} />

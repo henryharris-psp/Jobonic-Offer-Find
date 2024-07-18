@@ -10,6 +10,7 @@ import { baseURL, token } from "@/baseURL";
 import { checkProfile } from '@/functions/helperFunctions';
 import httpClient from "@/client/httpClient";
 
+
 interface JobData {
   title: string;
   work_category: string;
@@ -52,16 +53,14 @@ export default function OfferServicesPage(): ReactNode { // Use ReactNode for th
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<JobData[]>([]);
   const [inputValue, setInputValue] = useState('');
+  const [categoryList, setCategoryList] = useState<Category[]>([]);
 
-  const categories = [
-    "Development & IT",
-    "Admin & Customer Support",
-    "HR & Training",
-    "Graphic & Design",
-    "Marketing & Advertising",
-    "Writing & Translation",
-    "Finance & Accounting"
-  ];
+
+  const fetchCategory = async () => {
+    const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
+    setCategoryList(response.data);
+  };
+
 
   useEffect(() => {
     fetch('/updated_sample_data.csv')
@@ -155,7 +154,9 @@ export default function OfferServicesPage(): ReactNode { // Use ReactNode for th
   };
 
   const areFiltersApplied = appliedFilters.minPrice !== '' || appliedFilters.maxPrice !== '' || appliedFilters.deadline !== '';
-
+  useEffect(() => {
+    fetchCategory();
+  }, []);
   return (
       <div>
         <div className="p-16">
@@ -298,8 +299,8 @@ export default function OfferServicesPage(): ReactNode { // Use ReactNode for th
           <div className='flex pt-8'>
             <div className="job-category overflow-y-auto w-1/5">
               <h2 className='font-semibold text-center'>Work Category</h2>
-              {categories.map((category, index) => (
-                  <div key={index} className="py-1 border-b border-gray-400 hover:text-blue-500 cursor-pointer text-sm">{category}</div>
+              {categoryList.map((category, index) => (
+                  <div key={index} className="py-1 border-b border-gray-400 hover:text-blue-500 cursor-pointer text-sm">{category.name}</div>
               ))}
             </div>
 
