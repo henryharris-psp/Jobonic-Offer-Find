@@ -48,8 +48,8 @@ export default function CreateProfile(): React.ReactNode {
     }, []);
 
     const handleSubmit = async (event) => {
-        setPage3(true);
         event.preventDefault();
+        setPage3(true);
 
         if (!userId) {
             console.error('User ID is not available.');
