@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import axios from 'axios';
 import httpClient from '@/client/httpClient';
-import { baseURL } from '@/baseURL';
+import { baseURL, token } from "@/baseURL";
 
 const countryCodes = [
     { code: '+65', name: 'Singapore' },
@@ -37,7 +37,12 @@ export default function CreateProfile(): React.ReactNode {
                 //         'accept': 'application/json'
                 //     }
                 // });
-                const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`);
+                const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'accept': 'application/json'
+                    }
+                });
                 const userData = response.data;
                 setUserId(userData.id);
                 setContactNumber(userData.phoneNumber);
@@ -116,9 +121,14 @@ export default function CreateProfile(): React.ReactNode {
             //     },
             // });
 
-            // console.log('User updated successfully:', response.data);
+            //console.log('User updated successfully:', response.data);
 
-            const response = await httpClient.put(`${baseURL}/api/v1/user?id=${userId}`, userData);
+            const response = await httpClient.put(`${baseURL}/api/v1/user?id=${userId}`, userData, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
             console.log('User created successfully:', response.data);
             //router.push('/myProfile');
         } catch (error) {
