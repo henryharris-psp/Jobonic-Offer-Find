@@ -61,12 +61,7 @@ const CustomiseJobRequestForm: React.FC = () => {
   useEffect(() => {
     const fetchUserIdAndData = async () => {
       try {
-        const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'accept': 'application/json'
-          }
-        });
+        const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`);
         const userData = response.data;
         const userId = userData.id;
 
@@ -134,12 +129,7 @@ const CustomiseJobRequestForm: React.FC = () => {
     console.log('Service Data:', JSON.stringify(serviceData, null, 2));
 
     try {
-      const response = await httpClient.post(`${baseURL}/api/v1/service`, serviceData, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        }
-      });
+      const response = await httpClient.post(`${baseURL}/api/v1/service`, serviceData);
 
       const savedServiceId = response.data.id;
       console.log('Response Data:', response.data);

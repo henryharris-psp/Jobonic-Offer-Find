@@ -14,6 +14,7 @@ type UserData = {
 };
 
 export default function CustomiseService(): React.ReactNode {
+    const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [user, setUser] = useState<UserData>({});
     const router = useRouter();
@@ -22,12 +23,7 @@ export default function CustomiseService(): React.ReactNode {
         const fetchUserIdAndData = async () => {
             try {
                 // Fetch user ID and email from init-data
-                const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'accept': 'application/json'
-                    }
-                });
+                const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`);
                 const userData = response.data;
                 const userId = userData.id;
 
@@ -38,12 +34,7 @@ export default function CustomiseService(): React.ReactNode {
                 });
 
                 // Fetch additional user data using the userId
-                const userDetailsResponse = await httpClient.get(`${baseURL}/api/v1/user?id=${userId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'accept': 'application/json'
-                    }
-                });
+                const userDetailsResponse = await httpClient.get(`${baseURL}/api/v1/user?id=${userId}`);
                 const userDetails = userDetailsResponse.data;
 
                 // Update user state with additional data
@@ -57,7 +48,8 @@ export default function CustomiseService(): React.ReactNode {
             }
         };
 
-        fetchUserIdAndData();
+        // Call the function and handle the promise
+        fetchUserIdAndData().catch(console.error);
     }, []);
 
     const handleSaveDescription = async (event: React.MouseEvent) => {
@@ -95,18 +87,13 @@ export default function CustomiseService(): React.ReactNode {
                 "draftCount": null
             },
             "profileId": user["id"],
-            "title": null
+            "title": title
         };
 
         console.log('Service Data:', JSON.stringify(serviceData, null, 2)); // Log the service data to verify
 
         try {
-            const response = await httpClient.post(`${baseURL}/api/v1/service`, serviceData, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                }
-            });
+            const response = await httpClient.post(`${baseURL}/api/v1/service`, serviceData);
 
             const savedServiceId = response.data.id; // Capture the service ID from the response
 
@@ -126,6 +113,15 @@ export default function CustomiseService(): React.ReactNode {
         <div className="bg-white min-h-screen flex flex-col justify-center items-center p-4">
             <h2 className="text-3xl font-medium text-gray-900 mb-4 text-center">In 1-2 sentences, describe</h2>
             <h2 className="text-6xl font-bold text-gray-900 mb-4 text-center">what services do you offer?</h2>
+            <div className="max-w-4xl mx-auto w-full mt-8 mb-8">
+                <input
+                    type="text"
+                    id="service-title"
+                    placeholder="Service Title"
+                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    onChange={(e) => setTitle(e.target.value)}
+                />
+            </div>
             <div className="max-w-4xl mx-auto w-full mt-8 mb-8">
                 <input
                     type="text"

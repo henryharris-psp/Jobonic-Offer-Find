@@ -37,12 +37,7 @@ export default function CreateProfile(): React.ReactNode {
                 //         'accept': 'application/json'
                 //     }
                 // });
-                const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'accept': 'application/json'
-                    }
-                });
+                const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`);
                 const userData = response.data;
                 setUserId(userData.id);
                 setContactNumber(userData.phoneNumber);
@@ -123,12 +118,7 @@ export default function CreateProfile(): React.ReactNode {
 
             //console.log('User updated successfully:', response.data);
 
-            const response = await httpClient.put(`${baseURL}/api/v1/user?id=${userId}`, userData, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
+            const response = await httpClient.put(`${baseURL}/api/v1/user?id=${userId}`, userData);
             console.log('User created successfully:', response.data);
             //router.push('/myProfile');
         } catch (error) {
