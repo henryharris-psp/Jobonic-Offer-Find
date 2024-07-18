@@ -1,12 +1,10 @@
 package com.laconic.fastworkapi.service.impl;
 
 import com.laconic.fastworkapi.constants.AppMessage;
-import com.laconic.fastworkapi.dto.ProfileDTO;
 import com.laconic.fastworkapi.dto.SkillDTO;
 import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
-import com.laconic.fastworkapi.entity.Profile;
 import com.laconic.fastworkapi.entity.Skill;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.helper.PaginationHelper;
@@ -60,11 +58,11 @@ public class SkillService implements ISkillService {
                         "name"));
         var result = this.skillRepo.findAll(specification, pageAndFilterDTO.getPageRequest());
         return PaginationHelper.getResponse(result,
-                                            result.getContent().stream().map(SkillDTO::new).toList());
+                result.getContent().stream().map(SkillDTO::new).toList());
     }
 
     private Skill getSkill(UUID id) {
         return this.skillRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SKILL, "id",
-                                                                                               id.toString()));
+                id.toString()));
     }
 }

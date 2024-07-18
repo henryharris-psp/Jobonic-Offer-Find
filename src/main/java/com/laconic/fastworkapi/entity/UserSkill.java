@@ -21,4 +21,5 @@ public class UserSkill extends Auditable<UUID> {
 
     @Id
     private UUID skillId;
+    private boolean isActive = true;
 }

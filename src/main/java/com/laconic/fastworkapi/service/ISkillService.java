@@ -10,8 +10,12 @@ import java.util.UUID;
 
 public interface ISkillService {
     SkillDTO save(SkillDTO skillDTO);
+
     void delete(UUID id);
+
     SkillDTO update(UUID id, SkillDTO skillDTO);
+
     List<SkillDTO> getAll();
+
     PaginationDTO<SkillDTO> getAll(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
 }

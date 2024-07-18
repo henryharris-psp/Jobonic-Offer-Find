@@ -55,9 +55,10 @@ public class UserExperienceService implements IUserExperienceService {
                 this.userRepo.findById(userExperienceDTO.getProfileId())
                         .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
                                 userExperienceDTO.getProfileId().toString()));
+
         var userExperience = EntityMapper.mapToEntity(userExperienceDTO, UserExperience.class);
-        profile.addExperience(userExperience);
-        profile = userRepo.save(profile);
+        userExperience.setProfile(profile);
+        this.userExperienceRepo.save(userExperience);
         return new UserExperienceDTO(userExperience);
     }
 
