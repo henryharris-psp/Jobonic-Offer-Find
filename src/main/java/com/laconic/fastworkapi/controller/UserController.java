@@ -58,4 +58,10 @@ public class UserController {
         return this.userService.removeUser(id);
     }
 
+    @GetMapping("/profile")
+    @Operation(summary = APIDocsHelper.UserAPI.GET_PROFILE)
+    public ProfileDTO getProfileByUser(@RequestParam Long id) {
+        return this.userService.getByUserId(id);
+    }
+
 }
