@@ -70,6 +70,21 @@ export default function SelectSkills() {
         fetchServiceData();
     }, [serviceId]);
 
+    const[skills, setSkillsList] = useState<SkillInstance[]>([]);
+
+    const fetchSkills = async () => {
+        try {
+            const response = await httpClient.get(`${baseURL}/api/v1/skill/all`);
+            console.log("Skills fetched:", response.data);
+            setSkillsList(response.data);
+        } catch (error) {
+            console.error("Error fetching skills:", error);
+        }
+    }
+    useEffect(() => {
+        fetchSkills();
+    },[]);
+
     const handleExperienceClick = (experience: string) => {
         setSelectedExperience(experience);
     };
@@ -124,17 +139,17 @@ export default function SelectSkills() {
                 <div className="pb-4">
                     <h3 className="text-2xl font-bold mb-2 text-center">Skills</h3>
                     <div className="flex flex-col">
-                        {user.skills.map((skill, index) => (
+                        {skills.map((skill, index) => (
                             <button
                                 key={index}
                                 className={`btn ${
-                                    selectedExperience === skill
+                                    selectedExperience === skill.name
                                         ? "bg-[#0B2147] text-white"
                                         : "bg-white text-gray-900"
                                 } border border-gray-300 rounded-lg p-2 mb-2`}
-                                onClick={() => handleExperienceClick(skill)}
+                                onClick={() => handleExperienceClick(skill.name)}
                             >
-                                {skill}
+                                {skill.name}
                             </button>
                         ))}
                     </div>
