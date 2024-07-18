@@ -173,30 +173,30 @@ const CustomiseJobRequestForm: React.FC = () => {
             </div>
             <div>
               <label className="required block text-lg font-semibold mb-2" htmlFor="workCategory">Work Category</label>
-              <input
-                  type="text"
+              <select
                   id="workCategory"
                   name="workCategory"
                   value={formState.workCategory}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                  placeholder="Web Development"
-              />
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                <option value="" disabled>Select an option</option>
+                <option value="DEVELOPMENT">Development</option>
+                <option value="ACCOUNTING">Accounting</option>
+                <option value="ART">Art</option>
+              </select>
             </div>
             <div>
               <label className="required block text-lg font-semibold mb-2" htmlFor="employmentType">Employment Type</label>
               <select
-                  defaultValue=""
                   id="employmentType"
                   name="employmentType"
                   value={formState.employmentType}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                <option selected disabled>Select an option</option>
-                <option value="full-time">Full-time</option>
-                <option value="part-time">Part-time</option>
-                <option value="contract">Contract</option>
-                <option value="freelance">Freelance / Project-based</option>
+                <option value="" disabled>Select an option</option>
+                <option value="FULL_TIME">Full-time</option>
+                <option value="PART_TIME">Part-time</option>
+                <option value="CONTRACT">Contract</option>
               </select>
             </div>
             <div>For the fields below, please fill in the necessary job information e.g. job scope, skills requirement, personality fit.</div>
@@ -280,7 +280,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                       onChange={handleLanguageChange}
                       defaultValue={[]}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                <option value={[]} disabled>Select a language</option>
+                <option value="" disabled>Select a language</option>
                 <option value="Thai">ภาษาไทย</option>
                 <option value="English">English</option>
                 <option value="Chinese">中文</option>
@@ -315,5 +315,6 @@ const CustomiseJobRequestForm: React.FC = () => {
 };
 
 export default CustomiseJobRequestForm;
+
 
 
