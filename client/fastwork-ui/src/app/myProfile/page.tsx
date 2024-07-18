@@ -5,6 +5,7 @@ import Image from "next/image";
 import axios from "axios";
 import { baseURL, token } from "@/baseURL";
 import { useRouter } from "next/navigation";
+import httpClient from '@/client/httpClient';
 
 type EducationInstance = {
     id: string;
@@ -166,12 +167,7 @@ export default function MyProfile(): React.ReactNode {
         }
 
         try {
-            const response = await axios.post(`${baseURL}/api/v1/${inputKey}`, data, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            });
+            const response = await httpClient.post(`${baseURL}/api/v1/${inputKey}`, data);
             console.log("Save successful:", response.data);
             setEnabledInputs((prevState) => ({
                 ...prevState,
@@ -196,15 +192,7 @@ export default function MyProfile(): React.ReactNode {
         let abortController = new AbortController();
         const fetchUserData = async () => {
             try {
-                const response = await axios.get(
-                    `https://api-auths.laconic.co.th/v1/user/init-data`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            accept: "application/json",
-                        },
-                    }
-                );
+                const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`);
                 const userData = response.data;
                 setUserId(userData.id);
                 setCompanyName(userData.companyName);
