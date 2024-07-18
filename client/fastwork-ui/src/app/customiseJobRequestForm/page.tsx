@@ -1,8 +1,11 @@
 'use client'
 
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import CreateServiceRequestCard from '@/components/CreateServiceRequestCard';
 import { useRouter } from 'next/navigation';
+import httpClient from '@/client/httpClient';
+import { baseURL, token } from "@/baseURL";
+import { AxiosError } from 'axios';
 
 interface CardProps {
   title: string;
@@ -15,8 +18,14 @@ interface CardProps {
   details: string[];
 }
 
+type UserData = {
+  "id"?: number;
+  "email"?: string;
+};
+
 const CustomiseJobRequestForm: React.FC = () => {
   const router = useRouter();
+  const [user, setUser] = useState<UserData>({});
   const [formState, setFormState] = useState({
     title: '',
     workCategory: '',
@@ -49,6 +58,30 @@ const CustomiseJobRequestForm: React.FC = () => {
     ],
   });
 
+  useEffect(() => {
+    const fetchUserIdAndData = async () => {
+      try {
+        const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'accept': 'application/json'
+          }
+        });
+        const userData = response.data;
+        const userId = userData.id;
+
+        setUser({
+          "id": userId,
+          "email": userData.email
+        });
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserIdAndData();
+  }, []);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
     setFormState(prevState => ({ ...prevState, [name]: value }));
@@ -59,9 +92,66 @@ const CustomiseJobRequestForm: React.FC = () => {
     setFormState(prevState => ({ ...prevState, language: selectedOptions }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    router.push('/myProfile');
+
+    if (!user["id"]) {
+      console.error('User ID is not available.');
+      return;
+    }
+
+    const serviceData = {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "serviceOfferDTO": {
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "description": "",
+        "bankCardNumber": "",
+        "email": "",
+        "startDate": "",
+        "phone": "string",
+        "address": "string",
+        "skills": "string",
+        "experience": "string",
+        "draftCount": 0
+      },
+      "serviceRequestDTO": {
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "workCategory": formState.workCategory,
+        "employmentType": formState.employmentType,
+        "description1": formState.requirement1,
+        "description2": formState.requirement2,
+        "description3": formState.requirement3,
+        "submissionDeadline": formState.deadline,
+        "budget": parseInt(formState.budget),
+        "workExample": formState.exampleWork,
+        "languageSpoken": formState.language.join(', '),
+        "location": formState.location
+      },
+      "profileId": user["id"],
+      "title": formState.title
+    };
+
+    console.log('Service Data:', JSON.stringify(serviceData, null, 2));
+
+    try {
+      const response = await httpClient.post(`${baseURL}/api/v1/service`, serviceData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      });
+
+      const savedServiceId = response.data.id;
+      console.log('Response Data:', response.data);
+      console.log(savedServiceId);
+      router.push(`/myProfile`);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error('Error posting service data:', error.response?.data || error.message);
+      } else {
+        console.error('Error posting service data:', error);
+      }
+    }
   };
 
   return (
@@ -72,120 +162,140 @@ const CustomiseJobRequestForm: React.FC = () => {
             <div>
               <label className="required block text-lg font-semibold mb-2" htmlFor="title">Title</label>
               <input
-                type="text"
-                id="title"
-                name="title"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="Math Tutor"
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={formState.title}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Math Tutor"
               />
             </div>
             <div>
-              <label className="required block text-lg font-semibold mb-2" htmlFor="work-category">Work Category</label>
-              <input
-                type="text"
-                id="work-category"
-                name="work-category"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="Web Development"
-              />
-            </div>
-            <div>
-              <label className="required block text-lg font-semibold mb-2" htmlFor="employment-type">Employment Type</label>
+              <label className="required block text-lg font-semibold mb-2" htmlFor="workCategory">Work Category</label>
               <select
-                defaultValue=""
-                id="employment-type"
-                name="employment-type"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                <option selected disabled>Select an option</option>
-                <option value="full-time">Full-time</option>
-                <option value="part-time">Part-time</option>
-                <option value="contract">Contract</option>
-                <option value="freelance">Freelance / Project-based</option>
+                  id="workCategory"
+                  name="workCategory"
+                  value={formState.workCategory}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                <option value="" disabled>Select an option</option>
+                <option value="DEVELOPMENT">Development</option>
+                <option value="ACCOUNTING">Accounting</option>
+                <option value="ART">Art</option>
+              </select>
+            </div>
+            <div>
+              <label className="required block text-lg font-semibold mb-2" htmlFor="employmentType">Employment Type</label>
+              <select
+                  id="employmentType"
+                  name="employmentType"
+                  value={formState.employmentType}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                <option value="" disabled>Select an option</option>
+                <option value="FULL_TIME">Full-time</option>
+                <option value="PART_TIME">Part-time</option>
+                <option value="CONTRACT">Contract</option>
               </select>
             </div>
             <div>For the fields below, please fill in the necessary job information e.g. job scope, skills requirement, personality fit.</div>
             <div>
               <label className="required block text-lg font-semibold mb-2" htmlFor="requirement1">Job Description 1</label>
               <input
-                type="text"
-                id="requirement1"
-                name="requirement1"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="Teach Middle School students"
+                  type="text"
+                  id="requirement1"
+                  name="requirement1"
+                  value={formState.requirement1}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Teach Middle School students"
               />
             </div>
             <div>
               <label className="required block text-lg font-semibold mb-2" htmlFor="requirement2">Job Description 2</label>
               <input
-                type="text"
-                id="requirement2"
-                name="requirement2"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="Familiar with GCE O Levels"
+                  type="text"
+                  id="requirement2"
+                  name="requirement2"
+                  value={formState.requirement2}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Familiar with GCE O Levels"
               />
             </div>
             <div>
               <label className="required block text-lg font-semibold mb-2" htmlFor="requirement3">Job Description 3</label>
               <input
-                type="text"
-                id="requirement3"
-                name="requirement3"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="Able to travel to my house"
+                  type="text"
+                  id="requirement3"
+                  name="requirement3"
+                  value={formState.requirement3}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Able to travel to my house"
               />
             </div>
             <div>
-              <label className="block text-lg font-semibold mb-2" htmlFor="example-work">Examples of Work</label>
+              <label className="block text-lg font-semibold mb-2" htmlFor="exampleWork">Examples of Work</label>
               <input
-                type="text"
-                id="example-work"
-                name="example-work"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="https://www.netflix.com"
+                  type="text"
+                  id="exampleWork"
+                  name="exampleWork"
+                  value={formState.exampleWork}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  placeholder="https://www.netflix.com"
               />
             </div>
             <div>
               <label className="block text-lg font-semibold mb-2" htmlFor="deadline">Submission Deadline</label>
               <input
-                type="date"
-                id="deadline"
-                name="deadline"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="Select a date"
+                  type="date"
+                  id="deadline"
+                  name="deadline"
+                  value={formState.deadline}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Select a date"
               />
             </div>
             <div>
               <label className="required block text-lg font-semibold mb-2" htmlFor="budget">Budget</label>
               <input
-                type="number"
-                id="budget"
-                name="budget"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="$14 / hour"
+                  type="number"
+                  id="budget"
+                  name="budget"
+                  value={formState.budget}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  placeholder="$14 / hour"
               />
             </div>
             <div>
               <label className="required block text-lg font-semibold mb-2" htmlFor="language">Language Spoken</label>
               <select multiple
-                id="language"
-                name="language"
-                onChange={handleLanguageChange}
-                defaultValue={[]}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                  <option value={[]} disabled>Select a language</option>
-                  <option value="Thai">ภาษาไทย</option>
-                  <option value="English">English</option>
-                  <option value="Chinese">中文</option>
+                      id="language"
+                      name="language"
+                      onChange={handleLanguageChange}
+                      defaultValue={[]}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                <option value="" disabled>Select a language</option>
+                <option value="Thai">ภาษาไทย</option>
+                <option value="English">English</option>
+                <option value="Chinese">中文</option>
               </select>
             </div>
             <div>
               <label className="required block text-lg font-semibold mb-2" htmlFor="location">Location</label>
               <input
-                type="text"
-                id="location"
-                name="location"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="Online / Phra Khanong / On Nut"
+                  type="text"
+                  id="location"
+                  name="location"
+                  value={formState.location}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Online / Phra Khanong / On Nut"
               />
             </div>
             <div className="text-center">
@@ -196,7 +306,7 @@ const CustomiseJobRequestForm: React.FC = () => {
           </form>
         </div>
         <div className="w-1/3 flex flex-col items-center justify-center">
-            {/*Card should update as formed is filled in*/}
+          {/*Card should update as formed is filled in*/}
           <CreateServiceRequestCard {...cardProps}/>
           <h3 className="px-6 text-gray-500 text-justify text-xs">* how your service request card will look like</h3>
         </div>
@@ -205,5 +315,6 @@ const CustomiseJobRequestForm: React.FC = () => {
 };
 
 export default CustomiseJobRequestForm;
+
 
 
