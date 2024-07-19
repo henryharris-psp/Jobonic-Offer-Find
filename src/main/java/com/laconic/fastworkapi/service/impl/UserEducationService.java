@@ -54,8 +54,8 @@ public class UserEducationService implements IUserEducationService {
                                 userEducationDTO.getProfileId().toString()));
 
         var userEducation = EntityMapper.mapToEntity(userEducationDTO, UserEducation.class);
-        profile.addEducation(userEducation);
-        profile = userRepo.save(profile);
+        userEducation.setProfile(profile);
+        this.userEducationRepo.save(userEducation);
         return new UserEducationDTO(userEducation);
     }
 

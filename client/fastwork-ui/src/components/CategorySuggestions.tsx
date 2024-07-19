@@ -1,16 +1,23 @@
 'use client';
 
+import { baseURL } from '@/baseURL';
+import httpClient from '@/client/httpClient';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
-interface Category {
-  category: string;
-}
 
-interface CategoryCardProps {
-  categories: Category[];
-}
+const CategorySuggestions = (): React.ReactElement => {
+  const [categoryList, setCategoryList] = useState<Category[]>([]);
 
-const CategorySuggestions = ({ categories }: CategoryCardProps): React.ReactElement => {
+  const fetchCategory = async () => {
+    const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
+    setCategoryList(response.data);
+  };
+
+  useEffect(() => {
+    fetchCategory();
+  }, []);
+  
   return (
     <section className="py-16 px-4 md:px-0">
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-start">
@@ -22,10 +29,10 @@ const CategorySuggestions = ({ categories }: CategoryCardProps): React.ReactElem
           </Link>
         </div>
         <div className="flex flex-wrap items-center gap-4 mt-6">
-          {categories.map((category, index) => (
-            <Link key={index} href={`/serviceList?category=${encodeURIComponent(category.category)}`}>
+          {categoryList.map((category, index) => (
+            <Link key={index} href={`/serviceList?category=${encodeURIComponent(category.name)}`}>
               <div className="bg-[#0B2147] text-white rounded-lg px-4 py-2 shadow-md hover:cursor-pointer hover:bg-[#D0693B]">
-                {category.category}
+                {category.name}
               </div>
             </Link>
           ))}

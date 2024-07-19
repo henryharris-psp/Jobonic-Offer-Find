@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import ServiceMatchCard from '@/components/ServiceMatchCard'; // Ensure this path is correct
 import { Service } from '@/types';
+import httpClient from '@/client/httpClient';
+import { baseURL } from '@/baseURL';
 
 const ServiceMatches = (): React.ReactElement => {
   const services = [
@@ -59,15 +61,6 @@ const ServiceMatches = (): React.ReactElement => {
     },
   ];
 
-  const categories = [
-    "Development and IT",
-    "AI Services",
-    "HR and Training",
-    "Graphic and Design",
-    "Marketing and Advertising",
-    "Write and Translate"
-  ];
-
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
@@ -83,6 +76,13 @@ const ServiceMatches = (): React.ReactElement => {
   });
 
   const router = useRouter();
+  const [categoryList, setCategoryList] = useState<Category[]>([]);
+
+
+  const fetchCategory = async () => {
+    const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
+    setCategoryList(response.data);
+  };
 
   const handleServiceClick = (service: Service) => {
     setSelectedService(service);
@@ -139,6 +139,10 @@ const ServiceMatches = (): React.ReactElement => {
   };
 
   const areFiltersApplied = appliedFilters.minPrice !== '' || appliedFilters.maxPrice !== '' || appliedFilters.deadline !== '';
+
+  useEffect(() => {
+    fetchCategory();
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -251,8 +255,8 @@ const ServiceMatches = (): React.ReactElement => {
             <div className="flex pt-8">
               <div className="job-category overflow-y-auto w-1/5 pr-4">
                 <h2 className='font-semibold text-center'>Work Category</h2>
-                {categories.map((category, index) => (
-                  <div key={index} className="py-2 border-b border-gray-400 hover:text-blue-500 cursor-pointer">{category}</div>
+                {categoryList.map((category, index) => (
+                  <div key={index} className="py-2 border-b border-gray-400 hover:text-blue-500 cursor-pointer">{category.name}</div>
                 ))}
               </div>
               <div className="flex flex-wrap w-4/5">

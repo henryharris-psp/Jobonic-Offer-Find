@@ -39,6 +39,7 @@ public class Profile extends Auditable<UUID> {
     private String walletAddress;
     private double review = 0;
     private boolean isActive = true;
+    @Column(unique = true)
     private Long userId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile", orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<UserExperience> userExperienceList = new HashSet<>();

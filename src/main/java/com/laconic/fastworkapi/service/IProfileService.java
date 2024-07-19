@@ -19,4 +19,6 @@ public interface IProfileService {
     List<ProfileDTO> getAllUsers();
 
     String removeUser(Long id);
+
+    ProfileDTO getByUserId(Long userId);
 }

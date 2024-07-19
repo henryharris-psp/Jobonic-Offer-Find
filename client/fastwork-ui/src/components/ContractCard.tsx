@@ -1,75 +1,58 @@
-'use client';
+import React from 'react';
 
-import React from "react";
-import Image from 'next/image';
-
-interface Contract {
-  title: string;
-  company: string;
-  profilePic: string;
-  price: string;
-  deliverables: string[];
-  milestones: { name: string; tasks: string[]; dueDate?: string; payment: string }[];
-}
-
-interface ContractCardProps {
-  contract: Contract;
-  onEditContract: () => void;
-}
-
-const ContractCard = ({ contract, onEditContract }: ContractCardProps): React.ReactElement => {
-  return (
-      <div className="bg-white p-6 rounded-lg shadow-md flex space-x-4">
-        <div className="flex-shrink-0">
-          <Image src={contract.profilePic} alt="Profile Pic" width={50} height={50} className="rounded-full" />
-        </div>
-        <div className="flex-grow">
-          <h2 className="text-xl font-bold">{contract.title}</h2>
-          <p className="text-gray-500">{contract.company}</p>
-          <p className="mt-2 text-sm"><strong>Price:</strong> {contract.price}</p>
-          <p className="text-sm"><strong>Deliverable:</strong></p>
-          <ul className="list-disc list-inside">
-            {contract.deliverables.map((deliverable, index) => (
-                <li key={index}>{deliverable}</li>
-            ))}
-          </ul>
-          <div className="mt-4">
-            {contract.milestones.map((milestone, index) => (
-                <div key={index} className="mb-4">
-                  <h3 className="font-semibold">{milestone.name}</h3>
-                  <ul className="list-disc list-inside">
-                    {milestone.tasks.map((task, taskIndex) => (
-                        <li key={taskIndex}>{task}</li>
-                    ))}
-                    {milestone.dueDate && (
-                        <li className="text-gray-500">due by: {milestone.dueDate}</li>
-                    )}
-                  </ul>
-                  <p className="text-sm mt-1"><strong>{milestone.payment}</strong></p>
+const ContractCard: React.FC = () => {
+    return (
+        <div className="flex flex-row p-5 border shadow-lg rounded-md bg-white">
+            <div className="flex flex-col w-1/2 pr-4">
+                <div className="flex flex-row mb-4">
+                    <img
+                        src="path-to-image"
+                        alt="Profile"
+                        className="w-16 h-16 rounded-full"
+                    />
+                    <div className="ml-4">
+                        <h2 className="text-xl font-bold">Logo designer</h2>
+                        <p>Price: $200</p>
+                        <p>Deliverable:</p>
+                        <ul>
+                            <li>3 sets of logo design</li>
+                        </ul>
+                    </div>
                 </div>
-            ))}
-          </div>
+                <button className="mt-4 bg-[#E1824F] text-white p-2 rounded">
+                    Edit contract
+                </button>
+            </div>
+            <div className="flex flex-col w-1/2 max-h-96 overflow-y-auto">
+                <div className="mt-4">
+                    <h3 className="font-bold">Milestone 1</h3>
+                    <ul>
+                        <li>Design colour scheme</li>
+                        <li>Create logo draft</li>
+                    </ul>
+                    <p>10% payment: $100</p>
+                </div>
+                <div className="mt-4">
+                    <h3 className="font-bold">Milestone 2</h3>
+                    <ul>
+                        <li>Logo draft 2</li>
+                        <li>Due by: 5 August 2025</li>
+                    </ul>
+                    <p>40% payment: $100</p>
+                </div>
+                <div className="mt-4">
+                    <h3 className="font-bold">Milestone 3</h3>
+                    <ul>
+                        <li>Final logo draft 3</li>
+                        <li>Due by: 9 August 2025</li>
+                    </ul>
+                    <p>20% payment: $100</p>
+                </div>
+            </div>
         </div>
-        <div className="flex items-start">
-          <button
-              className="bg-[#E1824F] text-white rounded-lg px-4 py-2"
-              onClick={onEditContract}
-          >
-            Edit contract
-          </button>
-        </div>
-      </div>
-  );
+    );
 };
 
 export default ContractCard;
-
-
-
-
-
-
-
-
 
 

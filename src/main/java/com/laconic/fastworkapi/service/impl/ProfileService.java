@@ -128,4 +128,10 @@ public class ProfileService implements IProfileService {
         this.userRepo.save(existingUser);
         return String.format(AppMessage.DELETE_MESSAGE, AppMessage.USER);
     }
+
+    @Override
+    public ProfileDTO getByUserId(Long userId) {
+        var existingUser = this.userRepo.findByUserId(userId);
+        return EntityMapper.mapToResponse(existingUser, ProfileDTO.class);
+    }
 }

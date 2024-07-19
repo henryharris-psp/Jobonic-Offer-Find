@@ -5,8 +5,10 @@ import ChatMessageBig from '@/components/ChatMessageBig';
 import DealCard from '@/components/DealCard';
 import ServiceRequestCard from './ServiceRequestCard';
 import ServiceMatchCard from "@/components/ServiceMatchCard";
+
 import { CurrentUser } from '@/app/chat/page';
 import { supabase } from '@/app/config/supabaseClient';
+import ContractCard from './ContractCard';
 
 interface ServiceRequest {
   title: string;
@@ -131,6 +133,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
         price: '$99.99',
       };
 
+  const [isContractVisible, setIsContractVisible] = useState(false); // New state for modal visibility
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -228,6 +231,55 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
     setMessages([...messages, newMessageObj]);
   };
 
+  const handleViewContractDetails = () => {
+    setIsContractVisible(true); // Show the modal
+  };
+
+  const handleCloseContract = () => {
+    setIsContractVisible(false); // Hide the modal
+  };
+
+  const sampleService = {
+    name: 'Ella, Middle School Math tutor',
+    image: '/group-image.jpg', // Replace with actual image path
+    rating: 4.5,
+    reviews: 20,
+    price: '$15/hr',
+    description: 'Taught in mainstream school for 5 years. Specializes in boosting grades of failing math students through personalized home tutoring.',
+    reviewsDetail: [
+      {
+        reviewer: 'John',
+        comment: 'Oliver provided excellent tutoring for my son, and his grades improved significantly in just a month.',
+        rating: 5,
+      },
+      {
+        reviewer: 'Timmy',
+        comment: 'Oliver provided excellent tutoring for my son, and his grades improved significantly in just a month.',
+        rating: 4,
+      },
+    ],
+    numSold: 10,
+    bullet1: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    bullet2: 'Minimum 3 years of experience in software development.',
+    bullet3: 'Proficiency in Python, R, and machine learning algorithms.',
+  };
+
+  const sampleData: ServiceRequest = {
+    title: "Marketing Specialist",
+    work_category: "Analytics",
+    company: "Google",
+    location: "New York",
+    employment_type: "Part-time",
+    description_1: "Collect and analyze data",
+    description_2: "Generate and present reports",
+    description_3: "Use statistical tools for data interpretation",
+    examples_of_work: "Portfolio",
+    submission_deadline: "15/8/2024",
+    budget: "45000",
+    language: "English",
+    days_left: "50",
+  };
+
   return (
     <div className="flex flex-col w-full h-full bg-white">
       <div className="my-4 px-4">
@@ -263,6 +315,53 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
           message.type === 'message' ? ( */}
           {messages.map((message) => 
             <ChatMessageBig key={message.id} message={message} currentUserId={currentUser?.userid}/>
+                        
+//       <div className="flex flex-col w-full h-full bg-white">
+//         <div className="my-4 px-4">
+//           <div className="flex flex-row">
+//             <div className="text-xl font-bold justify-self-start mr-60">{activeChat.name}</div>
+//             <button
+//                 className="bg-[#E1824F] text-white rounded-lg text-sm p-2 mr-4"
+//                 onClick={handleViewContractDetails} // Add onClick handler
+//             >
+//               View Contract Details
+//             </button>
+//             <button className="bg-[#71BAC7] text-white rounded-lg text-sm p-2 mr-4" disabled>
+//               { activeChat.type === 'client' ? 'Hiring' : 'Offering'}
+//             </button>
+//             <button className="bg-[#71BAC7] text-white rounded-lg text-sm p-2" disabled>
+//               {activeChat.status}
+//             </button>
+//           </div>
+
+//           <div className="h-0.5 mt-1 bg-gray-300"></div>
+//         </div>
+//         <div ref={chatContainerRef} className={`overflow-y-auto p-6 bg-white flex" ${activeChat.status === 'Applied' ? 'justify-end' : 'justify-start'}`}>
+//           {messages.map((message) =>
+//               message.type === 'deal' ? (
+//                   <DealCard
+//                       key={message.id}
+//                       image={message.image!}
+//                       title={message.title!}
+//                       rating={message.rating!}
+//                       description={message.description!}
+//                       price={message.price!}
+//                       onAccept={() => alert('Deal Accepted')}
+//                       onEditOffer={(newPrice) => alert(`Edit Offer: ${newPrice}`)}
+//                       onDeclineAndSendMessage={handleDeclineAndSendMessage}
+//                   />
+//               ) : message.type === 'message' ? (
+//                   <ChatMessageBig key={message.id} message={message} />
+//               ) : message.type === 'apply' ? (
+//                   <ServiceRequestCard serviceRequest={sampleData} hasProfile={true} profilePic={'/jobonic.svg'} applyDisplay={false}/>
+//               ) : (
+//                   <ServiceMatchCard
+//                       service={sampleService}
+//                       onClick={() => console.log('clicked')}
+//                       onChatClick={() => console.log('clicked')}
+//                   />
+//               )
+
           )}
           {/* ) :
           message.type === 'apply' ? (
@@ -288,12 +387,15 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
                   width="24"
                   height="24"
                   fill="none"
-                  viewBox="0 0 24 24">
-                <path stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="1.5"
-                      d="M7 8v8a5 5 0 1 0 10 0V6.5a3.5 3.5 0 1 0-7 0V15a2 2 0 0 0 4 0V8"/>
+                  viewBox="0 0 24 24"
+              >
+                <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.5"
+                    d="M7 8v8a5 5 0 1 0 10 0V6.5a3.5 3.5 0 1 0-7 0V15a2 2 0 0 0 4 0V8"
+                />
               </svg>
             </label>
 
@@ -304,18 +406,30 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
             />
-            <button className="lg:w-auto px-4 py-2 bg-[#0C2348] text-white rounded-lg font-semibold hover:bg-[#D0693B] focus:outline-none"
-                    onClick={handleMessageSubmit}>
+            <button className="lg:w-auto px-4 py-2 bg-[#0C2348] text-white rounded-lg font-semibold hover:bg-[#D0693B] focus:outline-none" onClick={handleMessageSubmit}>
               Send
             </button>
           </div>
         </div>
+
+        {isContractVisible && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+              <div className="relative bg-white rounded-lg p-4 w-96">
+                <ContractCard />
+                <button
+                    className="mt-4 bg-red-500 text-white p-2 rounded"
+                    onClick={handleCloseContract}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+        )}
       </div>
   );
 };
 
 export default ChatConversation;
-
 
 
 
