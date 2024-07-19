@@ -10,7 +10,6 @@ import lombok.Setter;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -31,6 +30,16 @@ public class ServiceOfferDTO implements Serializable {
     private String skills;
     private String experience;
     private int draftCount;
+    private String title;
+    private String workCategory;
+    private String employmentType;
+    private String descriptionI;
+    private String descriptionII;
+    private String descriptionIII;
+    private double price;
+    private String languageSpoken;
+    private String location;
+
 
     public ServiceOfferDTO(ServiceOffer serviceOffer) {
         this.id = serviceOffer.getId();
@@ -43,6 +52,14 @@ public class ServiceOfferDTO implements Serializable {
         this.draftCount = serviceOffer.getDraftCount();
         this.skills = serviceOffer.getSkills();
         this.experience = serviceOffer.getExperience();
+        this.title = serviceOffer.getTitle();
+        this.workCategory = serviceOffer.getWorkCategory();
+        this.descriptionI = serviceOffer.getDescriptionI();
+        this.descriptionII = serviceOffer.getDescriptionII();
+        this.descriptionIII = serviceOffer.getDescriptionIII();
+        this.price = serviceOffer.getPrice();
+        this.languageSpoken = serviceOffer.getLanguageSpoken();
+        this.location = serviceOffer.getLocation();
     }
 
     public ServiceOffer updateServiceOffer(ServiceOffer serviceOffer) {
@@ -55,6 +72,14 @@ public class ServiceOfferDTO implements Serializable {
         serviceOffer.setDraftCount(this.draftCount);
         serviceOffer.setSkills(this.skills);
         serviceOffer.setExperience(this.experience);
+        serviceOffer.setTitle(this.title);
+        serviceOffer.setWorkCategory(this.workCategory);
+        serviceOffer.setDescriptionI(this.descriptionI);
+        serviceOffer.setDescriptionII(this.descriptionII);
+        serviceOffer.setDescriptionIII(this.descriptionIII);
+        serviceOffer.setPrice(this.price);
+        serviceOffer.setLanguageSpoken(this.languageSpoken);
+        serviceOffer.setLocation(this.location);
         return serviceOffer;
     }
 }
