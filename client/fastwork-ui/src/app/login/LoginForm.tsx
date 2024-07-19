@@ -4,40 +4,78 @@ import Link from 'next/link';
 import Form from '@/components/Form';
 import InputField from '@/components/InputField';
 import * as Yup from 'yup';
+import axios from 'axios';
+import { decodeJWT } from '../helper/decoder';
 
 interface LoginFormValues {
-  email: string;
+  username: string;
   password: string;
 }
 
 const initialValues: LoginFormValues = {
-  email: '',
+  username: '',
   password: '',
 };
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string().email().required().label('Email'),
+  username: Yup.string().email().required().label('Email'),
   password: Yup.string().required().label('Password'),
 });
 
-const loginDetails = {
-  email: 'test@test.com',
-  password: 'test',
-};
+const baseUrl = process.env.NEXT_PUBLIC_AUTHORIZE_SERVER
 
 export const LoginForm = (): React.ReactNode => {
-  const onSubmit = async (values: { [key: string]: any }): Promise<void> => {
+
+  // const onSubmit = async (values: { [key: string]: any }): Promise<void> => {
+  //   try {
+  //     console.log('Log in form submitted:', values);
+  //     if (values.email === loginDetails.email && values.password === loginDetails.password) {
+  //       window.location.href = '/';
+  //     } else {
+  //       alert('Invalid Credentials');
+  //     }
+  //   } catch (error: any) {
+  //     console.log('Error logging in:', error.message);
+  //   }
+  // };
+  const onSubmit = async (
+    values: { [key: string]: any }
+  ): Promise<void> => {
+    const URL =`${baseUrl}/v1/login`;
     try {
-      console.log('Log in form submitted:', values);
-      if (values.email === loginDetails.email && values.password === loginDetails.password) {
-        window.location.href = '/';
-      } else {
-        alert('Invalid Credentials');
-      }
+      const response = await axios.post(URL, values, {
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          });
+          console.log('Response:', response);
+          
+          if(response.data) {
+          console.log('Log in form submitted:')
+          const tokens = {
+            refreshToken: response.data.refresh_token,
+            refreshTokenExpires: response.data.refresh_expires_in,
+            accessToken: response.data.access_token,
+            accessTokenExpires: Date.now() + response.data.expires_in * 1000,
+          }
+          const tokensString = JSON.stringify(tokens);
+          localStorage.setItem('tokens', tokensString);
+
+          const decodedPayload = decodeJWT(tokens.accessToken);
+          console.log('DECO', decodedPayload)
+          const { name, email, userid } = decodedPayload;
+          const userInfo = {name, email, userid}
+          console.log('USER', userInfo)
+          localStorage.setItem('userInfo', JSON.stringify(userInfo));
+
+          window.location.href = '/'
+        } else {
+          alert('Invalid Credentials')
+        }
     } catch (error: any) {
-      console.log('Error logging in:', error.message);
+      console.log('Error logging in:', error.message)
     }
-  };
+  }
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -45,7 +83,7 @@ export const LoginForm = (): React.ReactNode => {
         <h1 className="text-black font-bold text-lg text-center pb-6">Log In</h1>
         <Form initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
           <div className="mb-6">
-            <InputField label="Email" name="email" type="email" placeholder="Email" />
+            <InputField label="Email" name="username" type="email" placeholder="Email" />
           </div>
           <div className="mb-6">
             <InputField label="Password" name="password" type="password" placeholder="Password" />

@@ -154,9 +154,11 @@ export default function OfferServicesPage(): ReactNode { // Use ReactNode for th
   };
 
   const areFiltersApplied = appliedFilters.minPrice !== '' || appliedFilters.maxPrice !== '' || appliedFilters.deadline !== '';
+
   useEffect(() => {
     fetchCategory();
   }, []);
+  
   return (
       <div>
         <div className="p-16">

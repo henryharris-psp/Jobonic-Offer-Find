@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import httpClient from "@/client/httpClient";
 import { baseURL, SERVER_AUTH, token } from "@/baseURL";
@@ -15,7 +15,7 @@ type User = {
     otherInformation: string[];
 };
 
-export default function SelectSkills() {
+function ComponentSelectSkills() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const serviceId = searchParams.get("serviceId");
@@ -70,7 +70,7 @@ export default function SelectSkills() {
         fetchServiceData();
     }, [serviceId]);
 
-    const[skills, setSkillsList] = useState<SkillInstance[]>([]);
+    const [skills, setSkillsList] = useState<SkillInstance[]>([]);
 
     const fetchSkills = async () => {
         try {
@@ -83,7 +83,7 @@ export default function SelectSkills() {
     }
     useEffect(() => {
         fetchSkills();
-    },[]);
+    }, []);
 
     const handleExperienceClick = (experience: string) => {
         setSelectedExperience(experience);
@@ -142,11 +142,10 @@ export default function SelectSkills() {
                         {skills.map((skill, index) => (
                             <button
                                 key={index}
-                                className={`btn ${
-                                    selectedExperience === skill.name
+                                className={`btn ${selectedExperience === skill.name
                                         ? "bg-[#0B2147] text-white"
                                         : "bg-white text-gray-900"
-                                } border border-gray-300 rounded-lg p-2 mb-2`}
+                                    } border border-gray-300 rounded-lg p-2 mb-2`}
                                 onClick={() => handleExperienceClick(skill.name)}
                             >
                                 {skill.name}
@@ -162,11 +161,10 @@ export default function SelectSkills() {
                         {user.experience.map((exp, index) => (
                             <button
                                 key={index}
-                                className={`btn ${
-                                    selectedExperience === exp
+                                className={`btn ${selectedExperience === exp
                                         ? "bg-[#0B2147] text-white"
                                         : "bg-white text-gray-900"
-                                } border border-gray-300 rounded-lg p-2 mb-2`}
+                                    } border border-gray-300 rounded-lg p-2 mb-2`}
                                 onClick={() => handleExperienceClick(exp)}
                             >
                                 {exp}
@@ -187,5 +185,16 @@ export default function SelectSkills() {
     );
 }
 
+function SelectSkills() {
+    return (
+        <div>
+            <Suspense fallback={<div>Loading...</div>}>
+                <ComponentSelectSkills />
+            </Suspense>
+        </div>
+    );
+}
+
+export default SelectSkills;
 
 
