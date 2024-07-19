@@ -33,12 +33,20 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/actuator/**",
-                                        "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                                        "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/api/v1/skill/all", "api/v1/category/all").permitAll()
                                 .anyRequest().authenticated()
                 )
-                .oauth2ResourceServer()
-                .jwt();
-
+                .oauth2ResourceServer(oauth2ResourceServer ->
+                        oauth2ResourceServer
+                                .jwt(jwt ->
+                                        {
+                                            try {
+                                                jwt.decoder(jwtDecoder());
+                                            } catch (Exception e) {
+                                                throw new RuntimeException(e);
+                                            }
+                                        }
+                                ));
         return http.build();
     }
 
