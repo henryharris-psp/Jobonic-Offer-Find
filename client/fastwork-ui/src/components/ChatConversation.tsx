@@ -79,48 +79,47 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
   //   },
   // ]);
 
-  const sampleService =
-  {
-    name: 'Ella, Middle School Math tutor',
-      image: '/group-image.jpg', // Replace with actual image path
-      rating: 4.5,
-      reviews: 20,
-      price: '$15/hr',
-      description: 'Taught in mainstream school for 5 years. Specializes in boosting grades of failing math students through personalized home tutoring.',
-      reviewsDetail: [
-    {
-      reviewer: 'John',
-      comment: 'Oliver provided excellent tutoring for my son, and his grades improved significantly in just a month.',
-      rating: 5,
-    },
-    {
-      reviewer: 'Timmy',
-      comment: 'Oliver provided excellent tutoring for my son, and his grades improved significantly in just a month.',
-      rating: 4,
-    },
-    // Add more reviews as needed
-  ],
-      numSold: 10,
-      bullet1: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      bullet2: 'Minimum 3 years of experience in software development.',
-      bullet3: 'Proficiency in Python, R, and machine learning algorithms.',
-  };
+  // const sampleService =
+  // {
+  //   name: 'Ella, Middle School Math tutor',
+  //     image: '/group-image.jpg',
+  //     rating: 4.5,
+  //     reviews: 20,
+  //     price: '$15/hr',
+  //     description: 'Taught in mainstream school for 5 years. Specializes in boosting grades of failing math students through personalized home tutoring.',
+  //     reviewsDetail: [
+  //   {
+  //     reviewer: 'John',
+  //     comment: 'Oliver provided excellent tutoring for my son, and his grades improved significantly in just a month.',
+  //     rating: 5,
+  //   },
+  //   {
+  //     reviewer: 'Timmy',
+  //     comment: 'Oliver provided excellent tutoring for my son, and his grades improved significantly in just a month.',
+  //     rating: 4,
+  //   },
+  // ],
+  //     numSold: 10,
+  //     bullet1: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+  //     bullet2: 'Minimum 3 years of experience in software development.',
+  //     bullet3: 'Proficiency in Python, R, and machine learning algorithms.',
+  // };
 
-  const sampleData = {
-    title: "Marketing Specialist",
-    work_category: "Analytics",
-    company: "Google",
-    location: "New York",
-    employment_type: "Part-time",
-    description_1: "Collect and analyze data",
-    description_2: "Generate and present reports",
-    description_3: "Use statistical tools for data interpretation",
-    examples_of_work: "Portfolio",
-    submission_deadline: "15/8/2024",
-    budget: "45000",
-    language: "English",
-    days_left: "50",
-  };
+  // const sampleData = {
+  //   title: "Marketing Specialist",
+  //   work_category: "Analytics",
+  //   company: "Google",
+  //   location: "New York",
+  //   employment_type: "Part-time",
+  //   description_1: "Collect and analyze data",
+  //   description_2: "Generate and present reports",
+  //   description_3: "Use statistical tools for data interpretation",
+  //   examples_of_work: "Portfolio",
+  //   submission_deadline: "15/8/2024",
+  //   budget: "45000",
+  //   language: "English",
+  //   days_left: "50",
+  // };
 
   const deal =
       {
@@ -166,23 +165,23 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
     fetchMessages();
   }, [recipientUser, newMessage]);
 
-  useEffect(() => {
-    if (currentUser && recipientUser) {
-      const messageSubscription = supabase
-        .channel('public:messages')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
-          const newMessage = payload.new;
-          if ((newMessage.sender_id == currentUser.id && newMessage.recipient_id == recipientUser.id) ||
-            (newMessage.sender_id == recipientUser.id && newMessage.recipient_id == currentUser.id)) {
-            setMessages(prevMessages => [...prevMessages, newMessage]);
-          }
-        })
-        .subscribe();
-      return () => {
-        supabase.removeChannel(messageSubscription);
-      };
-    }
-  }, [newMessage, messages]);
+  // useEffect(() => {
+  //   if (currentUser && recipientUser) {
+  //     const messageSubscription = supabase
+  //       .channel('public:messages')
+  //       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+  //         const newMessage = payload.new;
+  //         if ((newMessage.sender_id == currentUser.id && newMessage.recipient_id == recipientUser.id) ||
+  //           (newMessage.sender_id == recipientUser.id && newMessage.recipient_id == currentUser.id)) {
+  //           setMessages(prevMessages => [...prevMessages, newMessage]);
+  //         }
+  //       })
+  //       .subscribe();
+  //     return () => {
+  //       supabase.removeChannel(messageSubscription);
+  //     };
+  //   }
+  // }, [newMessage, messages]);
 
   // useEffect(() => {
   //   setMessages([

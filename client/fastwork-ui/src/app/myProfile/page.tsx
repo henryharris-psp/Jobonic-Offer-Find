@@ -8,7 +8,7 @@ import httpClient from '@/client/httpClient';
 
 type EducationInstance = {
     id: string;
-    profileId: string;
+    profileId: number;
     institute: string;
     degree: string;
     startDate: string;
@@ -17,7 +17,7 @@ type EducationInstance = {
 
 type ExperienceInstance = {
     id: string;
-    profileId: string;
+    profileId: number;
     company: string;
     startDate: string;
     endDate: string;
@@ -66,7 +66,7 @@ export default function MyProfile(): React.ReactNode {
 
     const [showFields, setShowFields] = useState(false); //education
     const [showExperienceFields, setShowExperienceFields] = useState(false);
-    const[skills, setSkillsList] = useState<SkillInstance[]>([]);
+    const [skills, setSkillsList] = useState<SkillInstance[]>([]);
 
     const [enabledInputs, setEnabledInputs] = useState<{
         [key: string]: boolean;
@@ -136,18 +136,18 @@ export default function MyProfile(): React.ReactNode {
                 };
                 break;
             case "user-experience":
-                data = {
+                const dataExperience: ExperienceInstance = {
                     id: dummyPostId,
                     profileId: userId,
                     company: companyField,
                     startDate: experienceStartDateField,
                     endDate: experienceEndDateField,
                 };
-                setExperienceList((prevList) => [...prevList, data]); // Add the new education entry to the list
-                console.log(data);
+                setExperienceList((prevList: ExperienceInstance[]) => [...prevList, dataExperience]);
+                console.log('data = ', data);
                 break;
             case "user-education":
-                data = {
+                const dataEducation: EducationInstance = {
                     id: dummyPostId,
                     profileId: userId,
                     institute: institutionField,
@@ -155,8 +155,8 @@ export default function MyProfile(): React.ReactNode {
                     startDate: startDateField,
                     endDate: endDateField,
                 };
-                setEducationList((prevList) => [...prevList, data]);
-                console.log(data);
+                setEducationList((prevList:EducationInstance[]) => [...prevList, dataEducation]);
+                console.log('data = ', data);
                 break;
             case "otherInfo":
                 fieldData = otherInfoField;
@@ -197,9 +197,9 @@ export default function MyProfile(): React.ReactNode {
     }
     useEffect(() => {
         fetchSkills();
-    },[]);
+    }, []);
     // Fetch userdata
-    console.log("fetching user data : ",skills);
+    console.log("fetching user data : ", skills);
     useEffect(() => {
         let abortController = new AbortController();
         const fetchUserData = async () => {
@@ -292,8 +292,8 @@ export default function MyProfile(): React.ReactNode {
                         !aboutMeField ? "incoming bza student from nus" : aboutMeField
                     }
                     className={`text-black ${enabledInputs["aboutMe"]
-                            ? "border bg-white"
-                            : "border-none bg-transparent"
+                        ? "border bg-white"
+                        : "border-none bg-transparent"
                         } rounded`}
                     ref={aboutMeRef}
                     disabled={!enabledInputs["aboutMe"]}
@@ -321,15 +321,15 @@ export default function MyProfile(): React.ReactNode {
                     </svg> */}
                 </div>
                 <form className="max-w-sm">
-                <select id="countries" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option selected>Choose a skills</option>
-                    {
-                        skills.map((skill) => (
-                            <option value={skill.name}>{skill.name}</option>
-                        ))
-                    }
-                </select>
-            </form>
+                    <select id="countries" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option selected>Choose a skills</option>
+                        {
+                            skills.map((skill, index) => (
+                                <option key={index} value={skill.name}>{skill.name}</option>
+                            ))
+                        }
+                    </select>
+                </form>
                 {enabledInputs["skills"] && (
                     <button
                         onClick={() => handleSave("skill")}
@@ -342,7 +342,7 @@ export default function MyProfile(): React.ReactNode {
                     <p className="text-sm mt-2">{feedbackMessage["skills"]}</p>
                 )}
             </div>
-            
+
             {/* Education */}
             <div className="flex flex-col justify-start w-full pb-16 space-y-2.5">
                 <div className="flex flex-row space-x-2 items-center">
@@ -422,8 +422,8 @@ export default function MyProfile(): React.ReactNode {
                                         : institutionField
                                 }
                                 className={`text-black col-span-2 ${enabledInputs["user-education"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
+                                    ? "border bg-white"
+                                    : "border-none bg-transparent"
                                     } rounded`}
                                 ref={institutionRef}
                                 disabled={!enabledInputs["user-education"]}
@@ -437,8 +437,8 @@ export default function MyProfile(): React.ReactNode {
                                 id="degree"
                                 placeholder={!degreeField ? "Enter your degree" : degreeField}
                                 className={`text-black w-full col-span-2 ${enabledInputs["user-education"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
+                                    ? "border bg-white"
+                                    : "border-none bg-transparent"
                                     } rounded`}
                                 ref={degreeRef}
                                 disabled={!enabledInputs["user-education"]}
@@ -456,8 +456,8 @@ export default function MyProfile(): React.ReactNode {
                                         : startDateField
                                 }
                                 className={`text-black w-full col-span-2 ${enabledInputs["user-education"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
+                                    ? "border bg-white"
+                                    : "border-none bg-transparent"
                                     } rounded`}
                                 ref={startDateRef}
                                 disabled={!enabledInputs["user-education"]}
@@ -473,8 +473,8 @@ export default function MyProfile(): React.ReactNode {
                                     !endDateField ? "Enter end date (YYYY-MM-DD)" : endDateField
                                 }
                                 className={`text-black w-full col-span-2 ${enabledInputs["user-education"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
+                                    ? "border bg-white"
+                                    : "border-none bg-transparent"
                                     } rounded`}
                                 ref={endDateRef}
                                 disabled={!enabledInputs["user-education"]}
@@ -565,8 +565,8 @@ export default function MyProfile(): React.ReactNode {
                                         : companyField
                                 }
                                 className={`text-black col-span-2 ${enabledInputs["user-experience"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
+                                    ? "border bg-white"
+                                    : "border-none bg-transparent"
                                     } rounded`}
                                 ref={companyRef}
                                 disabled={!enabledInputs["user-experience"]}
@@ -584,8 +584,8 @@ export default function MyProfile(): React.ReactNode {
                                         : experienceStartDateField
                                 }
                                 className={`text-black w-full col-span-2 ${enabledInputs["user-experience"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
+                                    ? "border bg-white"
+                                    : "border-none bg-transparent"
                                     } rounded`}
                                 ref={experienceStartDateRef}
                                 disabled={!enabledInputs["user-experience"]}
@@ -601,8 +601,8 @@ export default function MyProfile(): React.ReactNode {
                                     !experienceEndDateField ? "Enter end date (YYYY-MM-DD)" : experienceEndDateField
                                 }
                                 className={`text-black w-full col-span-2 ${enabledInputs["user-experience"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
+                                    ? "border bg-white"
+                                    : "border-none bg-transparent"
                                     } rounded`}
                                 ref={experienceEndDateRef}
                                 disabled={!enabledInputs["user-experience"]}
@@ -641,8 +641,8 @@ export default function MyProfile(): React.ReactNode {
                         !otherInfoField ? "Enter something about yourself" : otherInfoField
                     }
                     className={`text-black ${enabledInputs["otherInfo"]
-                            ? "border bg-white"
-                            : "border-none bg-transparent"
+                        ? "border bg-white"
+                        : "border-none bg-transparent"
                         } rounded`}
                     ref={otherInfoRef}
                     disabled={!enabledInputs["otherInfo"]}
