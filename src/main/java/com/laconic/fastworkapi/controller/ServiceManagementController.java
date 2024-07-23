@@ -53,9 +53,16 @@ public class ServiceManagementController {
 
     @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL_BY_USER)
     @GetMapping("/user")
-    public List<ServiceDTO.WithProfile> getAllByUser(Long profileId) {
+    public List<ServiceDTO.WithProfile> getAllByUser(@RequestParam Long profileId) {
         return this.managementService.getAllByUser(profileId);
     }
+
+    @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL_BY_USER)
+    @GetMapping("/get")
+    public ServiceDTO.WithProfile getById(@RequestParam UUID serviceId) {
+        return this.managementService.getById(serviceId);
+    }
+
 
     @Operation(summary = APIDocsHelper.ServiceAPI.DELETE_OFFER)
     @DeleteMapping("/offer")

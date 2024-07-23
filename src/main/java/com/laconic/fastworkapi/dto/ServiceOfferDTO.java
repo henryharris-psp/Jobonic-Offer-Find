@@ -29,14 +29,14 @@ public class ServiceOfferDTO implements Serializable {
     private String address;
     private String skills;
     private String experience;
-    private int draftCount;
+    private int draftCount = 0;
     private String title;
     private String workCategory;
     private String employmentType;
     private String descriptionI;
     private String descriptionII;
     private String descriptionIII;
-    private double price;
+    private double price = 0;
     private String languageSpoken;
     private String location;
 
