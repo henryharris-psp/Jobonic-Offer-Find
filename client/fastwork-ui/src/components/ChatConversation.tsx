@@ -150,7 +150,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
         const { data, error } = await supabase
           .from('messages')
           .select('*')
-          .or(`sender_id.eq.${currentUser.userid},recipient_id.eq.${currentUser.userid}`)
+          .or(`sender_id.eq.${currentUser.id},recipient_id.eq.${currentUser.id}`)
           .or(`sender_id.eq.${recipientUser.id},recipient_id.eq.${recipientUser.id}`)
           .order('created_at', { ascending: true });
 
@@ -172,8 +172,8 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
         .channel('public:messages')
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
           const newMessage = payload.new;
-          if ((newMessage.sender_id == currentUser.userid && newMessage.recipient_id == recipientUser.id) ||
-            (newMessage.sender_id == recipientUser.id && newMessage.recipient_id == currentUser.userid)) {
+          if ((newMessage.sender_id == currentUser.id && newMessage.recipient_id == recipientUser.id) ||
+            (newMessage.sender_id == recipientUser.id && newMessage.recipient_id == currentUser.id)) {
             setMessages(prevMessages => [...prevMessages, newMessage]);
           }
         })
@@ -203,13 +203,13 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
         .from('messages')
         .insert([
           {
-            sender_id: currentUser.userid,
+            sender_id: currentUser.id,
             recipient_id: recipientUser.id,
-            sender: currentUser.name,
+            sender: currentUser.username,
             recipient: recipientUser.fullName,
             text: newMessage,
             avatar: currentUser.avatar || '/avatar.svg',
-            sentByCurrentUser: currentUser.userid === 1,
+            sentByCurrentUser: currentUser.id === 1,
           }
         ]);
       if (error) {
@@ -237,47 +237,6 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
 
   const handleCloseContract = () => {
     setIsContractVisible(false); // Hide the modal
-  };
-
-  const sampleService = {
-    name: 'Ella, Middle School Math tutor',
-    image: '/group-image.jpg', // Replace with actual image path
-    rating: 4.5,
-    reviews: 20,
-    price: '$15/hr',
-    description: 'Taught in mainstream school for 5 years. Specializes in boosting grades of failing math students through personalized home tutoring.',
-    reviewsDetail: [
-      {
-        reviewer: 'John',
-        comment: 'Oliver provided excellent tutoring for my son, and his grades improved significantly in just a month.',
-        rating: 5,
-      },
-      {
-        reviewer: 'Timmy',
-        comment: 'Oliver provided excellent tutoring for my son, and his grades improved significantly in just a month.',
-        rating: 4,
-      },
-    ],
-    numSold: 10,
-    bullet1: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    bullet2: 'Minimum 3 years of experience in software development.',
-    bullet3: 'Proficiency in Python, R, and machine learning algorithms.',
-  };
-
-  const sampleData: ServiceRequest = {
-    title: "Marketing Specialist",
-    work_category: "Analytics",
-    company: "Google",
-    location: "New York",
-    employment_type: "Part-time",
-    description_1: "Collect and analyze data",
-    description_2: "Generate and present reports",
-    description_3: "Use statistical tools for data interpretation",
-    examples_of_work: "Portfolio",
-    submission_deadline: "15/8/2024",
-    budget: "45000",
-    language: "English",
-    days_left: "50",
   };
 
   return (
@@ -313,9 +272,9 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
               onDeclineAndSendMessage={handleDeclineAndSendMessage}/>
           ) :
           message.type === 'message' ? ( */}
-          {messages.map((message) => 
-            <ChatMessageBig key={message.id} message={message} currentUserId={currentUser?.userid}/>
-                        
+          {messages.map((message) =>
+            <ChatMessageBig key={message.id} message={message} currentUserId={currentUser?.id}/>
+
 //       <div className="flex flex-col w-full h-full bg-white">
 //         <div className="my-4 px-4">
 //           <div className="flex flex-row">

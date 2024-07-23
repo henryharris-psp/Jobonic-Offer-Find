@@ -332,7 +332,7 @@ const ChatPage: React.FC = () => {
                 )}
               </div>
             </form>
-            {peoples.filter(people => people.id !== currentUser?.userid)
+            {peoples.filter(people => people.id !== currentUser?.id)
             .map((people) => (
               <div
                 className="flex p-2 hover:bg-blue-300 rounded-md justify-between cursor-pointer"
