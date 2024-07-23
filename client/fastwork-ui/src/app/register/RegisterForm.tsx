@@ -9,6 +9,7 @@ import * as Yup from "yup";
 import axios from "axios";
 import {token, baseURL} from "@/baseURL";
 import { useRouter } from "next/navigation";
+import httpClient from "@/client/httpClient";
 
 const validationSchema = Yup.object().shape({
   firstname: Yup.string().required().label('First Name'),
@@ -24,8 +25,8 @@ const validationSchema = Yup.object().shape({
 export const RegisterForm = (): React.ReactNode => {
   const router = useRouter();
   const [formValues, setFormValues] = useState({
-    firstname: '',
-    lastname: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -37,38 +38,55 @@ export const RegisterForm = (): React.ReactNode => {
     setFormValues({ ...formValues, [name]: value });
   };
 
-  const handleOnsubmit = async (values: { [key: string]: any }): Promise<any> => {
+  const handleOnSubmit = async (values: { [key: string]: any }): Promise<any> => {
+    console.log('handleOnSubmit');
     const URL = `${baseURL}/api/v1/user`;
     const payload = {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "id": 0,
       "username": "string",
-      "firstName": values.firstname,
-      "lastName": values.lastname,
+      "firstName": values.firstName,
+      "lastName": values.lastName,
       "email": values.email,
       "companyName": "string",
       "phoneNumber": "string",
       "address": "string",
       "image": "string",
       "cardNumber": "string",
-      "cardExpiryDate": "2024-07-12",
+      "cardExpiryDate": "2024-07-19",
       "walletAddress": "string",
       "review": 0,
-      "roles": [
+      "userExperienceList": [
         {
           "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "roleType": "ADMIN"
+          "profileId": 0,
+          "company": "string",
+          "startDate": "2024-07-19",
+          "endDate": "2024-07-19"
         }
-      ]
+      ],
+      "userEducationList": [
+        {
+          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "profileId": 0,
+          "institute": "string",
+          "degree": "string",
+          "startDate": "2024-07-19",
+          "endDate": "2024-07-19"
+        }
+      ],
+      "skills": [
+        {
+          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "name": "string"
+        }
+      ],
+      "userId": 1
     };
+    console.log(payload);
     try {
-      const response = await axios.post(URL, payload, {
-        headers: {
-          'Authorization' : `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await httpClient.post(URL, payload);
       console.log('Response:', response.data);
-      router.push('/');
+      //router.push('/');
       //return response;
     } catch (error) {
       console.error('Error:', error);
@@ -79,7 +97,7 @@ export const RegisterForm = (): React.ReactNode => {
   return (
     <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md mx-auto">
       <Form
-          onSubmit={handleOnsubmit}
+          onSubmit={() => handleOnSubmit(formValues)}
           validationSchema={validationSchema}
           initialValues={{
             firstname: '',
@@ -88,18 +106,21 @@ export const RegisterForm = (): React.ReactNode => {
             password: '',
             confirmPassword: '',
           }}
-          innerRef={ref}
-      >
+          innerRef={ref}>
         <h1 className="mb-6 text-black font-inter text-2xl font-semibold text-center">
           Sign Up
         </h1>
 
         <div className="mb-6">
-          <InputField label="First Name" type="text" name="firstname" placeholder="Your First Name"/>
+          <InputField label="First Name" type="text" name="firstName" onChange={(e) => setFormValues((prevState) => ({
+            ...prevState,
+            ['firstName']: e.target.value,
+          }))}
+            placeholder="Your First Name"/>
         </div>
 
         <div className="mb-6">
-          <InputField label="Last Name" type="text" name="lastname" placeholder="Your Last Name"/>
+          <InputField label="Last Name" type="text" name="lastName" placeholder="Your Last Name"/>
         </div>
 
         <div className="mb-6">
@@ -116,7 +137,7 @@ export const RegisterForm = (): React.ReactNode => {
         </div>
 
         <div className="flex items-center justify-center">
-          <Button type="submit"
+          <Button onClick={() => handleOnSubmit} type="button"
                   variant="btn-primary flex justify-center text-white bg-[#0C2348] hover:bg-[#D0693B] focus:ring-4 focus:outline-none focus:ring-[#0C2348]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#0C2348]/55 me-2 mb-2">
             Create Account
           </Button>

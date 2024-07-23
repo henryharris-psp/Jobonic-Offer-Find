@@ -78,6 +78,16 @@ export default function MyProfile(): React.ReactNode {
         otherInfo: false,
     });
 
+    const [showNewEntry, setShowNewEntry] = useState<{
+        [key: string]: boolean;
+    }>({
+        aboutMe: false,
+        skills: false,
+        "user-experience": false,
+        "user-education": false,
+        otherInfo: false,
+    });
+
     const [feedbackMessage, setFeedbackMessage] = useState<{
         [key: string]: string;
     }>({
@@ -109,13 +119,12 @@ export default function MyProfile(): React.ReactNode {
         event.stopPropagation();
         setEnabledInputs((prevState) => ({
             ...prevState,
-            [inputKey]: !prevState[inputKey],
+            [inputKey]: true,
         }));
-        if (inputKey === "user-education") {
-            setShowFields(true); // Keep fields visible even after saving
-        } else if (inputKey === "user-experience") {
-            setShowExperienceFields(true); // Keep fields visible even after saving
-        }
+        setShowNewEntry((prevState) => ({
+            ...prevState,
+            [inputKey]: true,
+        }));
     };
 
     const handleSave = async (inputKey: string) => {
@@ -169,7 +178,11 @@ export default function MyProfile(): React.ReactNode {
         try {
             const response = await httpClient.post(`${baseURL}/api/v1/${inputKey}`, data);
             console.log("Save successful:", response.data);
-            setEnabledInputs((prevState) => ({
+            // setEnabledInputs((prevState) => ({
+            //     ...prevState,
+            //     [inputKey]: false,
+            // }));
+            setShowNewEntry((prevState) => ({
                 ...prevState,
                 [inputKey]: false,
             }));
@@ -204,18 +217,23 @@ export default function MyProfile(): React.ReactNode {
         let abortController = new AbortController();
         const fetchUserData = async () => {
             try {
-                const response = await httpClient.get(`${SERVER_AUTH}/v1/user/init-data`);
-                const userData = response.data;
-                setUserId(userData.id);
-                setCompanyName(userData.companyName);
-                setPhoneNumber(userData.phoneNumber);
-                setAddress(userData.address);
-                setImage(userData.image);
-                setCardNumber(userData.cardNumber);
-                setCardExpiryDate(userData.cardExpiryDate);
-                setWalletAddress(userData.walletAddress);
-                setReview(userData.review);
-                console.log(userData.id);
+                const initResponse = await httpClient.get(`${SERVER_AUTH}/v1/user/init-data`);
+                const authServerUserId = initResponse.data;
+                console.log(authServerUserId);
+                const authId = authServerUserId.id;
+                //const userDataResponse = await httpClient.get(`${baseURL}/api/v1/user/profile?id=${authId}`);
+                //console.log(userDataResponse);
+                // const userData = userDataResponse.data;
+                // setUserId(userData.id);
+                // setCompanyName(userData.companyName);
+                // setPhoneNumber(userData.phoneNumber);
+                // setAddress(userData.address);
+                // setImage(userData.image);
+                // setCardNumber(userData.cardNumber);
+                // setCardExpiryDate(userData.cardExpiryDate);
+                // setWalletAddress(userData.walletAddress);
+                // setReview(userData.review);
+                // console.log(userId);
             } catch (error) {
                 console.error("Error fetching user data:", error);
             }
@@ -365,135 +383,124 @@ export default function MyProfile(): React.ReactNode {
                     </svg>
                     <h3 className="text-xs text-grey-400 items-center select-none">Add Education</h3>
                 </div>
-                {showFields && (
-                    <div className="space-y-2.5 bg-white p-4">
-                        {educationList.map((education, index) => (
-                            <div key={index} className="space-y-2.5 bg-white p-4">
-                                <div className="grid grid-cols-3 items-center">
-                                    <h3 className="flex flex-col">Education Institution</h3>
-                                    <input
-                                        type="text"
-                                        id="institution"
-                                        value={education.institute}
-                                        className="text-black col-span-2 border bg-white rounded"
-                                        disabled
-                                    />
-                                </div>
-                                <div className="grid grid-cols-3 items-center">
-                                    <h3 className="flex flex-col">Degree</h3>
-                                    <input
-                                        type="text"
-                                        id="degree"
-                                        value={education.degree}
-                                        className="text-black w-full col-span-2 border bg-white rounded"
-                                        disabled
-                                    />
-                                </div>
-                                <div className="grid grid-cols-3 items-center">
-                                    <h3 className="flex flex-col">Start Date</h3>
-                                    <input
-                                        type="date"
-                                        id="start-date"
-                                        value={education.startDate}
-                                        className="text-black w-full col-span-2 border bg-white rounded"
-                                        disabled
-                                    />
-                                </div>
-                                <div className="grid grid-cols-3 items-center">
-                                    <h3 className="flex flex-col">End Date</h3>
-                                    <input
-                                        type="date"
-                                        id="end-date"
-                                        value={education.endDate}
-                                        className="text-black w-full col-span-2 border bg-white rounded"
-                                        disabled
-                                    />
-                                </div>
+                <div className="">
+                    {educationList.map((education, index) => (
+                        <div key={index} className="space-y-2.5 bg-white p-4">
+                            <div className="grid grid-cols-3 items-center">
+                                <h3 className="flex flex-col">Education Institution</h3>
+                                <input
+                                    type="text"
+                                    id="institution"
+                                    value={education.institute}
+                                    className="text-black col-span-2 border bg-white rounded"
+                                    disabled
+                                />
                             </div>
-                        ))}
-                        <div className="grid grid-cols-3 items-center">
-                            <h3 className="flex flex-col">Education Institution</h3>
-                            <input
-                                type="text"
-                                id="institution"
-                                placeholder={
-                                    !institutionField
-                                        ? "Enter your institution"
-                                        : institutionField
-                                }
-                                className={`text-black col-span-2 ${enabledInputs["user-education"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
-                                    } rounded`}
-                                ref={institutionRef}
-                                disabled={!enabledInputs["user-education"]}
-                                onChange={(e) => setInstitutionField(e.target.value)}
-                            />
+                            <div className="grid grid-cols-3 items-center">
+                                <h3 className="flex flex-col">Degree</h3>
+                                <input
+                                    type="text"
+                                    id="degree"
+                                    value={education.degree}
+                                    className="text-black w-full col-span-2 border bg-white rounded"
+                                    disabled
+                                />
+                            </div>
+                            <div className="grid grid-cols-3 items-center">
+                                <h3 className="flex flex-col">Start Date</h3>
+                                <input
+                                    type="date"
+                                    id="start-date"
+                                    value={education.startDate}
+                                    className="text-black w-full col-span-2 border bg-white rounded"
+                                    disabled
+                                />
+                            </div>
+                            <div className="grid grid-cols-3 items-center">
+                                <h3 className="flex flex-col">End Date</h3>
+                                <input
+                                    type="date"
+                                    id="end-date"
+                                    value={education.endDate}
+                                    className="text-black w-full col-span-2 border bg-white rounded"
+                                    disabled
+                                />
+                            </div>
                         </div>
-                        <div className="grid grid-cols-3 items-center">
-                            <h3 className="flex flex-col">Degree</h3>
-                            <input
-                                type="text"
-                                id="degree"
-                                placeholder={!degreeField ? "Enter your degree" : degreeField}
-                                className={`text-black w-full col-span-2 ${enabledInputs["user-education"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
-                                    } rounded`}
-                                ref={degreeRef}
-                                disabled={!enabledInputs["user-education"]}
-                                onChange={(e) => setDegreeField(e.target.value)}
-                            />
+                    ))}
+                    {showNewEntry['user-education'] && (
+                        <div className='space-y-2.5 bg-white p-4'>
+                            <div className="grid grid-cols-3 items-center">
+                                <h3 className="flex flex-col">Education Institution</h3>
+                                <input
+                                    type="text"
+                                    id="institution"
+                                    placeholder="Enter your institution"
+                                    className={`text-black col-span-2 ${enabledInputs["user-education"]
+                                            ? "border bg-white"
+                                            : "border-none bg-transparent"
+                                        } rounded`}
+                                    ref={institutionRef}
+                                    disabled={!enabledInputs["user-education"]}
+                                    onChange={(e) => setInstitutionField(e.target.value)}/>
+                            </div>
+                            <div className="grid grid-cols-3 items-center">
+                                <h3 className="flex flex-col">Degree</h3>
+                                <input
+                                    type="text"
+                                    id="degree"
+                                    placeholder="Enter your degree"
+                                    className={`text-black w-full col-span-2 ${enabledInputs["user-education"]
+                                            ? "border bg-white"
+                                            : "border-none bg-transparent"
+                                        } rounded`}
+                                    ref={degreeRef}
+                                    disabled={!enabledInputs["user-education"]}
+                                    onChange={(e) => setDegreeField(e.target.value)}
+                                />
+                            </div>
+                            <div className="grid grid-cols-3 items-center">
+                                <h3 className="flex flex-col">Start Date</h3>
+                                <input
+                                    type="date"
+                                    id="start-date"
+                                    placeholder="Enter start date (YYYY-MM-DD)"
+                                    className={`text-black w-full col-span-2 ${enabledInputs["user-education"]
+                                            ? "border bg-white"
+                                            : "border-none bg-transparent"
+                                        } rounded`}
+                                    ref={startDateRef}
+                                    disabled={!enabledInputs["user-education"]}
+                                    onChange={(e) => setStartDateField(e.target.value)}
+                                />
+                            </div>
+                            <div className="grid grid-cols-3 items-center">
+                                <h3 className="flex flex-col">End Date</h3>
+                                <input
+                                    type="date"
+                                    id="end-date"
+                                    placeholder="Enter end date (YYYY-MM-DD)"
+                                    className={`text-black w-full col-span-2 ${enabledInputs["user-education"]
+                                            ? "border bg-white"
+                                            : "border-none bg-transparent"
+                                        } rounded`}
+                                    ref={endDateRef}
+                                    disabled={!enabledInputs["user-education"]}
+                                    onChange={(e) => setEndDateField(e.target.value)}
+                                />
+                            </div>
                         </div>
-                        <div className="grid grid-cols-3 items-center">
-                            <h3 className="flex flex-col">Start Date</h3>
-                            <input
-                                type="date"
-                                id="start-date"
-                                placeholder={
-                                    !startDateField
-                                        ? "Enter start date (YYYY-MM-DD)"
-                                        : startDateField
-                                }
-                                className={`text-black w-full col-span-2 ${enabledInputs["user-education"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
-                                    } rounded`}
-                                ref={startDateRef}
-                                disabled={!enabledInputs["user-education"]}
-                                onChange={(e) => setStartDateField(e.target.value)}
-                            />
-                        </div>
-                        <div className="grid grid-cols-3 items-center">
-                            <h3 className="flex flex-col">End Date</h3>
-                            <input
-                                type="date"
-                                id="end-date"
-                                placeholder={
-                                    !endDateField ? "Enter end date (YYYY-MM-DD)" : endDateField
-                                }
-                                className={`text-black w-full col-span-2 ${enabledInputs["user-education"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
-                                    } rounded`}
-                                ref={endDateRef}
-                                disabled={!enabledInputs["user-education"]}
-                                onChange={(e) => setEndDateField(e.target.value)}
-                            />
-                        </div>
-                        {enabledInputs["user-education"] && (
-                            <button
-                                onClick={() => handleSave("user-education")}
-                                className="mt-2 bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 px-4 rounded"
-                            >
-                                Save
-                            </button>
-                        )}
-                        {feedbackMessage["education"] && (
-                            <p className="text-sm mt-2">{feedbackMessage["education"]}</p>
-                        )}
-                    </div>
-                )}
+                    )}
+                    {enabledInputs["user-education"] && (
+                        <button onClick={() => handleSave("user-education")}
+                            className="mt-2 bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 px-4 rounded">
+                            Save
+                        </button>
+                    )}
+                    {feedbackMessage["education"] && (
+                        <p className="text-sm mt-2">{feedbackMessage["education"]}</p>
+                    )}
+                </div>
             </div>
 
             {/* Experience */}
