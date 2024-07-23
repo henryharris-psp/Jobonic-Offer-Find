@@ -21,10 +21,10 @@ public class ProfileDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -4565041716760088438L;
     private Long id;
-    //    private String username;
-    //    private String firstName;
-    //    private String lastName;
-    //    private String email;
+    private String username;
+    private String firstName;
+    private String lastName;
+    private String email;
     private String companyName;
     private String phoneNumber;
     private String address;
