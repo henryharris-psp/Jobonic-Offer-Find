@@ -54,6 +54,7 @@ export interface CurrentUser {
   email: string;
   username: string;
   avatar: string;
+  userid: number
 }
 
 const allPeoples: ActiveChat[] = 

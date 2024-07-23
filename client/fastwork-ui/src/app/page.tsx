@@ -67,7 +67,7 @@ export default function Home() {
 
   const handleCreateServiceOffer = async (event: React.FormEvent) => {
     event.preventDefault();
-    const profile = await checkProfile("9bf58ef5-9b61-4cdd-808d-3c6ceb5c16f1", token);
+    const profile = await checkProfile(1, token);
     if (profile) {
       router.push('/customiseService');
     } else {

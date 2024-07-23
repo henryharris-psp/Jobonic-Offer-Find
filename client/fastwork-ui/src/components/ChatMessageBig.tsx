@@ -11,7 +11,7 @@ interface MessageProps {
     recipient_id?: number | string;
     sentByCurrentUser?: boolean;
   };
-  currentUserId: string | number
+  currentUserId: string | number | undefined
 }
 
 const ChatMessageBig: React.FC<MessageProps> = ({ message, currentUserId }) => {
