@@ -50,7 +50,7 @@ interface ActiveChat {
 }
 
 interface RecipientUser {
-  id : number,
+  id: number,
   fullName: string,
   avatar: string
 }
@@ -66,45 +66,31 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
   const [messages, setMessages] = useState<Message[]>(activeChat.messages);
   const [currentUser, setCurrentUser] = useState<CurrentUser>()
 
-  // const [messages, setMessages] = useState<Message[]>([
-  //   ...activeChat.messages,
-  //   {
-  //     id: 'deal',
-  //     type: 'deal',
-  //     image: '/group-image.jpg',
-  //     title: 'Sample Deal',
-  //     rating: 4.5,
-  //     description: ['This is a great deal.', "Don't miss out!"],
-  //     price: '$99.99',
-  //   },
-  // ]);
-
   const sampleService =
-  {
-    name: 'Ella, Middle School Math tutor',
-      image: '/group-image.jpg', // Replace with actual image path
-      rating: 4.5,
-      reviews: 20,
-      price: '$15/hr',
-      description: 'Taught in mainstream school for 5 years. Specializes in boosting grades of failing math students through personalized home tutoring.',
-      reviewsDetail: [
-    {
-      reviewer: 'John',
-      comment: 'Oliver provided excellent tutoring for my son, and his grades improved significantly in just a month.',
-      rating: 5,
-    },
-    {
-      reviewer: 'Timmy',
-      comment: 'Oliver provided excellent tutoring for my son, and his grades improved significantly in just a month.',
-      rating: 4,
-    },
-    // Add more reviews as needed
-  ],
-      numSold: 10,
-      bullet1: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      bullet2: 'Minimum 3 years of experience in software development.',
-      bullet3: 'Proficiency in Python, R, and machine learning algorithms.',
-  };
+      {
+        name: 'Ella, Middle School Math tutor',
+        image: '/group-image.jpg', // Replace with actual image path
+        rating: 4.5,
+        reviews: 20,
+        price: '$15/hr',
+        description: 'Taught in mainstream school for 5 years. Specializes in boosting grades of failing math students through personalized home tutoring.',
+        reviewsDetail: [
+          {
+            reviewer: 'John',
+            comment: 'Oliver provided excellent tutoring for my son, and his grades improved significantly in just a month.',
+            rating: 5,
+          },
+          {
+            reviewer: 'Timmy',
+            comment: 'Oliver provided excellent tutoring for my son, and his grades improved significantly in just a month.',
+            rating: 4,
+          },
+        ],
+        numSold: 10,
+        bullet1: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        bullet2: 'Minimum 3 years of experience in software development.',
+        bullet3: 'Proficiency in Python, R, and machine learning algorithms.',
+      };
 
   const sampleData = {
     title: "Marketing Specialist",
@@ -138,7 +124,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
 
   useEffect(() => {
     const userData = localStorage.getItem('userInfo')
-    if(userData){
+    if (userData) {
       const parsed = JSON.parse(userData)
       setCurrentUser(parsed)
     }
@@ -148,16 +134,15 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
     const fetchMessages = async () => {
       if (recipientUser && currentUser) {
         const { data, error } = await supabase
-          .from('messages')
-          .select('*')
-          .or(`sender_id.eq.${currentUser.id},recipient_id.eq.${currentUser.id}`)
-          .or(`sender_id.eq.${recipientUser.id},recipient_id.eq.${recipientUser.id}`)
-          .order('created_at', { ascending: true });
+            .from('messages')
+            .select('*')
+            .or(`sender_id.eq.${currentUser.id},recipient_id.eq.${currentUser.id}`)
+            .or(`sender_id.eq.${recipientUser.id},recipient_id.eq.${recipientUser.id}`)
+            .order('created_at', { ascending: true });
 
         if (error) {
           console.error('Error fetching messages:', error);
         } else {
-          console.log('Mess', data)
           setMessages(data);
         }
       }
@@ -169,26 +154,20 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
   useEffect(() => {
     if (currentUser && recipientUser) {
       const messageSubscription = supabase
-        .channel('public:messages')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
-          const newMessage = payload.new;
-          if ((newMessage.sender_id == currentUser.id && newMessage.recipient_id == recipientUser.id) ||
-            (newMessage.sender_id == recipientUser.id && newMessage.recipient_id == currentUser.id)) {
-            setMessages(prevMessages => [...prevMessages, newMessage]);
-          }
-        })
-        .subscribe();
+          .channel('public:messages')
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+            const newMessage = payload.new;
+            if ((newMessage.sender_id == currentUser.id && newMessage.recipient_id == recipientUser.id) ||
+                (newMessage.sender_id == recipientUser.id && newMessage.recipient_id == currentUser.id)) {
+              setMessages(prevMessages => [...prevMessages, newMessage]);
+            }
+          })
+          .subscribe();
       return () => {
         supabase.removeChannel(messageSubscription);
       };
     }
   }, [newMessage, messages]);
-
-  // useEffect(() => {
-  //   setMessages([
-  //     ...activeChat.messages,
-  //   ]);
-  // }, [activeChat]);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -196,22 +175,21 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
     }
   }, [messages]);
 
-  const handleMessageSubmit =async () => {
+  const handleMessageSubmit = async () => {
     if (newMessage.trim() !== '' && recipientUser && currentUser) {
-      console.log('recipient', recipientUser, 'user', currentUser);
       const { error } = await supabase
-        .from('messages')
-        .insert([
-          {
-            sender_id: currentUser.id,
-            recipient_id: recipientUser.id,
-            sender: currentUser.username,
-            recipient: recipientUser.fullName,
-            text: newMessage,
-            avatar: currentUser.avatar || '/avatar.svg',
-            sentByCurrentUser: currentUser.id === 1,
-          }
-        ]);
+          .from('messages')
+          .insert([
+            {
+              sender_id: currentUser.id,
+              recipient_id: recipientUser.id,
+              sender: currentUser.username,
+              recipient: recipientUser.fullName,
+              text: newMessage,
+              avatar: currentUser.avatar || '/avatar.svg',
+              sentByCurrentUser: currentUser.id === 1,
+            }
+          ]);
       if (error) {
         console.error('Error inserting message:', error);
       } else {
@@ -240,100 +218,35 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
   };
 
   return (
-    <div className="flex flex-col w-full h-full bg-white">
-      <div className="my-4 px-4">
-        <div className="flex flex-row">
-          <div className="text-xl font-bold justify-self-start mr-60">{recipientUser?.fullName}</div>
-          <button className="bg-[#E1824F] text-white rounded-lg text-sm p-2 mr-4">
-            View Contract Details
-          </button>
-          <button className="bg-[#71BAC7] text-white rounded-lg text-sm p-2 mr-4" disabled>
-            { activeChat.type === 'client' ? 'Hiring' : 'Offering'}
-          </button>
-          <button className="bg-[#71BAC7] text-white rounded-lg text-sm p-2"  disabled>
-            {activeChat.status}
-          </button>
+      <div className="flex flex-col w-full h-full bg-white">
+        <div className="my-4 px-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center">
+              <img className="w-12 h-12 rounded-full mr-4" src={recipientUser?.avatar || '/avatar.svg'} alt={recipientUser?.fullName} />
+              <div>
+                <div className="text-xl font-bold">{recipientUser?.fullName}</div>
+                <div className="text-sm text-gray-500">Last seen yesterday, 23:88</div>
+              </div>
+            </div>
+            <div className="text-sm text-gray-500">
+              is offering <span className="font-bold text-black">Plumbing</span>
+            </div>
+            <div className="flex items-center">
+              <button className="bg-[#E1824F] text-white rounded-lg text-sm p-2 mr-4">✔️</button>
+              <button className="bg-[#E1824F] text-white rounded-lg text-sm p-2 mr-4">❌</button>
+              <button className="bg-[#E1824F] text-white rounded-lg text-sm p-2" onClick={handleViewContractDetails}>View Contract</button>
+            </div>
+          </div>
+          <div className="text-center text-sm text-gray-500">
+            {recipientUser?.fullName} has applied for your service request: Plumbing service. Accept, reject or edit contract offer.
+          </div>
+          <div className="h-0.5 mt-1 bg-gray-300"></div>
         </div>
-
-        <div className="h-0.5 mt-1 bg-gray-300"></div>
-      </div>
-      <div ref={chatContainerRef} className={`overflow-y-auto p-6 bg-white flex" ${activeChat.status === 'Applied' ? 'justify-end' : 'justify-start'}`}>
-        {/* {messages.map((message) =>
-          message.type === 'deal' ? (
-            <DealCard
-              key={message.id}
-              image={message.image!}
-              title={message.title!}
-              rating={message.rating!}
-              description={message.description!}
-              price={message.price!}
-              onAccept={() => alert('Deal Accepted')}
-              onEditOffer={(newPrice) => alert(`Edit Offer: ${newPrice}`)}
-              onDeclineAndSendMessage={handleDeclineAndSendMessage}/>
-          ) :
-          message.type === 'message' ? ( */}
+        <div ref={chatContainerRef} className={`overflow-y-auto p-6 bg-white flex" ${activeChat.status === 'Applied' ? 'justify-end' : 'justify-start'}`}>
           {messages.map((message) =>
-            <ChatMessageBig key={message.id} message={message} currentUserId={currentUser?.id}/>
-
-//       <div className="flex flex-col w-full h-full bg-white">
-//         <div className="my-4 px-4">
-//           <div className="flex flex-row">
-//             <div className="text-xl font-bold justify-self-start mr-60">{activeChat.name}</div>
-//             <button
-//                 className="bg-[#E1824F] text-white rounded-lg text-sm p-2 mr-4"
-//                 onClick={handleViewContractDetails} // Add onClick handler
-//             >
-//               View Contract Details
-//             </button>
-//             <button className="bg-[#71BAC7] text-white rounded-lg text-sm p-2 mr-4" disabled>
-//               { activeChat.type === 'client' ? 'Hiring' : 'Offering'}
-//             </button>
-//             <button className="bg-[#71BAC7] text-white rounded-lg text-sm p-2" disabled>
-//               {activeChat.status}
-//             </button>
-//           </div>
-
-//           <div className="h-0.5 mt-1 bg-gray-300"></div>
-//         </div>
-//         <div ref={chatContainerRef} className={`overflow-y-auto p-6 bg-white flex" ${activeChat.status === 'Applied' ? 'justify-end' : 'justify-start'}`}>
-//           {messages.map((message) =>
-//               message.type === 'deal' ? (
-//                   <DealCard
-//                       key={message.id}
-//                       image={message.image!}
-//                       title={message.title!}
-//                       rating={message.rating!}
-//                       description={message.description!}
-//                       price={message.price!}
-//                       onAccept={() => alert('Deal Accepted')}
-//                       onEditOffer={(newPrice) => alert(`Edit Offer: ${newPrice}`)}
-//                       onDeclineAndSendMessage={handleDeclineAndSendMessage}
-//                   />
-//               ) : message.type === 'message' ? (
-//                   <ChatMessageBig key={message.id} message={message} />
-//               ) : message.type === 'apply' ? (
-//                   <ServiceRequestCard serviceRequest={sampleData} hasProfile={true} profilePic={'/jobonic.svg'} applyDisplay={false}/>
-//               ) : (
-//                   <ServiceMatchCard
-//                       service={sampleService}
-//                       onClick={() => console.log('clicked')}
-//                       onChatClick={() => console.log('clicked')}
-//                   />
-//               )
-
+              <ChatMessageBig key={message.id} message={message} currentUserId={currentUser?.id} />
           )}
-          {/* ) :
-          message.type === 'apply' ? (
-            <ServiceRequestCard serviceRequest={sampleData} hasProfile={true} profilePic={'/jobonic.svg'} applyDisplay={false}/>
-          ) : (
-              <ServiceMatchCard
-                  service={sampleService}
-                  onClick={() => console.log('clicked')}
-                  onChatClick={() => console.log('clicked')}
-              />
-          )
-        )} */}
-      </div>
+        </div>
 
         <div className="w-full bg-white">
           <div className="flex flex-col lg:flex-row">
@@ -389,6 +302,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
 };
 
 export default ChatConversation;
+
 
 
 

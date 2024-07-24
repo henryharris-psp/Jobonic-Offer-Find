@@ -1,15 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, ReactNode } from 'react'; // Ensure ReactNode is imported for the return type of the component
+import React, { useState, useEffect, ReactNode } from 'react';
 import ServiceRequestCard from '@/components/ServiceRequestCard';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Papa, { ParseResult } from 'papaparse';
 import axios from 'axios';
 import { baseURL, token } from "@/baseURL";
 import { checkProfile } from '@/functions/helperFunctions';
 import httpClient from "@/client/httpClient";
-
 
 interface JobData {
   title: string;
@@ -28,11 +25,33 @@ interface JobData {
 }
 
 type UserData = {
-  "id"?: number;
-  "email"?: string;
+  id?: number;
+  email?: string;
 };
 
-export default function OfferServicesPage(): ReactNode { // Use ReactNode for the return type of the component
+interface ServiceRequestDTO {
+  id: string;
+  workCategory: string;
+  employmentType: string;
+  description1: string;
+  description2: string;
+  description3: string;
+  submissionDeadline: string;
+  budget: number;
+  workExample: string;
+  languageSpoken: string;
+  location: string;
+}
+
+interface Service {
+  id: string;
+  serviceOfferDTO?: any;
+  serviceRequestDTO?: ServiceRequestDTO;
+  profileId: number;
+  title: string;
+}
+
+export default function OfferServicesPage(): ReactNode {
   const router = useRouter();
   const [user, setUser] = useState<UserData>({});
   const [userID, setUserID] = useState<number>(0);
@@ -49,31 +68,48 @@ export default function OfferServicesPage(): ReactNode { // Use ReactNode for th
     deadline: ''
   });
 
-  const [jobDataList, setJobDataList] = useState<JobData[]>([]);
+  const [jobDataList, setJobDataList] = useState<Service[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<JobData[]>([]);
+  const [searchResults, setSearchResults] = useState<Service[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [categoryList, setCategoryList] = useState<Category[]>([]);
 
+  const fetchServices = async () => {
+    try {
+      // const response = await httpClient.post(`${baseURL}/api/v1/service/all`, {
+      //   pageNumber: 1,
+      //   pageSize: 100,
+      //   sortBy: 'title',
+      //   sortOrder: 'DESC',
+      //   filter: {
+      //     searchKeyword: 'coder'
+      //   }
+      // });
+      const response = await httpClient.post(`http://localhost:8081/api/v1/service/all`, {
+        pageNumber: 1,
+        pageSize: 100,
+        sortBy: '',
+        sortOrder: 'DESC',
+        filter: {
+          searchKeyword: ''
+        }
+      });
+      const filteredServices = response.data.content.filter((service: Service) => service.serviceRequestDTO !== null);
+      setJobDataList(filteredServices);
+    } catch (error) {
+      console.error('Error fetching services:', error);
+    }
+  };
 
   const fetchCategory = async () => {
+    //const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
     const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
     setCategoryList(response.data);
   };
 
-
   useEffect(() => {
-    fetch('/updated_sample_data.csv')
-        .then(response => response.text())
-        .then(csvData => {
-          Papa.parse<JobData>(csvData, {
-            header: true,
-            complete: function (results: ParseResult<JobData>) {
-              setJobDataList(results.data);
-            }
-          });
-        })
-        .catch(error => console.error('Error fetching CSV file:', error));
+    fetchServices();
+    fetchCategory();
   }, []);
 
   const handleSearchSubmit = async (event: React.FormEvent) => {
@@ -94,8 +130,8 @@ export default function OfferServicesPage(): ReactNode { // Use ReactNode for th
         const userId = userData.id;
 
         setUser({
-          "id": userId,
-          "email": userData.email
+          id: userId,
+          email: userData.email
         });
         setUserID(userId);
       } catch (error) {
@@ -155,10 +191,6 @@ export default function OfferServicesPage(): ReactNode { // Use ReactNode for th
 
   const areFiltersApplied = appliedFilters.minPrice !== '' || appliedFilters.maxPrice !== '' || appliedFilters.deadline !== '';
 
-  useEffect(() => {
-    fetchCategory();
-  }, []);
-  
   return (
       <div>
         <div className="p-16">
@@ -310,7 +342,21 @@ export default function OfferServicesPage(): ReactNode { // Use ReactNode for th
                 <div className="flex flex-wrap pr-0 mr-0 w-4/5">
                   {jobDataList.map((jobData, index) => (
                       <div key={index} className="w-full sm:w-1/2 md:w-1/3 pb-4 flex justify-stretch">
-                        <ServiceRequestCard serviceRequest={jobData} key={index} hasProfile={true} profilePic={'/jobonic.svg'} />
+                        <ServiceRequestCard serviceRequest={{
+                          title: jobData.serviceRequestDTO?.description1 ?? '',
+                          work_category: jobData.serviceRequestDTO?.workCategory ?? '',
+                          company: jobData.serviceRequestDTO?.location ?? '',
+                          location: jobData.serviceRequestDTO?.location ?? '',
+                          employment_type: jobData.serviceRequestDTO?.employmentType ?? '',
+                          description_1: jobData.serviceRequestDTO?.description1 ?? '',
+                          description_2: jobData.serviceRequestDTO?.description2 ?? '',
+                          description_3: jobData.serviceRequestDTO?.description3 ?? '',
+                          examples_of_work: jobData.serviceRequestDTO?.workExample ?? '',
+                          submission_deadline: jobData.serviceRequestDTO?.submissionDeadline ?? '',
+                          budget: jobData.serviceRequestDTO?.budget.toString() ?? '',
+                          language: jobData.serviceRequestDTO?.languageSpoken ?? '',
+                          days_left: '', // This would need calculation based on the current date and submission_deadline
+                        }} hasProfile={true} profilePic={'/jobonic.svg'} />
                       </div>
                   ))}
                 </div>
@@ -318,7 +364,21 @@ export default function OfferServicesPage(): ReactNode { // Use ReactNode for th
                 <div className="flex flex-wrap pr-0 mr-0 w-4/5">
                   {searchResults.map((result, index) => (
                       <div key={index} className="w-full sm:w-1/2 md:w-1/3 px-2 pb-4 flex justify-end">
-                        <ServiceRequestCard serviceRequest={result} key={index} hasProfile={true} profilePic={'/jobonic.svg'} />
+                        <ServiceRequestCard serviceRequest={{
+                          title: result.serviceRequestDTO?.description1 ?? '',
+                          work_category: result.serviceRequestDTO?.workCategory ?? '',
+                          company: result.serviceRequestDTO?.location ?? '',
+                          location: result.serviceRequestDTO?.location ?? '',
+                          employment_type: result.serviceRequestDTO?.employmentType ?? '',
+                          description_1: result.serviceRequestDTO?.description1 ?? '',
+                          description_2: result.serviceRequestDTO?.description2 ?? '',
+                          description_3: result.serviceRequestDTO?.description3 ?? '',
+                          examples_of_work: result.serviceRequestDTO?.workExample ?? '',
+                          submission_deadline: result.serviceRequestDTO?.submissionDeadline ?? '',
+                          budget: result.serviceRequestDTO?.budget.toString() ?? '',
+                          language: result.serviceRequestDTO?.languageSpoken ?? '',
+                          days_left: '', // This would need calculation based on the current date and submission_deadline
+                        }} hasProfile={true} profilePic={'/jobonic.svg'} />
                       </div>
                   ))}
                 </div>
@@ -328,4 +388,5 @@ export default function OfferServicesPage(): ReactNode { // Use ReactNode for th
       </div>
   );
 }
+
 
