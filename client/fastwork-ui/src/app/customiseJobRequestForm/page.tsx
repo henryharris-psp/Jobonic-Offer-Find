@@ -48,7 +48,8 @@ const CustomiseJobRequestForm: React.FC = () => {
   const [categoryList, setCategoryList] = useState<Category[]>([]);
 
   const fetchCategory = async () => {
-    const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
+    //const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
+    const response = await httpClient.get(`http://localhost:8081/api/v1/category/all`);
     setCategoryList(response.data);
   };
 
@@ -91,21 +92,10 @@ const CustomiseJobRequestForm: React.FC = () => {
 
     const serviceData = {
       id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      serviceOfferDTO: {
-        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        description: "",
-        bankCardNumber: "",
-        email: "",
-        startDate: "",
-        phone: "string",
-        address: "string",
-        skills: "string",
-        experience: "string",
-        draftCount: 0
-      },
       serviceRequestDTO: {
         id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         workCategory: formState.workCategory,
+        //workCategory: "DEVELOPMENT",
         employmentType: formState.employmentType,
         description1: formState.requirement1,
         description2: formState.requirement2,
@@ -123,8 +113,8 @@ const CustomiseJobRequestForm: React.FC = () => {
     console.log('Service Data:', JSON.stringify(serviceData, null, 2));
 
     try {
-      const response = await httpClient.post(`${baseURL}/api/v1/service`, serviceData);
-
+      //const response = await httpClient.post(`${baseURL}/api/v1/service`, serviceData);
+      const response = await httpClient.post('http://localhost:8081/api/v1/service', serviceData);
       const savedServiceId = response.data.id;
       console.log('Response Data:', response.data);
       console.log(savedServiceId);
