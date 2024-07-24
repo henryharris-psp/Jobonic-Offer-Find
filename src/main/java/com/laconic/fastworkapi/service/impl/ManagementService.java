@@ -89,13 +89,16 @@ public class ManagementService implements IManagementService {
     public PaginationDTO<ServiceDTO> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
         Specification<ServiceManagement> specs =
-                GenericSpecification.hasKeyword(keyword, Set.of("title", "serviceRequest_workCategory"));
+                GenericSpecification.hasKeyword(keyword, Set.of("title"));
 
         var result = keyword != null ?
                 this.serviceRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
                 : this.serviceRepo.findAll(pageAndFilterDTO.getPageRequest());
-        return PaginationHelper.getResponse(result,
-                result.getContent().stream().map(data -> EntityMapper.mapToResponse(data,
-                        ServiceDTO.class)).toList());
+
+        var serviceDTOList = result.getContent().stream()
+                .map(EntityMapper::mapToServiceDTO)
+                .toList();
+
+        return PaginationHelper.getResponse(result, serviceDTOList);
     }
 }
