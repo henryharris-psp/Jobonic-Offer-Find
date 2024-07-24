@@ -154,15 +154,15 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
   useEffect(() => {
     if (currentUser && recipientUser) {
       const messageSubscription = supabase
-          .channel('public:messages')
-          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
-            const newMessage = payload.new;
-            if ((newMessage.sender_id == currentUser.id && newMessage.recipient_id == recipientUser.id) ||
-                (newMessage.sender_id == recipientUser.id && newMessage.recipient_id == currentUser.id)) {
-              setMessages(prevMessages => [...prevMessages, newMessage]);
-            }
-          })
-          .subscribe();
+        .channel('public:messages')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+          const newMessage = payload.new;
+          if ((newMessage.sender_id == currentUser.id && newMessage.recipient_id == recipientUser.id) ||
+            (newMessage.sender_id == recipientUser.id && newMessage.recipient_id == currentUser.id)) {
+            // setMessages(prevMessages => [...prevMessages, newMessage]);
+          }
+        })
+        .subscribe();
       return () => {
         supabase.removeChannel(messageSubscription);
       };

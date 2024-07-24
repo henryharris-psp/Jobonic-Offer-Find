@@ -3,7 +3,7 @@ import { baseURL } from "@/baseURL";
 import axios from "axios";
 import httpClient from '@/client/httpClient';
 
-export const checkProfile = async (userID: number, token: string) => {
+export const checkProfile = async (userID: number) => {
     try {
         const response = await httpClient.get(`${baseURL}/api/v1/user`, {
             params: {

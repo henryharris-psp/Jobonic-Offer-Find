@@ -144,7 +144,7 @@ export default function OfferServicesPage(): ReactNode {
 
   const handleCreateServiceOffer = async (event: React.FormEvent) => {
     event.preventDefault();
-    const profile = await checkProfile(userID, token);
+    const profile = await checkProfile(userID);
     if (profile) {
       router.push('/customiseService');
     } else {
