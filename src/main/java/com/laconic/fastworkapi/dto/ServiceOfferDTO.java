@@ -54,6 +54,7 @@ public class ServiceOfferDTO implements Serializable {
         this.experience = serviceOffer.getExperience();
         this.title = serviceOffer.getTitle();
         this.workCategory = serviceOffer.getWorkCategory();
+        this.employmentType = serviceOffer.getEmploymentType();
         this.descriptionI = serviceOffer.getDescriptionI();
         this.descriptionII = serviceOffer.getDescriptionII();
         this.descriptionIII = serviceOffer.getDescriptionIII();
