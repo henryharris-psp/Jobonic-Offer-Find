@@ -27,17 +27,13 @@ const ServiceMatches = (): React.ReactElement => {
   const router = useRouter();
   const [categoryList, setCategoryList] = useState<Category[]>([]);
 
+  const fetchCategory = async () => {
+    const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
+    setCategoryList(response.data);
+  };
+
   const fetchServices = async () => {
     try {
-      // const response = await httpClient.post(`${baseURL}/api/v1/service/all`, {
-      //   pageNumber: 1,
-      //   pageSize: 100,
-      //   sortBy: 'title',
-      //   sortOrder: 'DESC',
-      //   filter: {
-      //     searchKeyword: 'coder'
-      //   }
-      // });
       const response = await httpClient.post(`http://localhost:8081/api/v1/service/all`, {
         pageNumber: 1,
         pageSize: 100,
@@ -47,16 +43,37 @@ const ServiceMatches = (): React.ReactElement => {
           searchKeyword: 'coder'
         }
       });
-      const filteredServices = response.data.content.filter((service: Service) => service.serviceOfferDTO !== null);
-      setServices(filteredServices);
+      const filteredServices = response.data.content.filter((service: any) => service.serviceRequestDTO !== null);
+
+      // Map filtered services to match the expected structure for ServiceMatchCard
+      const mappedServices: Service[] = filteredServices.map((service: any) => ({
+        name: service.serviceRequestDTO.title,
+        image: '/default-image.jpg', // Placeholder image
+        rating: 0, // Default rating
+        reviews: 20, // Assuming a static number of reviews for now
+        price: `$${service.serviceOfferDTO?.price}/hr` || 'N/A',
+        description: service.serviceRequestDTO.description1,
+        reviewsDetail: [
+          {
+            reviewer: 'John',
+            comment: 'Great service!',
+            rating: 5,
+          },
+          {
+            reviewer: 'Timmy',
+            comment: 'Very professional.',
+            rating: 4,
+          },
+        ],
+        numSold: 10, // Assuming a static number sold for now
+        bullet1: service.serviceOfferDTO?.descriptionI || '',
+        bullet2: service.serviceOfferDTO?.descriptionII || '',
+        bullet3: service.serviceOfferDTO?.descriptionIII || '',
+      }));
+      setServices(mappedServices);
     } catch (error) {
       console.error('Error fetching services:', error);
     }
-  };
-
-  const fetchCategory = async () => {
-    const response = await httpClient.get(`http://localhost:8081/api/v1/category/all`);
-    setCategoryList(response.data);
   };
 
   const handleServiceClick = (service: Service) => {
@@ -80,7 +97,6 @@ const ServiceMatches = (): React.ReactElement => {
 
   const handleSortOptionClick = (option: string) => {
     setSelectedSortOption(option);
-    // Implement sorting logic based on the selected option
     console.log(`Selected sorting option: ${option}`);
     setIsSortDropdownOpen(false);
   };
@@ -90,7 +106,6 @@ const ServiceMatches = (): React.ReactElement => {
   };
 
   const handleFilterApply = () => {
-    // Implement filtering logic based on minPrice, maxPrice, and deadline
     setAppliedFilters({
       minPrice: minPrice,
       maxPrice: maxPrice,
@@ -116,8 +131,8 @@ const ServiceMatches = (): React.ReactElement => {
   const areFiltersApplied = appliedFilters.minPrice !== '' || appliedFilters.maxPrice !== '' || appliedFilters.deadline !== '';
 
   useEffect(() => {
-    fetchServices();
     fetchCategory();
+    fetchServices();
   }, []);
 
   return (
@@ -288,7 +303,6 @@ const ServiceMatches = (): React.ReactElement => {
 };
 
 export default ServiceMatches;
-
 
 
 
