@@ -12,6 +12,7 @@ public class EntityMapper {
     }
 
     public static <T, U> U mapToResponse(T entity, Class<U> responseClass) {
+        if(entity == null) return null;
         return modelMapper.map(entity, responseClass);
     }
 

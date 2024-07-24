@@ -2,10 +2,7 @@ package com.laconic.fastworkapi.entity;
 
 import com.laconic.fastworkapi.entity.audit.Auditable;
 import com.laconic.fastworkapi.enums.DocumentType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -31,6 +28,7 @@ public class Attachment extends Auditable<UUID> {
     private String location;
     private String extension;
     private String fileSize;
+    @Enumerated(EnumType.STRING)
     private DocumentType documentType;
     private boolean isActive = true;
 }

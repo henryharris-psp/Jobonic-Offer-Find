@@ -38,10 +38,10 @@ public class ManagementService implements IManagementService {
 
     private static ServiceDTO.WithProfile getServiceWithProfile(ServiceManagement service, Profile user) {
         return new ServiceDTO.WithProfile(service.getId(),
-                EntityMapper.mapToResponse(service.getServiceOffer(), ServiceOfferDTO.class),
-                EntityMapper.mapToResponse(service.getServiceRequest(), ServiceRequestDTO.class),
-                EntityMapper.mapToEntity(user, ProfileDTO.class),
-                service.getTitle());
+                                          EntityMapper.mapToResponse(service.getServiceOffer(), ServiceOfferDTO.class),
+                                          EntityMapper.mapToResponse(service.getServiceRequest(), ServiceRequestDTO.class),
+                                          EntityMapper.mapToEntity(user, ProfileDTO.class),
+                                          service.getTitle());
     }
 
     @Override
@@ -72,6 +72,17 @@ public class ManagementService implements IManagementService {
                         profileId.toString()));
         var services = this.serviceRepo.findAllByProfileId(profileId);
         return services.stream().map(s -> getServiceWithProfile(s, user)).toList();
+    }
+
+    @Override
+    public ServiceDTO.WithProfile getById(UUID id) {
+        var service = this.serviceRepo.findById(id)
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
+                                                                    id.toString()));
+        var user = this.userRepo.findById(service.getProfile().getId())
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
+                                                                    service.getProfile().getId().toString()));
+        return getServiceWithProfile(service, user);
     }
 
     @Override
