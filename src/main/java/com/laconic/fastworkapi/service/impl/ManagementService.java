@@ -89,7 +89,7 @@ public class ManagementService implements IManagementService {
     public PaginationDTO<ServiceDTO> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
         Specification<ServiceManagement> specs =
-                GenericSpecification.hasKeyword(keyword, Set.of("title", "serviceRequest_workCategory"));
+                GenericSpecification.hasKeyword(keyword, Set.of("title"));
 
         var result = keyword != null ?
                 this.serviceRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
