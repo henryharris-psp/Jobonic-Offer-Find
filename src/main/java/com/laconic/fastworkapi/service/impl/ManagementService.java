@@ -94,8 +94,11 @@ public class ManagementService implements IManagementService {
         var result = keyword != null ?
                 this.serviceRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
                 : this.serviceRepo.findAll(pageAndFilterDTO.getPageRequest());
-        return PaginationHelper.getResponse(result,
-                result.getContent().stream().map(data -> EntityMapper.mapToResponse(data,
-                        ServiceDTO.class)).toList());
+
+        var serviceDTOList = result.getContent().stream()
+                .map(EntityMapper::mapToServiceDTO)
+                .toList();
+
+        return PaginationHelper.getResponse(result, serviceDTOList);
     }
 }
