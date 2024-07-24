@@ -174,7 +174,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, jobData
           const newMessage = payload.new;
           if ((newMessage.sender_id == currentUser.id && newMessage.recipient_id == recipientUser.id) ||
             (newMessage.sender_id == recipientUser.id && newMessage.recipient_id == currentUser.id)) {
-            setMessages(prevMessages => [...prevMessages, newMessage]);
+            // setMessages(prevMessages => [...prevMessages, newMessage]);
           }
         })
         .subscribe();
