@@ -42,6 +42,7 @@ public class APIDocsHelper {
         public static final String DELETE_SERVICE = "Removes a service";
         public static final String GET_ALL = "Get all services with pagination and sorting";
         public static final String GET_ALL_BY_USER = "List all services by user id";
+        public static final String GET_ALL_BY_ID = "List all services by service id";
         public static final String UPDATE_REQUEST = "Updates service request";
         public static final String UPDATE_OFFER = "Updates service offer";
         public static final String DELETE_REQUEST = "Deletes service request";
