@@ -12,8 +12,8 @@ import { useRouter } from "next/navigation";
 import httpClient from "@/client/httpClient";
 
 const validationSchema = Yup.object().shape({
-  firstname: Yup.string().required().label('First Name'),
-  lastname: Yup.string().required().label('Last Name'),
+  firstName: Yup.string().required().label('First Name'),
+  lastName: Yup.string().required().label('Last Name'),
   email: Yup.string().email().required().label('Email'),
   password: Yup.string().min(8).required().label('Password'),
   confirmPassword: Yup.string()
@@ -40,7 +40,7 @@ export const RegisterForm = (): React.ReactNode => {
 
   const handleOnSubmit = async (values: { [key: string]: any }): Promise<any> => {
     console.log('handleOnSubmit');
-    const URL = `${baseURL}/api/v1/user`;
+    const URL = `http://localhost:8081/api/v1/user`;
     const payload = {
       "id": 0,
       "username": "string",
@@ -81,10 +81,15 @@ export const RegisterForm = (): React.ReactNode => {
         }
       ],
       "userId": 1
-    };
+    }
     console.log(payload);
     try {
-      const response = await httpClient.post(URL, payload);
+      const response = await httpClient.post(URL, payload, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
       console.log('Response:', response.data);
       //router.push('/');
       //return response;
@@ -97,11 +102,11 @@ export const RegisterForm = (): React.ReactNode => {
   return (
     <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md mx-auto">
       <Form
-          onSubmit={() => handleOnSubmit(formValues)}
+          onSubmit={(values) => handleOnSubmit(values)}
           validationSchema={validationSchema}
           initialValues={{
-            firstname: '',
-            lastname: '',
+            firstName: '',
+            lastName: '',
             email: '',
             password: '',
             confirmPassword: '',
@@ -114,30 +119,48 @@ export const RegisterForm = (): React.ReactNode => {
         <div className="mb-6">
           <InputField label="First Name" type="text" name="firstName" onChange={(e) => setFormValues((prevState) => ({
             ...prevState,
-            ['firstName']: e.target.value,
+            'firstName': e.target.value,
           }))}
             placeholder="Your First Name"/>
         </div>
 
         <div className="mb-6">
-          <InputField label="Last Name" type="text" name="lastName" placeholder="Your Last Name"/>
+          <InputField label="Last Name" type="text" name="lastName" onChange={(e) => setFormValues((prevState) => ({
+            ...prevState,
+            'lastName': e.target.value,
+          }))}
+            placeholder="Your Last Name"/>
         </div>
 
         <div className="mb-6">
-          <InputField label="Email Address" type="email" name="email" placeholder="Email address"/>
+          <InputField label="Email Address" type="email" name="email" onChange={(e) => setFormValues((prevState) => ({
+            ...prevState,
+            'email': e.target.value,
+          }))}
+            placeholder="Email address"/>
         </div>
 
         <div className="mb-6">
-          <InputField label="Password" name="password" onChange={handlePasswordChange} type="password"
-                      placeholder="Your Password"/>
+          <InputField label="Password" name="password" onChange={(e) =>
+              setFormValues((prevState) => ({
+                ...prevState,
+                password: e.target.value,
+              }))}
+              type="password"
+              placeholder="Your Password"/>
         </div>
 
         <div className="mb-6">
-          <InputField label="Confirm Password" type="password" name="confirmPassword" placeholder="Confirm Password"/>
+          <InputField label="Confirm Password" type="password" name="confirmPassword" onChange={(e) =>
+              setFormValues((prevState) => ({
+                ...prevState,
+                confirmPassword: e.target.value,
+              }))}
+              placeholder="Confirm Password"/>
         </div>
 
         <div className="flex items-center justify-center">
-          <Button onClick={() => handleOnSubmit} type="button"
+          <Button type="submit"
                   variant="btn-primary flex justify-center text-white bg-[#0C2348] hover:bg-[#D0693B] focus:ring-4 focus:outline-none focus:ring-[#0C2348]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#0C2348]/55 me-2 mb-2">
             Create Account
           </Button>
