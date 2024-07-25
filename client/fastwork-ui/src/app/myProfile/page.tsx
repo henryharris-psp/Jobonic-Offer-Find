@@ -1,8 +1,8 @@
 "use client";
 
-import React, { RefObject, useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import {baseURL, SERVER_AUTH, token} from "@/baseURL";
+import { baseURL, SERVER_AUTH, token } from "@/baseURL";
 import { useRouter } from "next/navigation";
 import httpClient from '@/client/httpClient';
 
@@ -23,30 +23,35 @@ type ExperienceInstance = {
     endDate: string;
 };
 
+type SkillInstance = {
+    id: string;
+    name: string;
+};
+
 type User = {
-    "id": number,
-    "username": string,
-    "firstName": string,
-    "lastName": string,
-    "email": string,
-    "companyName": string,
-    "phoneNumber": string,
-    "address": string,
-    "image": string,
-    "cardNumber": string,
-    "cardExpiryDate": string,
-    "walletAddress": string,
-    "review": number,
-    "userExperienceList": ExperienceInstance[],
-    "userEducationList": EducationInstance[],
-    "skills": [
-    {
-        "id": string,
-        "name": string
-    }
-],
-    "userId": number
-}
+    id: number;
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    companyName: string;
+    phoneNumber: string;
+    address: string;
+    image: string;
+    cardNumber: string;
+    cardExpiryDate: string;
+    walletAddress: string;
+    review: number;
+    userExperienceList: ExperienceInstance[];
+    userEducationList: EducationInstance[];
+    skills: [
+        {
+            id: string;
+            name: string;
+        }
+    ];
+    userId: number;
+};
 
 export default function MyProfile(): React.ReactNode {
     const [manualProfile, setManualProfile] = useState(true);
@@ -71,7 +76,6 @@ export default function MyProfile(): React.ReactNode {
     const [experienceEndDateField, setExperienceEndDateField] = useState<string>("");
 
     const [educationList, setEducationList] = useState<EducationInstance[]>([]);
-    const [educationEntry, setEducationEntry] = useState<EducationInstance>();
     const [institutionField, setInstitutionField] = useState<string>("");
     const [degreeField, setDegreeField] = useState<string>("");
     const [startDateField, setStartDateField] = useState<string>("");
@@ -98,7 +102,6 @@ export default function MyProfile(): React.ReactNode {
 
     // Focus Control
     const aboutMeRef = useRef<HTMLInputElement>(null);
-    const skillsRef = useRef<HTMLInputElement>(null);
     const institutionRef = useRef<HTMLInputElement>(null);
     const degreeRef = useRef<HTMLInputElement>(null);
     const startDateRef = useRef<HTMLInputElement>(null);
@@ -111,6 +114,9 @@ export default function MyProfile(): React.ReactNode {
     const [showFields, setShowFields] = useState(false); //education
     const [showExperienceFields, setShowExperienceFields] = useState(false);
     const [skills, setSkillsList] = useState<SkillInstance[]>([]);
+    const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [userSkillsList, setUserSkillsList] = useState<SkillInstance[]>([]);
 
     const [enabledInputs, setEnabledInputs] = useState<{
         [key: string]: boolean;
@@ -156,17 +162,6 @@ export default function MyProfile(): React.ReactNode {
     const dummyPostId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
     const replaceURL = 'http://localhost:8081'
 
-    // const handleEdit = (ref: RefObject<HTMLInputElement>, inputKey: string, event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
-    //     event.stopPropagation();
-    //     setEnabledInputs((prevState) => ({
-    //         ...prevState,
-    //         [inputKey]: true,
-    //     }));
-    //     if (ref.current) {
-    //         ref.current.focus();
-    //     }
-    // };
-
     const addMode = (
         inputKey: string,
         event: React.MouseEvent<SVGSVGElement, MouseEvent>
@@ -181,11 +176,19 @@ export default function MyProfile(): React.ReactNode {
             [inputKey]: !showNewEntry[inputKey],
         }));
         console.log(inputKey);
+        console.log(showNewEntry[inputKey]);
     };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { id, value } = event.target;
-        setFormState(prevState => ({ ...prevState, [id]: value }));
+        const [section, field] = id.split('.');
+        setFormState(prevState => ({
+            ...prevState,
+            [section]: {
+                ...prevState[section],
+                [field]: value
+            }
+        }));
     };
 
     const handleSave = async (inputKey: string) => {
@@ -199,23 +202,28 @@ export default function MyProfile(): React.ReactNode {
             degree: formState.education.degree,
             startDate: formState.education.startDate,
             endDate: formState.education.endDate,
-        }
+        };
         let experienceEntry = {
             id: dummyPostId,
             profileId: userId,
             company: formState.experience.company,
             startDate: formState.experience.experienceStartDate,
             endDate: formState.experience.experienceEndDate,
-        }
+        };
+        let skillsEntry = {
+            "profileId": userId,
+            "skillIds": selectedSkills,
+        };
         console.log(educationEntry);
         console.log(experienceEntry);
+        console.log(selectedSkills);
         try {
             if (inputKey == "user-education") {
                 const response = await httpClient.post(`${replaceURL}/api/v1/${inputKey}`, educationEntry, {
                     headers: {
                         "Authorization": `Bearer ${token}`,
                         "Content-Type": "application/json",
-                    }
+                    },
                 });
                 console.log("Save successful:", response.data);
             } else if (inputKey == 'user-experience') {
@@ -226,15 +234,25 @@ export default function MyProfile(): React.ReactNode {
                     }
                 })
                 console.log("Save successful:", response.data);
+            } else if (inputKey == "skills") {
+                const skillIdsParams = selectedSkills.map(skillId => `skillIds=${skillId}`).join('&');
+                const response = await httpClient.post(`${replaceURL}/api/v1/user-skill?profileId=${userId}&${skillIdsParams}`, null, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    }
+                });
+                console.log("Save successful:", response.data);
             }
-            // setEnabledInputs((prevState) => ({
-            //     ...prevState,
-            //     [inputKey]: false,
-            // }));
             if (inputKey == "user-education") {
-                setEducationList((prevList:EducationInstance[]) => [...prevList, educationEntry]);
+                setEducationList((prevList: EducationInstance[]) => [...prevList, educationEntry]);
+                console.log(educationList);
             } else if (inputKey == "user-experience") {
-                setExperienceList((prevList:ExperienceInstance[]) => [...prevList, experienceEntry]);
+                setExperienceList((prevList: ExperienceInstance[]) => [...prevList, experienceEntry]);
+                console.log(experienceList);
+            } else if (inputKey == "skills") {
+                //setSkillsField(skillsEntry.skills);
+                console.log(skillsField);
             }
             setShowNewEntry((prevState) => ({
                 ...prevState,
@@ -253,42 +271,57 @@ export default function MyProfile(): React.ReactNode {
             }));
         }
     };
+
     const fetchSkills = async () => {
         try {
-            const response = await httpClient.get(`${baseURL}/api/v1/skill/all`);
-            //console.log("Skills fetched:", response.data);
+            const response = await httpClient.get(`http://localhost:8081/api/v1/skill/all`);
             setSkillsList(response.data);
         } catch (error) {
             console.error("Error fetching skills:", error);
         }
-    }
+    };
+
+    const fetchUserSkills = async () => {
+        try {
+            const response = await httpClient.get(`${replaceURL}/api/v1/user-skill/all?userId=${userId}`);
+            const displayData = response.data.reverse();
+            setUserSkillsList(displayData);
+        } catch (error) {
+            console.error("Error fetching user skills:", error);
+        }
+    };
 
     const fetchEducation = async () => {
         try {
             const response = await httpClient.get(`${replaceURL}/api/v1/user-education/all?userId=${userId}`);
-            //console.log("Skills fetched:", response.data);
             const displayData = response.data.reverse();
             setEducationList(displayData);
         } catch (error) {
             console.error("Error fetching education:", error);
         }
-    }
+    };
 
     const fetchExperience = async () => {
         try {
             const response = await httpClient.get(`${replaceURL}/api/v1/user-experience/all?userId=${userId}`);
-            //console.log("Skills fetched:", response.data);
             const displayData = response.data.reverse();
             setExperienceList(displayData);
         } catch (error) {
             console.error("Error fetching experience:", error);
         }
-    }
+    };
 
     useEffect(() => {
         fetchSkills();
-        //fetchEducation();
     }, []);
+
+    useEffect(() => {
+        console.log(skills);
+    }, [skills]);
+
+    useEffect(() => {
+        console.log(userSkillsList);
+    }, [userSkillsList]);
 
     // Fetch userdata
     useEffect(() => {
@@ -301,9 +334,7 @@ export default function MyProfile(): React.ReactNode {
 
                 const userDataResponse = await httpClient.get(`${replaceURL}/api/v1/user/profile?id=${authId}`);
                 const userData = userDataResponse.data;
-                console.log(userData);
                 const jobonicId = userData.id;
-                console.log(jobonicId);
                 setUserId(jobonicId);
 
                 setCompanyName(userData.companyName);
@@ -326,10 +357,27 @@ export default function MyProfile(): React.ReactNode {
 
     useEffect(() => {
         // This effect runs whenever userId changes
-        console.log('User ID updated:', userId);
         fetchEducation();
         fetchExperience();
+        fetchUserSkills();
+        console.log(userId);
     }, [userId]);
+
+    const filteredSkills = skills.filter(skill =>
+        skill.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const handleSkillClick = (skill: SkillInstance) => {
+        console.log(skill.name);
+        setSelectedSkills((prevSelectedSkills) => {
+            // fix code
+            if (prevSelectedSkills.includes(skill.id)) {
+                return prevSelectedSkills.filter((s) => s !== skill.id);
+            } else {
+                return [...prevSelectedSkills, skill.id];
+            }
+        });
+    };
 
     return (
         <div className="m-16">
@@ -358,9 +406,6 @@ export default function MyProfile(): React.ReactNode {
             <div className="flex flex-col justify-start w-full pb-16">
                 <div className="flex space-x-2">
                     <h2 className="text-2xl font-bold text-gray-900">About Me</h2>
-                    {/* <svg onClick={(e) => handleEdit(aboutMeRef, "aboutMe", e)} className="w-8 h-8 text-orange-400 dark:text-white cursor-pointer flex justify-center items-center" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14.304 4.844L17.156 7.696M7 7H4a1 1 0 00-1 1v10a1 1 0 001 1h11a1 1 0 001-1v-4.5M19.409 3.59a2.017 2.017 0 010 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 012.852 0z" />
-                    </svg> */}
                 </div>
                 <h3 className="text-lg font-medium text-gray-400">
                     This was written with AI from what you&apos;ve written. Click to edit
@@ -375,7 +420,7 @@ export default function MyProfile(): React.ReactNode {
                     className={`text-black ${enabledInputs["aboutMe"]
                         ? "border bg-white"
                         : "border-none bg-transparent"
-                        } rounded`}
+                    } rounded`}
                     ref={aboutMeRef}
                     disabled={!enabledInputs["aboutMe"]}
                     onChange={(e) => setAboutMeField(e.target.value)}
@@ -397,28 +442,41 @@ export default function MyProfile(): React.ReactNode {
             <div className="flex flex-col justify-start w-full pb-16">
                 <div className="flex space-x-2">
                     <h2 className="text-2xl font-bold text-gray-900">Skills</h2>
-                    {/* <svg onClick={(e) => handleEdit(skillsRef, "skills", e)} className="w-8 h-8 text-orange-400 dark:text-white cursor-pointer flex justify-center items-center" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14.304 4.844L17.156 7.696M7 7H4a1 1 0 00-1 1v10a1 1 0 001 1h11a1 1 0 001-1v-4.5M19.409 3.59a2.017 2.017 0 010 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 012.852 0z" />
-                    </svg> */}
                 </div>
-                <form className="max-w-sm">
-                    <select id="countries" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option selected>Choose a skills</option>
-                        {
-                            skills.map((skill, index) => (
-                                <option key={index} value={skill.name}>{skill.name}</option>
-                            ))
-                        }
-                    </select>
-                </form>
-                {enabledInputs["skills"] && (
-                    <button
-                        onClick={() => handleSave("skill")}
-                        className="mt-2 bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 px-4 rounded"
-                    >
-                        Save
-                    </button>
-                )}
+                <div className="flex flex-wrap mb-4">
+                    {userSkillsList.map((skill) => (
+                        <div key={skill.id} className="bg-gray-200 text-gray-900 p-2 m-1 rounded">
+                            {skill.name}
+                        </div>
+                    ))}
+                </div>
+                <input
+                    type="text"
+                    placeholder="Search skills..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="mb-4 p-2 border border-gray-300 rounded-lg w-full"
+                />
+                <div className="flex flex-col max-h-80 overflow-y-auto">
+                    {filteredSkills.map((skill, index) => (
+                        <button
+                            key={index}
+                            className={`btn ${selectedSkills.includes(skill.name)
+                                ? "bg-[#0B2147] text-white"
+                                : "bg-white text-gray-900"
+                            } border border-gray-300 rounded-lg p-2 mb-2`}
+                            onClick={() => handleSkillClick(skill)}
+                        >
+                            {skill.name}
+                        </button>
+                    ))}
+                </div>
+                <button
+                    onClick={() => handleSave("skills")}
+                    className="mt-2 bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 px-4 rounded"
+                >
+                    Save
+                </button>
                 {feedbackMessage["skills"] && (
                     <p className="text-sm mt-2">{feedbackMessage["skills"]}</p>
                 )}
@@ -453,7 +511,7 @@ export default function MyProfile(): React.ReactNode {
                                 <h3 className="flex flex-col">Education Institution</h3>
                                 <input
                                     type="text"
-                                    id="institute"
+                                    id="education.institute"
                                     placeholder="Enter your institution"
                                     className={`text-black col-span-2 ${enabledInputs["user-education"]
                                         ? "border bg-white"
@@ -461,13 +519,13 @@ export default function MyProfile(): React.ReactNode {
                                     } rounded`}
                                     ref={institutionRef}
                                     disabled={!enabledInputs["user-education"]}
-                                    onChange={handleChange}/>
+                                    onChange={handleChange} />
                             </div>
                             <div className="grid grid-cols-3 items-center">
                                 <h3 className="flex flex-col">Degree</h3>
                                 <input
                                     type="text"
-                                    id="degree"
+                                    id="education.degree"
                                     placeholder="Enter your degree"
                                     className={`text-black w-full col-span-2 ${enabledInputs["user-education"]
                                         ? "border bg-white"
@@ -482,7 +540,7 @@ export default function MyProfile(): React.ReactNode {
                                 <h3 className="flex flex-col">Start Date</h3>
                                 <input
                                     type="date"
-                                    id="startDate"
+                                    id="education.startDate"
                                     placeholder="Enter start date (YYYY-MM-DD)"
                                     className={`text-black w-full col-span-2 ${enabledInputs["user-education"]
                                         ? "border bg-white"
@@ -497,7 +555,7 @@ export default function MyProfile(): React.ReactNode {
                                 <h3 className="flex flex-col">End Date</h3>
                                 <input
                                     type="date"
-                                    id="endDate"
+                                    id="education.endDate"
                                     placeholder="Enter end date (YYYY-MM-DD)"
                                     className={`text-black w-full col-span-2 ${enabledInputs["user-education"]
                                         ? "border bg-white"
@@ -516,7 +574,7 @@ export default function MyProfile(): React.ReactNode {
                                 <h3 className="flex flex-col">Education Institution</h3>
                                 <input
                                     type="text"
-                                    id="institute"
+                                    id="education.institute"
                                     value={education.institute}
                                     className="text-black col-span-2 border bg-white rounded"
                                     disabled
@@ -526,7 +584,7 @@ export default function MyProfile(): React.ReactNode {
                                 <h3 className="flex flex-col">Degree</h3>
                                 <input
                                     type="text"
-                                    id="degree"
+                                    id="education.degree"
                                     value={education.degree}
                                     className="text-black w-full col-span-2 border bg-white rounded"
                                     disabled
@@ -536,7 +594,7 @@ export default function MyProfile(): React.ReactNode {
                                 <h3 className="flex flex-col">Start Date</h3>
                                 <input
                                     type="date"
-                                    id="startDate"
+                                    id="education.startDate"
                                     value={education.startDate}
                                     className="text-black w-full col-span-2 border bg-white rounded"
                                     disabled
@@ -546,7 +604,7 @@ export default function MyProfile(): React.ReactNode {
                                 <h3 className="flex flex-col">End Date</h3>
                                 <input
                                     type="date"
-                                    id="endDate"
+                                    id="education.endDate"
                                     value={education.endDate}
                                     className="text-black w-full col-span-2 border bg-white rounded"
                                     disabled
@@ -557,7 +615,7 @@ export default function MyProfile(): React.ReactNode {
 
                     {enabledInputs["user-education"] && (
                         <button onClick={() => handleSave("user-education")}
-                            className="mt-2 bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 px-4 rounded">
+                                className="mt-2 bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 px-4 rounded">
                             Save
                         </button>
                     )}
@@ -596,7 +654,7 @@ export default function MyProfile(): React.ReactNode {
                                 <h3 className="flex flex-col">Company</h3>
                                 <input
                                     type="text"
-                                    id="company"
+                                    id="experience.company"
                                     placeholder="Enter your company"
                                     className={`text-black col-span-2 ${enabledInputs["user-experience"]
                                         ? "border bg-white"
@@ -604,13 +662,13 @@ export default function MyProfile(): React.ReactNode {
                                     } rounded`}
                                     ref={companyRef}
                                     disabled={!enabledInputs["user-experience"]}
-                                    onChange={handleChange}/>
+                                    onChange={handleChange} />
                             </div>
                             <div className="grid grid-cols-3 items-center">
                                 <h3 className="flex flex-col">Start Date</h3>
                                 <input
                                     type="date"
-                                    id="experienceStartDate"
+                                    id="experience.experienceStartDate"
                                     placeholder="Enter start date (YYYY-MM-DD)"
                                     className={`text-black w-full col-span-2 ${enabledInputs["user-experience"]
                                         ? "border bg-white"
@@ -625,7 +683,7 @@ export default function MyProfile(): React.ReactNode {
                                 <h3 className="flex flex-col">End Date</h3>
                                 <input
                                     type="date"
-                                    id="experienceEndDate"
+                                    id="experience.experienceEndDate"
                                     placeholder="Enter end date (YYYY-MM-DD)"
                                     className={`text-black w-full col-span-2 ${enabledInputs["user-experience"]
                                         ? "border bg-white"
@@ -644,7 +702,7 @@ export default function MyProfile(): React.ReactNode {
                                 <h3 className="flex flex-col">Company</h3>
                                 <input
                                     type="text"
-                                    id="company"
+                                    id="experience.company"
                                     value={exp.company}
                                     className="text-black col-span-2 border bg-white rounded"
                                     disabled
@@ -654,7 +712,7 @@ export default function MyProfile(): React.ReactNode {
                                 <h3 className="flex flex-col">Start Date</h3>
                                 <input
                                     type="date"
-                                    id="experienceStartDate"
+                                    id="experience.experienceStartDate"
                                     value={exp.startDate}
                                     className="text-black w-full col-span-2 border bg-white rounded"
                                     disabled
@@ -664,7 +722,7 @@ export default function MyProfile(): React.ReactNode {
                                 <h3 className="flex flex-col">End Date</h3>
                                 <input
                                     type="date"
-                                    id="experienceEndDate"
+                                    id="experience.experienceEndDate"
                                     value={exp.endDate}
                                     className="text-black w-full col-span-2 border bg-white rounded"
                                     disabled
@@ -691,9 +749,6 @@ export default function MyProfile(): React.ReactNode {
                     <h2 className="text-2xl font-bold text-gray-900">
                         Other Information
                     </h2>
-                    {/* <svg onClick={(e) => handleEdit(otherInfoRef, "otherInfo", e)} className="w-8 h-8 text-orange-400 dark:text-white cursor-pointer flex justify-center items-center" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14.304 4.844L17.156 7.696M7 7H4a1 1 0 00-1 1v10a1 1 0 001 1h11a1 1 0 001-1v-4.5M19.409 3.59a2.017 2.017 0 010 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 012.852 0z" />
-                    </svg> */}
                 </div>
                 <input
                     type="text"

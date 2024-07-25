@@ -77,7 +77,7 @@ function ComponentSelectSkills() {
 
     const fetchSkills = async () => {
         try {
-            const response = await httpClient.get(`${baseURL}/api/v1/skill/all`);
+            const response = await httpClient.get(`http://localhost:8081/api/v1/skill/all`);
             console.log("Skills fetched:", response.data);
             setSkillsList(response.data);
         } catch (error) {
@@ -170,7 +170,7 @@ function ComponentSelectSkills() {
                         placeholder="Search skills..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="mb-4 p-2 border border-gray-300 rounded-lg"
+                        className="mb-4 p-2 border border-gray-300 rounded-lg w-full"
                     />
                     <div className="flex flex-col max-h-80 overflow-y-auto">
                         {filteredSkills.map((skill, index) => (
