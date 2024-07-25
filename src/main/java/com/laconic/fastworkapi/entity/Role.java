@@ -19,6 +19,7 @@ public class Role extends Auditable<UUID> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @Enumerated(EnumType.STRING)
     private RoleType roleType;
     private boolean isActive = true;
 }
