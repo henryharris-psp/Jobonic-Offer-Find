@@ -15,6 +15,11 @@ type User = {
     otherInformation: string[];
 };
 
+type SkillInstance = {
+    id: string;
+    name: string;
+};
+
 function ComponentSelectSkills() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -35,12 +40,14 @@ function ComponentSelectSkills() {
     };
 
     const [selectedExperience, setSelectedExperience] = useState<string>("");
+    const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
     const [serviceData, setServiceData] = useState<any>(null);
+    const [skills, setSkillsList] = useState<SkillInstance[]>([]);
+    const [searchTerm, setSearchTerm] = useState<string>("");
 
     useEffect(() => {
         const fetchServiceData = async () => {
             try {
-                // Fetch user ID and email from init-data
                 const response = await httpClient.get(`${SERVER_AUTH}/v1/user/init-data`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -50,8 +57,7 @@ function ComponentSelectSkills() {
                 const userData = response.data;
                 const userId = userData.id;
 
-                // Fetch the list of services by user ID
-                const servicesResponse = await httpClient.get(`${baseURL}/api/v1/service/user`, {
+                const servicesResponse = await httpClient.get(`http://localhost:8081/api/v1/service/user`, {
                     headers: {
                         "Authorization": `Bearer ${token}`,
                         "accept": "application/json",
@@ -59,7 +65,6 @@ function ComponentSelectSkills() {
                     params: { profileId: userId }
                 });
 
-                // Filter the services to find the one with the given serviceId
                 const service = servicesResponse.data.find((service: any) => service.id === serviceId);
                 setServiceData(service);
             } catch (error) {
@@ -70,23 +75,32 @@ function ComponentSelectSkills() {
         fetchServiceData();
     }, [serviceId]);
 
-    const [skills, setSkillsList] = useState<SkillInstance[]>([]);
-
     const fetchSkills = async () => {
         try {
-            const response = await httpClient.get(`${baseURL}/api/v1/skill/all`);
+            const response = await httpClient.get(`http://localhost:8081/api/v1/skill/all`);
             console.log("Skills fetched:", response.data);
             setSkillsList(response.data);
         } catch (error) {
             console.error("Error fetching skills:", error);
         }
-    }
+    };
+
     useEffect(() => {
         fetchSkills();
     }, []);
 
     const handleExperienceClick = (experience: string) => {
         setSelectedExperience(experience);
+    };
+
+    const handleSkillClick = (skill: SkillInstance) => {
+        setSelectedSkills((prevSelectedSkills) => {
+            if (prevSelectedSkills.includes(skill.name)) {
+                return prevSelectedSkills.filter((s) => s !== skill.name);
+            } else {
+                return [...prevSelectedSkills, skill.name];
+            }
+        });
     };
 
     const handleSaveSkillsExperience = async (e: React.MouseEvent) => {
@@ -105,12 +119,21 @@ function ComponentSelectSkills() {
             startDate: serviceData.serviceOfferDTO.startDate,
             phone: serviceData.serviceOfferDTO.phone,
             address: serviceData.serviceOfferDTO.address,
-            skills: serviceData.serviceOfferDTO.skills,
+            skills: selectedSkills.join(", "),
             experience: selectedExperience,
             draftCount: serviceData.serviceOfferDTO.draftCount,
+            title: "Teacher",
+            workCategory: "DEVELOPMENT",
+            employmentType: "PART_TIME",
+            descriptionI: "Code",
+            descriptionII: "Teach",
+            descriptionIII: "Play with kids",
+            price: 2,
+            languageSpoken: "English",
+            location: "On Nut"
         };
 
-        const endpoint = `${baseURL}/api/v1/service/updateOffer?serviceOfferId=${serviceData.serviceOfferDTO.id}`;
+        const endpoint = `http://localhost:8081/api/v1/service/updateOffer?serviceOfferId=${serviceData.serviceOfferDTO.id}`;
         console.log('Updating service with data:', updateData);
         console.log('Endpoint:', endpoint);
 
@@ -128,6 +151,10 @@ function ComponentSelectSkills() {
         }
     };
 
+    const filteredSkills = skills.filter(skill =>
+        skill.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <div className="m-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-16 text-center">
@@ -138,15 +165,22 @@ function ComponentSelectSkills() {
                 {/* Display Skills */}
                 <div className="pb-4">
                     <h3 className="text-2xl font-bold mb-2 text-center">Skills</h3>
-                    <div className="flex flex-col">
-                        {skills.map((skill, index) => (
+                    <input
+                        type="text"
+                        placeholder="Search skills..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="mb-4 p-2 border border-gray-300 rounded-lg w-full"
+                    />
+                    <div className="flex flex-col max-h-80 overflow-y-auto">
+                        {filteredSkills.map((skill, index) => (
                             <button
                                 key={index}
-                                className={`btn ${selectedExperience === skill.name
-                                        ? "bg-[#0B2147] text-white"
-                                        : "bg-white text-gray-900"
-                                    } border border-gray-300 rounded-lg p-2 mb-2`}
-                                onClick={() => handleExperienceClick(skill.name)}
+                                className={`btn ${selectedSkills.includes(skill.name)
+                                    ? "bg-[#0B2147] text-white"
+                                    : "bg-white text-gray-900"
+                                } border border-gray-300 rounded-lg p-2 mb-2`}
+                                onClick={() => handleSkillClick(skill)}
                             >
                                 {skill.name}
                             </button>
@@ -162,9 +196,9 @@ function ComponentSelectSkills() {
                             <button
                                 key={index}
                                 className={`btn ${selectedExperience === exp
-                                        ? "bg-[#0B2147] text-white"
-                                        : "bg-white text-gray-900"
-                                    } border border-gray-300 rounded-lg p-2 mb-2`}
+                                    ? "bg-[#0B2147] text-white"
+                                    : "bg-white text-gray-900"
+                                } border border-gray-300 rounded-lg p-2 mb-2`}
                                 onClick={() => handleExperienceClick(exp)}
                             >
                                 {exp}
