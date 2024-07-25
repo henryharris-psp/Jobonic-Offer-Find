@@ -34,7 +34,7 @@ export default function CustomiseService(): React.ReactNode {
                 });
 
                 // Fetch additional user data using the userId
-                const userDetailsResponse = await httpClient.get(`${baseURL}/api/v1/user?id=${userId}`);
+                const userDetailsResponse = await httpClient.get(`http://localhost:8081/api/v1/user?id=${userId}`);
                 const userDetails = userDetailsResponse.data;
 
                 // Update user state with additional data
@@ -93,7 +93,7 @@ export default function CustomiseService(): React.ReactNode {
         console.log('Service Data:', JSON.stringify(serviceData, null, 2)); // Log the service data to verify
 
         try {
-            const response = await httpClient.post(`${baseURL}/api/v1/service`, serviceData);
+            const response = await httpClient.post(`http://localhost:8081/api/v1/service`, serviceData);
 
             const savedServiceId = response.data.id; // Capture the service ID from the response
 

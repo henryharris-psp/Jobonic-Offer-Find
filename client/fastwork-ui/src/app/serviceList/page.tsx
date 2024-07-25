@@ -37,17 +37,17 @@ const ServiceMatches = (): React.ReactElement => {
       const response = await httpClient.post(`http://localhost:8081/api/v1/service/all`, {
         pageNumber: 1,
         pageSize: 100,
-        sortBy: 'title',
+        sortBy: '',
         sortOrder: 'DESC',
         filter: {
-          searchKeyword: 'coder'
+          searchKeyword: ''
         }
       });
       const filteredServices = response.data.content.filter((service: any) => service.serviceRequestDTO !== null);
 
       // Map filtered services to match the expected structure for ServiceMatchCard
       const mappedServices: Service[] = filteredServices.map((service: any) => ({
-        name: service.serviceRequestDTO.title,
+        name: service.title,
         image: '/default-image.jpg', // Placeholder image
         rating: 0, // Default rating
         reviews: 20, // Assuming a static number of reviews for now
