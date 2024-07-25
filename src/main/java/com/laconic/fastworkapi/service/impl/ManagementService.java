@@ -1,10 +1,7 @@
 package com.laconic.fastworkapi.service.impl;
 
 import com.laconic.fastworkapi.constants.AppMessage;
-import com.laconic.fastworkapi.dto.ProfileDTO;
-import com.laconic.fastworkapi.dto.ServiceDTO;
-import com.laconic.fastworkapi.dto.ServiceOfferDTO;
-import com.laconic.fastworkapi.dto.ServiceRequestDTO;
+import com.laconic.fastworkapi.dto.*;
 import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
@@ -12,6 +9,7 @@ import com.laconic.fastworkapi.entity.Profile;
 import com.laconic.fastworkapi.entity.ServiceManagement;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.helper.PaginationHelper;
+import com.laconic.fastworkapi.repo.ICategoryRepo;
 import com.laconic.fastworkapi.repo.IServiceRepo;
 import com.laconic.fastworkapi.repo.IUserRepo;
 import com.laconic.fastworkapi.repo.specification.GenericSpecification;
@@ -24,24 +22,36 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ManagementService implements IManagementService {
     private final IServiceRepo serviceRepo;
     private final IUserRepo userRepo;
+    private final ICategoryRepo categoryRepo;
 
     @Autowired
-    public ManagementService(IServiceRepo serviceRepo, IUserRepo userRepo) {
+    public ManagementService(IServiceRepo serviceRepo, IUserRepo userRepo, ICategoryRepo categoryRepo) {
         this.serviceRepo = serviceRepo;
         this.userRepo = userRepo;
+        this.categoryRepo = categoryRepo;
     }
 
     private static ServiceDTO.WithProfile getServiceWithProfile(ServiceManagement service, Profile user) {
-        return new ServiceDTO.WithProfile(service.getId(),
-                                          EntityMapper.mapToResponse(service.getServiceOffer(), ServiceOfferDTO.class),
-                                          EntityMapper.mapToResponse(service.getServiceRequest(), ServiceRequestDTO.class),
-                                          EntityMapper.mapToEntity(user, ProfileDTO.class),
-                                          service.getTitle());
+        return new ServiceDTO.WithProfile(
+                service.getId(),
+                EntityMapper.mapToResponse(service.getServiceOffer(), ServiceOfferDTO.class),
+                EntityMapper.mapToResponse(service.getServiceRequest(), ServiceRequestDTO.class),
+                EntityMapper.mapToResponse(user, ProfileDTO.class),
+                service.getTitle(),
+                service.getEmploymentType(),
+                service.getDescription1(),
+                service.getDescription2(),
+                service.getDescription3(),
+                service.getLanguageSpoken(),
+                service.getLocation(),
+                EntityMapper.mapToResponse(service.getCategory(), CategoryDTO.class)
+        );
     }
 
     @Override
@@ -49,8 +59,12 @@ public class ManagementService implements IManagementService {
         var user = this.userRepo.findById(serviceDTO.getProfileId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
                         serviceDTO.getProfileId().toString()));
+        var category = this.categoryRepo.findById(serviceDTO.getCategoryId())
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.CATEGORY, "id",
+                        serviceDTO.getCategoryId().toString()));
         var serviceManagement = EntityMapper.mapToEntity(serviceDTO, ServiceManagement.class);
         serviceManagement.setProfile(user);
+        serviceManagement.setCategory(category);
         var service = this.serviceRepo.save(serviceManagement);
         return getServiceWithProfile(service, user);
     }
@@ -78,10 +92,10 @@ public class ManagementService implements IManagementService {
     public ServiceDTO.WithProfile getById(UUID id) {
         var service = this.serviceRepo.findById(id)
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
-                                                                    id.toString()));
+                        id.toString()));
         var user = this.userRepo.findById(service.getProfile().getId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
-                                                                    service.getProfile().getId().toString()));
+                        service.getProfile().getId().toString()));
         return getServiceWithProfile(service, user);
     }
 

@@ -1,6 +1,7 @@
 package com.laconic.fastworkapi.entity;
 
 import com.laconic.fastworkapi.entity.audit.Auditable;
+import com.laconic.fastworkapi.enums.EmploymentType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,5 +31,18 @@ public class ServiceManagement extends Auditable<UUID> {
     @JoinColumn(name = "profileId")
     private Profile profile;
     private String title;
+    @Enumerated(EnumType.STRING)
+    private EmploymentType employmentType;
+    @Column(columnDefinition = "CLOB")
+    private String description1;
+    @Column(columnDefinition = "CLOB")
+    private String description2;
+    @Column(columnDefinition = "CLOB")
+    private String description3;
+    private String languageSpoken;
+    private String location;
+    @ManyToOne
+    @JoinColumn(name = "category")
+    private Category category;
     private boolean isActive = true;
 }

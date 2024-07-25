@@ -31,15 +31,7 @@ public class ServiceOfferDTO implements Serializable {
     private String experience;
     private int draftCount = 0;
     private String title;
-    private String workCategory;
-    private String employmentType;
-    private String descriptionI;
-    private String descriptionII;
-    private String descriptionIII;
     private double price = 0;
-    private String languageSpoken;
-    private String location;
-
 
     public ServiceOfferDTO(ServiceOffer serviceOffer) {
         this.id = serviceOffer.getId();
@@ -53,14 +45,7 @@ public class ServiceOfferDTO implements Serializable {
         this.skills = serviceOffer.getSkills();
         this.experience = serviceOffer.getExperience();
         this.title = serviceOffer.getTitle();
-        this.workCategory = serviceOffer.getWorkCategory();
-        this.employmentType = serviceOffer.getEmploymentType();
-        this.descriptionI = serviceOffer.getDescriptionI();
-        this.descriptionII = serviceOffer.getDescriptionII();
-        this.descriptionIII = serviceOffer.getDescriptionIII();
         this.price = serviceOffer.getPrice();
-        this.languageSpoken = serviceOffer.getLanguageSpoken();
-        this.location = serviceOffer.getLocation();
     }
 
     public ServiceOffer updateServiceOffer(ServiceOffer serviceOffer) {
@@ -74,13 +59,7 @@ public class ServiceOfferDTO implements Serializable {
         serviceOffer.setSkills(this.skills);
         serviceOffer.setExperience(this.experience);
         serviceOffer.setTitle(this.title);
-        serviceOffer.setWorkCategory(this.workCategory);
-        serviceOffer.setDescriptionI(this.descriptionI);
-        serviceOffer.setDescriptionII(this.descriptionII);
-        serviceOffer.setDescriptionIII(this.descriptionIII);
         serviceOffer.setPrice(this.price);
-        serviceOffer.setLanguageSpoken(this.languageSpoken);
-        serviceOffer.setLocation(this.location);
         return serviceOffer;
     }
 }

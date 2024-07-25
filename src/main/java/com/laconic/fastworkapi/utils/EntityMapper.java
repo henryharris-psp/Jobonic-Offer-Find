@@ -35,7 +35,14 @@ public class EntityMapper {
         if(serviceManagement.getServiceRequest() != null)
             serviceDTO.setServiceRequestDTO(new ServiceRequestDTO(serviceManagement.getServiceRequest()));
         serviceDTO.setProfileId(serviceManagement.getProfile().getId());
+        serviceDTO.setCategoryId(serviceManagement.getCategory().getId());
         serviceDTO.setTitle(serviceManagement.getTitle());
+        serviceDTO.setEmploymentType(serviceManagement.getEmploymentType());
+        serviceDTO.setDescription1(serviceManagement.getDescription1());
+        serviceDTO.setDescription2(serviceManagement.getDescription2());
+        serviceDTO.setDescription3(serviceManagement.getDescription3());
+        serviceDTO.setLanguageSpoken(serviceManagement.getLanguageSpoken());
+        serviceDTO.setLocation(serviceManagement.getLocation());
         return serviceDTO;
     }
 }

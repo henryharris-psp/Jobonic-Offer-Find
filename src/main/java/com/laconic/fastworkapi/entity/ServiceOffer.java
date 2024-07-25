@@ -31,17 +31,10 @@ public class ServiceOffer extends Auditable<UUID> {
     private String address;
     private String skills;
     private String experience;
-    private String title;
-    private String workCategory;
-    private String employmentType;
-    private String descriptionI;
-    private String descriptionII;
-    private String descriptionIII;
-    @Builder.Default
-    private double price = 0;
-    private String languageSpoken;
-    private String location;
     @Builder.Default
     private int draftCount = 0;
+    private String title;
+    @Builder.Default
+    private double price = 0;
     private boolean isActive = true;
 }
