@@ -56,7 +56,7 @@ public class ServiceManagementController {
         return this.managementService.getAllByUser(profileId);
     }
 
-    @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL_BY_USER)
+    @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL_BY_ID)
     @GetMapping("/get")
     public ServiceDTO.WithProfile getById(@RequestParam UUID serviceId) {
         return this.managementService.getById(serviceId);
