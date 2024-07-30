@@ -5,13 +5,13 @@ import { AxiosError } from 'axios';
 
 // Function to fetch categories from the backend enum
 const fetchBackendCategories = async () => {
-    const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
+    const response = await httpClient.get(`http://localhost:8081/api/v1/category/all`);
     return response.data;
 };
 
 const initializeCategories = async () => {
     try {
-        const existingCategoriesResponse = await httpClient.get(`${baseURL}/api/v1/category/all`);
+        const existingCategoriesResponse = await httpClient.get(`http://localhost:8081/api/v1/category/all`);
         const existingCategories = existingCategoriesResponse.data.map((category: { name: string }) => category.name);
 
         // Fetch backend categories
@@ -20,7 +20,7 @@ const initializeCategories = async () => {
         for (const category of backendCategories) {
             if (!existingCategories.includes(category)) {
                 try {
-                    await httpClient.post(`${baseURL}/api/v1/category`, { name: category });
+                    await httpClient.post(`http://localhost:8081/api/v1/category`, { name: category });
                 } catch (error) {
                     if (error instanceof AxiosError) {
                         console.error('Error adding category:', error.response?.data || error.message);
