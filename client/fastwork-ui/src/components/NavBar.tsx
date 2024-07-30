@@ -185,13 +185,15 @@ const NavbarComponent = ({ showOnlyLogo = false, isEmployer = false, signedIn = 
                     className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-2 py-1 text-center me-2 mb-2 mt-1"
                     onClick={(e) => void handleLogin(e)}
                   >
-                    {' Log In'}
+                    Log In
                   </button>
                   <button
                     type="button"
                     className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-2 py-1 text-center me-2 mb-2 mt-1"
                   >
-                    <Link href="/register"> {' Sing Up'}</Link>
+                    <Link href="/register">
+                      Sign Up
+                    </Link>
                   </button>
                 </div>
               )
@@ -202,7 +204,9 @@ const NavbarComponent = ({ showOnlyLogo = false, isEmployer = false, signedIn = 
                     type="button"
                     className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-2 py-1 text-center me-2 mb-2 mt-1"
                   >
-                    <Link href="/register"> {'Create Profile'}</Link>
+                    <Link href="/register">
+                      Create Profile
+                    </Link>
                   </button>
                 </div>
               ) :
@@ -214,7 +218,7 @@ const NavbarComponent = ({ showOnlyLogo = false, isEmployer = false, signedIn = 
                       className="flex items-center space-x-2"
                     >
                       <img src="/group-image.jpg" alt="User Avatar" className="lg:w-8 lg:h-8 sm:w-6 sm:h-6 rounded-full object-cover" />
-                      <label>{user.firstName} {user.lastName}</label>
+                      <label>{user.firstName}</label>
                       <svg
                         className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''
                           }`}
