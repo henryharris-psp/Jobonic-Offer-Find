@@ -30,19 +30,24 @@ public class EntityMapper {
         }
         ServiceDTO serviceDTO = new ServiceDTO();
         serviceDTO.setId(serviceManagement.getId());
-        if(serviceManagement.getServiceOffer() != null)
+        if (serviceManagement.getServiceOffer() != null)
             serviceDTO.setServiceOfferDTO(new ServiceOfferDTO(serviceManagement.getServiceOffer()));
-        if(serviceManagement.getServiceRequest() != null)
+        if (serviceManagement.getServiceRequest() != null)
             serviceDTO.setServiceRequestDTO(new ServiceRequestDTO(serviceManagement.getServiceRequest()));
-        serviceDTO.setProfileId(serviceManagement.getProfile().getId());
-        serviceDTO.setCategoryId(serviceManagement.getCategory().getId());
+        if (serviceManagement.getProfile() != null)
+            serviceDTO.setProfileId(serviceManagement.getProfile().getId());
+        if (serviceManagement.getCategory() != null)
+            serviceDTO.setCategoryId(serviceManagement.getCategory().getId());
         serviceDTO.setTitle(serviceManagement.getTitle());
         serviceDTO.setEmploymentType(serviceManagement.getEmploymentType());
+        serviceDTO.setDescription(serviceManagement.getDescription());
         serviceDTO.setDescription1(serviceManagement.getDescription1());
         serviceDTO.setDescription2(serviceManagement.getDescription2());
         serviceDTO.setDescription3(serviceManagement.getDescription3());
         serviceDTO.setLanguageSpoken(serviceManagement.getLanguageSpoken());
         serviceDTO.setLocation(serviceManagement.getLocation());
+        serviceDTO.setPrice(serviceManagement.getPrice());
+        serviceDTO.setPriceUnit(serviceManagement.getPriceUnit());
         return serviceDTO;
     }
 }

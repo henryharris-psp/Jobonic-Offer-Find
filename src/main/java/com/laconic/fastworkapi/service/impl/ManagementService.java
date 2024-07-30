@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class ManagementService implements IManagementService {
@@ -45,12 +44,15 @@ public class ManagementService implements IManagementService {
                 EntityMapper.mapToResponse(user, ProfileDTO.class),
                 service.getTitle(),
                 service.getEmploymentType(),
+                service.getDescription(),
                 service.getDescription1(),
                 service.getDescription2(),
                 service.getDescription3(),
                 service.getLanguageSpoken(),
                 service.getLocation(),
-                EntityMapper.mapToResponse(service.getCategory(), CategoryDTO.class)
+                EntityMapper.mapToResponse(service.getCategory(), CategoryDTO.class),
+                service.getPrice(),
+                service.getPriceUnit()
         );
     }
 

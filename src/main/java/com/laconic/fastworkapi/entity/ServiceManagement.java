@@ -2,11 +2,9 @@ package com.laconic.fastworkapi.entity;
 
 import com.laconic.fastworkapi.entity.audit.Auditable;
 import com.laconic.fastworkapi.enums.EmploymentType;
+import com.laconic.fastworkapi.enums.PriceUnit;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.UUID;
@@ -17,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @SQLRestriction("is_active=true")
+@Builder
 public class ServiceManagement extends Auditable<UUID> {
 
     @Id
@@ -36,6 +35,8 @@ public class ServiceManagement extends Auditable<UUID> {
     @Column(columnDefinition = "CLOB")
     private String description1;
     @Column(columnDefinition = "CLOB")
+    private String description;
+    @Column(columnDefinition = "CLOB")
     private String description2;
     @Column(columnDefinition = "CLOB")
     private String description3;
@@ -44,5 +45,9 @@ public class ServiceManagement extends Auditable<UUID> {
     @ManyToOne
     @JoinColumn(name = "category")
     private Category category;
+    @Builder.Default
+    private double price = 0;
+    @Enumerated(EnumType.STRING)
+    private PriceUnit priceUnit;
     private boolean isActive = true;
 }

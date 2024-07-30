@@ -1,7 +1,6 @@
 package com.laconic.fastworkapi.controller;
 
 import com.laconic.fastworkapi.dto.ServiceDTO;
-import com.laconic.fastworkapi.dto.ServiceOfferDTO;
 import com.laconic.fastworkapi.dto.ServiceRequestDTO;
 import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
@@ -74,13 +73,6 @@ public class ServiceManagementController {
     @DeleteMapping("/request")
     public String deleteRequest(@RequestParam UUID serviceRequestId) {
         return this.requestService.remove(serviceRequestId);
-    }
-
-    @Operation(summary = APIDocsHelper.ServiceAPI.UPDATE_OFFER)
-    @PutMapping("/updateOffer")
-    public ServiceOfferDTO updateOffer(@RequestParam UUID serviceOfferId,
-                                       @RequestBody ServiceOfferDTO serviceOfferDTO) {
-        return this.offerService.update(serviceOfferId, serviceOfferDTO);
     }
 
     @Operation(summary = APIDocsHelper.ServiceAPI.UPDATE_REQUEST)

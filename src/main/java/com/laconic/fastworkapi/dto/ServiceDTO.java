@@ -1,6 +1,7 @@
 package com.laconic.fastworkapi.dto;
 
 import com.laconic.fastworkapi.enums.EmploymentType;
+import com.laconic.fastworkapi.enums.PriceUnit;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,6 +26,8 @@ public class ServiceDTO implements Serializable {
     private String title;
     private EmploymentType employmentType;
     @Column(columnDefinition = "CLOB")
+    private String description;
+    @Column(columnDefinition = "CLOB")
     private String description1;
     @Column(columnDefinition = "CLOB")
     private String description2;
@@ -33,10 +36,13 @@ public class ServiceDTO implements Serializable {
     private String languageSpoken;
     private String location;
     private UUID categoryId;
+    private double price = 0;
+    private PriceUnit priceUnit;
 
     public record WithProfile(UUID id, ServiceOfferDTO serviceOfferDTO, ServiceRequestDTO serviceRequestDTO,
-                              ProfileDTO profileDTO, String title, EmploymentType employmentType, String description1,
-                              String description2, String description3, String languageSpoken, String location,
-                              CategoryDTO categoryDTO) implements Serializable {
+                              ProfileDTO profileDTO, String title, EmploymentType employmentType, String description,
+                              String description1, String description2, String description3, String languageSpoken,
+                              String location, CategoryDTO categoryDTO, double price,
+                              PriceUnit priceUnit) implements Serializable {
     }
 }

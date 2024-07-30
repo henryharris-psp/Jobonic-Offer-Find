@@ -1,8 +1,6 @@
 package com.laconic.fastworkapi.service.impl;
 
 import com.laconic.fastworkapi.constants.AppMessage;
-import com.laconic.fastworkapi.dto.ServiceDTO;
-import com.laconic.fastworkapi.dto.ServiceOfferDTO;
 import com.laconic.fastworkapi.entity.ServiceOffer;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.IServiceOfferRepo;
@@ -19,12 +17,6 @@ public class OfferService implements IOfferService {
     @Autowired
     public OfferService(IServiceOfferRepo serviceOfferRepo) {
         this.serviceOfferRepo = serviceOfferRepo;
-    }
-
-    @Override
-    public ServiceOfferDTO update(UUID serviceOfferId, ServiceOfferDTO serviceOfferDTO) {
-        var offer = this.getServiceOffer(serviceOfferId);
-        return new ServiceOfferDTO(this.serviceOfferRepo.save(serviceOfferDTO.updateServiceOffer(offer)));
     }
 
     @Override

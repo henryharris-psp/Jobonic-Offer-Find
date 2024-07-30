@@ -8,7 +8,6 @@ import jakarta.persistence.Id;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -23,18 +22,5 @@ public class ServiceOffer extends Auditable<UUID> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    private String description;
-    private String bankCardNumber;
-    private String email;
-    private LocalDate startDate;
-    private String phone;
-    private String address;
-    private String skills;
-    private String experience;
-    @Builder.Default
-    private int draftCount = 0;
-    private String title;
-    @Builder.Default
-    private double price = 0;
     private boolean isActive = true;
 }

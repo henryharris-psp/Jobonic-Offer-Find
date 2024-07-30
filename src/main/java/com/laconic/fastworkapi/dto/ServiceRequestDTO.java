@@ -22,19 +22,16 @@ public class ServiceRequestDTO implements Serializable {
     private UUID id;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate submissionDeadline;
-    private double budget = 0;
     private String workExample;
 
     public ServiceRequestDTO(ServiceRequest serviceRequest) {
         this.id = serviceRequest.getId();
         this.submissionDeadline = serviceRequest.getSubmissionDeadline();
-        this.budget = serviceRequest.getBudget();
         this.workExample = serviceRequest.getWorkExample();
     }
 
     public ServiceRequest updateServiceRequest(ServiceRequest serviceRequest) {
         serviceRequest.setSubmissionDeadline(this.submissionDeadline);
-        serviceRequest.setBudget(this.budget);
         serviceRequest.setWorkExample(this.workExample);
         return serviceRequest;
     }
