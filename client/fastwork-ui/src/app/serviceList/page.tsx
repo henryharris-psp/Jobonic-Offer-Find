@@ -47,6 +47,7 @@ const ServiceMatches = (): React.ReactElement => {
 
       // Map filtered services to match the expected structure for ServiceMatchCard
       const mappedServices: Service[] = filteredServices.map((service: any) => ({
+        id: service.id,
         name: service.title,
         image: '/default-image.jpg', // Placeholder image
         rating: 0, // Default rating
@@ -254,7 +255,7 @@ const ServiceMatches = (): React.ReactElement => {
                   {services.map((service, index) => (
                       <div key={index} className="pb-8">
                         <ServiceMatchCard
-                            service={service}
+                            service={service}  // Pass the service object
                             onClick={handleServiceClick}
                             onChatClick={handleChatClick}
                         />
@@ -303,9 +304,3 @@ const ServiceMatches = (): React.ReactElement => {
 };
 
 export default ServiceMatches;
-
-
-
-
-
-

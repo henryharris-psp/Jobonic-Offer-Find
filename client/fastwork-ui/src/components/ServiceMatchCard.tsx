@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import Toast from './Toast';
 import { Service } from '@/types';
 
@@ -69,7 +70,9 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({ service, onClick, o
         <div className="flex items-center mb-4">
           <Image src={service.image} alt={service.name} width={50} height={50} className="rounded-full" />
           <div className="ml-4 text-left">
-            <h3 className="text-xl font-bold">{service.name}</h3>
+            <Link href={{ pathname: '/description', query: { id: service.id } }} legacyBehavior>
+              <a className="text-xl font-bold hover:text-blue-500 hover:underline">{service.name}</a>
+            </Link>
             <div className="flex items-center space-x-2">
               <span className="text-gray-500">{service.rating}</span>
               {renderStars(service.rating)}
@@ -82,17 +85,16 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({ service, onClick, o
           <div className="flex space-x-2 items-center justify-center">
             <span className="text-lg font-bold">{service.price}</span>
             <button className="flex items-center justify-center" onClick={onChatClick}>
-            <span>
-              <svg className="w-6 h-6 text-[#0B2147] hover:text-[#D0693B] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                <path fillRule="evenodd" d="M3 5.983C3 4.888 3.895 4 5 4h14c1.105 0 2 .888 2 1.983v8.923a1.992 1.992 0 0 1-2 1.983h-6.6l-2.867 2.7c-.955.899-2.533.228-2.533-1.08v-1.62H5c-1.105 0-2-.888-2-1.983V5.983Zm5.706 3.809a1 1 0 1 0-1.412 1.417 1 1 0 1 0 1.412-1.417Zm2.585.002a1 1 0 1 1 .003 1.414 1 1 0 0 1-.003-1.414Zm5.415-.002a1 1 0 1 0-1.412 1.417 1 1 0 1 0 1.412-1.417Z" clipRule="evenodd"/>
-              </svg>
-            </span>
+              <span>
+                <svg className="w-6 h-6 text-[#0B2147] hover:text-[#D0693B] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path fillRule="evenodd" d="M3 5.983C3 4.888 3.895 4 5 4h14c1.105 0 2 .888 2 1.983v8.923a1.992 1.992 0 0 1-2 1.983h-6.6l-2.867 2.7c-.955.899-2.533.228-2.533-1.08v-1.62H5c-1.105 0-2-.888-2-1.983V5.983Zm5.706 3.809a1 1 0 1 0-1.412 1.417 1 1 0 1 0 1.412-1.417Zm2.585.002a1 1 0 1 1 .003 1.414 1 1 0 0 1-.003-1.414Zm5.415-.002a1 1 0 1 0-1.412 1.417 1 1 0 1 0 1.412-1.417Z" clipRule="evenodd"/>
+                </svg>
+              </span>
             </button>
             <button
                 className={`text-gray-600 hover:text-gray-900`}
                 onClick={handleWishlistClick}
             >
-              {/* Favourite icon */}
               {isWishlisted ?
                   <svg className="w-6 h-6 text-red-500 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                     <path d="m12.75 20.66 6.184-7.098c2.677-2.884 2.559-6.506.754-8.705-.898-1.095-2.206-1.816-3.72-1.855-1.293-.034-2.652.43-3.963 1.442-1.315-1.012-2.678-1.476-3.973-1.442-1.515.04-2.825.76-3.724 1.855-1.806 2.201-1.915 5.823.772 8.706l6.183 7.097c.19.216.46.34.743.34a.985.985 0 0 0 .743-.34Z"/>
@@ -113,7 +115,3 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({ service, onClick, o
 };
 
 export default ServiceMatchCard;
-
-
-
-
