@@ -148,7 +148,7 @@ public class APIDocsHelper {
     public static class MatchesAPI {
         public static final String SAVE_MATCHES = "Saves and returns a match";
         public static final String UPDATE_MATCHES = "Updates and returns a match";
-        public static final String GET_ALL_MATCHES = "Get all matches with pagination and sorting.";
+        public static final String GET_ALL_MATCHES = "Get all matches";
         public static final String GET_MATCHES = "Get single match";
         public static final String DELETE_MATCHES = "Removes a match";
     }
