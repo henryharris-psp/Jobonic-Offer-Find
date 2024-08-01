@@ -77,7 +77,7 @@ function ComponentSelectSkills() {
 
     const fetchSkills = async () => {
         try {
-            const response = await httpClient.get(`http://localhost:8081/api/v1/skill/all`);
+            const response = await httpClient.get(`${baseURL}/api/v1/skill/all`);
             console.log("Skills fetched:", response.data);
             setSkillsList(response.data);
         } catch (error) {

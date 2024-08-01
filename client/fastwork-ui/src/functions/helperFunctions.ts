@@ -3,12 +3,50 @@ import { baseURL } from "@/baseURL";
 import axios from "axios";
 import httpClient from '@/client/httpClient';
 
-// returns a boolean which says whether profile exists
-const checkProfile = async (userID: number) => {
+// function to get user ID from the init endpoint
+export const getUserId = async () => {
     try {
-        const response = await httpClient.get(`${baseURL}/api/v1/user`, {
+        const response = await httpClient.get('https://api-auths.laconic.co.th/v1/user/init-data');
+        return response.data.id;
+    } catch (error: any) {
+        console.error('Error fetching user ID:', error);
+        throw error;
+    }
+};
+
+// function to get profile details from user-controller without taking userId as a parameter
+export const getProfile = async () => {
+    try {
+        const userId = await getUserId();
+        const response = await httpClient.get(`http://localhost:8081/api/v1/user/profile`, {
             params: {
-                id: userID
+                id: userId
+            }
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error('Error fetching profile details:', error);
+        throw error;
+    }
+};
+
+// function to get profile ID from profile object
+export const getProfileId = async () => {
+    try {
+        const profile = await getProfile();
+        return profile.id;
+    } catch (error: any) {
+        console.error('Error fetching profile ID:', error);
+        throw error;
+    }
+};
+
+// returns a boolean which says whether profile exists
+export const checkProfile = async (profileId: number) => {
+    try {
+        const response = await httpClient.get(`http://localhost:8081/api/v1/user`, {
+            params: {
+                id: profileId
             }
         });
 
@@ -25,42 +63,17 @@ const checkProfile = async (userID: number) => {
     }
 };
 
-// function to get user ID from the init endpoint
-const getUserId = async () => {
+// function to get category name from category-controller taking categoryId as a parameter
+export const getCategoryName = async (categoryId: string) => {
     try {
-        const response = await httpClient.get('https://api-auths.laconic.co.th/v1/user/init-data');
-        return response.data.id;
-    } catch (error: any) {
-        console.error('Error fetching user ID:', error);
-        throw error;
-    }
-};
-
-// function to get profile details from user-controller without taking userId as a parameter
-const getProfile = async () => {
-    try {
-        const userId = await getUserId();
-        const response = await httpClient.get(`${baseURL}/api/v1/user/profile`, {
+        const response = await httpClient.get(`http://localhost:8081/api/v1/category`, {
             params: {
-                id: userId
+                id: categoryId
             }
         });
-        return response.data;
+        return response.data.name;
     } catch (error: any) {
         console.error('Error fetching profile details:', error);
         throw error;
     }
 };
-
-// function to get profile ID from profile object
-const getProfileId = async () => {
-    try {
-        const profile = await getProfile();
-        return profile.id;
-    } catch (error: any) {
-        console.error('Error fetching profile ID:', error);
-        throw error;
-    }
-};
-
-export default { checkProfile, getProfile, getUserId, getProfileId };
