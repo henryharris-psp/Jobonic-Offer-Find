@@ -25,6 +25,7 @@
     "formik": "^2.4.6",
     "fs": "^0.0.1-security",
     "jest": "^29.7.0",
+    "json2csv": "^6.0.0-alpha.2",
     "next": "^14.2.3",
     "pandas": "^0.0.3",
     "papaparse": "^5.4.1",
@@ -35,6 +36,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@types/json2csv": "^5.0.7",
     "@types/node": "^20",
     "@types/papaparse": "^5.3.14",
     "@types/react": "^18",
