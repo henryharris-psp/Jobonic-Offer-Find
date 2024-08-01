@@ -283,7 +283,7 @@ export default function MyProfile(): React.ReactNode {
 
     const fetchUserSkills = async () => {
         try {
-            const response = await httpClient.get(`${replaceURL}/api/v1/user-skill/all?userId=${userId}`);
+            const response = await httpClient.get(`${replaceURL}/api/v1/user-skill/all?profileId=${userId}`);
             const displayData = response.data.reverse();
             setUserSkillsList(displayData);
         } catch (error) {
