@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface IMatchesRepo extends JpaRepository<Matches, UUID> {
+    Matches findByServiceId(UUID serviceId);
 }
