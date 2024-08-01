@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import CreateServiceRequestCard from '@/components/CreateServiceRequestCard';
 import { useRouter } from 'next/navigation';
 import httpClient from '@/client/httpClient';
-import { baseURL, SERVER_AUTH } from "@/baseURL";
+import { baseURL } from "@/baseURL";
 import { AxiosError } from 'axios';
+import { getProfileId, getProfile } from '../../functions/helperFunctions';
 
 interface CardProps {
   title: string;
@@ -21,6 +22,7 @@ interface CardProps {
 type UserData = {
   id?: number;
   email?: string;
+  username?: string;
 };
 
 type Category = {
@@ -31,45 +33,38 @@ type Category = {
 const CustomiseJobRequestForm: React.FC = () => {
   const router = useRouter();
   const [user, setUser] = useState<UserData>({});
+  //const [profileId, setProfileId] = useState<number | null>(null);
   const [formState, setFormState] = useState({
     title: '',
     workCategory: '',
     employmentType: '',
+    detailedDescription: '',
     requirement1: '',
     requirement2: '',
     requirement3: '',
     exampleWork: '',
     deadline: '',
     budget: '',
+    priceUnit: '',
     language: [] as string[],
     location: '',
   });
 
   const [categoryList, setCategoryList] = useState<Category[]>([]);
 
-  const fetchCategory = async () => {
-    const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
-    setCategoryList(response.data);
-  };
-
   useEffect(() => {
-    const fetchUserIdAndData = async () => {
-      try {
-        const response = await httpClient.get(`${SERVER_AUTH}/v1/user/init-data`);
-        const userData = response.data;
-        const userId = userData.id;
-
-        setUser({
-          id: userId,
-          email: userData.email
-        });
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-
-    fetchUserIdAndData();
+    // Fetch category list on component mount
+    fetchCategory();
   }, []);
+
+  const fetchCategory = async () => {
+    try {
+      const response = await httpClient.get(`http://localhost:8081/api/v1/category/all`);
+      setCategoryList(response.data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
@@ -83,30 +78,28 @@ const CustomiseJobRequestForm: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (!user.id) {
-      console.error('User ID is not available.');
-      return;
-    }
-
+    const selectedCategory = categoryList.find(category => category.name === formState.workCategory);
+    const profileId = await getProfileId();
+    console.log(profileId);
     const serviceData = {
       id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       serviceRequestDTO: {
         id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        //workCategory: formState.workCategory,
-        workCategory: "DEVELOPMENT",
-        employmentType: formState.employmentType,
-        description1: formState.requirement1,
-        description2: formState.requirement2,
-        description3: formState.requirement3,
         submissionDeadline: formState.deadline,
-        budget: parseInt(formState.budget),
         workExample: formState.exampleWork,
-        languageSpoken: formState.language.join(', '),
-        location: formState.location
       },
-      profileId: user.id,
-      title: formState.title
+      profileId: profileId, // Use the state variable
+      title: formState.title,
+      employmentType: formState.employmentType,
+      description: formState.detailedDescription,
+      description1: formState.requirement1,
+      description2: formState.requirement2,
+      description3: formState.requirement3,
+      languageSpoken: formState.language.join(', '),
+      location: formState.location,
+      categoryId: selectedCategory ? selectedCategory.id : '',
+      price: parseInt(formState.budget),
+      priceUnit: formState.priceUnit
     };
 
     console.log('Service Data:', JSON.stringify(serviceData, null, 2));
@@ -115,7 +108,6 @@ const CustomiseJobRequestForm: React.FC = () => {
       const response = await httpClient.post(`http://localhost:8081/api/v1/service`, serviceData);
       const savedServiceId = response.data.id;
       console.log('Response Data:', response.data);
-      console.log(savedServiceId);
       router.push(`/myProfile`);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -126,17 +118,13 @@ const CustomiseJobRequestForm: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    fetchCategory();
-  }, []);
-
   const cardProps: CardProps = {
     title: formState.title,
     earned: '',
     description: [
       {
         avatar: '/group-image.jpg',
-        username: 'taytayxy',
+        username: user.username || '',
         review: '',
       },
     ],
@@ -193,7 +181,20 @@ const CustomiseJobRequestForm: React.FC = () => {
                 <option value="CONTRACT">Contract</option>
               </select>
             </div>
-            <div>For the fields below, please fill in the necessary job information e.g. job scope, skills requirement, personality fit.</div>
+            <div>
+              For the fields below, please fill in the necessary job information e.g. job scope, skills requirement, personality fit.
+            </div>
+            <div>
+              <label className="required block text-lg font-semibold mb-2" htmlFor="detailedDescription">Detailed Job Description</label>
+              <textarea
+                  id="detailedDescription"
+                  name="detailedDescription"
+                  value={formState.detailedDescription}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Detailed description of the job"
+              />
+            </div>
             <div>
               <label className="required block text-lg font-semibold mb-2" htmlFor="requirement1">Job Description 1</label>
               <input
@@ -263,8 +264,23 @@ const CustomiseJobRequestForm: React.FC = () => {
                   value={formState.budget}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                  placeholder="$14 / hour"
+                  placeholder="$14"
               />
+            </div>
+            <div>
+              <label className="required block text-lg font-semibold mb-2" htmlFor="priceUnit">Price Unit</label>
+              <select
+                  id="priceUnit"
+                  name="priceUnit"
+                  value={formState.priceUnit}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                <option value="" disabled>Select a unit</option>
+                <option value="HOUR">Hour</option>
+                <option value="WEEK">Week</option>
+                <option value="MONTH">Month</option>
+                <option value="PROJECT">Project</option>
+              </select>
             </div>
             <div>
               <label className="required block text-lg font-semibold mb-2" htmlFor="language">Language Spoken</label>
@@ -293,7 +309,7 @@ const CustomiseJobRequestForm: React.FC = () => {
               />
             </div>
             <div className="text-center">
-              <button type="submit" className="bg-[#0B2147] hover:bg-[#D0693B] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#D0693B]">
+              <button type="submit" className="bg-[#0B2147] hover:bg-[#D0693B] text-white font-semibold py-2 px-4 rounded-lg">
                 Submit
               </button>
             </div>
@@ -309,9 +325,3 @@ const CustomiseJobRequestForm: React.FC = () => {
 };
 
 export default CustomiseJobRequestForm;
-
-
-
-
-
-

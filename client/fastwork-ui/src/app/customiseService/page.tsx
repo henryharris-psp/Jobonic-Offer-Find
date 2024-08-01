@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import httpClient from '@/client/httpClient';
 import { baseURL, SERVER_AUTH } from "@/baseURL";
 import { AxiosError } from 'axios';
+import {getProfileId} from "@/functions/helperFunctions";
 
 type Category = {
     id: string;
@@ -35,36 +36,8 @@ const CustomiseService: React.FC = () => {
     const [user, setUser] = useState<UserData>({});
     const router = useRouter();
 
-    useEffect(() => {
-        const fetchUserIdAndData = async () => {
-            try {
-                const response = await httpClient.get(`${SERVER_AUTH}/v1/user/init-data`);
-                const userData = response.data;
-                const userId = userData.id;
-
-                setUser({
-                    id: userId,
-                    email: userData.email,
-                });
-
-                const userDetailsResponse = await httpClient.get(`http://localhost:8081/api/v1/user?id=${userId}`);
-                const userDetails = userDetailsResponse.data;
-
-                setUser(prevUser => ({
-                    ...prevUser,
-                    phoneNumber: userDetails.phoneNumber || null,
-                    address: userDetails.address || null,
-                }));
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        };
-
-        fetchUserIdAndData().catch(console.error);
-    }, []);
-
     const fetchCategory = async () => {
-        const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
+        const response = await httpClient.get(`http://localhost:8081/api/v1/category/all`);
         setCategoryList(response.data);
     };
 
@@ -81,56 +54,27 @@ const CustomiseService: React.FC = () => {
 
     const handleSaveDescription = async (event: React.MouseEvent) => {
         event.preventDefault();
-
-        if (!user.id) {
-            console.error('User ID is not available.');
-            return;
-        }
-
+        const profileId = await getProfileId();
         const serviceData = {
-            id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-            serviceOfferDTO: {
-                id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-                description,
-                bankCardNumber: null,
-                email: user.email,
-                startDate: null,
-                phone: user.phoneNumber,
-                address: user.address,
-                skills: null,
-                experience: null,
-                draftCount: 0,
-            },
-            serviceRequestDTO: {
-                id: null,
-                description: null,
-                bankCardNumber: null,
-                email: null,
-                startDate: null,
-                phone: null,
-                address: null,
-                skills: null,
-                experience: null,
-                draftCount: null,
-            },
-            profileId: user.id,
-            title,
-            employmentType,
-            description1,
-            description2,
-            description3,
-            languageSpoken: languages,
-            location,
-            categoryId: selectedCategoryId,
-            price: askingPrice,
-            priceUnit,
+            id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // This ID should typically be generated or provided
+            profileId: profileId,
+            title: title, // Use the individual state variables
+            employmentType: employmentType,
+            description: description,
+            description1: description1,
+            description2: description2,
+            description3: description3,
+            languageSpoken: languages.join(', '), // Joining languages array into a string
+            location: location,
+            categoryId: selectedCategoryId, // Assuming selectedCategoryId is already correctly set
+            price: askingPrice, // Assuming askingPrice is a number or null
+            priceUnit: priceUnit
         };
 
         console.log('Service Data:', JSON.stringify(serviceData, null, 2));
 
         try {
             const response = await httpClient.post('http://localhost:8081/api/v1/service', serviceData);
-
             const savedServiceId = response.data.id;
 
             console.log('Response Data:', response.data);
@@ -144,6 +88,7 @@ const CustomiseService: React.FC = () => {
             }
         }
     };
+
 
     return (
         <div className="bg-white min-h-screen flex flex-col justify-center items-center p-4">
