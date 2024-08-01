@@ -1,10 +1,9 @@
 import { useRouter } from 'next/router';
 import { baseURL } from "@/baseURL";
-import axios from "axios";
 import httpClient from '@/client/httpClient';
 
 // returns a boolean which says whether profile exists
-const checkProfile = async (userID: number) => {
+export const checkProfile = async (userID: number) => {
     try {
         const response = await httpClient.get(`${baseURL}/api/v1/user`, {
             params: {
@@ -26,7 +25,7 @@ const checkProfile = async (userID: number) => {
 };
 
 // function to get user ID from the init endpoint
-const getUserId = async () => {
+export const getUserId = async () => {
     try {
         const response = await httpClient.get('https://api-auths.laconic.co.th/v1/user/init-data');
         return response.data.id;
@@ -37,14 +36,12 @@ const getUserId = async () => {
 };
 
 // function to get profile details from user-controller without taking userId as a parameter
-const getProfile = async () => {
+export const getProfile = async () => {
     try {
         const userId = await getUserId();
-        const response = await httpClient.get(`${baseURL}/api/v1/user/profile`, {
-            params: {
-                id: userId
-            }
-        });
+        const response = await httpClient.get(`http://localhost:8081/api/v1/user/profile?id=${userId}`);
+        //console.log(userId);
+        console.log(response.data.id);
         return response.data;
     } catch (error: any) {
         console.error('Error fetching profile details:', error);
@@ -53,14 +50,13 @@ const getProfile = async () => {
 };
 
 // function to get profile ID from profile object
-const getProfileId = async () => {
+export const getProfileId = async () => {
     try {
         const profile = await getProfile();
+        console.log(profile.id);
         return profile.id;
     } catch (error: any) {
         console.error('Error fetching profile ID:', error);
         throw error;
     }
 };
-
-export default { checkProfile, getProfile, getUserId, getProfileId };
