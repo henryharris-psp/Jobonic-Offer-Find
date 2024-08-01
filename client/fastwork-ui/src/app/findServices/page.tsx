@@ -8,7 +8,6 @@ import design from "@/../public/design.svg";
 import marketing from "@/../public/marketing.svg";
 import prog from "@/../public/prog.svg";
 import translate from "@/../public/translate.svg";
-import { useState } from "react";
 import httpClient from "@/client/httpClient";
 import { baseURL } from "@/baseURL";
 

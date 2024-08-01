@@ -5,24 +5,10 @@ import ServiceRequestCard from '@/components/ServiceRequestCard';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { baseURL, token } from "@/baseURL";
-import { checkProfile } from '@/functions/helperFunctions';
+import { checkProfile, getCategoryName } from '@/functions/helperFunctions';
 import httpClient from "@/client/httpClient";
-
-interface JobData {
-  title: string;
-  work_category: string;
-  company: string;
-  location: string;
-  employment_type: string;
-  description_1: string;
-  description_2: string;
-  description_3: string;
-  examples_of_work: string;
-  submission_deadline: string;
-  budget: string;
-  language: string;
-  days_left: string;
-}
+import { parse } from 'json2csv';
+//import { writeFileSync } from 'fs';
 
 type UserData = {
   id?: number;
@@ -31,16 +17,8 @@ type UserData = {
 
 interface ServiceRequestDTO {
   id: string;
-  workCategory: string;
-  employmentType: string;
-  description1: string;
-  description2: string;
-  description3: string;
   submissionDeadline: string;
-  budget: number;
   workExample: string;
-  languageSpoken: string;
-  location: string;
 }
 
 interface Service {
@@ -49,6 +27,17 @@ interface Service {
   serviceRequestDTO?: ServiceRequestDTO;
   profileId: number;
   title: string;
+  employmentType: string,
+  description: string,
+  description1: string,
+  description2: string,
+  description3: string,
+  languageSpoken: string,
+  location: string,
+  categoryId: string,
+  categoryName?: string,
+  price: number,
+  priceUnit: string
 }
 
 export default function OfferServicesPage(): ReactNode {
@@ -86,11 +75,49 @@ export default function OfferServicesPage(): ReactNode {
         }
       });
       const filteredServices = response.data.content.filter((service: Service) => service.serviceRequestDTO !== null);
-      setJobDataList(filteredServices);
+      const servicesWithCategoryNames = await mapCategoryIdToName(filteredServices);
+      setJobDataList(servicesWithCategoryNames);
     } catch (error) {
       console.error('Error fetching services:', error);
     }
   };
+
+  const mapCategoryIdToName = async (jobs: Service[]) => {
+    console.log("mapCat called");
+    const updatedJobs = await Promise.all(
+        jobs.map(async (job) => {
+          try {
+            const categoryName = await getCategoryName(job.categoryId);
+            console.log(categoryName);
+            return { ...job, categoryName };
+          } catch (error) {
+            console.error(`Error fetching category name for ${job.categoryId}:`, error);
+            return job; // return the job without modification if there's an error
+          }
+        })
+    );
+    return updatedJobs;
+  };
+
+  // const saveDataToFile = (data: any[]) => {
+  //   writeFileSync('data.json', JSON.stringify(data, null, 2));
+  // }
+
+  const downloadCSV = () => {
+    try {
+      const csv = parse(jobDataList);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', 'job_data_list.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error('Error converting to CSV:', err);
+    }
+  };
+
 
   const fetchCategory = async () => {
     const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
@@ -99,8 +126,14 @@ export default function OfferServicesPage(): ReactNode {
 
   useEffect(() => {
     fetchServices();
+    //saveDataToFile(jobDataList);
+    downloadCSV();
     fetchCategory();
   }, []);
+
+  useEffect(() => {
+    console.log(jobDataList);
+  }, [jobDataList]);
 
   const handleSearchSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -112,23 +145,23 @@ export default function OfferServicesPage(): ReactNode {
     }
   };
 
+  const fetchUserIdAndData = async () => {
+    try {
+      const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`);
+      const userData = response.data;
+      const userId = userData.id;
+
+      setUser({
+        id: userId,
+        email: userData.email
+      });
+      setUserID(userId);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchUserIdAndData = async () => {
-      try {
-        const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`);
-        const userData = response.data;
-        const userId = userData.id;
-
-        setUser({
-          id: userId,
-          email: userData.email
-        });
-        setUserID(userId);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-
     fetchUserIdAndData();
   }, []);
 
@@ -334,18 +367,19 @@ export default function OfferServicesPage(): ReactNode {
                       <div key={index} className="w-full sm:w-1/2 md:w-1/3 pb-4 flex justify-stretch">
                         <ServiceRequestCard serviceRequest={{
                           title: jobData.title, // Correctly pass the title from the service object
-                          work_category: jobData.serviceRequestDTO?.workCategory ?? '',
-                          //company: jobData.serviceRequestDTO?.location ?? '',
+                          work_category: jobData.categoryName,
+                          //company: map profileId to username or firstName + lastName in User table
                           company: "Jeremy",
-                          location: jobData.serviceRequestDTO?.location ?? '',
-                          employment_type: jobData.serviceRequestDTO?.employmentType ?? '',
-                          description_1: jobData.serviceRequestDTO?.description1 ?? '',
-                          description_2: jobData.serviceRequestDTO?.description2 ?? '',
-                          description_3: jobData.serviceRequestDTO?.description3 ?? '',
+                          location: jobData.location ?? '',
+                          employment_type: jobData.employmentType ?? '',
+                          description_1: jobData.description1 ?? '',
+                          description_2: jobData.description2 ?? '',
+                          description_3: jobData.description3 ?? '',
                           examples_of_work: jobData.serviceRequestDTO?.workExample ?? '',
                           submission_deadline: jobData.serviceRequestDTO?.submissionDeadline ?? '',
-                          budget: jobData.serviceRequestDTO?.budget.toString() ?? '',
-                          language: jobData.serviceRequestDTO?.languageSpoken ?? '',
+                          budget: jobData.price.toString() ?? '',
+                          //add priceUnit here and in ServiceRequestCard component
+                          language: jobData.languageSpoken ?? '',
                           days_left: '', // This would need calculation based on the current date and submission_deadline
                         }} hasProfile={true} profilePic={'/jobonic.svg'} />
                       </div>
@@ -357,18 +391,19 @@ export default function OfferServicesPage(): ReactNode {
                       <div key={index} className="w-full sm:w-1/2 md:w-1/3 px-2 pb-4 flex justify-end">
                         <ServiceRequestCard serviceRequest={{
                           title: result.title, // Correctly pass the title from the service object
-                          work_category: result.serviceRequestDTO?.workCategory ?? '',
-                          //company: result.serviceRequestDTO?.location ?? '',
+                          work_category: result.categoryName,
+                          //company: map profileId to username or firstName + lastName in User table
                           company: "Jeremy",
-                          location: result.serviceRequestDTO?.location ?? '',
-                          employment_type: result.serviceRequestDTO?.employmentType ?? '',
-                          description_1: result.serviceRequestDTO?.description1 ?? '',
-                          description_2: result.serviceRequestDTO?.description2 ?? '',
-                          description_3: result.serviceRequestDTO?.description3 ?? '',
+                          location: result.location ?? '',
+                          employment_type: result.employmentType ?? '',
+                          description_1: result.description1 ?? '',
+                          description_2: result.description2 ?? '',
+                          description_3: result.description3 ?? '',
                           examples_of_work: result.serviceRequestDTO?.workExample ?? '',
                           submission_deadline: result.serviceRequestDTO?.submissionDeadline ?? '',
-                          budget: result.serviceRequestDTO?.budget.toString() ?? '',
-                          language: result.serviceRequestDTO?.languageSpoken ?? '',
+                          budget: result.price.toString() ?? '',
+                          //add priceUnit here and in ServiceRequestCard component
+                          language: result.languageSpoken ?? '',
                           days_left: '', // This would need calculation based on the current date and submission_deadline
                         }} hasProfile={true} profilePic={'/jobonic.svg'} />
                       </div>

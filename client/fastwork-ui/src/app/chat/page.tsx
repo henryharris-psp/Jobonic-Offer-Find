@@ -1,7 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
-import ChatConversation from '../../components/ChatConversation'; // Import the new ChatConversation component
+import ChatConversation from '../../components/ChatConversation';
 import { supabase } from '../config/supabaseClient';
+import ProgressSidebar from '../../components/ProgressSidebar';
 
 export interface Message {
   id: number | string;
@@ -54,11 +55,10 @@ export interface CurrentUser {
   email: string;
   username: string;
   avatar: string;
-  userid: number
+  userid: number;
 }
 
-const allPeoples: ActiveChat[] = 
-[
+const allPeoples: ActiveChat[] = [
   {
     id: 1,
     fullName: 'John Chamlington',
@@ -88,7 +88,7 @@ const allPeoples: ActiveChat[] =
     messages: [
       { id: 1, sender: 'Bob', type: 'message', avatar: '/avatar.svg', text: 'Hello Ella, I am interested in your Middle School Math tutor service.', sentByCurrentUser: false },
       { id: 2, sender: 'Bob', type: 'service offer', avatar: '/avatar.svg', sentByCurrentUser: false },
-      { id: 2, sender: 'You', type: 'message', avatar: '/avatar.svg', text: 'Hi! Which deliverable are you look for?', sentByCurrentUser: true }
+      { id: 2, sender: 'You', type: 'message', avatar: '/avatar.svg', text: 'Hi! Which deliverable are you looking for?', sentByCurrentUser: true }
     ],
     type: 'client',
     status: 'Enquiring',
@@ -101,13 +101,13 @@ const ChatPage: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(500);
   const [isResizing, setIsResizing] = useState(false);
-  const [currentUser, setCurrentUser] = useState<CurrentUser>()
+  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [recipient, setRecipient] = useState<any>(null);
   const [messages, setMessages] = useState([]);
-
   const [roleFilter, setRoleFilter] = useState('All');
   const [fromClientStatusFilter, setFromClientStatusFilter] = useState('All');
   const [fromServiceProviderStatusFilter, setFromServiceProviderStatusFilter] = useState('All');
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true); // State to control sidebar visibility
 
   const filteredPeoples =
       roleFilter === 'All'
@@ -157,18 +157,18 @@ const ChatPage: React.FC = () => {
   };
 
   useEffect(() => {
-    const userData = localStorage.getItem('userInfo')
-    if(userData){
-      const parsed = JSON.parse(userData)
-      setCurrentUser(parsed)
+    const userData = localStorage.getItem('userInfo');
+    if (userData) {
+      const parsed = JSON.parse(userData);
+      setCurrentUser(parsed);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     const getPeoples = async () => {
       const { data, error } = await supabase
-        .from('user')
-        .select('*');
+          .from('user')
+          .select('*');
 
       if (error) {
         console.error('Error fetching data:', error);
@@ -190,8 +190,8 @@ const ChatPage: React.FC = () => {
 
   return (
       <div className="flex h-screen w-screen">
-        {/* Navbar should show only logo. */}
-        <div className="bg-[#CFEDF4]">
+        {/* Sidebar for chat list */}
+        <div className="bg-[#CFEDF4]" style={{ width: sidebarWidth }}>
           <div className="px-4 pt-2">
             <div className="text-lg font-semibold mb-4 text-center overflow-hidden">
               Chats
@@ -223,17 +223,20 @@ const ChatPage: React.FC = () => {
                           id="search-dropdown"
                           className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                           placeholder="Search for Orders"
-                          style={{ paddingRight: '2.5rem' }}/>
+                          style={{ paddingRight: '2.5rem' }}
+                      />
                       <button
                           type="submit"
                           className="absolute top-0 right-0 p-2.5 text-sm font-medium h-1/2 bg-gray-50 text-[#828282] border-l border-gray-300 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg"
-                          style={{ borderLeft: 'none' }}>
+                          style={{ borderLeft: 'none' }}
+                      >
                         <svg
                             className="w-4 h-4"
                             aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
-                            viewBox="0 0 20 20">
+                            viewBox="0 0 20 20"
+                        >
                           <path
                               stroke="currentColor"
                               strokeLinecap="round"
@@ -246,13 +249,14 @@ const ChatPage: React.FC = () => {
                     </div>
                 )}
                 {roleFilter === 'From clients' && (
-                    <div className="flex flex-col ">
+                    <div className="flex flex-col">
                       <select
                           id="type"
                           className="cursor-pointer py-2.5 px-4 text-sm font-medium text-gray-900 bg-gray-50 border border-gray-300 rounded-t-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100"
                           required
                           value={fromClientStatusFilter}
-                          onChange={e => setFromClientStatusFilter(e.target.value)}>
+                          onChange={e => setFromClientStatusFilter(e.target.value)}
+                      >
                         {fromClientStatus.map(type => (
                             <option key={type} value={type}>
                               {type}
@@ -265,17 +269,20 @@ const ChatPage: React.FC = () => {
                             id="search-dropdown"
                             className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 border border-t-0 border-gray-300 rounded-b-lg focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Search for Orders"
-                            style={{ paddingRight: '2.5rem' }}/>
+                            style={{ paddingRight: '2.5rem' }}
+                        />
                         <button
                             type="submit"
                             className="absolute top-0 right-0 p-2.5 text-sm font-medium h-full bg-gray-50 text-[#828282] border-l border-gray-300 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-br-lg"
-                            style={{ borderLeft: 'none' }}>
+                            style={{ borderLeft: 'none' }}
+                        >
                           <svg
                               className="w-4 h-4"
                               aria-hidden="true"
                               xmlns="http://www.w3.org/2000/svg"
                               fill="none"
-                              viewBox="0 0 20 20">
+                              viewBox="0 0 20 20"
+                          >
                             <path
                                 stroke="currentColor"
                                 strokeLinecap="round"
@@ -295,7 +302,8 @@ const ChatPage: React.FC = () => {
                           className="cursor-pointer py-2.5 px-4 text-sm font-medium text-gray-900 bg-gray-50 border border-gray-300 rounded-t-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100"
                           required
                           value={fromServiceProviderStatusFilter}
-                          onChange={e => setFromServiceProviderStatusFilter(e.target.value)}>
+                          onChange={e => setFromServiceProviderStatusFilter(e.target.value)}
+                      >
                         {fromServiceProviderStatus.map(type => (
                             <option key={type} value={type}>
                               {type}
@@ -308,17 +316,20 @@ const ChatPage: React.FC = () => {
                             id="search-dropdown"
                             className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 border border-t-0 border-gray-300 rounded-b-lg focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Search for Orders"
-                            style={{ paddingRight: '2.5rem' }}/>
+                            style={{ paddingRight: '2.5rem' }}
+                        />
                         <button
                             type="submit"
                             className="absolute top-0 right-0 p-2.5 text-sm font-medium h-full bg-gray-50 text-[#828282] border-l border-gray-300 hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-br-lg"
-                            style={{ borderLeft: 'none' }}>
+                            style={{ borderLeft: 'none' }}
+                        >
                           <svg
                               className="w-4 h-4"
                               aria-hidden="true"
                               xmlns="http://www.w3.org/2000/svg"
                               fill="none"
-                              viewBox="0 0 20 20">
+                              viewBox="0 0 20 20"
+                          >
                             <path
                                 stroke="currentColor"
                                 strokeLinecap="round"
@@ -333,24 +344,25 @@ const ChatPage: React.FC = () => {
                 )}
               </div>
             </form>
-            {peoples.filter(people => people.id !== currentUser?.id)
-            .map((people) => (
-              <div
-                className="flex p-2 hover:bg-blue-300 rounded-md justify-between cursor-pointer"
-                key={people.id}
-                onClick={() => setActiveChat(people)}
-              >
-                <div className="flex">
-                  <img className="w-10 h-10 rounded-full mr-4" src={people.avatar || '/avatar.svg'} alt={people.fullName} />
-                  <div className="text-black mt-2 flex items-center text-sm">{people.fullName}</div>
-                </div>
-                <div className="flex items-center">
-                  {sidebarWidth > 200 && (
-                    <div className="bg-[#0B2147] text-center text-white px-2 py-1 text-xs rounded-md">Completed</div>
-                  )}
-                </div>
-              </div>
-            ))}
+            {peoples
+                .filter(people => people.id !== currentUser?.id)
+                .map((people) => (
+                    <div
+                        className="flex p-2 hover:bg-blue-300 rounded-md justify-between cursor-pointer"
+                        key={people.id}
+                        onClick={() => setActiveChat(people)}
+                    >
+                      <div className="flex">
+                        <img className="w-10 h-10 rounded-full mr-4" src={people.avatar || '/avatar.svg'} alt={people.fullName} />
+                        <div className="text-black mt-2 flex items-center text-sm">{people.fullName}</div>
+                      </div>
+                      <div className="flex items-center">
+                        {sidebarWidth > 200 && (
+                            <div className="bg-[#0B2147] text-center text-white px-2 py-1 text-xs rounded-md">Completed</div>
+                        )}
+                      </div>
+                    </div>
+                ))}
           </div>
         </div>
 
@@ -359,22 +371,48 @@ const ChatPage: React.FC = () => {
             style={{ width: '5px', cursor: 'col-resize' }}
             onMouseDown={handleMouseDown}
         ></div>
-        <ChatConversation activeChat={activeChat} recipientUser={activeChat} />
-    </div>
+
+        {/* Main Chat Area */}
+        <div className="flex flex-grow">
+          <ChatConversation activeChat={activeChat} recipientUser={activeChat} />
+        </div>
+
+        {/* Progress Sidebar */}
+        {isSidebarVisible && (
+            <div className="flex-none">
+              <ProgressSidebar milestones={allPeoples} />
+            </div>
+        )}
+
+        {/* Toggle Button */}
+        <button
+            className="fixed top-20 right-4 bg-[#0B2147] text-white p-2 rounded-full shadow-lg z-50"
+            onClick={() => setIsSidebarVisible(!isSidebarVisible)}
+        >
+          {isSidebarVisible ? (
+              <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+          ) : (
+              <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5l-7 7 7 7" />
+              </svg>
+          )}
+        </button>
+      </div>
   );
 };
 
 export default ChatPage;
-
-
-
-
-
-
-
-
-
-
-
-
-

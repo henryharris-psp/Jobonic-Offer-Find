@@ -8,10 +8,10 @@ import "./globals.css";
 import CanvasComponent from "../components/HomeAniBG";
 import ChatBox from "@/components/ChatBox";
 import axios from "axios";
-import { checkProfile } from "@/functions/helperFunctions";
+import {checkProfile, getProfileId} from "@/functions/helperFunctions";
 import { token } from "@/baseURL";
 import { useRouter } from "next/navigation";
-import initializeCategories from "../utils/initialiseCategories";
+import initialiseCategories from "../utils/initialiseCategories";
 import initializeSkills from "../utils/initialiseSkills";
 import { parseCSVFile } from "../utils/parseCSVFile";
 
@@ -58,12 +58,15 @@ export default function Home() {
 
   const handleCreateServiceOffer = async (event: React.FormEvent) => {
     event.preventDefault();
-    const profile = await checkProfile(1);
-    if (profile) {
-      router.push('/customiseService');
-    } else {
-      router.push('/createProfile');
-    }
+    const profileId = await getProfileId();
+    console.log(profileId);
+    const profile = await checkProfile(profileId);
+    console.log(profile);
+    // if (profile) {
+    //   router.push('/customiseService');
+    // } else {
+    //   router.push('/createProfile');
+    // }
   };
 
   useEffect(() => {
@@ -80,7 +83,7 @@ export default function Home() {
     }
 
     // Initialize categories on app start
-    initializeCategories();
+    initialiseCategories();
 
     // Load and initialize skills from CSV file
     const fetchAndInitializeSkills = async () => {
