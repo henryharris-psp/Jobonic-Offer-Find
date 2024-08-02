@@ -148,8 +148,17 @@ public class APIDocsHelper {
     public static class MatchesAPI {
         public static final String SAVE_MATCHES = "Saves and returns a match";
         public static final String UPDATE_MATCHES = "Updates and returns a match";
-        public static final String GET_ALL_MATCHES = "Get all matches with pagination and sorting.";
+        public static final String GET_ALL_MATCHES = "Get all matches";
         public static final String GET_MATCHES = "Get single match";
         public static final String DELETE_MATCHES = "Removes a match";
+    }
+
+    @UtilityClass
+    public static class CheckpointAPI {
+        public static final String SAVE_CHECKPOINT = "Saves and returns a checkpoint";
+        public static final String UPDATE_CHECKPOINT = "Updates and returns a checkpoint";
+        public static final String GET_ALL_CHECKPOINT = "Get all checkpoints.";
+        public static final String GET_CHECKPOINT = "Get single checkpoint";
+        public static final String DELETE_CHECKPOINT = "Removes a checkpoint";
     }
 }

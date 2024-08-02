@@ -19,7 +19,7 @@ public class AppMessage {
     public final static String ATTACHMENT = "ATTACHMENT";
     public final static String SERVICE_REQUEST = "SERVICE REQUEST";
     public final static String SERVICE_OFFER = "SERVICE OFFER";
-
+    public final static String CHECKPOINT = "CHECKPOINT";
     public final static String FREELANCER_RECEIPT = "FREELANCER RECEIPT";
     public final static String EMPLOYER_PAYMENT = "EMPLOYER PAYMENT";
     public final static String MATCHES = "MATCHES";

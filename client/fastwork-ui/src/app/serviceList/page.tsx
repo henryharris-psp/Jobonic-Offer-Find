@@ -255,9 +255,10 @@ const ServiceMatches = (): React.ReactElement => {
                   {services.map((service, index) => (
                       <div key={index} className="pb-8">
                         <ServiceMatchCard
-                            service={service}  // Pass the service object
-                            onClick={handleServiceClick}
-                            onChatClick={handleChatClick}
+                            service = {service}  // Pass the service object
+                            user = {service.profileDTO} // Pass the user object
+                            onClick = {handleServiceClick}
+                            onChatClick = {handleChatClick}
                         />
                       </div>
                   ))}
@@ -270,18 +271,18 @@ const ServiceMatches = (): React.ReactElement => {
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                 <div className="bg-white rounded-lg p-6 w-full max-w-lg max-h-full overflow-auto">
                   <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-2xl font-bold">{selectedService.name}</h2>
+                    <h2 className="text-2xl font-bold">{selectedService.title}</h2>
                     <button className="text-gray-600 hover:text-gray-900" onClick={closeModal}>✖</button>
                   </div>
                   <div className="flex items-center mb-4">
-                    <Image src={selectedService.image} alt={selectedService.name} width={50} height={50} className="rounded-full" />
+                    <Image src={selectedService.profileDTO.image} alt={selectedService.title} width={50} height={50} className="rounded-full" />
                     <div className="ml-4">
-                      <h3 className="text-lg font-bold">{selectedService.name}</h3>
+                      <h3 className="text-lg font-bold">{selectedService.title}</h3>
                       <p>{selectedService.description}</p>
                     </div>
                   </div>
                   <div className="max-h-96 overflow-y-auto">
-                    {selectedService.reviewsDetail.map((review, index) => (
+                    {selectedService.reviewsDetail?.map((review, index) => (
                         <div key={index} className="flex items-start mb-4">
                           <Image src="/group-image.jpg" alt={review.reviewer} width={40} height={40} className="rounded-full" /> {/* Replace with actual reviewer image */}
                           <div className="ml-4">

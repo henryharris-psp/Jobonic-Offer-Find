@@ -33,7 +33,7 @@ public class ProfileDTO implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate cardExpiryDate;
     private String walletAddress;
-    private double review;
+    private double numReviews;
     private Set<UserExperienceDTO> userExperienceList;
     private Set<UserEducationDTO> userEducationList;
     private Set<SkillDTO> skills;
@@ -52,7 +52,7 @@ public class ProfileDTO implements Serializable {
         profile.setCardNumber(this.cardNumber);
         profile.setCardExpiryDate(this.cardExpiryDate);
         profile.setWalletAddress(this.walletAddress);
-        profile.setReview(this.review);
+        profile.setReview(this.numReviews);
         return profile;
     }
 }

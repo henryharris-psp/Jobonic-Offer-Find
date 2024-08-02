@@ -4,15 +4,16 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Toast from './Toast';
-import { Service } from '@/types';
+import { Service, User } from '@/types';
 
 interface ServiceMatchCardProps {
   service: Service;
+  user: User;
   onClick: (service: Service) => void;
   onChatClick: (e: React.MouseEvent) => void;
 }
 
-const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({ service, onClick, onChatClick }) => {
+const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({ service, user, onClick, onChatClick }) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -68,15 +69,15 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({ service, onClick, o
           onClick={() => onClick(service)}
       >
         <div className="flex items-center mb-4">
-          <Image src={service.image} alt={service.name} width={50} height={50} className="rounded-full" />
+          <Image src={user.image} alt={service.title} width={50} height={50} className="rounded-full" />
           <div className="ml-4 text-left">
             <Link href={{ pathname: '/description', query: { id: service.id } }} legacyBehavior>
-              <a className="text-xl font-bold hover:text-blue-500 hover:underline">{service.name}</a>
+              <a className="text-xl font-bold hover:text-blue-500 hover:underline">{service.title}</a>
             </Link>
             <div className="flex items-center space-x-2">
-              <span className="text-gray-500">{service.rating}</span>
-              {renderStars(service.rating)}
-              <span className="text-gray-500">{service.reviews} reviews | {service.numSold} sold</span>
+              <span className="text-gray-500">{user.rating}</span>
+              {renderStars(user.rating)}
+              <span className="text-gray-500">{user.numReviews} reviews | {user.numSold} sold</span>
             </div>
           </div>
         </div>
