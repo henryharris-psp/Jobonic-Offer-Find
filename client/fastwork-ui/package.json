@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroicons/react": "^2.1.5",
     "@mantine/rte": "^5.10.5",
     "@nextui-org/react": "^2.3.5",
     "@supabase/supabase-js": "^2.44.4",
@@ -33,6 +34,7 @@
     "react-dom": "^18",
     "react-router-dom": "^6.23.1",
     "react-toastify": "^10.0.5",
+    "uuid": "^10.0.0",
     "yup": "^1.4.0"
   },
   "devDependencies": {
