@@ -16,12 +16,14 @@ import com.laconic.fastworkapi.repo.specification.GenericSpecification;
 import com.laconic.fastworkapi.service.IManagementService;
 import com.laconic.fastworkapi.utils.EntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ManagementService implements IManagementService {
@@ -102,19 +104,19 @@ public class ManagementService implements IManagementService {
     }
 
     @Override
-    public PaginationDTO<ServiceDTO> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+    public PaginationDTO<ServiceDTO.WithProfile> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
         Specification<ServiceManagement> specs =
                 GenericSpecification.hasKeyword(keyword, Set.of("title"));
 
-        var result = keyword != null ?
+        Page<ServiceManagement> servicePage = keyword != null ?
                 this.serviceRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
                 : this.serviceRepo.findAll(pageAndFilterDTO.getPageRequest());
 
-        var serviceDTOList = result.getContent().stream()
-                .map(EntityMapper::mapToServiceDTO)
-                .toList();
+        List<ServiceDTO.WithProfile> servicesWithProfile = servicePage.stream()
+                .map(service -> getServiceWithProfile(service, service.getProfile()))
+                .collect(Collectors.toList());
 
-        return PaginationHelper.getResponse(result, serviceDTOList);
+        return PaginationHelper.getResponse(servicePage, servicesWithProfile);
     }
 }

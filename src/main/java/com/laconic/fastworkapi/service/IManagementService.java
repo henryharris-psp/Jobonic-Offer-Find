@@ -16,5 +16,5 @@ public interface IManagementService {
     List<ServiceDTO.WithProfile> getAllByUser(Long profileId);
     ServiceDTO.WithProfile getById(UUID id);
 
-    PaginationDTO<ServiceDTO> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
+    PaginationDTO<ServiceDTO.WithProfile> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
 }

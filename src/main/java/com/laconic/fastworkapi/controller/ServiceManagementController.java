@@ -46,7 +46,7 @@ public class ServiceManagementController {
 
     @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL)
     @PostMapping("/all")
-    public PaginationDTO<ServiceDTO> getAllServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+    public PaginationDTO<ServiceDTO.WithProfile> getAllServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         return this.managementService.getAllServices(pageAndFilterDTO);
     }
 
