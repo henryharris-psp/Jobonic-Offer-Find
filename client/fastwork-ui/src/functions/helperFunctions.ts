@@ -4,7 +4,6 @@ import httpClient from '@/client/httpClient';
 
 // function to get user ID from the init endpoint
 export const getUserId = async () => {
-export const getUserId = async () => {
     try {
         const response = await httpClient.get('https://api-auths.laconic.co.th/v1/user/init-data');
         return response.data.id;
@@ -15,7 +14,6 @@ export const getUserId = async () => {
 };
 
 // function to get profile details from user-controller without taking userId as a parameter
-export const getProfile = async () => {
 export const getProfile = async () => {
     try {
         const userId = await getUserId();
@@ -32,7 +30,7 @@ export const getProfile = async () => {
 };
 
 // function to get profile ID from profile object
-export const getProfileId = async () => {
+
 export const getProfileId = async () => {
     try {
         const profile = await getProfile();
