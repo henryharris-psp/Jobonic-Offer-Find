@@ -49,7 +49,7 @@ const ServiceMatches = (): React.ReactElement => {
       const mappedServices: Service[] = filteredServices.map((service: any) => ({
         id: service.id,
         name: service.title,
-        image: '/default-image.jpg', // Placeholder image
+        image: '/profile-pic.jpg', // Placeholder image
         rating: 0, // Default rating
         reviews: 20, // Assuming a static number of reviews for now
         price: `$${service.serviceOfferDTO?.price}/hr` || 'N/A',
@@ -71,7 +71,7 @@ const ServiceMatches = (): React.ReactElement => {
         bullet2: service.serviceOfferDTO?.descriptionII || '',
         bullet3: service.serviceOfferDTO?.descriptionIII || '',
       }));
-      setServices(mappedServices);
+      setServices(filteredServices);
     } catch (error) {
       console.error('Error fetching services:', error);
     }

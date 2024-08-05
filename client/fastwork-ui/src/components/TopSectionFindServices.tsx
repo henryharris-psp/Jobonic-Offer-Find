@@ -16,7 +16,7 @@ const TopSectionFindServices = (): React.ReactElement => {
         <section className="text-white py-16 px-4 md:px-0 flex flex-col md:flex-row items-center md:px-8 lg:px-16">
             <div className="max-w-5xl mx-auto text-center">
                 <h1 className="text-4xl md:text-6xl font-bold mb-4 text-black">What would you like to do?</h1>
-                <p className="text-lg md:text-xl mb-8 text-black">Don&apos;t miss out on the great trade</p>
+                <p className="text-lg md:text-xl mb-8 text-black">Meet your needs with skills</p>
                 <form className="max-w-md mx-auto" onSubmit={handleSubmit}>   
                     <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                     <div className="relative">
