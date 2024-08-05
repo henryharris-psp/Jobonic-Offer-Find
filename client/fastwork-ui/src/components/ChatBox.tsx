@@ -169,13 +169,13 @@ const ChatTabsHeader: React.FC<{
     return (
         <div className="w-full border-b font-semibold flex flex-row">
             <div
-                className={`text-zinc-500 text-sm flex-1 text-center p-2 ${activeTab === "focused" ? "border-b-green-700 border-b-2" : ""}`}
+                className={`text-zinc-500 cursor-pointer text-sm flex-1 text-center p-2 ${activeTab === "focused" ? "border-b-green-700 border-b-2" : ""}`}
                 onClick={() => onChangeTab("focused")}
             >
                 Focused
             </div>
             <div
-                className={`text-zinc-500 text-sm flex-1 text-center p-2 ${activeTab === "other" ? "border-b-green-700 border-b-2" : ""}`}
+                className={`text-zinc-500 cursor-pointer text-sm flex-1 text-center p-2 ${activeTab === "other" ? "border-b-green-700 border-b-2" : ""}`}
                 onClick={() => onChangeTab("other")}
             >
                 Other

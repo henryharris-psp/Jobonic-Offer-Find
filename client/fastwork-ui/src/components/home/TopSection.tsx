@@ -39,7 +39,7 @@ const TopSection: React.FC = (): React.ReactNode => {
 
             <p className="mt-4 text-lg md:text-xl mb-12">Where skills meet needs</p>
 
-            <div className="flex flex-col rounded-l-lg overflow-hidden md:flex-row space-y-1 md:space-y-0">
+            <div className="w-full md:w-2/3 lg:w-1/2 flex flex-col rounded-l-lg overflow-hidden sm:flex-row space-y-1 sm:space-y-0">
                 <div className="flex-1 flex flex-row min-h-14">
                     <div className="flex-1">
                         <button 
@@ -53,7 +53,7 @@ const TopSection: React.FC = (): React.ReactNode => {
                     </div>
                     <div className="flex-1">
                         <button 
-                            className={`p-3 w-full h-full bg-[#0B2147] font-medium text-sm border border-gray-300 rounded-r-lg md:rounded-none
+                            className={`p-3 w-full h-full bg-[#0B2147] font-medium text-sm border border-gray-300 rounded-r-lg sm:rounded-none
                                 ${ selectedCategory === "Offer Service" ? 'bg-[#0B2147] text-white' : 'bg-white text-[#0B2147]'}
                             `}
                             onClick={() => handleCategorySelect("Offer Service")}
@@ -66,13 +66,13 @@ const TopSection: React.FC = (): React.ReactNode => {
                 <div className="flex-1 flex flex-row overflow-hidden min-h-14">
                     <div className="flex-1">
                         <input 
-                            className="w-full h-full bg-white border border-gray-300 placeholder:text-sm rounded-l-lg md:rounded-none"
+                            className="w-full h-full bg-white border border-gray-300 placeholder:text-sm rounded-l-lg sm:rounded-none"
                             type="text" 
                             placeholder={placeholder}
                         />
                     </div>
                     <div>
-                        <button className="px-4  w-full h-full border bg-[#D0693B] border-[#D0693B] text-white rounded-r-lg">
+                        <button className="px-4 w-full h-full border bg-[#D0693B] border-[#D0693B] text-white rounded-r-lg">
                             <MagnifyingGlassIcon className="size-6 font-bold text-white"/>
                         </button>
                     </div>
