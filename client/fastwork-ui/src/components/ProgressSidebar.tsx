@@ -12,6 +12,9 @@ interface Milestone {
 
 const ProgressSidebar: React.FC = () => {
     const [openMilestones, setOpenMilestones] = useState<number[]>([]);
+    const [isReviewPopupOpen, setIsReviewPopupOpen] = useState(false);
+    const [selectedRating, setSelectedRating] = useState(0);
+    const [reviewText, setReviewText] = useState('');
 
     // Sample milestone data for demonstration
     const milestones: Milestone[] = [
@@ -74,6 +77,25 @@ const ProgressSidebar: React.FC = () => {
         document.getElementById('file-input')?.click();
     };
 
+    const handleGiveReview = () => {
+        setIsReviewPopupOpen(true);
+    };
+
+    const handleRatingSelect = (rating: number) => {
+        setSelectedRating(rating);
+    };
+
+    const handleReviewSubmit = () => {
+        console.log('Review submitted:', { rating: selectedRating, reviewText });
+        setIsReviewPopupOpen(false);
+        setReviewText('');
+        setSelectedRating(0);
+    };
+
+    const handleCloseReviewPopup = () => {
+        setIsReviewPopupOpen(false);
+    };
+
     return (
         <div className="bg-[#E0F7FA] p-4 rounded-lg shadow-md w-[300px]">
             <h2 className="text-lg font-bold mb-4">Progress</h2>
@@ -96,12 +118,21 @@ const ProgressSidebar: React.FC = () => {
                                     <li>{milestone.todoDescription}</li>
                                     <li>{`Amount to pay: ${milestone.amountToPay}`}</li>
                                 </ul>
-                                <button
-                                    className="bg-[#E1824F] text-white rounded-lg px-2 py-1 mt-2"
-                                    onClick={handleFileUpload}
-                                >
-                                    Submit work
-                                </button>
+                                {milestone.title === 'Review' ? (
+                                    <button
+                                        className="bg-[#E1824F] text-white rounded-lg px-2 py-1 mt-2"
+                                        onClick={handleGiveReview}
+                                    >
+                                        Give Review
+                                    </button>
+                                ) : (
+                                    <button
+                                        className="bg-[#E1824F] text-white rounded-lg px-2 py-1 mt-2"
+                                        onClick={handleFileUpload}
+                                    >
+                                        Submit work
+                                    </button>
+                                )}
                             </div>
                         )}
                     </li>
@@ -120,8 +151,62 @@ const ProgressSidebar: React.FC = () => {
                     }
                 }}
             />
+
+            {/* Review Popup */}
+            {isReviewPopupOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white rounded-lg p-6 shadow-lg w-[400px] relative">
+                        <button
+                            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                            onClick={handleCloseReviewPopup}
+                        >
+                            <svg
+                                className="w-6 h-6"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        </button>
+                        <h2 className="text-lg font-bold mb-4">What do you think of the service?</h2>
+                        <div className="flex justify-center mb-4">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <span
+                                    key={star}
+                                    className={`text-3xl cursor-pointer ${selectedRating >= star ? 'text-orange-500' : 'text-gray-300'}`}
+                                    onClick={() => handleRatingSelect(star)}
+                                >
+                                    ★
+                                </span>
+                            ))}
+                        </div>
+                        <textarea
+                            className="w-full border border-gray-300 rounded-lg p-2 mb-4"
+                            placeholder="Write your review"
+                            value={reviewText}
+                            onChange={(e) => setReviewText(e.target.value)}
+                        />
+                        <div className="flex justify-center">
+                            <button
+                                className="bg-[#E1824F] text-white rounded-lg px-4 py-2"
+                                onClick={handleReviewSubmit}
+                            >
+                                Send Review
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
 export default ProgressSidebar;
+
