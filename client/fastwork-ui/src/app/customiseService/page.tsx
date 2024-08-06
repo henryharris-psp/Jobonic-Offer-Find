@@ -18,10 +18,15 @@ type UserData = {
     address?: string;
 };
 
+type LinkEntry = {
+    description: string;
+    url: string;
+};
+
 const CustomiseService: React.FC = () => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [employmentType, setEmploymentType] = useState('PART_TIME'); // Default to first option
+    const [employmentType, setEmploymentType] = useState('PART_TIME');
     const [description1, setDescription1] = useState('');
     const [description2, setDescription2] = useState('');
     const [description3, setDescription3] = useState('');
@@ -29,10 +34,13 @@ const CustomiseService: React.FC = () => {
     const [newLanguage, setNewLanguage] = useState('');
     const [location, setLocation] = useState('');
     const [categoryList, setCategoryList] = useState<Category[]>([]);
-    const [selectedCategoryName, setSelectedCategoryName] = useState(''); // Initialize later
+    const [selectedCategoryName, setSelectedCategoryName] = useState('');
     const [askingPrice, setAskingPrice] = useState<number | null>(null);
     const [priceUnit, setPriceUnit] = useState('HOUR');
     const [user, setUser] = useState<UserData>({});
+    const [links, setLinks] = useState<LinkEntry[]>([]);
+    const [newLinkDescription, setNewLinkDescription] = useState('');
+    const [newLinkUrl, setNewLinkUrl] = useState('');
     const router = useRouter();
 
     useEffect(() => {
@@ -41,7 +49,7 @@ const CustomiseService: React.FC = () => {
 
     useEffect(() => {
         if (categoryList.length > 0) {
-            setSelectedCategoryName(categoryList[0].name); // Default to first category name
+            setSelectedCategoryName(categoryList[0].name);
         }
     }, [categoryList]);
 
@@ -59,6 +67,22 @@ const CustomiseService: React.FC = () => {
             setLanguages([...languages, newLanguage]);
             setNewLanguage('');
         }
+    };
+
+    const handleRemoveLanguage = (languageToRemove: string) => {
+        setLanguages(languages.filter(language => language !== languageToRemove));
+    };
+
+    const handleAddLink = () => {
+        if (newLinkDescription.trim() !== '' && newLinkUrl.trim() !== '') {
+            setLinks([...links, { description: newLinkDescription, url: newLinkUrl }]);
+            setNewLinkDescription('');
+            setNewLinkUrl('');
+        }
+    };
+
+    const handleRemoveLink = (index: number) => {
+        setLinks(links.filter((_, i) => i !== index));
     };
 
     const handleSaveDescription = async (event: React.MouseEvent) => {
@@ -83,7 +107,8 @@ const CustomiseService: React.FC = () => {
             location: location,
             categoryId: categoryId,
             price: askingPrice,
-            priceUnit: priceUnit
+            priceUnit: priceUnit,
+            links: links
         };
 
         console.log('Service Data:', JSON.stringify(serviceData, null, 2));
@@ -183,10 +208,16 @@ const CustomiseService: React.FC = () => {
                         Add
                     </button>
                 </div>
-                <div className="mt-4">
+                <div className="mt-4 flex flex-wrap">
                     {languages.map((language, index) => (
-                        <span key={index} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                        <span key={index} className="inline-flex items-center bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
                             {language}
+                            <button
+                                className="ml-2 text-red-600 hover:text-red-800"
+                                onClick={() => handleRemoveLanguage(language)}
+                            >
+                                &times;
+                            </button>
                         </span>
                     ))}
                 </div>
@@ -236,6 +267,51 @@ const CustomiseService: React.FC = () => {
                         <option value="MONTH">Month</option>
                         <option value="PROJECT">Project</option>
                     </select>
+                </div>
+            </div>
+            <div className="max-w-4xl mx-auto w-full mt-8 mb-8">
+                <label className="block text-lg font-semibold mb-2" htmlFor="links">Add links which can help employers know more about you. Enter in order of priority.</label>
+                <div className="flex items-center space-x-4">
+                    <input
+                        type="text"
+                        id="new-link-description"
+                        placeholder="Short description"
+                        value={newLinkDescription}
+                        onChange={(e) => setNewLinkDescription(e.target.value)}
+                        className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <input
+                        type="text"
+                        id="new-link-url"
+                        placeholder="Link"
+                        value={newLinkUrl}
+                        onChange={(e) => setNewLinkUrl(e.target.value)}
+                        className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <button
+                        onClick={handleAddLink}
+                        className="bg-[#0B2147] text-white rounded-lg px-4 py-2 hover:bg-[#D0693B] text-sm"
+                    >
+                        Add
+                    </button>
+                </div>
+                <div className="mt-4">
+                    {links.map((link, index) => (
+                        <div key={index} className="flex items-center bg-gray-200 rounded-lg p-3 mb-2">
+                            <div className="flex-grow">
+                                <p className="text-sm font-semibold text-gray-700">{link.description}</p>
+                                <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                                    {link.url}
+                                </a>
+                            </div>
+                            <button
+                                className="ml-4 text-red-600 hover:text-red-800"
+                                onClick={() => handleRemoveLink(index)}
+                            >
+                                &minus;
+                            </button>
+                        </div>
+                    ))}
                 </div>
             </div>
             <div className="mt-4">

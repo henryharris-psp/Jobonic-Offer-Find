@@ -228,7 +228,7 @@ const ServiceMatches = (): React.ReactElement => {
                   {isSortDropdownOpen && (
                       <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
                         <ul className="py-1 text-sm text-gray-700">
-                          {['Best Match', 'Popularity', 'Price: Lowest to Highest', 'Price: Highest to Lowest'].map(option => (
+                          {['Best Match', 'Popularity', 'Price: Lowest to Highest', 'Price: Highest to Lowest', 'Rating'].map(option => (
                               <li key={option} className={`flex justify-between items-center px-4 py-2 cursor-pointer hover:bg-gray-100 ${selectedSortOption === option ? 'font-bold' : ''}`} onClick={() => handleSortOptionClick(option)}>
                                 {option}
                                 {selectedSortOption === option && (
