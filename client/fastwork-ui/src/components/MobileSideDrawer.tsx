@@ -12,14 +12,17 @@ const MobileSideDrawer = ({
     onClose,
     children
 }: MobileSideDrawerProps) => {
-    
+
+    const width = 300;
+    const isFloat = true;
+
     return (
         <>
             <div
                 className="fixed top-16 bottom-0 right-0 flex shadow z-50 bg-white transition-all duration-300"
                 style={{
-                    width: 300,
-                    left: show ? 0 : -300,
+                    width: width,
+                    left: show ? 0 : (-1 * width),
                 }}
             >
                 { children }
@@ -32,10 +35,20 @@ const MobileSideDrawer = ({
                 </button>
             </div>
 
-            { show ? (
+            { isFloat && show ? (
                 <div 
                     className="fixed bg-none top-0 bottom-0 right-0 left-0 z-40"
                     onClick={onClose}
+                />
+            ) : ''}
+            
+            {/* nav spacer */}
+            { !isFloat ? (
+                <div
+                    style={{
+                        minWidth: show ? width : 0,
+                        transition: "min-width 300ms",
+                    }}
                 />
             ) : ''}
         </>

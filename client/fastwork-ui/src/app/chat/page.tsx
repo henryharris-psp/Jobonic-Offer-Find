@@ -12,6 +12,7 @@ import {
 import { People, ActiveChat, Message, CurrentUser } from "@/components/chat/interfaces";
 import { people as allPeoples } from "@/components/chat/data/people";
 import MobileSideDrawer from "@/components/MobileSideDrawer";
+import styles from "./chat.module.css";
 
 const ChatPage: React.FC = () => {
     const [activeChat, setActiveChat] = useState<ActiveChat>(allPeoples[0]);
@@ -84,9 +85,9 @@ const ChatPage: React.FC = () => {
     }, [isResizing]);
 
     return (
-        <div className="flex h-screen w-screen relative">
+        <div className={`${styles.container} flex h-screen w-screen relative`}>
             <div
-                className="hidden sm:flex"
+                className="hidden sm:flex overflow-hidden relative"
                 style={{
                     width: sidebarWidth,
                 }}
@@ -105,7 +106,7 @@ const ChatPage: React.FC = () => {
                 />
             </MobileSideDrawer>
             
-
+            {/* resizer */}
             <div
                 className="resizer bg-gray-500 hidden sm:flex"
                 style={{ width: "5px", cursor: "col-resize" }}
@@ -113,7 +114,7 @@ const ChatPage: React.FC = () => {
             />
 
             {/* Main Chat Area */}
-            <div className="flex flex-col bg-red-500">
+            <div className="flex flex-col bg-red-500 overflow-hidden relative">
                 {/* mobile toggle header */}
                 <div className="flex sm:hidden justify-between items-center px-3 bg-white border-b border-b-gray-200 h-16">
                     <button
