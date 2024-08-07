@@ -108,7 +108,7 @@ const NavbarComponent = ({ showOnlyLogo = false, isEmployer = false, signedIn = 
                   <p>About Us</p>
                 </Link>
               </li>
-              <li className={`p-2 hover:bg-white hover:text-[#35617C] rounded-md ${getLinkClass('/findServices')}`}>
+              <li className={`p-2 hover:bg-white hover:text-[#35617C] rounded-md ${getLinkClass('/findServices')} ${getLinkClass('/serviceList')}`}>
                 <Link href="/findServices">
                   <p>Find Services</p>
                 </Link>
