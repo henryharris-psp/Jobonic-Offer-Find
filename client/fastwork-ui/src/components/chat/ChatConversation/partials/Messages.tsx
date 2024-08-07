@@ -1,11 +1,13 @@
 import { supabase } from "@/app/config/supabaseClient";
 import { useChat } from "@/contexts/chat";
 import React, { useEffect, useRef, useState } from "react";
+import { CurrentUser } from "../../interfaces";
 
 interface Message {
     id: number;
     content: string;
     sender_id: number;
+    sender: CurrentUser;
     created_at: Date;
 }
 
@@ -15,16 +17,40 @@ const Messages = () => {
     const [messages, setMessages] = useState<Message[]>([]);
 
     //methods 
-        const fetchMessages = async () => {
+        const fetchSenderDetails = async (senderId: number) => {
             const { data, error } = await supabase
-                .from('messages')
-                .select('*, sender_id(*)')
-                .order('created_at', { ascending: true });
+                .from('users')
+                .select('*')
+                .eq('id', senderId)
+                .single();
+        
             if (error) {
-                console.log('error', error);
-            } else {
-                setMessages(data)
+                console.error('Error fetching sender details:', error);
+                return null;
             }
+            return data;
+        };
+
+        const fetchAllMessages = async () => {
+            const { data: messages, error } = await supabase
+                .from('messages')
+                .select('*')
+                .order('created_at', { ascending: true });
+        
+            if (error) {
+                console.log('Error fetching messages:', error);
+                return;
+            }
+        
+            const messagesWithSenders = await Promise.all(messages.map(async (message) => {
+                const sender = await fetchSenderDetails(message.sender_id);
+                return {
+                    ...message,
+                    sender
+                };
+            }));
+        
+            setMessages(messagesWithSenders);
         };
 
         const isSentByCurrentUser = (senderId: number) : boolean => {
@@ -33,20 +59,32 @@ const Messages = () => {
     
     //subscribe to channel and listen
         useEffect(() => {
-            fetchMessages();
+            //inital fetch
+            fetchAllMessages();
 
+            //listen to new Message
             const messageSubscription = supabase
                 .channel("public:messages")
                 .on(
                     "postgres_changes",
                     { event: "INSERT", schema: "public", table: "messages" },
                     (payload: { new: Message }) => {
-                        setMessages( preMessages => {
-                            return [
-                                ...preMessages,
-                                payload.new
-                            ]
-                        });
+                        const handleNewMessage = async () => {
+                            let newMessage = payload.new;
+                            const sender = await fetchSenderDetails(newMessage.sender_id);
+                            newMessage = {
+                                ...payload.new,
+                                sender: sender
+                            }
+    
+                            setMessages( preMessages => {
+                                return [
+                                    ...preMessages,
+                                    newMessage
+                                ]
+                            });
+                        };
+                        handleNewMessage();
                     }
                 )
                 .subscribe();
@@ -69,13 +107,13 @@ const Messages = () => {
     return (
         <div 
             ref={messagesScreenRef} 
-            className="flex flex-col space-y-3 py-5"
+            className="flex flex-col space-y-3 py-5 min-h-full"
         >
             { messages.map( msg => 
                 <div 
                     key={msg.id} 
                     className={`flex flex-row
-                        ${ isSentByCurrentUser(msg.sender_id) ? 'justify-end' : 'justify-start'}
+                        ${ isSentByCurrentUser(msg.sender_id) ? 'justify-end' : 'justify-start' }
                     `}
                 >
                     <div className={`flex items-end mx-3 ${ isSentByCurrentUser(msg.sender_id)
