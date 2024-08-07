@@ -8,6 +8,7 @@ import { baseURL } from "@/baseURL";
 import { AxiosError } from 'axios';
 import { getProfileId, getProfile } from '../../functions/helperFunctions';
 
+// delete later
 interface CardProps {
   title: string;
   earned: string;
@@ -17,6 +18,31 @@ interface CardProps {
     review: string;
   }[];
   details: string[];
+}
+
+interface ServiceRequestDTO {
+  id: string;
+  submissionDeadline: string;
+  workExample: string;
+}
+
+interface Service {
+  id: string;
+  serviceOfferDTO?: any;
+  serviceRequestDTO?: ServiceRequestDTO;
+  profileId: number;
+  title: string;
+  employmentType: string,
+  description: string,
+  description1: string,
+  description2: string,
+  description3: string,
+  languageSpoken: string,
+  location: string,
+  categoryId: string,
+  categoryName?: string,
+  price: number,
+  priceUnit: string
 }
 
 type UserData = {
@@ -106,15 +132,48 @@ const CustomiseJobRequestForm: React.FC = () => {
 
     try {
       const response = await httpClient.post(`http://localhost:8081/api/v1/service`, serviceData);
-      const savedServiceId = response.data.id;
-      console.log('Response Data:', response.data);
-      router.push(`/myProfile`);
+      
+      const savedService = response.data;
+      console.log('Response Data:', savedService);
+      // select relevant fields for CSV
+      const serviceForCSV = {
+        id: savedService.id,
+        title: savedService.title,
+        description1: savedService.description1,
+        description2: savedService.description2,
+        description3: savedService.description3,
+        categoryName: savedService.categoryDTO.name
+      };
+      await saveData(serviceForCSV);
+
+      //router.push(`/myProfile`);
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error('Error posting service data:', error.response?.data || error.message);
       } else {
         console.error('Error posting service data:', error);
       }
+    }
+  };
+
+  const saveData = async (data: any) => {
+    try {
+      const response = await fetch('/api/writeCsv', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        console.log(result.message);
+      } else {
+        console.error(result.error);
+      }
+    } catch (error) {
+      console.error('Failed to save data', error);
     }
   };
 

@@ -71,7 +71,7 @@ const ServiceMatches = (): React.ReactElement => {
         bullet2: service.serviceOfferDTO?.descriptionII || '',
         bullet3: service.serviceOfferDTO?.descriptionIII || '',
       }));
-      setServices(mappedServices);
+      setServices(filteredServices);
     } catch (error) {
       console.error('Error fetching services:', error);
     }

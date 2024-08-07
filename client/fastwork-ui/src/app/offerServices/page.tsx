@@ -8,7 +8,7 @@ import { baseURL, token } from "@/baseURL";
 import { checkProfile, getCategoryName } from '@/functions/helperFunctions';
 import httpClient from "@/client/httpClient";
 import { parse } from 'json2csv';
-//import { writeFileSync } from 'fs';
+//import { writeFile } from 'fs/promises';
 
 type UserData = {
   id?: number;
@@ -19,6 +19,11 @@ interface ServiceRequestDTO {
   id: string;
   submissionDeadline: string;
   workExample: string;
+}
+
+interface CategoryDTO {
+  id: string;
+  name: string;
 }
 
 interface Service {
@@ -34,8 +39,7 @@ interface Service {
   description3: string,
   languageSpoken: string,
   location: string,
-  categoryId: string,
-  categoryName?: string,
+  categoryDTO: CategoryDTO,
   price: number,
   priceUnit: string
 }
@@ -44,7 +48,6 @@ export default function OfferServicesPage(): ReactNode {
   const router = useRouter();
   const [user, setUser] = useState<UserData>({});
   const [userID, setUserID] = useState<number>(0);
-  const [hasProfile, setHasProfile] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [selectedSortOption, setSelectedSortOption] = useState('Best Match');
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
@@ -60,6 +63,7 @@ export default function OfferServicesPage(): ReactNode {
   const [jobDataList, setJobDataList] = useState<Service[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Service[]>([]);
+  const [serviceDisplay, setServiceDisplay] = useState<Service[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [categoryList, setCategoryList] = useState<Category[]>([]);
 
@@ -75,49 +79,29 @@ export default function OfferServicesPage(): ReactNode {
         }
       });
       const filteredServices = response.data.content.filter((service: Service) => service.serviceRequestDTO !== null);
-      const servicesWithCategoryNames = await mapCategoryIdToName(filteredServices);
-      setJobDataList(servicesWithCategoryNames);
+      setJobDataList(filteredServices);
     } catch (error) {
       console.error('Error fetching services:', error);
     }
   };
 
-  const mapCategoryIdToName = async (jobs: Service[]) => {
-    console.log("mapCat called");
-    const updatedJobs = await Promise.all(
-        jobs.map(async (job) => {
-          try {
-            const categoryName = await getCategoryName(job.categoryId);
-            console.log(categoryName);
-            return { ...job, categoryName };
-          } catch (error) {
-            console.error(`Error fetching category name for ${job.categoryId}:`, error);
-            return job; // return the job without modification if there's an error
-          }
-        })
-    );
-    return updatedJobs;
+  const fetchServicesById = async () => {
+    // declare temp's type later (Service[])
+    const temp = [];
+    const fetchPromises = searchResults.map(async (service) => {
+      try {
+        const response = await httpClient.get(`http://localhost:8081/api/v1/service/get?serviceId=${service.id}`);
+        const servicesResponse = response.data;
+        console.log(servicesResponse);
+        temp.push(servicesResponse);
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      }
+    });
+    await Promise.all(fetchPromises);
+    //console.log(temp);
+    setServiceDisplay(temp);
   };
-
-  // const saveDataToFile = (data: any[]) => {
-  //   writeFileSync('data.json', JSON.stringify(data, null, 2));
-  // }
-
-  const downloadCSV = () => {
-    try {
-      const csv = parse(jobDataList);
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.setAttribute('download', 'job_data_list.csv');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (err) {
-      console.error('Error converting to CSV:', err);
-    }
-  };
-
 
   const fetchCategory = async () => {
     const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
@@ -126,14 +110,14 @@ export default function OfferServicesPage(): ReactNode {
 
   useEffect(() => {
     fetchServices();
-    //saveDataToFile(jobDataList);
-    downloadCSV();
     fetchCategory();
+    fetchUserIdAndData();
   }, []);
 
   useEffect(() => {
-    console.log(jobDataList);
-  }, [jobDataList]);
+    fetchServicesById();
+    //console.log(searchResults);
+  }, [searchResults]);
 
   const handleSearchSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -160,10 +144,6 @@ export default function OfferServicesPage(): ReactNode {
       console.error('Error fetching user data:', error);
     }
   };
-
-  useEffect(() => {
-    fetchUserIdAndData();
-  }, []);
 
   const handleCreateServiceOffer = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -242,10 +222,10 @@ export default function OfferServicesPage(): ReactNode {
           <div className="flex items-center justify-center pt-8 text-black">
             <h2 className="text-xl font-semibold">No requests match your skills?</h2>
             <span>
-          <button onClick={(e) => handleCreateServiceOffer(e)} className="text-md px-3 py-2 bg-[#0C2348] text-white rounded-lg font-medium hover:bg-[#D0693B] focus:outline-none ml-2">
-            Personalise your service offer
-          </button>
-        </span>
+              <button onClick={(e) => handleCreateServiceOffer(e)} className="text-md px-3 py-2 bg-[#0C2348] text-white rounded-lg font-medium hover:bg-[#D0693B] focus:outline-none ml-2">
+                Personalise your service offer
+              </button>
+            </span>
           </div>
 
           <div className="flex justify-end space-x-4 pt-4">
@@ -367,19 +347,19 @@ export default function OfferServicesPage(): ReactNode {
                       <div key={index} className="w-full sm:w-1/2 md:w-1/3 pb-4 flex justify-stretch">
                         <ServiceRequestCard serviceRequest={{
                           title: jobData.title, // Correctly pass the title from the service object
-                          work_category: jobData.categoryName,
+                          work_category: jobData.categoryDTO.name,
                           //company: map profileId to username or firstName + lastName in User table
                           company: "Jeremy",
-                          location: jobData.location ?? '',
-                          employment_type: jobData.employmentType ?? '',
+                          location: jobData.location ?? 'a',
+                          employment_type: jobData.employmentType ?? 'a',
                           description_1: jobData.description1 ?? '',
                           description_2: jobData.description2 ?? '',
                           description_3: jobData.description3 ?? '',
-                          examples_of_work: jobData.serviceRequestDTO?.workExample ?? '',
-                          submission_deadline: jobData.serviceRequestDTO?.submissionDeadline ?? '',
-                          budget: jobData.price.toString() ?? '',
+                          examples_of_work: jobData.serviceRequestDTO?.workExample ?? 'a',
+                          submission_deadline: jobData.serviceRequestDTO?.submissionDeadline ?? '11/08',
+                          budget: jobData.price.toString() ?? '0',
                           //add priceUnit here and in ServiceRequestCard component
-                          language: jobData.languageSpoken ?? '',
+                          language: jobData.languageSpoken ?? 'English',
                           days_left: '', // This would need calculation based on the current date and submission_deadline
                         }} hasProfile={true} profilePic={'/jobonic.svg'} />
                       </div>
@@ -387,11 +367,11 @@ export default function OfferServicesPage(): ReactNode {
                 </div>
             ) : (
                 <div className="flex flex-wrap pr-0 mr-0 w-4/5">
-                  {searchResults.map((result, index) => (
+                  {serviceDisplay.map((result, index) => (
                       <div key={index} className="w-full sm:w-1/2 md:w-1/3 px-2 pb-4 flex justify-end">
                         <ServiceRequestCard serviceRequest={{
                           title: result.title, // Correctly pass the title from the service object
-                          work_category: result.categoryName,
+                          work_category: result.categoryDTO.name,
                           //company: map profileId to username or firstName + lastName in User table
                           company: "Jeremy",
                           location: result.location ?? '',
@@ -400,8 +380,9 @@ export default function OfferServicesPage(): ReactNode {
                           description_2: result.description2 ?? '',
                           description_3: result.description3 ?? '',
                           examples_of_work: result.serviceRequestDTO?.workExample ?? '',
-                          submission_deadline: result.serviceRequestDTO?.submissionDeadline ?? '',
-                          budget: result.price.toString() ?? '',
+                          submission_deadline: result.serviceRequestDTO?.submissionDeadline ?? '11/08',
+                          //budget: '0',
+                          budget: result.price.toString() ?? '0',
                           //add priceUnit here and in ServiceRequestCard component
                           language: result.languageSpoken ?? '',
                           days_left: '', // This would need calculation based on the current date and submission_deadline

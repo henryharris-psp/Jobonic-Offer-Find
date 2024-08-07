@@ -197,7 +197,8 @@ export default function CreateProfile(): React.ReactNode {
     } else if (page1 && page2 && !page3) {
         return (
             <div className="min-h-screen flex flex-col justify-center items-center p-4">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">Verify your identity</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2 text-center">Verify your identity</h2>
+                <h3 className="text-xl font-medium text-gray-500 mb-4 text-center">Upload a picture of your ID card so we can confirm you are a real person</h3>
                 <div className="max-w-4xl mx-auto w-full mt-8 mb-8">
                     <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" htmlFor="file_input">Upload file</label>
                     <input className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file" />
