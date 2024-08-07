@@ -4,7 +4,7 @@ import "./globals.css";
 import NavbarComponent from "../components/NavBar";
 import Footer from "../components/footer";
 import ChatBox from "../components/ChatBox";
-import { store } from "@/store";
+import store from "@/store";
 import { Provider } from "react-redux";
 import useWindowResize from "@/hooks/useWindowResize";
 
@@ -24,7 +24,7 @@ const RootLayout = ({
                 <NavbarComponent />
                 <main>{children}</main>
                 <Footer />
-                <ChatBox />
+                {/* <ChatBox /> */}
             </body>
         </html>
     );

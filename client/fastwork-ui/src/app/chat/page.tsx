@@ -1,187 +1,98 @@
-"use client";
-import { useState, useEffect } from "react";
-import ChatConversation from "../../components/ChatConversation";
-import { supabase } from "../config/supabaseClient";
-import ProgressSidebar from "../../components/ProgressSidebar";
+'use client'
+import ChatConversation from "@/components/chat/ChatConversation";
+import SideDrawer from "@/components/SideDrawer";
 import ChatList from "@/components/chat/ChatList";
-import {
-    Bars2Icon,
-    Bars3Icon,
-    ChatBubbleBottomCenterTextIcon,
-} from "@heroicons/react/24/solid";
-import { People, ActiveChat, Message, CurrentUser } from "@/components/chat/interfaces";
-import { people as allPeoples } from "@/components/chat/data/people";
-import MobileSideDrawer from "@/components/MobileSideDrawer";
-import styles from "./chat.module.css";
+import { people } from "@/components/chat/data/people";
+import { People } from "@/components/chat/interfaces";
+import { RootState } from "@/store";
+import React, { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { ChatProvider, useChat } from "@/contexts/chat";
 
-const ChatPage: React.FC = () => {
-    const [activeChat, setActiveChat] = useState<ActiveChat>(allPeoples[0]);
-    const [peoples, setPeoples] = useState<People[]>([]);
-    const [isChatOpen, setIsChatOpen] = useState(false);
-    const [sidebarWidth, setSidebarWidth] = useState(500);
-    const [isResizing, setIsResizing] = useState(false);
-    const [currentUser, setCurrentUser] = useState<CurrentUser>();
-    const [recipient, setRecipient] = useState<any>(null);
-    const [messages, setMessages] = useState([]);
-    const [roleFilter, setRoleFilter] = useState("All");
-    const [fromClientStatusFilter, setFromClientStatusFilter] = useState("All");
-    const [fromServiceProviderStatusFilter, setFromServiceProviderStatusFilter,] = useState("All");
-    const [isSidebarVisible, setIsSidebarVisible] = useState(true); // State to control sidebar visibility
+const ChatPage = () => {
+    const { isMobile } = useSelector((state: RootState) => state.ui);
+    const { 
+        showChatList, 
+        setShowChatList,
+        showProgressList,
+        setShowProgressList
+    } = useChat();
 
-    const [showMobileChatList, setShowMobileChatList] = useState(false);
-    const [showMobileProgressList, setShowMobileProgressList] = useState(false);
+    //chatlist section handler
+        const maxChatListWidth = 500;
+        const minChatListWidth = 1;
 
-    const filteredPeoples =
-        roleFilter === "All"
-            ? allPeoples
-            : allPeoples.filter((people) =>
-                  roleFilter === "From clients"
-                      ? people.type === "client"
-                      : people.type === "service_provider"
-              );
+        const [chatListWidth, setChatListWidth] = useState<number>(300);
+        const [isResizable, setIsResizable] = useState<boolean>(false);
 
-    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-        setIsResizing(true);
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-        if (isResizing) {
-            setSidebarWidth(e.clientX);
-        }
-    };
-
-    const handleMouseUp = () => {
-        setIsResizing(false);
-    };
-
-    useEffect(() => {
-        const userData = localStorage.getItem("userInfo");
-        if (userData) {
-            const parsed = JSON.parse(userData);
-            setCurrentUser(parsed);
-        }
-    }, []);
-
-    useEffect(() => {
-        const getPeoples = async () => {
-            const { data, error } = await supabase.from("user").select("*");
-
-            if (error) {
-                console.error("Error fetching data:", error);
-            } else {
-                setPeoples(data);
+        const resize = useCallback((event: MouseEvent) => {
+            event.preventDefault();
+            const newWidth = event.clientX;
+            if (newWidth < maxChatListWidth && newWidth >= minChatListWidth) {
+                setChatListWidth(newWidth);
             }
-        };
-        getPeoples();
-    }, []);
+            if (newWidth >= maxChatListWidth || newWidth < minChatListWidth) {
+                setIsResizable(false);
+            }
+        }, []);
 
-    useEffect(() => {
-        document.addEventListener("mousemove", handleMouseMove);
-        document.addEventListener("mouseup", handleMouseUp);
-        return () => {
-            document.removeEventListener("mousemove", handleMouseMove);
-            document.removeEventListener("mouseup", handleMouseUp);
-        };
-    }, [isResizing]);
+        useEffect( () => {
+            if(isResizable){
+                window.addEventListener('mousemove', resize);
+            } else {
+                window.removeEventListener('mousemove', resize);
+            }
+            return () => window.removeEventListener('mousemove', resize);
+        }, [isResizable]);
+
+        useEffect( () => {
+            setShowChatList(!isMobile);
+            setShowProgressList(!isMobile);
+        }, [isMobile]);
+
+    const [activeChat, setActiveChat] = useState<People>(people[0]);
 
     return (
-        <div className={`${styles.container} flex h-screen w-screen relative`}>
-            <div
-                className="hidden sm:flex overflow-hidden relative"
-                style={{
-                    width: sidebarWidth,
-                }}
+        <div
+            className="select-none flex flex-row relative overflow-hidden"
+            style={{
+                height: "91vh",
+            }}
+        >   
+            <SideDrawer
+                show={showChatList} 
+                onClose={() => setShowChatList(false)}
+                width={chatListWidth}
+                animate={isMobile}
             >
                 <ChatList 
                     onActiveChatChange={setActiveChat}
                 />
-            </div>
-            
-            <MobileSideDrawer
-                show={showMobileChatList}
-                onClose={() => setShowMobileChatList(false)}
-            >
-                <ChatList 
-                    onActiveChatChange={setActiveChat}
-                />
-            </MobileSideDrawer>
-            
+            </SideDrawer>
+
             {/* resizer */}
             <div
-                className="resizer bg-gray-500 hidden sm:flex"
-                style={{ width: "5px", cursor: "col-resize" }}
-                onMouseDown={handleMouseDown}
+                className="cursor-col-resize bg-gray-500 hidden sm:flex hover:bg-gray-400"
+                style={{
+                    width: '4px'
+                }}
+                onMouseDown={ () => setIsResizable(true) }
+                onMouseUp={ () => setIsResizable(false) }
             />
 
-            {/* Main Chat Area */}
-            <div className="flex flex-col bg-red-500 overflow-hidden relative">
-                {/* mobile toggle header */}
-                <div className="flex sm:hidden justify-between items-center px-3 bg-white border-b border-b-gray-200 h-16">
-                    <button
-                        className="rounded-full p-2 bg-gray-200 hover:bg-gray-300"
-                        onClick={() => setShowMobileChatList( prev => !prev )}
-                    >
-                        <ChatBubbleBottomCenterTextIcon className="size-6 font-bold text-[#0B2147]" />
-                    </button>
-                    <button 
-                        className="rounded-full p-2 bg-gray-200 hover:bg-gray-300"
-                        onClick={() => setShowMobileProgressList( prev => !prev )}
-                    >
-                        <Bars3Icon className="size-6 font-bold text-[#0B2147]" />
-                    </button>
-                </div>
-                <ChatConversation
-                    activeChat={activeChat}
-                    recipientUser={activeChat}
-                />
-            </div>
+            <ChatConversation
+                activeChat={activeChat}
+            />
 
-            {/* Progress Sidebar */}
-            {isSidebarVisible && (
-                <div className="hidden sm:flex">
-                    <ProgressSidebar milestones={allPeoples} />
-                </div>
-            )}
-
-            {/* Toggle Button */}
-            <button
-                className="fixed top-20 right-4 bg-[#0B2147] text-white p-2 rounded-full shadow-lg z-50"
-                onClick={() => setIsSidebarVisible(!isSidebarVisible)}
-            >
-                {isSidebarVisible ? (
-                    <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                        />
-                    </svg>
-                ) : (
-                    <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 5l-7 7 7 7"
-                        />
-                    </svg>
-                )}
-            </button>
+            <div className="flex bg-yellow-200">
+                milestone
+            Co</div>
         </div>
     );
 };
 
-export default ChatPage;
+export default () => (
+    <ChatProvider>
+        <ChatPage/>
+    </ChatProvider>
+);

@@ -1,33 +1,43 @@
+import { RootState } from "@/store";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
+import { useSelector } from "react-redux";
 
-interface MobileSideDrawerProps {
+interface SideDrawerProps {
     show: boolean;
-    onClose: () => void;
+    width?: number;
+    animate?: boolean;
     children: ReactNode;
+    onClose: () => void;
   }
 
-const MobileSideDrawer = ({ 
+const SideDrawer = ({ 
     show, 
+    width = 300,
+    animate = true,
     onClose,
     children
-}: MobileSideDrawerProps) => {
+}: SideDrawerProps) => {
 
-    const width = 300;
-    const isFloat = true;
+    const { isMobile } = useSelector((state: RootState) => state.ui);
+    
+    const isFloat = useMemo( () => {
+        return isMobile;
+    }, [isMobile]);
 
     return (
         <>
             <div
-                className="fixed top-16 bottom-0 right-0 flex shadow z-50 bg-white transition-all duration-300"
+                className="absolute top-0 bottom-0 right-0 flex shadow bg-white overflow-hidden"
                 style={{
                     width: width,
                     left: show ? 0 : (-1 * width),
+                    transition: animate ? 'left 300ms' : 'none'
                 }}
             >
                 { children }
 
-                <button 
+                <button
                     className="flex items-center absolute top-2 right-2 rounded-full p-2 bg-[#0B2147]"
                     onClick={onClose}
                 >
@@ -45,9 +55,10 @@ const MobileSideDrawer = ({
             {/* nav spacer */}
             { !isFloat ? (
                 <div
+                    className="bg-red-500"
                     style={{
                         minWidth: show ? width : 0,
-                        transition: "min-width 300ms",
+                        transition: animate ? 'min-width 300ms' : 'none'
                     }}
                 />
             ) : ''}
@@ -55,4 +66,4 @@ const MobileSideDrawer = ({
     );
 };
 
-export default MobileSideDrawer;
+export default SideDrawer;
