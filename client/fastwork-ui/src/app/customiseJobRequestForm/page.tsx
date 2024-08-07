@@ -144,9 +144,9 @@ const CustomiseJobRequestForm: React.FC = () => {
         description3: savedService.description3,
         categoryName: savedService.categoryDTO.name
       };
-      await saveData(serviceForCSV);
+      await saveDataToCsv(serviceForCSV);
 
-      //router.push(`/myProfile`);
+      router.push(`/myDashboard`);
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error('Error posting service data:', error.response?.data || error.message);
@@ -156,7 +156,7 @@ const CustomiseJobRequestForm: React.FC = () => {
     }
   };
 
-  const saveData = async (data: any) => {
+  const saveDataToCsv = async (data: any) => {
     try {
       const response = await fetch('/api/writeCsv', {
         method: 'POST',

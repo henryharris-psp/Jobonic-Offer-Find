@@ -40,14 +40,6 @@ def search():
     query_embedding = model.encode(query, convert_to_tensor=True)
     scores = util.pytorch_cos_sim(query_embedding, service_data)
 
-    # top_results = torch.topk(scores, k=5)
-    # top_results_indices = top_results.indices[0].tolist()
-
-    # results = df.iloc[top_results_indices].to_dict(orient='records')
-    # response = make_response(jsonify({"results": results}))
-    # response.headers.add("Access-Control-Allow-Origin", "*")
-    # return response
-
     # Flatten scores tensor to 1D for sorting
     scores = scores.view(-1)
     

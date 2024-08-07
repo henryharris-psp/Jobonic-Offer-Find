@@ -127,7 +127,7 @@ const CustomiseService: React.FC = () => {
     };
 
     return (
-        <div className="bg-white min-h-screen flex flex-col justify-center items-center p-4">
+        <div className="min-h-screen flex flex-col justify-center items-center m-16">
             <h2 className="text-6xl font-bold text-gray-900 mb-4 text-center">Describe your service offer</h2>
             <div className="max-w-4xl mx-auto w-full mt-8 mb-8">
                 <label className="block text-lg font-semibold mb-2" htmlFor="service-title">Service Title</label>
