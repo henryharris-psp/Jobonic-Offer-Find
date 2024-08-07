@@ -316,7 +316,7 @@ export default function OfferServicesPage(): ReactNode {
                        onMouseEnter={() => setIsSortDropdownOpen(true)}
                        onMouseLeave={() => setIsSortDropdownOpen(false)}>
                     <ul className="py-1 text-sm text-gray-700">
-                      {['Best Match', 'Popularity', 'Price: Lowest to Highest', 'Price: Highest to Lowest'].map(option => (
+                      {['Best Match', 'Popularity', 'Price: Lowest to Highest', 'Price: Highest to Lowest', 'Rating'].map(option => (
                           <li key={option} className={`flex justify-between items-center px-4 py-2 cursor-pointer hover:bg-gray-100 ${selectedSortOption === option ? 'font-bold' : ''}`} onClick={() => handleSortOptionClick(option)}>
                             {option}
                             {selectedSortOption === option && (

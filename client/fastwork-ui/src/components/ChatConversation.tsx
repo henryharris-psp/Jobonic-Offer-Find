@@ -46,6 +46,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, recipie
   const [messages, setMessages] = useState<Message[]>(activeChat.messages);
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [isContractVisible, setIsContractVisible] = useState(false);
+  const [isEditContractVisible, setIsEditContractVisible] = useState(false);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [newPrice, setNewPrice] = useState('');
@@ -151,11 +152,19 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, recipie
   };
 
   const handleViewContractDetails = () => {
-    setIsContractVisible(true);
+    if (isAccepted) {
+      setIsContractVisible(true);
+    } else {
+      setIsEditContractVisible(true);
+    }
   };
 
   const handleCloseContract = () => {
     setIsContractVisible(false);
+  };
+
+  const handleCloseEditContract = () => {
+    setIsEditContractVisible(false);
   };
 
   const handleAccept = () => {
@@ -305,26 +314,12 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, recipie
           </div>
         </div>
 
-        {isContractVisible && (
-            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
-              <div className="relative bg-white rounded-lg p-4 w-96">
-                <ContractCard />
-                <button
-                    className="mt-4 bg-red-500 text-white p-2 rounded"
-                    onClick={handleCloseContract}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-        )}
-
-        {showAcceptModal && (
+        {isEditContractVisible && (
             <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white rounded-lg p-6 shadow-lg w-[50rem] relative">
                 <button
                     className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-                    onClick={handleCloseAcceptModal}
+                    onClick={handleCloseEditContract}
                 >
                   <svg
                       className="w-6 h-6"
@@ -430,9 +425,23 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, recipie
             </div>
         )}
 
+        {isContractVisible && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+              <div className="relative bg-white rounded-lg p-4 w-96">
+                <ContractCard />
+                <button
+                    className="mt-4 bg-red-500 text-white p-2 rounded"
+                    onClick={handleCloseContract}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+        )}
+
         {showPaymentModal && (
             <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg p-6 shadow-lg w-[400px] relative">
+              <div className="bg-white rounded-lg p-6 shadow-lg w-[450px] relative">
                 <button
                     className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
                     onClick={handleClosePaymentModal}
@@ -452,36 +461,44 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, recipie
                     />
                   </svg>
                 </button>
-                <div className="p-4">
+                <div className="p-4 text-center">
                   <h2 className="text-lg font-bold mb-4">Which milestones do you want to pay first?</h2>
                   <div className="mb-4 max-h-60 overflow-y-auto">
                     {checkpoints.map((milestone) => (
-                        <div key={milestone.id} className="flex items-center mb-2">
-                          <input type="checkbox" id={`milestone${milestone.id}`} name={`milestone${milestone.id}`} className="mr-2" />
-                          <label htmlFor={`milestone${milestone.id}`}>{milestone.deliverable}</label>
+                        <div key={milestone.id} className="flex items-center justify-between mb-2">
+                          <div className="flex items-center">
+                            <span className="font-semibold mr-4">{`Milestone ${milestone.id}`}</span>
+                            <span className="text-sm text-gray-600">{`Payment: $${milestone.payment}`}</span>
+                          </div>
+                          <input
+                              type="checkbox"
+                              id={`milestone${milestone.id}`}
+                              name={`milestone${milestone.id}`}
+                              className="form-checkbox h-5 w-5 text-[#E1824F]"
+                          />
                         </div>
                     ))}
                   </div>
-                  <div className="flex space-x-2">
-                    <button className="flex-grow px-4 py-2 bg-[#E1824F] text-white rounded-lg font-semibold hover:bg-[#D0693B]" onClick={handlePayAll}>
+                  <div className="flex justify-around">
+                    <button
+                        className="px-4 py-1 bg-[#E1824F] text-white rounded-lg font-semibold hover:bg-[#D0693B]"
+                        onClick={handlePayAll}
+                    >
                       Pay all at once
                     </button>
-                    <button className="flex-grow px-4 py-2 bg-[#0C2348] text-white rounded-lg font-semibold hover:bg-[#D0693B]" onClick={handlePaySelected}>
-                      Pay for selected milestones
-                    </button>
-                  </div>
-                  <div className="flex justify-center mt-4">
                     <button
-                        className="bg-red-500 text-white rounded-lg px-4 py-2"
-                        onClick={handleClosePaymentModal}
+                        className="px-4 py-1 bg-[#FBE8E3] text-[#E1824F] rounded-lg font-semibold hover:bg-[#D0693B] hover:text-white"
+                        onClick={handlePaySelected}
                     >
-                      Close
+                      Pay for selected milestones
                     </button>
                   </div>
                 </div>
               </div>
             </div>
         )}
+
+
       </div>
   );
 };

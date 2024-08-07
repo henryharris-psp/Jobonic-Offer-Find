@@ -99,7 +99,7 @@ const ChatPage: React.FC = () => {
   const [activeChat, setActiveChat] = useState<ActiveChat>(allPeoples[0]);
   const [peoples, setPeoples] = useState<People[]>([]);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [sidebarWidth, setSidebarWidth] = useState(500);
+  const [sidebarWidth, setSidebarWidth] = useState(300); // Smaller default width
   const [isResizing, setIsResizing] = useState(false);
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [recipient, setRecipient] = useState<any>(null);

@@ -3,9 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import httpClient from '@/client/httpClient';
-import { baseURL, SERVER_AUTH } from "@/baseURL";
 import { AxiosError } from 'axios';
-import {getProfileId} from "@/functions/helperFunctions";
+import { getProfileId } from "@/functions/helperFunctions";
 
 type Category = {
     id: string;
@@ -19,10 +18,15 @@ type UserData = {
     address?: string;
 };
 
+type LinkEntry = {
+    description: string;
+    url: string;
+};
+
 const CustomiseService: React.FC = () => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [employmentType, setEmploymentType] = useState('');
+    const [employmentType, setEmploymentType] = useState('PART_TIME');
     const [description1, setDescription1] = useState('');
     const [description2, setDescription2] = useState('');
     const [description3, setDescription3] = useState('');
@@ -30,20 +34,33 @@ const CustomiseService: React.FC = () => {
     const [newLanguage, setNewLanguage] = useState('');
     const [location, setLocation] = useState('');
     const [categoryList, setCategoryList] = useState<Category[]>([]);
-    const [selectedCategoryId, setSelectedCategoryId] = useState('');
+    const [selectedCategoryName, setSelectedCategoryName] = useState('');
     const [askingPrice, setAskingPrice] = useState<number | null>(null);
-    const [priceUnit, setPriceUnit] = useState('hour');
+    const [priceUnit, setPriceUnit] = useState('HOUR');
     const [user, setUser] = useState<UserData>({});
+    const [links, setLinks] = useState<LinkEntry[]>([]);
+    const [newLinkDescription, setNewLinkDescription] = useState('');
+    const [newLinkUrl, setNewLinkUrl] = useState('');
     const router = useRouter();
-
-    const fetchCategory = async () => {
-        const response = await httpClient.get(`http://localhost:8081/api/v1/category/all`);
-        setCategoryList(response.data);
-    };
 
     useEffect(() => {
         fetchCategory();
     }, []);
+
+    useEffect(() => {
+        if (categoryList.length > 0) {
+            setSelectedCategoryName(categoryList[0].name);
+        }
+    }, [categoryList]);
+
+    const fetchCategory = async () => {
+        try {
+            const response = await httpClient.get(`http://localhost:8081/api/v1/category/all`);
+            setCategoryList(response.data);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    };
 
     const handleAddLanguage = () => {
         if (newLanguage.trim() !== '') {
@@ -52,33 +69,53 @@ const CustomiseService: React.FC = () => {
         }
     };
 
+    const handleRemoveLanguage = (languageToRemove: string) => {
+        setLanguages(languages.filter(language => language !== languageToRemove));
+    };
+
+    const handleAddLink = () => {
+        if (newLinkDescription.trim() !== '' && newLinkUrl.trim() !== '') {
+            setLinks([...links, { description: newLinkDescription, url: newLinkUrl }]);
+            setNewLinkDescription('');
+            setNewLinkUrl('');
+        }
+    };
+
+    const handleRemoveLink = (index: number) => {
+        setLinks(links.filter((_, i) => i !== index));
+    };
+
     const handleSaveDescription = async (event: React.MouseEvent) => {
         event.preventDefault();
         const profileId = await getProfileId();
+        const selectedCategory = categoryList.find(category => category.name === selectedCategoryName);
+        const categoryId = selectedCategory ? selectedCategory.id : '';
+
         const serviceData = {
             id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // This ID should typically be generated or provided
+            ServiceOfferDTO: {
+                id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            },
             profileId: profileId,
-            title: title, // Use the individual state variables
+            title: title,
             employmentType: employmentType,
             description: description,
             description1: description1,
             description2: description2,
             description3: description3,
-            languageSpoken: languages.join(', '), // Joining languages array into a string
+            languageSpoken: languages.join(', '),
             location: location,
-            categoryId: selectedCategoryId, // Assuming selectedCategoryId is already correctly set
-            price: askingPrice, // Assuming askingPrice is a number or null
-            priceUnit: priceUnit
+            categoryId: categoryId,
+            price: askingPrice,
+            priceUnit: priceUnit,
+            links: links
         };
 
         console.log('Service Data:', JSON.stringify(serviceData, null, 2));
 
         try {
-            const response = await httpClient.post('http://localhost:8081/api/v1/service', serviceData);
-            const savedServiceId = response.data.id;
-
+            const response = await httpClient.post(`http://localhost:8081/api/v1/service`, serviceData);
             console.log('Response Data:', response.data);
-            console.log(savedServiceId);
             router.push(`/aiServiceMatches`);
         } catch (error) {
             if (error instanceof AxiosError) {
@@ -89,7 +126,6 @@ const CustomiseService: React.FC = () => {
         }
     };
 
-
     return (
         <div className="bg-white min-h-screen flex flex-col justify-center items-center p-4">
             <h2 className="text-6xl font-bold text-gray-900 mb-4 text-center">Describe your service offer</h2>
@@ -99,7 +135,7 @@ const CustomiseService: React.FC = () => {
                     type="text"
                     id="service-title"
                     placeholder="e.g. Web developer"
-                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
                     onChange={(e) => setTitle(e.target.value)}
                 />
             </div>
@@ -109,7 +145,7 @@ const CustomiseService: React.FC = () => {
                     type="text"
                     id="service-description"
                     placeholder="e.g. I can design websites such as..."
-                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
                     onChange={(e) => setDescription(e.target.value)}
                 />
             </div>
@@ -117,10 +153,10 @@ const CustomiseService: React.FC = () => {
                 <label className="block text-lg font-semibold mb-2" htmlFor="employment-type">Employment Type</label>
                 <select
                     id="employment-type"
-                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    value={employmentType}
+                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
                     onChange={(e) => setEmploymentType(e.target.value)}
                 >
-                    <option value="" disabled>Select an option</option>
                     <option value="PART_TIME">Part-time</option>
                     <option value="FULL_TIME">Full-time</option>
                     <option value="CONTRACT">Contract</option>
@@ -132,7 +168,7 @@ const CustomiseService: React.FC = () => {
                     type="text"
                     id="description1"
                     placeholder="Job Description 1"
-                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
                     onChange={(e) => setDescription1(e.target.value)}
                 />
             </div>
@@ -141,7 +177,7 @@ const CustomiseService: React.FC = () => {
                     type="text"
                     id="description2"
                     placeholder="Job Description 2"
-                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
                     onChange={(e) => setDescription2(e.target.value)}
                 />
             </div>
@@ -150,7 +186,7 @@ const CustomiseService: React.FC = () => {
                     type="text"
                     id="description3"
                     placeholder="Job Description 3"
-                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
                     onChange={(e) => setDescription3(e.target.value)}
                 />
             </div>
@@ -163,7 +199,7 @@ const CustomiseService: React.FC = () => {
                         placeholder="Add a language"
                         value={newLanguage}
                         onChange={(e) => setNewLanguage(e.target.value)}
-                        className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
                     />
                     <button
                         onClick={handleAddLanguage}
@@ -172,11 +208,17 @@ const CustomiseService: React.FC = () => {
                         Add
                     </button>
                 </div>
-                <div className="mt-4">
+                <div className="mt-4 flex flex-wrap">
                     {languages.map((language, index) => (
-                        <span key={index} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-              {language}
-            </span>
+                        <span key={index} className="inline-flex items-center bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                            {language}
+                            <button
+                                className="ml-2 text-red-600 hover:text-red-800"
+                                onClick={() => handleRemoveLanguage(language)}
+                            >
+                                &times;
+                            </button>
+                        </span>
                     ))}
                 </div>
             </div>
@@ -186,7 +228,7 @@ const CustomiseService: React.FC = () => {
                     type="text"
                     id="location"
                     placeholder="e.g. Phra Khanong"
-                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
                     onChange={(e) => setLocation(e.target.value)}
                 />
             </div>
@@ -194,12 +236,12 @@ const CustomiseService: React.FC = () => {
                 <label className="block text-lg font-semibold mb-2" htmlFor="category">Category</label>
                 <select
                     id="category"
-                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    onChange={(e) => setSelectedCategoryId(e.target.value)}
+                    value={selectedCategoryName}
+                    className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
+                    onChange={(e) => setSelectedCategoryName(e.target.value)}
                 >
-                    <option value="" disabled>Select a category</option>
                     {categoryList.map((category) => (
-                        <option key={category.id} value={category.id}>
+                        <option key={category.id} value={category.name}>
                             {category.name}
                         </option>
                     ))}
@@ -212,18 +254,64 @@ const CustomiseService: React.FC = () => {
                         type="number"
                         id="asking-price"
                         placeholder="Asking Price"
-                        className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
                         onChange={(e) => setAskingPrice(parseFloat(e.target.value))}
                     />
                     <select
-                        className="block p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        className="block p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
+                        value={priceUnit}
                         onChange={(e) => setPriceUnit(e.target.value)}
                     >
-                        <option value="hour">Hour</option>
-                        <option value="week">Week</option>
-                        <option value="month">Month</option>
-                        <option value="project">Project</option>
+                        <option value="HOUR">Hour</option>
+                        <option value="WEEK">Week</option>
+                        <option value="MONTH">Month</option>
+                        <option value="PROJECT">Project</option>
                     </select>
+                </div>
+            </div>
+            <div className="max-w-4xl mx-auto w-full mt-8 mb-8">
+                <label className="block text-lg font-semibold mb-2" htmlFor="links">Add links which can help employers know more about you. Enter in order of priority.</label>
+                <div className="flex items-center space-x-4">
+                    <input
+                        type="text"
+                        id="new-link-description"
+                        placeholder="Short description"
+                        value={newLinkDescription}
+                        onChange={(e) => setNewLinkDescription(e.target.value)}
+                        className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <input
+                        type="text"
+                        id="new-link-url"
+                        placeholder="Link"
+                        value={newLinkUrl}
+                        onChange={(e) => setNewLinkUrl(e.target.value)}
+                        className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <button
+                        onClick={handleAddLink}
+                        className="bg-[#0B2147] text-white rounded-lg px-4 py-2 hover:bg-[#D0693B] text-sm"
+                    >
+                        Add
+                    </button>
+                </div>
+                <div className="mt-4">
+                    {links.map((link, index) => (
+                        <div key={index} className="flex items-center bg-gray-200 rounded-lg p-3 mb-2">
+                            <div className="flex-grow">
+                                <p className="text-sm font-semibold text-gray-700">{link.description}</p>
+                                <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                                    {link.url}
+                                </a>
+                            </div>
+                            <button
+                                className="ml-4 text-red-600 hover:text-red-800"
+                                onClick={() => handleRemoveLink(index)}
+                            >
+                                &minus;
+                            </button>
+                        </div>
+                    ))}
                 </div>
             </div>
             <div className="mt-4">
