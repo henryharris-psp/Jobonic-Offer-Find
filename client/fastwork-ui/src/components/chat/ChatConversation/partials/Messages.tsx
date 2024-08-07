@@ -69,7 +69,7 @@ const Messages = () => {
     return (
         <div 
             ref={messagesScreenRef} 
-            className="flex flex-col space-y-2 py-5"
+            className="flex flex-col space-y-3 py-5"
         >
             { messages.map( msg => 
                 <div 
@@ -84,11 +84,7 @@ const Messages = () => {
                     }`}>
                         <div>
                             {/* avatar */}
-                            <div className="flex items-center justify-center h-8 w-8 bg-orange-400 rounded-full">
-                                <span className="text-xs text-white">
-                                    User
-                                </span>
-                            </div>
+                            <img src={'/avatar.svg'} alt="Profile Pic" className="h-8 w-8 rounded-full" />
                         </div>
                         <div className={`flex items-center justify-center p-3 mx-2 rounded-xl break-words max-w-sm ${ isSentByCurrentUser(msg.sender_id)
                             ? "bg-[#0C2348] text-white"
