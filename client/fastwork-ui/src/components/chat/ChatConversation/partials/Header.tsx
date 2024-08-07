@@ -3,7 +3,7 @@ import { ChatBubbleBottomCenterTextIcon, ChevronLeftIcon, ChevronRightIcon } fro
 import React from "react";
 
 const Header = () => {
-    const { 
+    const {
         showChatList, 
         setShowChatList,
         showProgressList,

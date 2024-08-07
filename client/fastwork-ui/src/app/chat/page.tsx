@@ -11,7 +11,6 @@ import { ChatProvider, useChat } from "@/contexts/chat";
 import httpClient from "@/client/httpClient";
 import { SERVER_AUTH } from "@/baseURL";
 import ProgressList from "@/components/chat/ProgressList";
-import ProgressSidebar from "@/components/ProgressSidebar";
 
 const ChatPage = () => {
     const { isMobile } = useSelector((state: RootState) => state.ui);
@@ -24,8 +23,13 @@ const ChatPage = () => {
         setShowProgressList
     } = useChat();
 
+    const [activeChat, setActiveChat] = useState<People>(people[0]);
+
     //fetch authenticated user on mounted
     useEffect( () => {
+
+        console.log('fdfdfdf');
+
         const controller = new AbortController();
         const signal = controller.signal;
 
@@ -73,8 +77,6 @@ const ChatPage = () => {
             setShowProgressList(!isMobile);
         }, [isMobile]);
 
-    const [activeChat, setActiveChat] = useState<People>(people[0]);
-
     return (
         <div
             className="select-none flex flex-row relative overflow-hidden"
@@ -119,7 +121,7 @@ const ChatPage = () => {
                         animate
                         position="right"
                     >
-                        <ProgressSidebar/>
+                        <ProgressList/>
                     </SideDrawer>
                 </>  
             )}

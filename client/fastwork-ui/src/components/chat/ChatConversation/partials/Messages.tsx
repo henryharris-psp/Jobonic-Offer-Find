@@ -56,15 +56,15 @@ const Messages = () => {
             };
         }, []);
 
-
-    useEffect( () => {
-        if(messages.length !== 0 && messagesScreenRef.current) {
-            messagesScreenRef.current.scrollIntoView({ 
-                behavior: "smooth", 
-                block: "end"
-            });
-          }
-    }, [messages.length]);
+        //scroll to bottom on new message
+        useEffect( () => {
+            if(messages.length !== 0 && messagesScreenRef.current) {
+                messagesScreenRef.current.scrollIntoView({ 
+                    behavior: "smooth", 
+                    block: "end"
+                });
+            }
+        }, [messages.length]);
 
     return (
         <div 
