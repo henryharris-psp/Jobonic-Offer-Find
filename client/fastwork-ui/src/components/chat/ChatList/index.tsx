@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { chatFilters } from "../data/chatFilters";
-import { people } from "../data/people";
-import { fromClientStatus } from "../data/fromClientStatus";
-import { fromServiceProviderStatus } from "../data/fromServiceProviderStatus";
+import { fromServiceProviderStatus, fromClientStatus, people, chatFilters } from "@/data/chat";
 import SearchBox from "./partials/SearchBox";
 import SelectAndSearchBox from "./partials/SelectAndSearchBox";
-import { People, CurrentUser } from "../interfaces";
+import { People, CurrentUser } from "@/interfaces/chat";
 
 interface ChatListProps {
     onActiveChatChange: (value: People) => void;

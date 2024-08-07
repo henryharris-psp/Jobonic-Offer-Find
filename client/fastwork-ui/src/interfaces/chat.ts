@@ -3,34 +3,34 @@ export interface Message {
     sender?: string;
     avatar?: string;
     text?: string;
-    type?: 'deal' | 'message' | 'apply' | 'service offer';
+    type?: "deal" | "message" | "apply" | "service offer";
     image?: string;
     title?: string;
     rating?: number;
     description?: string[];
     price?: string;
     sentByCurrentUser?: boolean;
-  }
-  
-  export interface ActiveChat {
+}
+
+export interface ActiveChat {
     id: number;
     fullName: string;
     avatar: string;
     messages: Message[];
-    type: 'client' | 'service_provider';
+    type: "client" | "service_provider";
     status: string;
-  }
-  
-  export interface People {
+}
+
+export interface People {
     id: number;
     fullName: string;
     avatar: string;
     messages: Message[];
-    type: 'client' | 'service_provider';
+    type: "client" | "service_provider";
     status: string;
-  }
-  
-  export interface Service {
+}
+
+export interface Service {
     name: string;
     image: string;
     bullet1: string;
@@ -42,12 +42,12 @@ export interface Message {
     description: string;
     reviewsDetail: { reviewer: string; comment: string; rating: number }[];
     numSold: number;
-  }
-  
-  export interface CurrentUser {
+}
+
+export interface CurrentUser {
     id: number;
     email: string;
     username: string;
     avatar: string;
     userid: number;
-  }
+}

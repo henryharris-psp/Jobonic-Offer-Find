@@ -1,4 +1,4 @@
-import { CurrentUser } from './../../components/chat/interfaces';
+import { CurrentUser } from '@/interfaces/chat';
 import { ChatState } from ".";
 
 type ChatAction =

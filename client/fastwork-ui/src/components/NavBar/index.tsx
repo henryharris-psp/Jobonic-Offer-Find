@@ -10,42 +10,8 @@ import { AUTH_UI_URL, baseURL, SERVER_AUTH } from "@/baseURL";
 import httpAuth from "@/client/httpAuth";
 import { v4 as uuid } from "uuid";
 import { Bars3Icon, BeakerIcon } from '@heroicons/react/24/solid';
-
-interface NavBarProps {
-    showOnlyLogo?: boolean;
-    isEmployer?: boolean;
-    signedIn?: boolean;
-}
-
-const pageLinks = [
-    {
-        id: uuid(),
-        path: '/about',
-        name: 'About Us'
-    },
-    {
-        id: uuid(),
-        path: '/findServices',
-        name: 'Find Services'
-    },
-    {
-        id: uuid(),
-        path: '/offerServices',
-        name: 'Offer Services'
-    },
-    {
-        id: uuid(),
-        path: '/chat',
-        name: 'Messages'
-    },
-    {
-        id: uuid(),
-        path: '/privileges',
-        name: 'Privileges'
-    }
-];
-
-const availableLanguages = ['English', '中文', 'ไทย'];
+import { availableLanguages, pageLinks } from "@/data/nav-bar";
+import { NavBarProps } from "@/interfaces/nav-bar";
 
 const NavbarComponent = ({
     showOnlyLogo = false,

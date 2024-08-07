@@ -2,8 +2,8 @@
 import ChatConversation from "@/components/chat/ChatConversation";
 import SideDrawer from "@/components/SideDrawer";
 import ChatList from "@/components/chat/ChatList";
-import { people } from "@/components/chat/data/people";
-import { People } from "@/components/chat/interfaces";
+import { people } from "@/data/chat";
+import { People } from "@/interfaces/chat";
 import { RootState } from "@/store";
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";

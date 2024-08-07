@@ -1,12 +1,12 @@
 "use client";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import NavbarComponent from "../components/NavBar";
 import Footer from "../components/footer";
 import ChatBox from "../components/ChatBox";
 import store from "@/store";
 import { Provider } from "react-redux";
 import useWindowResize from "@/hooks/useWindowResize";
+import NavbarComponent from "@/components/NavBar";
 
 const inter = Inter({ subsets: ["latin"] });
 

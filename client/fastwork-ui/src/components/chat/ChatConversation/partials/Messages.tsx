@@ -1,7 +1,7 @@
 import { supabase } from "@/app/config/supabaseClient";
 import { useChat } from "@/contexts/chat";
 import React, { useEffect, useRef, useState } from "react";
-import { CurrentUser } from "../../interfaces";
+import { CurrentUser } from "@/interfaces/chat";
 
 interface Message {
     id: number;

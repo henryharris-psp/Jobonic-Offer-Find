@@ -32,6 +32,7 @@ const SideDrawer = ({
             <div
                 className="absolute top-0 bottom-0 flex shadow bg-white overflow-hidden"
                 style={{
+                    zIndex: 9999,
                     width: width,
                     left: position === 'left' ? (show ? 0 : (-1 * width)) : '',
                     right: position === 'right' ? (show ? 0 : (-1 * width)) : '',
@@ -56,9 +57,12 @@ const SideDrawer = ({
 
             { isFloat && show ? (
                 <div 
-                    className={`fixed bg-none top-0 bottom-0 right-0 z-40
+                    className={`fixed bg-none top-0 bottom-0
                         ${ position === 'left' ? 'left-0' : 'right-0' }
                     `}
+                    style={{
+                        zIndex: 9998
+                    }}
                     onClick={onClose}
                 />
             ) : ''}
