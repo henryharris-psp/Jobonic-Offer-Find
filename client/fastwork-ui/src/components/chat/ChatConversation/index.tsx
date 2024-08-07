@@ -4,6 +4,7 @@ import Details from "./partials/Details";
 import Messages from "./partials/Messages";
 import NewMessage from "./partials/NewMessage";
 import { People } from "@/components/chat/interfaces";
+import { useChat } from "@/contexts/chat";
 
 interface ChatConversationProps {
     activeChat: People;
@@ -12,9 +13,12 @@ interface ChatConversationProps {
 const ChatConversation = ({ 
     activeChat,
 }: ChatConversationProps) => {
+    const { showChatList, showProgressList } = useChat();
     return (
         <div className="flex flex-1 flex-col overflow-hidden bg-white">
-            <Header/>
+            { !showChatList || !showProgressList ? (
+                <Header/>
+            ): ''}
             <Details
                 activeChat={activeChat}
                 recipientUser={activeChat}

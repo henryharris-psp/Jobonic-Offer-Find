@@ -75,7 +75,7 @@ const ProgressSidebar: React.FC = () => {
     };
 
     return (
-        <div className="bg-[#E0F7FA] p-4 rounded-lg shadow-md w-[300px]">
+        <div className="bg-[#E0F7FA] p-4 rounded-lg shadow-md w-[300px] pt-16">
             <h2 className="text-lg font-bold mb-4">Progress</h2>
             <ul className="space-y-2">
                 {milestones.length > 0 ? milestones.map((milestone) => (

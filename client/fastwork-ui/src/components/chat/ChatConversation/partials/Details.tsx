@@ -79,42 +79,6 @@ const Details: React.FC<DetailsProps> = ({
         fetchMessages();
     }, [recipientUser, newMessage, currentUser]);
 
-    useEffect(() => {
-        if (currentUser && recipientUser) {
-            const messageSubscription = supabase
-                .channel("public:messages")
-                .on(
-                    "postgres_changes",
-                    { event: "INSERT", schema: "public", table: "messages" },
-                    (payload) => {
-                        const newMessage = payload.new;
-                        if (
-                            (newMessage.sender_id === currentUser.userid &&
-                                newMessage.recipient_id === recipientUser.id) ||
-                            (newMessage.sender_id === recipientUser.id &&
-                                newMessage.recipient_id === currentUser.userid)
-                        ) {
-                            setMessages((prevMessages) => [
-                                ...prevMessages,
-                                newMessage,
-                            ]);
-                        }
-                    }
-                )
-                .subscribe();
-            return () => {
-                supabase.removeChannel(messageSubscription);
-            };
-        }
-    }, [newMessage, messages, currentUser, recipientUser]);
-
-    useEffect(() => {
-        if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop =
-                chatContainerRef.current.scrollHeight;
-        }
-    }, [messages]);
-
     const handleMessageSubmit = async () => {
         if (newMessage.trim() !== "" && recipientUser && currentUser) {
             const { error } = await supabase.from("messages").insert([

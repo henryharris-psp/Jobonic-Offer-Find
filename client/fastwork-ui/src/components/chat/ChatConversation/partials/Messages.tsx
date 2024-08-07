@@ -1,25 +1,16 @@
 import { supabase } from "@/app/config/supabaseClient";
+import { useChat } from "@/contexts/chat";
 import React, { useEffect, useRef, useState } from "react";
-
-interface Sender {
-    id: number;
-    name: string;
-    created_at: Date;
-}
 
 interface Message {
     id: number;
     content: string;
-    sent_by: Sender;
+    sender_id: number;
     created_at: Date;
 }
 
 const Messages = () => {
-    const currentUser = {
-        id: 1,
-        name: 'Logged in User',
-    }
-
+    const { currentUser } = useChat();
     const messagesScreenRef = useRef<HTMLDivElement | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
 
@@ -27,7 +18,7 @@ const Messages = () => {
         const fetchMessages = async () => {
             const { data, error } = await supabase
                 .from('messages')
-                .select('*, sent_by(*)')
+                .select('*, sender_id(*)')
                 .order('created_at', { ascending: true });
             if (error) {
                 console.log('error', error);
@@ -36,8 +27,8 @@ const Messages = () => {
             }
         };
 
-        const isFromCurrentUser = (msgId: number) => {
-            return msgId % 2 === 0;
+        const isSentByCurrentUser = (senderId: number) : boolean => {
+            return senderId === currentUser?.id
         }
     
     //subscribe to channel and listen
@@ -84,10 +75,10 @@ const Messages = () => {
                 <div 
                     key={msg.id} 
                     className={`flex flex-row
-                        ${ isFromCurrentUser(msg.id) ? 'justify-end' : 'justify-start'}
+                        ${ isSentByCurrentUser(msg.sender_id) ? 'justify-end' : 'justify-start'}
                     `}
                 >
-                    <div className={`flex items-end mx-3 ${ isFromCurrentUser(msg.id)
+                    <div className={`flex items-end mx-3 ${ isSentByCurrentUser(msg.sender_id)
                         ? 'flex-row-reverse'
                         : 'flex-row'
                     }`}>
@@ -95,11 +86,11 @@ const Messages = () => {
                             {/* avatar */}
                             <div className="flex items-center justify-center h-8 w-8 bg-orange-400 rounded-full">
                                 <span className="text-xs text-white">
-                                    user
+                                    User
                                 </span>
                             </div>
                         </div>
-                        <div className={`flex items-center justify-center p-3 mx-2 rounded-xl break-words max-w-sm ${ isFromCurrentUser(msg.id)
+                        <div className={`flex items-center justify-center p-3 mx-2 rounded-xl break-words max-w-sm ${ isSentByCurrentUser(msg.sender_id)
                             ? "bg-[#0C2348] text-white"
                             : "bg-gray-200 text-black"
                         }`}>

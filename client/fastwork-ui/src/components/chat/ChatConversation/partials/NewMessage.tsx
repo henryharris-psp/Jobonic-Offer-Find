@@ -1,18 +1,10 @@
 import { supabase } from "@/app/config/supabaseClient";
-import { SERVER_AUTH } from "@/baseURL";
-import httpAuth from "@/client/httpAuth";
+import { useChat } from "@/contexts/chat";
 import { PaperClipIcon, PhotoIcon } from "@heroicons/react/24/solid";
-import React, { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, KeyboardEvent, useState } from "react";
 
 const NewMessage = () => {
-    useEffect( () => {
-        const authUser = localStorage.getItem('userInfo');
-        const authUserId = localStorage.getItem('userId');
-
-        console.log(authUser, authUserId);
-
-    }, []);
-
+    const { currentUser } = useChat();
     const [newMessage, setNewMessage] = useState('');
 
     //methods
@@ -28,10 +20,10 @@ const NewMessage = () => {
         };
         
         const handleOnSend = async () => {
-            if (newMessage.trim()) {
+            if (currentUser && newMessage.trim()) {
                 const { error } = await supabase
                     .from("messages")
-                    .insert([{ content: newMessage, sent_by: 1 }]);
+                    .insert([{ content: newMessage, sender_id: currentUser.id }]);
 
                 if (error) {
                     console.log("error", error)
