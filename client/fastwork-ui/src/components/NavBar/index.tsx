@@ -15,6 +15,7 @@ import { RootState } from "@/store";
 import CaretUpIcon from "../../../public/icons/CaretDownIcon";
 import DropDownButton from "../DropDownButton";
 import DesktopNavLinks from "./partials/DesktopNavLinks";
+import MobileNavLinks from "./partials/MobileNavLinks";
 
 export interface NavBarProps {
     showOnlyLogo?: boolean;
@@ -97,18 +98,13 @@ const NavBar = ({
         }
     }, [token]);
 
-    const { isMobile } = useSelector((state: RootState) => state.ui);
 
     //new
+    const { isMobile } = useSelector((state: RootState) => state.ui);
     const [showMobileNavDrawer, setShowMobileNavDrawer] = useState<boolean>(false);
 
     return (
-        <div
-            className="h-16 p-4 sticky top-0 z-50"
-            style={{
-                background: "linear-gradient(to right, #35617C, #10294D)",
-            }}
-        >
+        <div className="h-16 p-4 sticky top-0 z-50 bg-gradient-to-r from-[#35617C] to-[#10294D]">
             <div className="container mx-auto flex h-full items-center justify-between">
                 <div className="flex items-center justify-center">
                     <span
@@ -129,7 +125,7 @@ const NavBar = ({
                         className="flex items-center"
                         onClick={() => setShowMobileNavDrawer(true)}
                     >
-                        <Bars3Icon className="size-8 text-white" />
+                        <Bars3Icon className="size-8 text-white hover:opacity-70 active:opacity-50" />
                     </button>
                 ) : (
                     <DesktopNavLinks
@@ -147,7 +143,7 @@ const NavBar = ({
                 onClose={() => setShowMobileNavDrawer(false)}
                 zStack={10}
             >
-                <div>fdf</div>
+                <MobileNavLinks/>
             </SideDrawer>
         </div>
     );

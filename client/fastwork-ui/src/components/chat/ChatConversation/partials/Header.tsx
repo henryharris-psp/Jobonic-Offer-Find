@@ -1,5 +1,5 @@
 import { useChat } from "@/contexts/chat";
-import { ChatBubbleBottomCenterTextIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
+import { ChatBubbleBottomCenterTextIcon, ChevronLeftIcon, ChevronRightIcon, NumberedListIcon } from "@heroicons/react/24/solid";
 import React from "react";
 
 const Header = () => {
@@ -23,21 +23,22 @@ const Header = () => {
             <div>
                 { !showChatList ? (
                     <button 
-                        className="flex items-center justify-center space-x-1 h-9 w-16 rounded-full bg-[#0C2348] hover:bg-[#D0693B] active:bg-[#b65e35]"
+                        className="flex items-center justify-evenly px-2 space-x-1 h-9 w-14 rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400"
                         onClick={handelOnOpenChatList}
                     >
-                        <ChatBubbleBottomCenterTextIcon className="size-6 text-white"/>
-                        <ChevronRightIcon className="size-4 text-white"/>
+                        <ChatBubbleBottomCenterTextIcon className="size-6 text-gray-500"/>
+                        <ChevronRightIcon className="size-4 text-gray-600"/>
                     </button>
                 ) : ''}
             </div>
             <div>
                 { !showProgressList ? (
                     <button     
-                        className="flex items-center justify-center h-9 w-9 rounded-full bg-[#0C2348] hover:bg-[#D0693B] active:bg-[#b65e35]"
+                        className="flex items-center justify-evenly px-2 h-9 w-14 rounded-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400"
                         onClick={handelOnOpenProgressList}
                     >
-                        <ChevronLeftIcon className="size-5 text-white"/>
+                        <ChevronLeftIcon className="size-4 text-gray-600"/>
+                        <NumberedListIcon className="size-5 text-gray-600"/>
                     </button>
                 ) : ''}
             </div>

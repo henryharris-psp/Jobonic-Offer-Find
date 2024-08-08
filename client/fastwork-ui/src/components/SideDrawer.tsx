@@ -1,5 +1,5 @@
 import { RootState } from "@/store";
-import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import { ReactNode, useMemo } from "react";
 import { useSelector } from "react-redux";
 
@@ -38,7 +38,7 @@ const SideDrawer = ({
     return (
         <>
             <div
-                className={`top-0 bottom-0 flex shadow bg-white overflow-hidden ${
+                className={`top-0 bottom-0 bg-none flex shadow overflow-hidden ${
                     fullScreen ? 'fixed' : 'absolute'
                 }`}
                 style={{
@@ -65,13 +65,12 @@ const SideDrawer = ({
                 </button>
             </div>
 
+            {/* clickable backdrop to close */}
             { isFloat && show ? (
                 <div 
-                    className={`fixed bg-none top-0 bottom-0
-                        ${ position === 'left' ? 'left-0' : 'right-0' }
-                    `}
+                    className="fixed bg-none top-0 bottom-0 left-0 right-0"
                     style={{
-                        zIndex: zStack - 1
+                        zIndex: zStack - 1 //must always be under drawer
                     }}
                     onClick={onClose}
                 />
@@ -80,7 +79,6 @@ const SideDrawer = ({
             {/* nav spacer */}
             { !isFloat ? (
                 <div
-                    className="bg-red-500"
                     style={{
                         minWidth: show ? width : 0,
                         transition: animate ? 'min-width 300ms' : 'none'

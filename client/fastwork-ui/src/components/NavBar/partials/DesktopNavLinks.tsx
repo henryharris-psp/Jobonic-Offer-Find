@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import AuthUserDetailsDropDownButton from "./AuthUserDetailsDropDownButton";
 import { usePathname } from 'next/navigation';
+import { AUTH_UI_URL } from "@/baseURL";
 
 interface NavLinksProps {
     registerForm: string | null;
@@ -22,6 +23,7 @@ const DesktopNavLinks = ({
     const currentPathName = usePathname();
 
     const handleLogIn = () => {
+        window.location.href = `${AUTH_UI_URL}/authentication?page=logout`;
         // dispatch(login());
     }
 
