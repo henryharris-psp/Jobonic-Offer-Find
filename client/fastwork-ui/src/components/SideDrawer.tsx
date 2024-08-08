@@ -9,17 +9,25 @@ interface SideDrawerProps {
     animate?: boolean;
     children: ReactNode;
     position?: 'left' | 'right';
+    fullScreen?: boolean;
+    zStack?: number; //max 9997
     onClose: () => void;
   }
 
 const SideDrawer = ({ 
     show, 
-    width = 300,
+    width = 250,
     animate = true,
     position = 'left',
+    fullScreen = false,
+    zStack = 10,
     onClose,
     children
 }: SideDrawerProps) => {
+
+    if (zStack !== undefined && zStack > 10) {
+        throw new Error('zStack must be between only 1 to 10');
+    }
 
     const { isMobile } = useSelector((state: RootState) => state.ui);
     
@@ -30,9 +38,11 @@ const SideDrawer = ({
     return (
         <>
             <div
-                className="absolute top-0 bottom-0 flex shadow bg-white overflow-hidden"
+                className={`top-0 bottom-0 flex shadow bg-white overflow-hidden ${
+                    fullScreen ? 'fixed' : 'absolute'
+                }`}
                 style={{
-                    zIndex: 9999,
+                    zIndex: zStack,
                     width: width,
                     left: position === 'left' ? (show ? 0 : (-1 * width)) : '',
                     right: position === 'right' ? (show ? 0 : (-1 * width)) : '',
@@ -61,7 +71,7 @@ const SideDrawer = ({
                         ${ position === 'left' ? 'left-0' : 'right-0' }
                     `}
                     style={{
-                        zIndex: 9998
+                        zIndex: zStack - 1
                     }}
                     onClick={onClose}
                 />

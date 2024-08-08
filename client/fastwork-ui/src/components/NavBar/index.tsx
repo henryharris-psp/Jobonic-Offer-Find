@@ -5,13 +5,17 @@ import Link from "next/link";
 import Drawer from "@/components/Drawer";
 import Settings from "@/components/Settings";
 import { useRouter, usePathname } from "next/navigation";
-import Image from "next/image";
 import { AUTH_UI_URL, baseURL, SERVER_AUTH } from "@/baseURL";
 import httpAuth from "@/client/httpAuth";
-import { v4 as uuid } from "uuid";
-import { Bars3Icon, BeakerIcon } from '@heroicons/react/24/solid';
+import { Bars3Icon } from '@heroicons/react/24/solid';
 import { availableLanguages, pageLinks } from "@/data/nav-bar";
-import { NavBarProps } from "@/interfaces/nav-bar";
+import SideDrawer from "../SideDrawer";
+
+export interface NavBarProps {
+    showOnlyLogo?: boolean;
+    isEmployer?: boolean;
+    signedIn?: boolean;
+}
 
 const NavbarComponent = ({
     showOnlyLogo = false,
@@ -93,6 +97,9 @@ const NavbarComponent = ({
         }
     }, [token]);
 
+    //new
+    const [showMobileNavDrawer, setShowMobileNavDrawer] = useState<boolean>(false);
+
     return (
         <div
             className="h-16 p-4 sticky top-0 z-50"
@@ -132,7 +139,7 @@ const NavbarComponent = ({
                         )}
                         
                         <li
-                            className="p-2 hover:bg-white hover:text-[#35617C] overflow-hidden hover:overflow-visible rounded-md relative"
+                            className="p-2 hover:bg-white hover:text-[#35617C] overflow-hidden hover:overflow-visible rounded-md"
                             onMouseEnter={() =>
                                 setIsLanguageDropdownOpen(true)
                             }
@@ -219,7 +226,7 @@ const NavbarComponent = ({
                                 </div>
                             ) : (
                                 <li
-                                    className="p-2 hover:bg-white hover:text-[#35617C] rounded-md relative"
+                                    className="p-2 hover:bg-white hover:text-[#35617C] rounded-md "
                                     onMouseEnter={() => setIsDropdownOpen(true)}
                                     onMouseLeave={() =>
                                         setIsDropdownOpen(false)
@@ -296,19 +303,22 @@ const NavbarComponent = ({
                 </div>
 
                 {/* mobile nav drawer toggle */}
-                <div className="flex items-center lg:hidden">
-                    <Bars3Icon className="size-8 text-white" />
-                </div>
-
-                <Drawer
-                    drawerOpen={isDrawerOpen}
-                    title="Settings"
-                    handleClose={handleDrawerCloseClicked}
-                    showBackArrow
-                    width="w-full sm:w-1/3"
+                <button 
+                    className="flex items-center lg:hidden"
+                    onClick={() => setShowMobileNavDrawer(true)}
                 >
-                    <Settings />
-                </Drawer>
+                    <Bars3Icon className="size-8 text-white" />
+                </button>
+
+                <SideDrawer
+                    show={showMobileNavDrawer}
+                    position="right"
+                    fullScreen
+                    onClose={() => setShowMobileNavDrawer(false)}
+                    zStack={10}
+                >
+                    <div>fdf</div>
+                </SideDrawer>
             </div>
         </div>
     );

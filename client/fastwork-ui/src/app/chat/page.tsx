@@ -95,6 +95,7 @@ const ChatPage = () => {
                         onClose={() => setShowChatList(false)}
                         width={chatListWidth}
                         animate={isMobile}
+                        zStack={9}
                     >
                         <ChatList 
                             onActiveChatChange={setActiveChat}
@@ -120,6 +121,7 @@ const ChatPage = () => {
                         onClose={() => setShowProgressList(false)}
                         animate
                         position="right"
+                        zStack={9}
                     >
                         <ProgressList/>
                     </SideDrawer>
