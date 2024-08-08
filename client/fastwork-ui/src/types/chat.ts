@@ -43,11 +43,3 @@ export interface Service {
     reviewsDetail: { reviewer: string; comment: string; rating: number }[];
     numSold: number;
 }
-
-export interface CurrentUser {
-    id: number;
-    email: string;
-    username: string;
-    avatar: string;
-    userid: number;
-}

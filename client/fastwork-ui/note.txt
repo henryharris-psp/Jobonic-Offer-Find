@@ -1,4 +1,13 @@
 zIndex order
 
-SideDrawer -> 9999
-SideDrawer- tapToCloseArea - 9998
+noti toast -> 
+modal and dialog - 
+SideDrawer -> 10 max
+SideDrawer/clickableBackDrop - 9 max
+
+
+main colors
+
+#darkblue - #0C2348
+#blue - #35617C
+#oragne - #D0693B

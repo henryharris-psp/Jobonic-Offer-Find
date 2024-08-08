@@ -1,6 +1,6 @@
 import React, { ReactNode, createContext, useContext, useReducer } from "react";
 import reducer from "./reducer";
-import { CurrentUser } from "@/interfaces/chat";
+import { CurrentUser } from "@/types/chat";
 
 export interface ChatState {
     showChatList: boolean;

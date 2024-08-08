@@ -6,7 +6,7 @@ import ChatBox from "../components/ChatBox";
 import store from "@/store";
 import { Provider } from "react-redux";
 import useWindowResize from "@/hooks/useWindowResize";
-import NavbarComponent from "@/components/NavBar";
+import NavBar from "@/components/NavBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,7 +21,7 @@ const RootLayout = ({
     return (
         <html lang="en">
             <body className={inter.className}>
-                <NavbarComponent />
+                <NavBar />
                 <main>{children}</main>
                 <Footer />
                 {/* <ChatBox /> */}

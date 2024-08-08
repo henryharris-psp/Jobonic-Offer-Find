@@ -3,7 +3,7 @@ import Header from "./partials/Header";
 import Details from "./partials/Details";
 import Messages from "./partials/Messages";
 import NewMessage from "./partials/NewMessage";
-import { People } from "@/interfaces/chat";
+import { People } from "@/types/chat";
 import { useChat } from "@/contexts/chat";
 
 interface ChatConversationProps {

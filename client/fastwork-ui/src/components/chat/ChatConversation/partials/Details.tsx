@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"; // Correct import for Next.js 13 an
 import ChatMessageBig from "@/components/ChatMessageBig";
 
 import { supabase } from "@/app/config/supabaseClient";
-import { Message, ActiveChat, CurrentUser } from "@/interfaces/chat";
+import { Message, ActiveChat, CurrentUser } from "@/types/chat";
 import ContractCard from "@/components/ContractCard";
 
 interface RecipientUser {

@@ -10,6 +10,11 @@ import httpAuth from "@/client/httpAuth";
 import { Bars3Icon } from '@heroicons/react/24/solid';
 import { availableLanguages, pageLinks } from "@/data/nav-bar";
 import SideDrawer from "../SideDrawer";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import CaretUpIcon from "../../../public/icons/CaretDownIcon";
+import DropDownButton from "../DropDownButton";
+import DesktopNavLinks from "./partials/DesktopNavLinks";
 
 export interface NavBarProps {
     showOnlyLogo?: boolean;
@@ -17,7 +22,7 @@ export interface NavBarProps {
     signedIn?: boolean;
 }
 
-const NavbarComponent = ({
+const NavBar = ({
     showOnlyLogo = false,
     isEmployer = false,
     signedIn = true,
@@ -68,11 +73,6 @@ const NavbarComponent = ({
         router.push("/");
     }, [router]);
 
-    const handleLanguageChange = useCallback((language: string) => {
-        setSelectedLanguage(language);
-        setIsLanguageDropdownOpen(false);
-    }, []);
-
     const handleDrawerCloseClicked = useCallback((): void => {
         setIsDrawerOpen(false);
     }, []);
@@ -96,6 +96,8 @@ const NavbarComponent = ({
             void fetchUserAuth();
         }
     }, [token]);
+
+    const { isMobile } = useSelector((state: RootState) => state.ui);
 
     //new
     const [showMobileNavDrawer, setShowMobileNavDrawer] = useState<boolean>(false);
@@ -121,207 +123,34 @@ const NavbarComponent = ({
                     </span>
                 </div>
                 
-                {/* desktop nav */}
-                <div className="items-center space-x-4 text-sm hidden lg:flex">
-                    <ul className="flex gap-x-4 text-white items-center font-medium">
-
-                        { pageLinks.map( page => 
-                            <li
-                                key={page.id}
-                                className={`p-2 hover:bg-white hover:text-[#35617C] rounded-md ${
-                                    getLinkClass(page.path)
-                                }`}
-                            >
-                                <Link href={page.path}>
-                                    <p>{page.name}</p>
-                                </Link>
-                            </li>  
-                        )}
-                        
-                        <li
-                            className="p-2 hover:bg-white hover:text-[#35617C] overflow-hidden hover:overflow-visible rounded-md"
-                            onMouseEnter={() =>
-                                setIsLanguageDropdownOpen(true)
-                            }
-                            onMouseLeave={() =>
-                                setIsLanguageDropdownOpen(false)
-                            }
-                        >
-                            <button className="flex items-center space-x-2">
-                                <p>{selectedLanguage}</p>
-                                <svg
-                                    className={`w-4 h-4 transition-transform ${
-                                        isLanguageDropdownOpen
-                                            ? "rotate-180"
-                                            : ""
-                                    }`}
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                >
-                                    <path
-                                        fillRule="evenodd"
-                                        d="M5.292 7.292a1 1 0 011.414 0L10 10.586l3.293-3.294a1 1 111.414 1.414l-4 4a1 1 01-1.414 0l-4-4a1 1 010-1.414z"
-                                        clipRule="evenodd"
-                                    />
-                                </svg>
-                            </button>
-                            {isLanguageDropdownOpen && (
-                                <ul
-                                    className="text-black absolute right-0 mt-2 w-28 bg-white border border-gray-200 rounded-md shadow-lg z-10"
-                                    onMouseEnter={() =>
-                                        setIsLanguageDropdownOpen(true)
-                                    }
-                                    onMouseLeave={() =>
-                                        setIsLanguageDropdownOpen(false)
-                                    }
-                                >
-                                    { availableLanguages.map( (language, index) => (
-                                        <li
-                                            key={index}
-                                            className="p-2 hover:bg-gray-100 hover:rounded-t-md cursor-pointer"
-                                            onClick={() =>
-                                                handleLanguageChange(language)
-                                            }
-                                        >
-                                            <a
-                                                href="#"
-                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            >
-                                                { language }
-                                            </a>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </li>
-
-                        { !token ? (
-                            <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                                <button
-                                    type="button"
-                                    className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-2 py-1 text-center me-2 mb-2 mt-1"
-                                    onClick={(e) => void handleLogin(e)}
-                                >
-                                    Log In
-                                </button>
-                                <button
-                                    type="button"
-                                    className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-2 py-1 text-center me-2 mb-2 mt-1"
-                                >
-                                    <Link href="/register">Sign Up</Link>
-                                </button>
-                            </div>
-                        ) : (
-                            registerForm === "jobonicRegister" ? (
-                                <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                                    <button
-                                        type="button"
-                                        className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-2 py-1 text-center me-2 mb-2 mt-1"
-                                    >
-                                        <Link href="/register">
-                                            Create Profile
-                                        </Link>
-                                    </button>
-                                </div>
-                            ) : (
-                                <li
-                                    className="p-2 hover:bg-white hover:text-[#35617C] rounded-md "
-                                    onMouseEnter={() => setIsDropdownOpen(true)}
-                                    onMouseLeave={() =>
-                                        setIsDropdownOpen(false)
-                                    }
-                                >
-                                    <button className="flex items-center space-x-2">
-                                        <img
-                                            src="/group-image.jpg"
-                                            alt="User Avatar"
-                                            className="lg:w-8 lg:h-8 sm:w-6 sm:h-6 rounded-full object-cover"
-                                        />
-                                        <label>{user.firstName}</label>
-                                        <svg
-                                            className={`w-4 h-4 transition-transform ${
-                                                isDropdownOpen
-                                                    ? "rotate-180"
-                                                    : ""
-                                            }`}
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 20 20"
-                                            fill="currentColor"
-                                        >
-                                            <path
-                                                fillRule="evenodd"
-                                                d="M5.292 7.292a1 1 0 011.414 0L10 10.586l3.293-3.294a1 1 111.414 1.414l-4 4a1 1 01-1.414 0l-4-4a1 1 010-1.414z"
-                                                clipRule="evenodd"
-                                            />
-                                        </svg>
-                                    </button>
-
-                                    {isDropdownOpen && (
-                                        <ul
-                                            className="text-black absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10"
-                                            onMouseEnter={() =>
-                                                setIsDropdownOpen(true)
-                                            }
-                                            onMouseLeave={() =>
-                                                setIsDropdownOpen(false)
-                                            }
-                                        >
-                                            <li className="p-2 hover:bg-gray-100 hover:rounded-t-md cursor-pointer">
-                                                <label htmlFor="">
-                                                    {user.email}
-                                                </label>
-                                            </li>
-                                            <hr />
-                                            <li className="p-2 hover:bg-gray-100 hover:rounded-t-md cusor-pointer">
-                                                <Link href="/myDashboard">
-                                                    My Dashboard
-                                                </Link>
-                                            </li>
-                                            <li className="p-2 hover:bg-gray-100 text-black cursor-pointer">
-                                                <Link href="/myProfile">
-                                                    My Profile
-                                                </Link>
-                                            </li>
-                                            <li className="p-2 hover:bg-gray-100 text-black cursor-pointer">
-                                                <Link href="/myRewardsEmployer">
-                                                    My Rewards
-                                                </Link>
-                                            </li>
-                                            <li
-                                                className="p-2 hover:bg-gray-100 hover:rounded-b-md cursor-pointer"
-                                                onClick={handleSignOut}
-                                            >
-                                                Sign Out
-                                            </li>
-                                        </ul>
-                                    )}
-                                </li>
-                            )
-                        )}
-                    </ul>
-                </div>
-
-                {/* mobile nav drawer toggle */}
-                <button 
-                    className="flex items-center lg:hidden"
-                    onClick={() => setShowMobileNavDrawer(true)}
-                >
-                    <Bars3Icon className="size-8 text-white" />
-                </button>
-
-                <SideDrawer
-                    show={showMobileNavDrawer}
-                    position="right"
-                    fullScreen
-                    onClose={() => setShowMobileNavDrawer(false)}
-                    zStack={10}
-                >
-                    <div>fdf</div>
-                </SideDrawer>
+                { isMobile ? (
+                    //mobile nav drawer toggle
+                    <button 
+                        className="flex items-center"
+                        onClick={() => setShowMobileNavDrawer(true)}
+                    >
+                        <Bars3Icon className="size-8 text-white" />
+                    </button>
+                ) : (
+                    <DesktopNavLinks
+                        registerForm={registerForm}
+                        selectedLanguage={selectedLanguage}
+                        setSelectedLanguage={setSelectedLanguage}
+                    />
+                )}
             </div>
+
+            <SideDrawer
+                show={showMobileNavDrawer}
+                position="right"
+                fullScreen
+                onClose={() => setShowMobileNavDrawer(false)}
+                zStack={10}
+            >
+                <div>fdf</div>
+            </SideDrawer>
         </div>
     );
 };
 
-export default NavbarComponent;
+export default NavBar;

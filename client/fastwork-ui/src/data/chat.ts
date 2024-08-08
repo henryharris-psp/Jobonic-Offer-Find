@@ -1,4 +1,4 @@
-import { ActiveChat } from "@/interfaces/chat";
+import { ActiveChat } from "@/types/chat";
 
 export const chatFilters = [
     "All", 
