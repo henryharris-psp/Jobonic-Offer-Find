@@ -7,6 +7,7 @@ import { CurrentUser } from '@/app/chat/page';
 import ContractCard from './ContractCard';
 import { supabase } from '@/app/config/supabaseClient';
 
+// Message interface definition
 interface Message {
   id: number | string;
   sender?: string;
@@ -21,6 +22,7 @@ interface Message {
   sentByCurrentUser?: boolean;
 }
 
+// ActiveChat interface definition
 interface ActiveChat {
   id: number;
   fullName: string;
@@ -30,40 +32,43 @@ interface ActiveChat {
   status: string;
 }
 
+// RecipientUser interface definition
 interface RecipientUser {
   id: number;
   fullName: string;
   avatar: string;
 }
 
+// ChatConversationProps interface definition
 interface ChatConversationProps {
   activeChat: ActiveChat;
   recipientUser?: RecipientUser;
 }
 
 const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, recipientUser }) => {
-  const [newMessage, setNewMessage] = useState('');
-  const [messages, setMessages] = useState<Message[]>(activeChat.messages);
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
-  const [isContractVisible, setIsContractVisible] = useState(false);
-  const [isEditContractVisible, setIsEditContractVisible] = useState(false);
-  const [showAcceptModal, setShowAcceptModal] = useState(false);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [newPrice, setNewPrice] = useState('');
-  const [deliverable, setDeliverable] = useState('');
+  const [newMessage, setNewMessage] = useState(''); // State for new message input
+  const [messages, setMessages] = useState<Message[]>(activeChat.messages); // State for chat messages
+  const [currentUser, setCurrentUser] = useState<CurrentUser>(); // State for current user
+  const [isContractVisible, setIsContractVisible] = useState(false); // State to control contract visibility
+  const [isEditContractVisible, setIsEditContractVisible] = useState(false); // State to control edit contract visibility
+  const [showAcceptModal, setShowAcceptModal] = useState(false); // State to control accept modal visibility
+  const [showPaymentModal, setShowPaymentModal] = useState(false); // State to control payment modal visibility
+  const [newPrice, setNewPrice] = useState(''); // State for new price input
+  const [deliverable, setDeliverable] = useState(''); // State for deliverable input
   const [checkpoints, setCheckpoints] = useState([
     { id: 1, deliverable: 'Initial logo concepts', payment: '$100' },
     { id: 2, deliverable: 'First draft of logo', payment: '$150' },
     { id: 3, deliverable: 'Final logo delivery', payment: '$200' }
-  ]);
-  const [focusStates, setFocusStates] = useState<{ [key: number]: boolean }>({});
-  const [file, setFile] = useState<File | null>(null);
-  const [isAccepted, setIsAccepted] = useState(false);
+  ]); // State for checkpoints
+  const [focusStates, setFocusStates] = useState<{ [key: number]: boolean }>({}); // State for focus states
+  const [file, setFile] = useState<File | null>(null); // State for file input
+  const [isAccepted, setIsAccepted] = useState(false); // State to control if contract is accepted
 
-  const chatContainerRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
+  const chatContainerRef = useRef<HTMLDivElement>(null); // Ref for chat container
+  const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input
+  const router = useRouter(); // Router instance for navigation
 
+  // Fetch current user data from localStorage on component mount
   useEffect(() => {
     const userData = localStorage.getItem('userInfo');
     if (userData) {
@@ -72,6 +77,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, recipie
     }
   }, []);
 
+  // Fetch messages from Supabase on recipientUser or currentUser change
   useEffect(() => {
     const fetchMessages = async () => {
       if (recipientUser && currentUser) {
@@ -93,6 +99,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, recipie
     fetchMessages();
   }, [recipientUser, newMessage, currentUser]);
 
+  // Subscribe to new messages from Supabase
   useEffect(() => {
     if (currentUser && recipientUser) {
       const messageSubscription = supabase
@@ -111,12 +118,14 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, recipie
     }
   }, [newMessage, messages, currentUser, recipientUser]);
 
+  // Scroll to bottom of chat container when messages change
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [messages]);
 
+  // Handle message submit
   const handleMessageSubmit = async () => {
     if (newMessage.trim() !== '' && recipientUser && currentUser) {
       const { error } = await supabase
@@ -140,6 +149,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, recipie
     }
   };
 
+  // Handle decline and send message
   const handleDeclineAndSendMessage = () => {
     const newMessageObj: Message = {
       id: messages.length + 1,
@@ -151,6 +161,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, recipie
     setMessages([...messages, newMessageObj]);
   };
 
+  // Handle view contract details
   const handleViewContractDetails = () => {
     if (isAccepted) {
       setIsContractVisible(true);
@@ -159,73 +170,88 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, recipie
     }
   };
 
+  // Handle close contract
   const handleCloseContract = () => {
     setIsContractVisible(false);
   };
 
+  // Handle close edit contract
   const handleCloseEditContract = () => {
     setIsEditContractVisible(false);
   };
 
+  // Handle accept contract
   const handleAccept = () => {
     setIsAccepted(true);
     setShowAcceptModal(true);
   };
 
+  // Handle close accept modal
   const handleCloseAcceptModal = () => {
     setShowAcceptModal(false);
   };
 
+  // Handle confirm accept contract
   const handleConfirmAccept = () => {
     console.log(`Price: ${newPrice}, Deliverable: ${deliverable}`);
     console.log('Checkpoints:', checkpoints);
     setShowAcceptModal(false);
   };
 
+  // Handle add checkpoint
   const handleAddCheckpoint = () => {
     const newId = checkpoints.length + 1;
     setCheckpoints([...checkpoints, { id: newId, deliverable: '', payment: '' }]);
     setFocusStates({ ...focusStates, [newId]: true });
   };
 
+  // Handle delete checkpoint
   const handleDeleteCheckpoint = (index: number) => {
     const newCheckpoints = [...checkpoints];
     newCheckpoints.splice(index, 1);
     setCheckpoints(newCheckpoints);
   };
 
+  // Handle checkpoint change
   const handleCheckpointChange = (index: number, field: string, value: string) => {
     const newCheckpoints = [...checkpoints];
     newCheckpoints[index] = { ...newCheckpoints[index], [field]: value };
     setCheckpoints(newCheckpoints);
   };
 
+  // Handle focus state
   const handleFocus = (id: number) => {
     setFocusStates({ ...focusStates, [id]: false });
   };
 
+  // Handle blur state
   const handleBlur = (id: number) => {
     setFocusStates({ ...focusStates, [id]: false });
   };
 
+  // Handle pay all milestones
   const handlePayAll = () => {
     router.push('/payment');
   };
 
+  // Handle pay selected milestones
   const handlePaySelected = () => {
     router.push('/payment');
   };
 
+  // Handle close payment modal
   const handleClosePaymentModal = () => {
     setShowPaymentModal(false);
   };
 
+  // Handle file change
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       setFile(event.target.files[0]);
     }
   };
 
+  // Handle submit work
   const handleSubmitWork = () => {
     // Trigger the file input click event
     if (fileInputRef.current) {
@@ -314,6 +340,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, recipie
           </div>
         </div>
 
+        {/* Edit Contract Modal */}
         {isEditContractVisible && (
             <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white rounded-lg p-6 shadow-lg w-[50rem] relative">
@@ -425,6 +452,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, recipie
             </div>
         )}
 
+        {/* Contract Modal */}
         {isContractVisible && (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
               <div className="relative bg-white rounded-lg p-4 w-96">
@@ -439,6 +467,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ activeChat, recipie
             </div>
         )}
 
+        {/* Payment Modal */}
         {showPaymentModal && (
             <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white rounded-lg p-6 shadow-lg w-[450px] relative">

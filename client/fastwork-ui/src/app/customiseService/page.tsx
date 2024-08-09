@@ -24,6 +24,7 @@ type LinkEntry = {
 };
 
 const CustomiseService: React.FC = () => {
+    // State variables for service form fields
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [employmentType, setEmploymentType] = useState('PART_TIME');
@@ -43,16 +44,19 @@ const CustomiseService: React.FC = () => {
     const [newLinkUrl, setNewLinkUrl] = useState('');
     const router = useRouter();
 
+    // Fetch categories when the component mounts
     useEffect(() => {
         fetchCategory();
     }, []);
 
+    // Set default selected category when category list is populated
     useEffect(() => {
         if (categoryList.length > 0) {
             setSelectedCategoryName(categoryList[0].name);
         }
     }, [categoryList]);
 
+    // Fetch category data from the API
     const fetchCategory = async () => {
         try {
             const response = await httpClient.get(`http://localhost:8081/api/v1/category/all`);
@@ -62,6 +66,7 @@ const CustomiseService: React.FC = () => {
         }
     };
 
+    // Handle adding a new language to the list
     const handleAddLanguage = () => {
         if (newLanguage.trim() !== '') {
             setLanguages([...languages, newLanguage]);
@@ -69,10 +74,12 @@ const CustomiseService: React.FC = () => {
         }
     };
 
+    // Handle removing a language from the list
     const handleRemoveLanguage = (languageToRemove: string) => {
         setLanguages(languages.filter(language => language !== languageToRemove));
     };
 
+    // Handle adding a new link to the list
     const handleAddLink = () => {
         if (newLinkDescription.trim() !== '' && newLinkUrl.trim() !== '') {
             setLinks([...links, { description: newLinkDescription, url: newLinkUrl }]);
@@ -81,16 +88,19 @@ const CustomiseService: React.FC = () => {
         }
     };
 
+    // Handle removing a link from the list
     const handleRemoveLink = (index: number) => {
         setLinks(links.filter((_, i) => i !== index));
     };
 
+    // Handle saving the service description and other details
     const handleSaveDescription = async (event: React.MouseEvent) => {
         event.preventDefault();
         const profileId = await getProfileId();
         const selectedCategory = categoryList.find(category => category.name === selectedCategoryName);
         const categoryId = selectedCategory ? selectedCategory.id : '';
 
+        // Service data object to be sent to the API
         const serviceData = {
             id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // This ID should typically be generated or provided
             ServiceOfferDTO: {

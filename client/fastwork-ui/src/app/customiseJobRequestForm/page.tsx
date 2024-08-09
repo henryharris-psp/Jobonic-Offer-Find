@@ -8,7 +8,7 @@ import { baseURL } from "@/baseURL";
 import { AxiosError } from 'axios';
 import { getProfileId, getProfile } from '../../functions/helperFunctions';
 
-// delete later
+// Interface for card properties (delete later)
 interface CardProps {
   title: string;
   earned: string;
@@ -57,9 +57,8 @@ type Category = {
 };
 
 const CustomiseJobRequestForm: React.FC = () => {
-  const router = useRouter();
-  const [user, setUser] = useState<UserData>({});
-  //const [profileId, setProfileId] = useState<number | null>(null);
+  const router = useRouter(); // Initialize Next.js router for navigation
+  const [user, setUser] = useState<UserData>({}); // State for storing user data
   const [formState, setFormState] = useState({
     title: '',
     workCategory: '',
@@ -76,13 +75,14 @@ const CustomiseJobRequestForm: React.FC = () => {
     location: '',
   });
 
-  const [categoryList, setCategoryList] = useState<Category[]>([]);
+  const [categoryList, setCategoryList] = useState<Category[]>([]); // State for storing category list
 
   useEffect(() => {
     // Fetch category list on component mount
     fetchCategory();
   }, []);
 
+  // Fetch category data from the API
   const fetchCategory = async () => {
     try {
       const response = await httpClient.get(`http://localhost:8081/api/v1/category/all`);
@@ -92,21 +92,26 @@ const CustomiseJobRequestForm: React.FC = () => {
     }
   };
 
+  // Handle input changes for form fields
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
     setFormState(prevState => ({ ...prevState, [name]: value }));
   };
 
+  // Handle language selection changes
   const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedOptions = Array.from(event.target.selectedOptions).map(option => option.value);
     setFormState(prevState => ({ ...prevState, language: selectedOptions }));
   };
 
+  // Handle form submission
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const selectedCategory = categoryList.find(category => category.name === formState.workCategory);
     const profileId = await getProfileId();
     console.log(profileId);
+
+    // Construct service data object to be sent to the API
     const serviceData = {
       id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       serviceRequestDTO: {
@@ -132,10 +137,11 @@ const CustomiseJobRequestForm: React.FC = () => {
 
     try {
       const response = await httpClient.post(`http://localhost:8081/api/v1/service`, serviceData);
-      
+
       const savedService = response.data;
       console.log('Response Data:', savedService);
-      // select relevant fields for CSV
+
+      // Select relevant fields for CSV
       const serviceForCSV = {
         id: savedService.id,
         title: savedService.title,
@@ -156,6 +162,7 @@ const CustomiseJobRequestForm: React.FC = () => {
     }
   };
 
+  // Save service data to a CSV file via an API call
   const saveData = async (data: any) => {
     try {
       const response = await fetch('/api/writeCsv', {
@@ -177,6 +184,7 @@ const CustomiseJobRequestForm: React.FC = () => {
     }
   };
 
+  // Props for the CreateServiceRequestCard component
   const cardProps: CardProps = {
     title: formState.title,
     earned: '',

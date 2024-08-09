@@ -5,6 +5,7 @@ import Image from "next/image";
 import { baseURL, SERVER_AUTH, token } from "@/baseURL";
 import { useRouter } from "next/navigation";
 import httpClient from '@/client/httpClient';
+import {getProfileId} from "@/functions/helperFunctions";
 
 type EducationInstance = {
     id: string;
@@ -65,6 +66,8 @@ export default function MyProfile(): React.ReactNode {
     const [cardNumber, setCardNumber] = useState<string>("");
     const [cardExpiryDate, setCardExpiryDate] = useState<Date>(new Date());
     const [walletAddress, setWalletAddress] = useState<string>("");
+    const [cryptoType, setCryptoType] = useState<string>("");
+    const [bankAccountNumber, setBankAccountNumber] = useState<string>("");
     const [review, setReview] = useState<number>(0);
 
     const [aboutMeField, setAboutMeField] = useState<string>("");
@@ -80,6 +83,9 @@ export default function MyProfile(): React.ReactNode {
     const [degreeField, setDegreeField] = useState<string>("");
     const [startDateField, setStartDateField] = useState<string>("");
     const [endDateField, setEndDateField] = useState<string>("");
+    const [paymentMethod, setPaymentMethod] = useState<string>("CREDIT_CARD");
+    const [receivePaymentMethod, setReceivePaymentMethod] = useState<string>("CREDIT_CARD");
+
     const [formState, setFormState] = useState({
         education: {
             id: '',
@@ -195,6 +201,8 @@ export default function MyProfile(): React.ReactNode {
         console.log(`handleSave called for ${inputKey}`);
         console.log(formState);
         console.log(formState.education);
+        //setUserId(await (getProfileId()));
+        //const userId = await getProfileId();
         let educationEntry = {
             id: dummyPostId,
             profileId: userId,
@@ -302,6 +310,7 @@ export default function MyProfile(): React.ReactNode {
     };
 
     const fetchExperience = async () => {
+        //const userId = await getProfileId();
         try {
             const response = await httpClient.get(`${replaceURL}/api/v1/user-experience/all?userId=${userId}`);
             const displayData = response.data.reverse();
@@ -775,6 +784,104 @@ export default function MyProfile(): React.ReactNode {
                 {feedbackMessage["otherInfo"] && (
                     <p className="text-sm mt-2">{feedbackMessage["otherInfo"]}</p>
                 )}
+            </div>
+
+            {/* Additional Financial Information */}
+            <div className="flex flex-col justify-start w-full pb-16">
+                <div className="flex space-x-2">
+                    <h2 className="text-2xl font-bold text-gray-900">
+                        Financial Information
+                    </h2>
+                </div>
+                <div className="mb-4">
+                    <label className="block text-lg font-semibold mb-2" htmlFor="credit-card">
+                        Credit Card Number
+                    </label>
+                    <input
+                        type="text"
+                        id="credit-card"
+                        placeholder="e.g. 1234 5678 9123 4567"
+                        className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
+                        onChange={(e) => setCardNumber(e.target.value)}
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-lg font-semibold mb-2" htmlFor="card-expiry-date">
+                        Card Expiry Date
+                    </label>
+                    <input
+                        type="text"
+                        id="card-expiry-date"
+                        placeholder="MM/YY"
+                        className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
+                        onChange={(e) => setCardExpiryDate(e.target.value as unknown as Date)}
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-lg font-semibold mb-2" htmlFor="bank-account">
+                        Bank Account Number
+                    </label>
+                    <input
+                        type="text"
+                        id="bank-account"
+                        placeholder="e.g. 1234567890"
+                        className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
+                        onChange={(e) => setBankAccountNumber(e.target.value)}
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-lg font-semibold mb-2" htmlFor="crypto-address">
+                        Cryptocurrency Address
+                    </label>
+                    <input
+                        type="text"
+                        id="crypto-address"
+                        placeholder="e.g. 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+                        className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
+                        onChange={(e) => setWalletAddress(e.target.value)}
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-lg font-semibold mb-2" htmlFor="crypto-type">
+                        Type of Cryptocurrency
+                    </label>
+                    <input
+                        type="text"
+                        id="crypto-type"
+                        placeholder="e.g. Bitcoin, Ethereum"
+                        className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
+                        onChange={(e) => setCryptoType(e.target.value)}
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-lg font-semibold mb-2" htmlFor="payment-method">
+                        Select how you want to pay
+                    </label>
+                    <select
+                        id="payment-method"
+                        value={paymentMethod}
+                        className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                    >
+                        <option value="CREDIT_CARD">Credit Card</option>
+                        <option value="CRYPTOCURRENCY">Cryptocurrency</option>
+                    </select>
+                </div>
+                <div className="mb-4">
+                    <label className="block text-lg font-semibold mb-2" htmlFor="payment-receive-method">
+                        Select how you want to be paid
+                    </label>
+                    <select
+                        id="payment-receive-method"
+                        value={receivePaymentMethod}
+                        className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
+                        onChange={(e) => setReceivePaymentMethod(e.target.value)}
+                    >
+                        <option value="CREDIT_CARD">Credit Card</option>
+                        <option value="CRYPTOCURRENCY">Cryptocurrency</option>
+                    </select>
+                </div>
+
             </div>
         </div>
     );

@@ -4,6 +4,7 @@ import ChatConversation from '../../components/ChatConversation';
 import { supabase } from '../config/supabaseClient';
 import ProgressSidebar from '../../components/ProgressSidebar';
 
+// Message interface definition
 export interface Message {
   id: number | string;
   sender?: string;
@@ -18,6 +19,7 @@ export interface Message {
   sentByCurrentUser?: boolean;
 }
 
+// ActiveChat interface definition
 export interface ActiveChat {
   id: number;
   fullName: string;
@@ -27,6 +29,7 @@ export interface ActiveChat {
   status: string;
 }
 
+// People interface definition
 export interface People {
   id: number;
   fullName: string;
@@ -36,6 +39,7 @@ export interface People {
   status: string;
 }
 
+// Service interface definition
 export interface Service {
   name: string;
   image: string;
@@ -50,6 +54,7 @@ export interface Service {
   numSold: number;
 }
 
+// CurrentUser interface definition
 export interface CurrentUser {
   id: number;
   email: string;
@@ -58,6 +63,7 @@ export interface CurrentUser {
   userid: number;
 }
 
+// Sample data for allPeoples
 const allPeoples: ActiveChat[] = [
   {
     id: 1,
@@ -96,19 +102,20 @@ const allPeoples: ActiveChat[] = [
 ];
 
 const ChatPage: React.FC = () => {
-  const [activeChat, setActiveChat] = useState<ActiveChat>(allPeoples[0]);
-  const [peoples, setPeoples] = useState<People[]>([]);
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [sidebarWidth, setSidebarWidth] = useState(300); // Smaller default width
-  const [isResizing, setIsResizing] = useState(false);
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
-  const [recipient, setRecipient] = useState<any>(null);
-  const [messages, setMessages] = useState([]);
-  const [roleFilter, setRoleFilter] = useState('All');
-  const [fromClientStatusFilter, setFromClientStatusFilter] = useState('All');
-  const [fromServiceProviderStatusFilter, setFromServiceProviderStatusFilter] = useState('All');
+  const [activeChat, setActiveChat] = useState<ActiveChat>(allPeoples[0]); // State for active chat
+  const [peoples, setPeoples] = useState<People[]>([]); // State for peoples list
+  const [isChatOpen, setIsChatOpen] = useState(false); // State to control chat visibility
+  const [sidebarWidth, setSidebarWidth] = useState(300); // State for sidebar width
+  const [isResizing, setIsResizing] = useState(false); // State to control resizing
+  const [currentUser, setCurrentUser] = useState<CurrentUser>(); // State for current user
+  const [recipient, setRecipient] = useState<any>(null); // State for recipient
+  const [messages, setMessages] = useState([]); // State for messages
+  const [roleFilter, setRoleFilter] = useState('All'); // State for role filter
+  const [fromClientStatusFilter, setFromClientStatusFilter] = useState('All'); // State for client status filter
+  const [fromServiceProviderStatusFilter, setFromServiceProviderStatusFilter] = useState('All'); // State for service provider status filter
   const [isSidebarVisible, setIsSidebarVisible] = useState(true); // State to control sidebar visibility
 
+  // Filtered peoples list based on role filter
   const filteredPeoples =
       roleFilter === 'All'
           ? allPeoples
@@ -118,6 +125,7 @@ const ChatPage: React.FC = () => {
                   : people.type === 'service_provider'
           );
 
+  // Status options for clients
   const fromClientStatus = [
     'All',
     'Enquiring',
@@ -129,6 +137,7 @@ const ChatPage: React.FC = () => {
     'Completed'
   ];
 
+  // Status options for service providers
   const fromServiceProviderStatus = [
     'All',
     'Enquiring',
@@ -140,22 +149,27 @@ const ChatPage: React.FC = () => {
     'Completed'
   ];
 
+  // Chat filters
   const chatFilters = ['All', 'From clients', 'From service providers'];
 
+  // Handle mouse down event for resizing
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsResizing(true);
   };
 
+  // Handle mouse move event for resizing
   const handleMouseMove = (e: MouseEvent) => {
     if (isResizing) {
       setSidebarWidth(e.clientX);
     }
   };
 
+  // Handle mouse up event for resizing
   const handleMouseUp = () => {
     setIsResizing(false);
   };
 
+  // Fetch user data from local storage on component mount
   useEffect(() => {
     const userData = localStorage.getItem('userInfo');
     if (userData) {
@@ -164,6 +178,7 @@ const ChatPage: React.FC = () => {
     }
   }, []);
 
+  // Fetch peoples data from Supabase on component mount
   useEffect(() => {
     const getPeoples = async () => {
       const { data, error } = await supabase
@@ -179,6 +194,7 @@ const ChatPage: React.FC = () => {
     getPeoples();
   }, []);
 
+  // Add event listeners for mouse move and mouse up events
   useEffect(() => {
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
@@ -198,7 +214,7 @@ const ChatPage: React.FC = () => {
               <div className="w-full h-0.5 mt-3 bg-gray-300"></div>
             </div>
 
-            {/* New Toggle */}
+            {/* Chat filters */}
             <div className="flex justify-center mb-4">
               {chatFilters.map(filter => (
                   <button
@@ -216,6 +232,7 @@ const ChatPage: React.FC = () => {
 
             <form className="max-w-lg mx-auto">
               <div className="flex flex-col pb-4 space-y-0">
+                {/* Search input for "All" filter */}
                 {roleFilter === 'All' && (
                     <div className="flex flex-row relative">
                       <input
@@ -248,6 +265,7 @@ const ChatPage: React.FC = () => {
                       </button>
                     </div>
                 )}
+                {/* Search input and status filter for "From clients" */}
                 {roleFilter === 'From clients' && (
                     <div className="flex flex-col">
                       <select
@@ -295,6 +313,7 @@ const ChatPage: React.FC = () => {
                       </div>
                     </div>
                 )}
+                {/* Search input and status filter for "From service providers" */}
                 {roleFilter === 'From service providers' && (
                     <div className="flex flex-col relative">
                       <select
@@ -344,6 +363,7 @@ const ChatPage: React.FC = () => {
                 )}
               </div>
             </form>
+            {/* Render filtered peoples */}
             {peoples
                 .filter(people => people.id !== currentUser?.id)
                 .map((people) => (
@@ -366,6 +386,7 @@ const ChatPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Resizer for sidebar */}
         <div
             className="resizer bg-gray-500"
             style={{ width: '5px', cursor: 'col-resize' }}

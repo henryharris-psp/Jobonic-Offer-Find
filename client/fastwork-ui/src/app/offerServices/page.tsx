@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, ReactNode } from 'react';
-import ServiceRequestCard from '@/components/ServiceRequestCard';
+import ServiceRequestCard from '@/components/ServiceRequestCard'; // Importing the ServiceRequestCard component
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { baseURL, token } from "@/baseURL";
@@ -45,7 +45,7 @@ interface Service {
 }
 
 export default function OfferServicesPage(): ReactNode {
-  const router = useRouter();
+  const router = useRouter(); // Using Next.js router for navigation
   const [user, setUser] = useState<UserData>({});
   const [userID, setUserID] = useState<number>(0);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
@@ -67,6 +67,7 @@ export default function OfferServicesPage(): ReactNode {
   const [inputValue, setInputValue] = useState('');
   const [categoryList, setCategoryList] = useState<Category[]>([]);
 
+  // Fetch all services from the backend API
   const fetchServices = async () => {
     try {
       const response = await httpClient.post(`http://localhost:8081/api/v1/service/all`, {
@@ -78,6 +79,7 @@ export default function OfferServicesPage(): ReactNode {
           searchKeyword: ''
         }
       });
+      // Filter out services that do not have a serviceRequestDTO
       const filteredServices = response.data.content.filter((service: Service) => service.serviceRequestDTO !== null);
       setJobDataList(filteredServices);
     } catch (error) {
@@ -85,9 +87,9 @@ export default function OfferServicesPage(): ReactNode {
     }
   };
 
+  // Fetch services by their IDs from the search results
   const fetchServicesById = async () => {
-    // declare temp's type later (Service[])
-    const temp = [];
+    const temp: Service[] = []; // Temporary array to store fetched services
     const fetchPromises = searchResults.map(async (service) => {
       try {
         const response = await httpClient.get(`http://localhost:8081/api/v1/service/get?serviceId=${service.id}`);
@@ -99,26 +101,29 @@ export default function OfferServicesPage(): ReactNode {
       }
     });
     await Promise.all(fetchPromises);
-    //console.log(temp);
     setServiceDisplay(temp);
   };
 
+  // Fetch all categories from the backend API
   const fetchCategory = async () => {
-    const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
+    const response = await httpClient.get(`http://localhost:8081/api/v1/category/all`);
     setCategoryList(response.data);
   };
 
+  // Fetch user data and user ID on component mount
   useEffect(() => {
     fetchServices();
     fetchCategory();
     fetchUserIdAndData();
   }, []);
 
+  // Fetch services by ID whenever search results change
   useEffect(() => {
     fetchServicesById();
-    //console.log(searchResults);
+    console.log(searchResults);
   }, [searchResults]);
 
+  // Handle the search form submission
   const handleSearchSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
@@ -129,6 +134,7 @@ export default function OfferServicesPage(): ReactNode {
     }
   };
 
+  // Fetch user ID and data from the backend API
   const fetchUserIdAndData = async () => {
     try {
       const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`);
@@ -145,6 +151,7 @@ export default function OfferServicesPage(): ReactNode {
     }
   };
 
+  // Handle the creation of a new service offer
   const handleCreateServiceOffer = async (event: React.FormEvent) => {
     event.preventDefault();
     const profile = await checkProfile(userID);
@@ -155,20 +162,24 @@ export default function OfferServicesPage(): ReactNode {
     }
   };
 
+  // Toggle sort dropdown visibility
   const handleSortClick = () => {
     setIsSortDropdownOpen(!isSortDropdownOpen);
   };
 
+  // Handle selection of a sort option
   const handleSortOptionClick = (option: string) => {
     setSelectedSortOption(option);
     console.log(`Selected sorting option: ${option}`);
     setIsSortDropdownOpen(false);
   };
 
+  // Toggle filter dropdown visibility
   const handleFilterClick = () => {
     setIsFilterDropdownOpen(!isFilterDropdownOpen);
   };
 
+  // Apply filters and update appliedFilters state
   const handleFilterApply = () => {
     setAppliedFilters({
       minPrice: minPrice,
@@ -179,6 +190,7 @@ export default function OfferServicesPage(): ReactNode {
     setIsFilterDropdownOpen(false);
   };
 
+  // Clear all filters and reset states
   const handleClearFilters = () => {
     setMinPrice('');
     setMaxPrice('');
@@ -192,6 +204,7 @@ export default function OfferServicesPage(): ReactNode {
     setIsFilterDropdownOpen(false);
   };
 
+  // Check if any filters are applied
   const areFiltersApplied = appliedFilters.minPrice !== '' || appliedFilters.maxPrice !== '' || appliedFilters.deadline !== '';
 
   return (
@@ -208,8 +221,8 @@ export default function OfferServicesPage(): ReactNode {
               </div>
               <input type="search" id="default-search"
                      className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50
-          focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
-          dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
+                      dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                      placeholder="e.g. I have a service to offer"
                      value={inputValue}
                      onChange={(e) => setInputValue(e.target.value)}
@@ -222,10 +235,10 @@ export default function OfferServicesPage(): ReactNode {
           <div className="flex items-center justify-center pt-8 text-black">
             <h2 className="text-xl font-semibold">No requests match your skills?</h2>
             <span>
-              <button onClick={(e) => handleCreateServiceOffer(e)} className="text-md px-3 py-2 bg-[#0C2348] text-white rounded-lg font-medium hover:bg-[#D0693B] focus:outline-none ml-2">
-                Personalise your service offer
-              </button>
-            </span>
+            <button onClick={(e) => handleCreateServiceOffer(e)} className="text-md px-3 py-2 bg-[#0C2348] text-white rounded-lg font-medium hover:bg-[#D0693B] focus:outline-none ml-2">
+              Personalise your service offer
+            </button>
+          </span>
           </div>
 
           <div className="flex justify-end space-x-4 pt-4">
@@ -235,11 +248,11 @@ export default function OfferServicesPage(): ReactNode {
                   onMouseEnter={() => setIsFilterDropdownOpen(true)}
                   onMouseLeave={() => setIsFilterDropdownOpen(false)}
                   style={{ borderColor: 'transparent' }}>
-            <span>
-              <svg className="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M5.05 3C3.291 3 2.352 5.024 3.51 6.317l5.422 6.059v4.874c0 .472.227.917.613 1.2l3.069 2.25c1.01.742 2.454.036 2.454-1.2v-7.124l5.422-6.059C21.647 5.024 20.708 3 18.95 3H5.05Z"/>
-              </svg>
-            </span>Filter
+              <span>
+                <svg className="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M5.05 3C3.291 3 2.352 5.024 3.51 6.317l5.422 6.059v4.874c0 .472.227.917.613 1.2l3.069 2.25c1.01.742 2.454.036 2.454-1.2v-7.124l5.422-6.059C21.647 5.024 20.708 3 18.95 3H5.05Z"/>
+                </svg>
+              </span>Filter
                 {areFiltersApplied && (
                     <svg className="w-4 h-4 text-[#0C2348] ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
@@ -305,11 +318,11 @@ export default function OfferServicesPage(): ReactNode {
                   onMouseEnter={() => setIsSortDropdownOpen(true)}
                   onMouseLeave={() => setIsSortDropdownOpen(false)}
                   style={{ borderColor: 'transparent' }}>
-            <span>
-              <svg className="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                <path fillRule="evenodd" d="M12.832 3.445a1 1 0 0 0-1.664 0l-4 6A1 1 0 0 0 8 11h8a1 1 0 0 0 .832-1.555l-4-6Zm-1.664 17.11a1 1 0 0 0 1.664 0l4-6A1 1 0 0 0 16 13H8a1 1 0 0 0-.832 1.555l4 6Z" clipRule="evenodd"/>
-            </svg>
-            </span>Sort
+              <span>
+                <svg className="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                  <path fillRule="evenodd" d="M12.832 3.445a1 1 0 0 0-1.664 0l-4 6A1 1 0 0 0 8 11h8a1 1 0 0 0 .832-1.555l-4-6Zm-1.664 17.11a1 1 0 0 0 1.664 0l4-6A1 1 0 0 0 16 13H8a1 1 0 0 0-.832 1.555l4 6Z" clipRule="evenodd"/>
+                </svg>
+              </span>Sort
               </button>
               {isSortDropdownOpen && (
                   <div className="absolute right-0 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10"
@@ -341,6 +354,7 @@ export default function OfferServicesPage(): ReactNode {
               ))}
             </div>
 
+            {/* Display services based on search query */}
             {searchQuery.trim() === '' ? (
                 <div className="flex flex-wrap pr-0 mr-0 w-4/5">
                   {jobDataList.map((jobData, index) => (
@@ -396,6 +410,3 @@ export default function OfferServicesPage(): ReactNode {
       </div>
   );
 }
-
-
-

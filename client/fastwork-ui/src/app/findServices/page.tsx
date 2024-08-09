@@ -46,7 +46,7 @@ export default function FindServices() {
   //   },
   // ];
 
-  //need to get from API
+  //sample data for testimonial cards. Need to get from API
   const testimonials = [
     {
       quote: "Zach was a brilliant plumber! He fixed all my pipes and water doesn’t leak out anymore!",
