@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import TopSection from "../components/TopSection";
+import TopSection from "../components/home/TopSection";
 import SatisfiedCollaborators from "../components/SatisfiedCollaborators";
 import Link from "next/link"; // Import Link from next/link
 import "./globals.css";
@@ -14,9 +14,13 @@ import { useRouter } from "next/navigation";
 import initialiseCategories from "../utils/initialiseCategories";
 import initializeSkills from "../utils/initialiseSkills";
 import { parseCSVFile } from "../utils/parseCSVFile";
+import FindingServiceSection from '@/components/home/FindingServiceSection';
+import OfferingServiceSection from '@/components/home/OfferingServiceSection';
 
 export default function Home() {
   const router = useRouter();
+
+  //sample data for testimonials section. need to be with actual data from API.
   const testimonials = [
     {
       quote: "Zach was a brilliant plumber! He fixed all my pipes and water doesn’t leak out anymore!",
@@ -56,19 +60,6 @@ export default function Home() {
     },
   ];
 
-  const handleCreateServiceOffer = async (event: React.FormEvent) => {
-    event.preventDefault();
-    const profileId = await getProfileId();
-    console.log(profileId);
-    const profile = await checkProfile(profileId);
-    console.log(profile);
-    // if (profile) {
-    //   router.push('/customiseService');
-    // } else {
-    //   router.push('/createProfile');
-    // }
-  };
-
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const refreshToken = urlParams.get('refresh_token');
@@ -82,10 +73,10 @@ export default function Home() {
       window.location.href = '/';
     }
 
-    // Initialize categories on app start
+    // Initialize categories on app start. To be removed for production.
     initialiseCategories();
 
-    // Load and initialize skills from CSV file
+    // Load and initialize skills from CSV file. To be removed for production.
     const fetchAndInitializeSkills = async () => {
       try {
         const response = await fetch('/skillList.csv');
@@ -106,53 +97,11 @@ export default function Home() {
         {/* Top Section */}
         <TopSection />
 
-        {/* Finding Services Section */}
-        <section className="py-16 flex justify-start items-center px-20">
-          <div className="text-left">
-            <h2 className="text-3xl md:text-5xl font-bold mb-1" style={{ color: "#E1824F" }}>
-              Looking for a service?
-            </h2>
-            <p className="mb-4" style={{ color: "#828282" }}>
-              Meet your service needs with Jobonic
-            </p>
-            <div className="flex space-x-4">
-              <Link href="/findServices">
-                <button className="bg-[#71BAC7] text-white py-2 px-4 rounded-lg">
-                  Find a service
-                </button>
-              </Link>
-              <Link href="/serviceList">
-                <button className="bg-[#71BAC7] text-white py-2 px-4 rounded-lg">
-                  View service offers
-                </button>
-              </Link>
-            </div>
-          </div>
-        </section>
+        <FindingServiceSection/>
 
         <CanvasComponent />
 
-        {/* Offering Services Section */}
-        <section className="py-16 flex justify-end items-center px-20">
-          <div className="text-right">
-            <h2 className="text-3xl md:text-5xl font-bold mb-1" style={{ color: "#E1824F" }}>
-              Have a service to offer?
-            </h2>
-            <p className="mb-4" style={{ color: "#828282" }}>
-              Offer your services at Jobonic at no cost!
-            </p>
-            <div className="flex space-x-4 justify-end">
-              <button onClick={(e) => handleCreateServiceOffer(e)} className="bg-[#71BAC7] text-white py-2 px-4 rounded-lg">
-                Offer a service
-              </button>
-              <Link href="/offerServices">
-                <button className="bg-[#71BAC7] text-white py-2 px-4 rounded-lg">
-                  View service requests
-                </button>
-              </Link>
-            </div>
-          </div>
-        </section>
+        <OfferingServiceSection/>
 
         {/* Satisfied Collaborators Section */}
         <section className="text-center pt-64 pb-16">
