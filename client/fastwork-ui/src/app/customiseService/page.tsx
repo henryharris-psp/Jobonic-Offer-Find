@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import httpClient from '@/client/httpClient';
 import { AxiosError } from 'axios';
 import { getProfileId } from "@/functions/helperFunctions";
+import { baseURL } from '@/baseURL';
 
 type Category = {
     id: string;
@@ -55,7 +56,7 @@ const CustomiseService: React.FC = () => {
 
     const fetchCategory = async () => {
         try {
-            const response = await httpClient.get(`http://localhost:8081/api/v1/category/all`);
+            const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
             setCategoryList(response.data);
         } catch (error) {
             console.error('Error fetching categories:', error);
