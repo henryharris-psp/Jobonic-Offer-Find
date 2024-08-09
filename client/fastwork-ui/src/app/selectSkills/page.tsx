@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import httpClient from "@/client/httpClient";
 import { baseURL, SERVER_AUTH, token } from "@/baseURL";
 
+// Define types for the User and SkillInstance
 type User = {
     name: string;
     services: string[];
@@ -20,11 +21,13 @@ type SkillInstance = {
     name: string;
 };
 
+// Component to select skills and experience
 function ComponentSelectSkills() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const serviceId = searchParams.get("serviceId");
+    const router = useRouter(); // Initialize router for navigation
+    const searchParams = useSearchParams(); // Get URL search parameters
+    const serviceId = searchParams.get("serviceId"); // Get the 'serviceId' from the URL parameters
 
+    // Dummy user data for experience display
     const user: User = {
         name: "emm",
         services: ["Service 1", "Service 2", "Service 3"],
@@ -39,12 +42,14 @@ function ComponentSelectSkills() {
         otherInformation: ["random", "languages", "certifications"],
     };
 
+    // State variables to manage selected experience, skills, service data, and search term
     const [selectedExperience, setSelectedExperience] = useState<string>("");
     const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
     const [serviceData, setServiceData] = useState<any>(null);
     const [skills, setSkillsList] = useState<SkillInstance[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
 
+    // Fetch service data using the service ID
     useEffect(() => {
         const fetchServiceData = async () => {
             try {
@@ -75,6 +80,7 @@ function ComponentSelectSkills() {
         fetchServiceData();
     }, [serviceId]);
 
+    // Fetch all available skills
     const fetchSkills = async () => {
         try {
             const response = await httpClient.get(`${baseURL}/api/v1/skill/all`);
@@ -85,14 +91,17 @@ function ComponentSelectSkills() {
         }
     };
 
+    // Fetch skills when the component mounts
     useEffect(() => {
         fetchSkills();
     }, []);
 
+    // Handle click on experience item
     const handleExperienceClick = (experience: string) => {
         setSelectedExperience(experience);
     };
 
+    // Handle click on skill item, toggle selection
     const handleSkillClick = (skill: SkillInstance) => {
         setSelectedSkills((prevSelectedSkills) => {
             if (prevSelectedSkills.includes(skill.name)) {
@@ -103,6 +112,7 @@ function ComponentSelectSkills() {
         });
     };
 
+    // Handle save skills and experience, and update service data
     const handleSaveSkillsExperience = async (e: React.MouseEvent) => {
         e.preventDefault();
 
@@ -119,7 +129,7 @@ function ComponentSelectSkills() {
             startDate: serviceData.serviceOfferDTO.startDate,
             phone: serviceData.serviceOfferDTO.phone,
             address: serviceData.serviceOfferDTO.address,
-            skills: selectedSkills.join(", "),
+            skills: selectedSkills.join(", "), // Join selected skills into a comma-separated string
             experience: selectedExperience,
             draftCount: serviceData.serviceOfferDTO.draftCount,
             title: "Teacher",
@@ -145,12 +155,13 @@ function ComponentSelectSkills() {
                 },
             });
             console.log(response.data);
-            router.push("/aiServiceMatches");
+            router.push("/aiServiceMatches"); // Redirect to service matches page after updating
         } catch (error) {
             console.error("Error saving skills and experience:", error);
         }
     };
 
+    // Filter skills based on search term
     const filteredSkills = skills.filter(skill =>
         skill.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -219,6 +230,7 @@ function ComponentSelectSkills() {
     );
 }
 
+// Main component with suspense for lazy loading
 function SelectSkills() {
     return (
         <div>
@@ -230,5 +242,3 @@ function SelectSkills() {
 }
 
 export default SelectSkills;
-
-

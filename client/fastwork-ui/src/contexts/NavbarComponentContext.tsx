@@ -1,25 +1,26 @@
 // no use for now
-'use client';
+"use client";
 
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, ReactNode } from "react";
 
 interface NavbarContextProps {
-  signedIn: boolean;
-  setSignedIn: (newValue: boolean) => void;
+    signedIn: boolean;
+    setSignedIn: (newValue: boolean) => void;
 }
 
 export const NavbarComponentContext = createContext<NavbarContextProps>({
-  signedIn: false,
-  setSignedIn: () => {},
+    signedIn: false,
+    setSignedIn: () => {},
 });
 
-export const NavbarComponentProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [signedIn, setSignedIn] = useState(false); // Initial state
+export const NavbarComponentProvider: React.FC<{ children: ReactNode }> = ({
+    children,
+}) => {
+    const [signedIn, setSignedIn] = useState(false); // Initial state
 
-  return (
-    <NavbarComponentContext.Provider value={{ signedIn, setSignedIn }}>
-      {children}
-    </NavbarComponentContext.Provider>
-  );
+    return (
+        <NavbarComponentContext.Provider value={{ signedIn, setSignedIn }}>
+            {children}
+        </NavbarComponentContext.Provider>
+    );
 };
-
