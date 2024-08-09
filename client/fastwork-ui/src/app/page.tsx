@@ -19,6 +19,8 @@ import OfferingServiceSection from '@/components/home/OfferingServiceSection';
 
 export default function Home() {
   const router = useRouter();
+
+  //sample data for testimonials section. need to be with actual data from API.
   const testimonials = [
     {
       quote: "Zach was a brilliant plumber! He fixed all my pipes and water doesn’t leak out anymore!",
@@ -71,10 +73,10 @@ export default function Home() {
       window.location.href = '/';
     }
 
-    // Initialize categories on app start
+    // Initialize categories on app start. To be removed for production.
     initialiseCategories();
 
-    // Load and initialize skills from CSV file
+    // Load and initialize skills from CSV file. To be removed for production.
     const fetchAndInitializeSkills = async () => {
       try {
         const response = await fetch('/skillList.csv');
