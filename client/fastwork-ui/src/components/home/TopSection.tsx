@@ -29,7 +29,7 @@ const TopSection: React.FC = (): React.ReactNode => {
     };
 
     return (
-        <section className="flex flex-col items-center justify-center py-14 px-10 text-black">
+        <section className="flex flex-col items-center justify-center py-14 px-5 text-black">
             <Image
                 src="/jobonic-black.svg"
                 alt="Jobonic"

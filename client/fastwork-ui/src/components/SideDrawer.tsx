@@ -3,6 +3,13 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import { ReactNode, useMemo } from "react";
 import { useSelector } from "react-redux";
 
+// inspired from react native navigation
+// front: Traditional drawer which covers the screen with a overlay behind it.
+// back: The drawer is revealed behind the screen on swipe.
+// slide: Both the screen and the drawer slide on swipe to reveal the drawer.
+
+export type DrawerType = 'front' | 'slide'; // 'back' is not support currenly
+
 interface SideDrawerProps {
     show: boolean;
     width?: number;
@@ -12,6 +19,7 @@ interface SideDrawerProps {
     fullScreen?: boolean;
     zStack?: number; //max 9997
     onClose: () => void;
+    type?: DrawerType
   }
 
 const SideDrawer = ({ 
@@ -22,6 +30,7 @@ const SideDrawer = ({
     fullScreen = false,
     zStack = 10,
     onClose,
+    type = 'front',
     children
 }: SideDrawerProps) => {
 
@@ -30,10 +39,6 @@ const SideDrawer = ({
     }
 
     const { isMobile } = useSelector((state: RootState) => state.ui);
-    
-    const isFloat = useMemo( () => {
-        return isMobile;
-    }, [isMobile]);
 
     return (
         <>
@@ -66,7 +71,7 @@ const SideDrawer = ({
             </div>
 
             {/* clickable backdrop to close */}
-            { isFloat && show ? (
+            { type === 'front' && show ? (
                 <div 
                     className="fixed bg-none top-0 bottom-0 left-0 right-0"
                     style={{
@@ -77,7 +82,7 @@ const SideDrawer = ({
             ) : ''}
             
             {/* nav spacer */}
-            { !isFloat ? (
+            { type === 'slide' ? (
                 <div
                     style={{
                         minWidth: show ? width : 0,

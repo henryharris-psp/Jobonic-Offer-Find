@@ -104,36 +104,42 @@ const NavBar = ({
     const [showMobileNavDrawer, setShowMobileNavDrawer] = useState<boolean>(false);
 
     return (
-        <div className="h-16 p-4 sticky top-0 z-50 bg-gradient-to-r from-[#35617C] to-[#10294D]">
-            <div className="container mx-auto flex h-full items-center justify-between">
-                <div className="flex items-center justify-center">
-                    <span
-                        className="text-2xl font-semibold text-white cursor-pointer flex items-center"
-                        onClick={handleLogoClick}
+
+        <div className="flex h-16 sticky top-0 z-50 bg-gradient-to-r from-[#35617C] to-[#10294D]">
+            <div className="flex-1 space-x-5 flex items-center justify-between mx-4 sm:mx-6">
+
+                {/* jobonic title */}
+                <div className="flex items-center">
+                    <Link
+                        href="/"
+                        onClick={() =>console.log('fdf')}
                     >
                         <img
                             src="/jobonic.svg"
                             alt="Jobonic Logo"
                             className="h-8 w-auto"
                         />
-                    </span>
+                    </Link>
                 </div>
-                
-                { isMobile ? (
-                    //mobile nav drawer toggle
+
+                {/* mobile nav links */}
+                <div className="flex lg:hidden justify-end">
                     <button 
                         className="flex items-center"
                         onClick={() => setShowMobileNavDrawer(true)}
                     >
                         <Bars3Icon className="size-8 text-white hover:opacity-70 active:opacity-50" />
                     </button>
-                ) : (
+                </div>
+
+                {/* desktop nav links */}
+                <div className="hidden lg:flex justify-end ">
                     <DesktopNavLinks
                         registerForm={registerForm}
                         selectedLanguage={selectedLanguage}
                         setSelectedLanguage={setSelectedLanguage}
                     />
-                )}
+                </div>
             </div>
 
             <SideDrawer
@@ -142,6 +148,7 @@ const NavBar = ({
                 fullScreen
                 onClose={() => setShowMobileNavDrawer(false)}
                 zStack={10}
+                type="front"
             >
                 <MobileNavLinks/>
             </SideDrawer>
