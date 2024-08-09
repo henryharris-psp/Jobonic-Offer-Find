@@ -4,11 +4,9 @@ import React, { useState, useEffect, ReactNode } from 'react';
 import ServiceRequestCard from '@/components/ServiceRequestCard'; // Importing the ServiceRequestCard component
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { baseURL, token } from "@/baseURL";
+import { baseURL } from "@/baseURL";
 import { checkProfile, getCategoryName } from '@/functions/helperFunctions';
 import httpClient from "@/client/httpClient";
-import { parse } from 'json2csv';
-//import { writeFile } from 'fs/promises';
 
 type UserData = {
   id?: number;

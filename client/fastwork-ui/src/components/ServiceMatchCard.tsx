@@ -80,14 +80,16 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({ service, user, onCl
             <div className="flex items-center space-x-2">
               <span className="text-gray-500">{user.rating}</span>
               {renderStars(user.rating)}
-              <span className="text-gray-500">{user.numReviews} reviews | {user.numSold} sold</span>
+              <span className="text-gray-500">{user.numReviews} reviews | {user.numSold ?? 0} sold</span>
             </div>
           </div>
         </div>
-        <p className="text-gray-700 text-left mb-4">{service.description}</p>
-        <div className="flex justify-between items-center">
+        <p className="text-gray-700 text-left mb-4">• {service.description1}</p>
+        <p className="text-gray-700 text-left mb-4">• {service.description2}</p>
+        <p className="text-gray-700 text-left mb-4">• {service.description3}</p>
+        <div className="flex justify-between justify-center items-center mb-4">
           <div className="flex space-x-2 items-center justify-center">
-            <span className="text-lg font-bold">{service.price}</span>
+            <span className="text-sm font-bold">${service.price}/{service.priceUnit}</span>
             <button className="flex items-center justify-center" onClick={onChatClick}>
             <span>
               <svg className="w-6 h-6 text-[#0B2147] hover:text-[#D0693B] dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -109,10 +111,10 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({ service, user, onCl
               }
             </button>
           </div>
-          <button className="text-white py-2 px-3 rounded-full bg-[#0B2147] hover:bg-[#D0693B]" onClick={onChatClick}>
-            Engage in service
-          </button>
         </div>
+        <button className="text-white py-2 px-3 rounded-full bg-[#0B2147] hover:bg-[#D0693B]" onClick={onChatClick}>
+          Engage in service
+        </button>
         <Toast message={toastMessage}/>
       </div>
   );
