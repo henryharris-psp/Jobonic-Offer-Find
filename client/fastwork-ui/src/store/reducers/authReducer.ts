@@ -3,12 +3,12 @@ import { createSlice } from "@reduxjs/toolkit"
 
 export interface AuthState {
     authUser: User | null;
-    token: number | null;
+    token: string | null;
 }
 
 const initialState : AuthState = {
     authUser: null,
-    token: null
+    token: null,
 }
 
 const authSlice = createSlice({
@@ -24,10 +24,14 @@ const authSlice = createSlice({
             state.authUser = null;
             state.token = null;
         },
+        updateAuthUser: (state, action) => {
+            state.authUser = action.payload;
+        },
     }
 });
 
 export const {
+    updateAuthUser,
     authenticate,
     unauthenticate
 } =  authSlice.actions;

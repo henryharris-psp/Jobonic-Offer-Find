@@ -5,18 +5,15 @@ import ChatList from "@/components/chat/ChatList";
 import { people } from "@/data/chat";
 import { People } from "@/types/chat";
 import { RootState } from "@/store";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { ChatProvider, useChat } from "@/contexts/chat";
-import httpClient from "@/client/httpClient";
-import { SERVER_AUTH } from "@/baseURL";
 import ProgressList from "@/components/chat/ProgressList";
 
 const ChatPage = () => {
     const { isMobile, screenSize } = useSelector((state: RootState) => state.ui);
+    const { authUser } = useSelector((state: RootState) => state.auth );
     const { 
-        currentUser,
-        setCurrentUser,
         showChatList, 
         setShowChatList,
         showProgressList,
@@ -24,23 +21,6 @@ const ChatPage = () => {
     } = useChat();
 
     const [activeChat, setActiveChat] = useState<People>(people[0]);
-
-    //fetch authenticated user on mounted
-    useEffect( () => {
-        const controller = new AbortController();
-        const signal = controller.signal;
-
-        (async () => {
-            try {
-                const res = await httpClient.get(`${SERVER_AUTH}/v1/user/init-data`, { signal });
-                setCurrentUser(res.data);
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        })();
-
-        return () => controller.abort();
-    }, []);
 
     //chatlist section handler
         const maxChatListWidth = 500;
@@ -82,7 +62,7 @@ const ChatPage = () => {
                 height: "91vh",
             }}
         >
-            { !currentUser ? (
+            { !authUser ? (
                 <div className="flex-1 flex items-center justify-center">
                     <span>Please Login first</span>
                 </div>

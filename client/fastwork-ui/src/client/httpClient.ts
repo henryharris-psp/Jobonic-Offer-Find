@@ -20,8 +20,10 @@ interface OriginalRequest extends AxiosRequestConfig {
     _retry: boolean;
 }
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 const httpClient = axios.create({
-    baseURL: `${baseURL}`
+    baseURL: apiUrl
 });
 
 httpClient.interceptors.request.use((config) => {

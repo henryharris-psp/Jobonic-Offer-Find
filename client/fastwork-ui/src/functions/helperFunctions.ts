@@ -1,11 +1,10 @@
-import { useRouter } from 'next/router';
-import { baseURL } from "@/baseURL";
 import httpClient from '@/client/httpClient';
 
 // function to get user ID from the init endpoint
 export const getUserId = async () => {
     try {
-        const response = await httpClient.get('https://api-auths.laconic.co.th/v1/user/init-data');
+        const laconicAuthServerUrl = process.env.NEXT_PUBLIC_APP_URL;
+        const response = await httpClient.get(`${laconicAuthServerUrl}/user/init-data`);
         return response.data.id;
     } catch (error: any) {
         console.error('Error fetching user ID:', error);
@@ -17,7 +16,7 @@ export const getUserId = async () => {
 export const getProfile = async () => {
     try {
         const userId = await getUserId();
-        const response = await httpClient.get(`http://localhost:8081/api/v1/user/profile`, {
+        const response = await httpClient.get(`user/profile`, {
             params: {
                 id: userId
             }
@@ -44,7 +43,7 @@ export const getProfileId = async () => {
 // returns a boolean which says whether profile exists
 export const checkProfile = async (profileId: number) => {
     try {
-        const response = await httpClient.get(`http://localhost:8081/api/v1/user`, {
+        const response = await httpClient.get('user', {
             params: {
                 id: profileId
             }

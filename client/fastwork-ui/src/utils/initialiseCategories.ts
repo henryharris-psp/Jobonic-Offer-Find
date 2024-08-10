@@ -1,6 +1,5 @@
 // src/utils/initializeCategories.ts
 import httpClient from '@/client/httpClient';
-import { baseURL } from '@/baseURL';
 import { parseCSVFile } from '@/utils/parseCSVFile';
 
 // Function to fetch categories from the backend enum
@@ -13,7 +12,7 @@ const initialiseCategories = async () => {
         const categories = await parseCSVFile(file);
 
         // Fetch existing categories from the database
-        const existingCategoriesResponse = await httpClient.get(`https://localhost:8081/api/v1/category/all`);
+        const existingCategoriesResponse = await httpClient.get('category/all');
         const existingCategories = existingCategoriesResponse.data;
 
         // Check if the number of categories in the CSV file is larger

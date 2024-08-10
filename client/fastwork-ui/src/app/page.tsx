@@ -9,7 +9,6 @@ import CanvasComponent from "../components/HomeAniBG";
 import ChatBox from "@/components/ChatBox";
 import axios from "axios";
 import {checkProfile, getProfileId} from "@/functions/helperFunctions";
-import { token } from "@/baseURL";
 import { useRouter } from "next/navigation";
 import initialiseCategories from "../utils/initialiseCategories";
 import initializeSkills from "../utils/initialiseSkills";

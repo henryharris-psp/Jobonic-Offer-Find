@@ -4,7 +4,6 @@ import React, { useState, useEffect, ReactNode } from 'react';
 import ServiceRequestCard from '@/components/ServiceRequestCard'; // Importing the ServiceRequestCard component
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { baseURL } from "@/baseURL";
 import { checkProfile, getCategoryName } from '@/functions/helperFunctions';
 import httpClient from "@/client/httpClient";
 

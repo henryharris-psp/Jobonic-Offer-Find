@@ -22,8 +22,6 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required().label('Password'),
 });
 
-const baseUrl = process.env.NEXT_PUBLIC_AUTHORIZE_SERVER
-
 export const LoginForm = (): React.ReactNode => {
 
   // const onSubmit = async (values: { [key: string]: any }): Promise<void> => {
@@ -41,9 +39,9 @@ export const LoginForm = (): React.ReactNode => {
   const onSubmit = async (
     values: { [key: string]: any }
   ): Promise<void> => {
-    const URL =`${baseUrl}/v1/login`;
+
     try {
-      const response = await axios.post(URL, values, {
+      const response = await axios.post('login', values, {
           headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             },

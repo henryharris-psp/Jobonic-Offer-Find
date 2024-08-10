@@ -1,11 +1,10 @@
 // src/utils/initializeSkills.ts
 import httpClient from '@/client/httpClient';
-import { baseURL } from '@/baseURL';
 import { AxiosError } from 'axios';
 
 const initializeSkills = async (skills: string[]) => {
     try {
-        const existingSkillsResponse = await httpClient.get(`http://localhost:8081/api/v1/skill/all`);
+        const existingSkillsResponse = await httpClient.get('skill/all');
         const existingSkills = existingSkillsResponse.data.map((skill: { name: string }) => skill.name);
 
         for (const skill of skills) {
