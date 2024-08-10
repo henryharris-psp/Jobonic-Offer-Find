@@ -6,7 +6,7 @@ import React from 'react'
 
 const MobileNavLinks = () => {
   return (
-    <div className="flex-1 bg-white rounded-l-lg">
+    <div className="flex-1 bg-white rounded-r-lg">
         <div className="flex flex-col mt-14">
 
             <div className="flex flex-col space-y-3 justify-center items-center p-3">

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import Image from "next/image";
-import { MagnifyingGlassCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 
 const TopSection: React.FC = (): React.ReactNode => {
     const router = useRouter();
@@ -29,7 +29,7 @@ const TopSection: React.FC = (): React.ReactNode => {
     };
 
     return (
-        <section className="flex flex-col items-center justify-center py-14 px-5 text-black">
+        <section className="flex flex-col items-center justify-center py-14 text-black">
             <Image
                 src="/jobonic-black.svg"
                 alt="Jobonic"
@@ -37,7 +37,7 @@ const TopSection: React.FC = (): React.ReactNode => {
                 height={600}
             />
 
-            <p className="mt-4 text-lg md:text-xl mb-12">Where skills meet needs</p>
+            <p className="mt-3 text-lg md:text-xl mb-12">Where skills meet needs</p>
 
             <div className="w-full md:w-2/3 lg:w-1/2 flex flex-col rounded-l-lg overflow-hidden sm:flex-row space-y-1 sm:space-y-0">
                 <div className="flex-1 flex flex-row min-h-14">

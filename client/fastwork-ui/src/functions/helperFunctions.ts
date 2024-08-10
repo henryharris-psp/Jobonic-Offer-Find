@@ -3,7 +3,7 @@ import httpClient from '@/client/httpClient';
 // function to get user ID from the init endpoint
 export const getUserId = async () => {
     try {
-        const laconicAuthServerUrl = process.env.NEXT_PUBLIC_APP_URL;
+        const laconicAuthServerUrl = process.env.NEXT_PUBLIC_LACONIC_AUTH_SERVER_URL;
         const response = await httpClient.get(`${laconicAuthServerUrl}/user/init-data`);
         return response.data.id;
     } catch (error: any) {

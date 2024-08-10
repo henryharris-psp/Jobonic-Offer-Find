@@ -9,7 +9,7 @@ import MobileNavLinks from "./partials/MobileNavLinks";
 import LoginSignUpButtonGroup from "./partials/LoginSignUpButtonGroup";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import AuthUserDetailsDropDownButton from "./partials/AuthUserDetailsDropDownButton";
+import AuthUserAvatarDropDown from "./partials/AuthUserAvatarDropDown";
 
 const NavBar = () => {
     const { isAuthenticated } = useSelector((state: RootState) => state.auth );
@@ -30,7 +30,7 @@ const NavBar = () => {
                         className="flex items-center md:hidden"
                         onClick={() => setShowMobileNavDrawer(true)}
                     >
-                        <Bars3Icon className="size-8 text-white hover:opacity-70 active:opacity-50" />
+                        <Bars3Icon className="size-7 text-white hover:opacity-70 active:opacity-50" />
                     </button>
                     <Link href="/">
                         <img
@@ -57,7 +57,7 @@ const NavBar = () => {
                                 </button>
                             </div>
                         ) : (
-                            <AuthUserDetailsDropDownButton/>
+                            <AuthUserAvatarDropDown/>
                         )
                     ) : (
                         <LoginSignUpButtonGroup/>
