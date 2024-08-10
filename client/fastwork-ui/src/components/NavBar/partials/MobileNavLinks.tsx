@@ -25,6 +25,7 @@ const MobileNavLinks = () => {
             <div className="flex flex-col">
                 { pageLinks.map( page =>
                     <Link
+                        key={page.id}
                         href={page.path}
                         className="flex flex-row items-center justify-between h-12 hover:bg-gray-100"
                     >

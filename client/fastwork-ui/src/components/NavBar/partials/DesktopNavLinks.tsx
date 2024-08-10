@@ -1,47 +1,35 @@
-import DropDownButton from "@/components/DropDownButton";
+import DropDownButton, { DropDownButtonOption } from "@/components/DropDownButton";
 import { availableLanguages, pageLinks } from "@/data/nav-bar";
 import { RootState } from "@/store";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
-import AuthUserDetailsDropDownButton from "./AuthUserDetailsDropDownButton";
 import { usePathname } from 'next/navigation';
-import { AUTH_UI_URL } from "@/baseURL";
+import { setSelectedLanguage } from "@/store/reducers/uiReducer";
+import { Language } from "@/types/ui";
 
-interface NavLinksProps {
-    registerForm: string | null;
-    selectedLanguage: string;
-    setSelectedLanguage: (value: string) => void,
-}
-
-const DesktopNavLinks = ({
-    registerForm,
-    selectedLanguage,
-    setSelectedLanguage,
-} : NavLinksProps ) => {
-    const { authUser } = useSelector((state: RootState) => state.auth);
-    const dispatch = useDispatch();
+const DesktopNavLinks = () => {
     const currentPathName = usePathname();
+    const dispatch = useDispatch();
+    const { selectedLanguage } = useSelector((state: RootState) => state.ui);
 
-    const handleLogIn = () => {
-        window.location.href = `${AUTH_UI_URL}/authentication?page=logout`;
-        // dispatch(login());
-    }
-
+    //methods
+        const handleOnAppLanguageChange = (option: DropDownButtonOption) => {
+            dispatch(setSelectedLanguage(option.value as Language));
+        }
     return (
         //desktop nav links
         <div className="flex items-center space-x-4 text-sm">
-            <ul className="flex gap-x-4 text-white items-center font-medium">
+            <ul className="flex space-x-3 text-white items-center font-medium">
                 {pageLinks.map((page) => (
-                    <li
+                    <Link 
+                        href={page.path}
                         key={page.id}
-                        className={`p-2 hover:bg-[#0C2348] cursor-pointer hover:text-white rounded-md ${
-                            page.path === currentPathName ? 'bg-white text-[#35617C]' : ''
-                        }`}
+                        className={`p-2 text-center cursor-pointer rounded-md ${
+                            page.path === currentPathName ? 'bg-white text-[#35617C]' : 'hover:bg-[#0C2348] hover:text-white'
+                        }`}    
                     >
-                        <Link href={page.path}>
-                            <p>{page.name}</p>
-                        </Link>
-                    </li>
+                        <p>{page.name}</p>
+                    </Link>
                 ))}
 
                 <DropDownButton
@@ -50,43 +38,8 @@ const DesktopNavLinks = ({
                         label: language,
                         value: language,
                     }))}
-                    onChange={(option) => setSelectedLanguage(option.value)}
+                    onChange={handleOnAppLanguageChange}
                 />
-
-                { authUser ? (
-                    //authenticated
-                    registerForm === "jobonicRegister" ? (
-                        <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                            <button
-                                type="button"
-                                className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-2 py-1 text-center me-2 mb-2 mt-1"
-                            >
-                                <Link href="/register">Create Profile</Link>
-                            </button>
-                        </div>
-                    ) : (
-                        <AuthUserDetailsDropDownButton/>
-                    )
-                ) : (  
-                    //unauthenticated
-                    <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                        <button
-                            type="button"
-                            className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-2 py-1 text-center me-2 mb-2 mt-1"
-                            onClick={handleLogIn}
-                        >
-                            Log In
-                        </button>
-                        <button
-                            type="button"
-                            className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-2 py-1 text-center me-2 mb-2 mt-1"
-                        >
-                            <Link href="/register">
-                                Sign Up
-                            </Link>
-                        </button>
-                    </div>
-                )}                    
             </ul>
         </div>
     );
