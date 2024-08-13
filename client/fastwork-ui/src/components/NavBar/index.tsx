@@ -22,7 +22,7 @@ const NavBar = () => {
 
     return (
         <div className="flex h-16 sticky top-0 z-50 bg-gradient-to-r from-[#35617C] to-[#10294D]">
-            <div className="flex-1 space-x-5 flex items-center justify-between mx-4 md:mx-6">
+            <div className="flex-1 space-x-5 flex items-center justify-between mx-4 md:mx-6 lg:mx-10">
 
                 {/* jobonic logo */}
                 <div className="flex items-cente space-x-3">

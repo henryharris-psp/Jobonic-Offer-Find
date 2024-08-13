@@ -36,7 +36,7 @@ const DropDownButton = ({
                 }`}/>
             </button>
             { isHover ? (
-                <ul className="text-black absolute right-0 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                <ul className="text-black absolute right-0 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10 overflow-hidden">
                     {options.map( option => (
                         <li
                             key={option.value}

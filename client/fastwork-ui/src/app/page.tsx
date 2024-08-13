@@ -1,22 +1,11 @@
 "use client";
-
-import React, { useEffect } from "react";
 import TopSection from "../components/home/TopSection";
 import SatisfiedCollaborators from "../components/SatisfiedCollaborators";
 import Link from "next/link"; // Import Link from next/link
-import "./globals.css";
 import CanvasComponent from "../components/HomeAniBG";
-import ChatBox from "@/components/ChatBox";
-import axios from "axios";
-import { checkProfile, getProfileId, getUserId } from "@/functions/helperFunctions";
-import { useRouter } from "next/navigation";
-import initialiseCategories from "../utils/initialiseCategories";
-import initializeSkills from "../utils/initialiseSkills";
-import { parseCSVFile } from "../utils/parseCSVFile";
 import FindingServiceSection from "@/components/home/FindingServiceSection";
 import OfferingServiceSection from "@/components/home/OfferingServiceSection";
-import { useDispatch } from "react-redux";
-import { authenticate } from "@/store/reducers/authReducer";
+import "./globals.css";
 
 const testimonials = [
     {
@@ -63,90 +52,7 @@ const testimonials = [
     },
 ];
 
-const dummyProfile = {
-    name: "John Doe",
-    email: "user@gmail.com",
-    services: [
-        "Web Development",
-        "App Development",
-        "UI/UX Design",
-        "SEO Optimization",
-    ],
-    description:
-        "Experienced full-stack developer with a passion for creating modern and responsive web applications. Skilled in both front-end and back-end technologies.",
-    skills: [
-        "JavaScript",
-        "React",
-        "Node.js",
-        "PHP",
-        "Laravel",
-        "TailwindCSS",
-        "MySQL",
-        "HTML/CSS",
-    ],
-    experience: [
-        "3 years as a Front-End Developer at TechCorp",
-        "2 years as a Full-Stack Developer at CodeMasters",
-        "1 year as a Freelance Web Developer",
-    ],
-    education: [
-        "Bachelor's in Computer Science from State University",
-        "Certified JavaScript Developer",
-    ],
-    otherInformation: [
-        "Fluent in English and Spanish",
-        "Enjoys contributing to open-source projects",
-        "Active member of local developer community",
-    ],
-    rating: 4.7,
-};
-
 const Home = () => {
-    const router = useRouter();
-    const dispatch = useDispatch();
-
-    // Load and initialize skills from CSV file. To be removed for production.
-    const fetchAndInitializeSkills = async () => {
-        try {
-            const response = await fetch("/skillList.csv");
-            const blob = await response.blob();
-            const file = new File([blob], "skills.csv");
-            const skills = await parseCSVFile(file);
-            await initializeSkills(skills);
-        } catch (error) {
-            console.error("Error initializing skills:", error);
-        }
-    };
-
-    useEffect(() => {
-        //temporary login
-        const urlParams = new URLSearchParams(window.location.search);
-        const refreshToken = urlParams.get("refresh_token");
-        const accessToken = urlParams.get("access_token");
-
-        if (accessToken && refreshToken) {
-            // Use access token for API calls in PMS
-            localStorage.setItem("refresh_token", refreshToken);
-            localStorage.setItem("access_token", accessToken);
-            window.location.href = '/';
-        } else {
-            //temporary
-            (async () => {
-                try {
-                    const userId = await getUserId();
-                    dispatch(authenticate(dummyProfile));
-                } catch (error) {
-                    console.log('Session Expired', error)
-                }
-            })();
-        }
-
-        // Initialize categories on app start. To be removed for production.
-        initialiseCategories();
-
-        fetchAndInitializeSkills();
-    }, []);
-
     return (
         <div className="mx-5 sm:mx-16">
             {/* Top Section */}
