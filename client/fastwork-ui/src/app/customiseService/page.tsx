@@ -124,7 +124,7 @@ const CustomiseService: React.FC = () => {
         console.log('Service Data:', JSON.stringify(serviceData, null, 2));
 
         try {
-            const response = await httpClient.post(`http://localhost:8081/api/v1/service`, serviceData);
+            const response = await httpClient.post('service', serviceData);
             console.log('Response Data:', response.data);
             router.push(`/aiServiceMatches`);
         } catch (error) {

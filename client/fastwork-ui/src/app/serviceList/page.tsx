@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import ServiceMatchCard from '@/components/ServiceMatchCard'; // Ensure this path is correct
 import { Service } from '@/types';
 import httpClient from '@/client/httpClient';
-import { baseURL } from '@/baseURL';
 
 const ServiceMatches = (): React.ReactElement => {
   const [services, setServices] = useState<Service[]>([]);
@@ -29,14 +28,14 @@ const ServiceMatches = (): React.ReactElement => {
 
   // Fetch categories so that we can filter the jobs based on category selected on the left of the page
   const fetchCategory = async () => {
-    const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
+    const response = await httpClient.get('category/all');
     setCategoryList(response.data);
   };
 
   // Fetch services data from the backend API
   const fetchServices = async () => {
     try {
-      const response = await httpClient.post(`http://localhost:8081/api/v1/service/all`, {
+      const response = await httpClient.post('service/all', {
         pageNumber: 1,
         pageSize: 100,
         sortBy: '',

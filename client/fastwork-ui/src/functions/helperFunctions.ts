@@ -65,7 +65,7 @@ export const checkProfile = async (profileId: number) => {
 // function to get category name from category-controller taking categoryId as a parameter
 export const getCategoryName = async (categoryId: string) => {
     try {
-        const response = await httpClient.get(`http://localhost:8081/api/v1/category`, {
+        const response = await httpClient.get('category', {
             params: {
                 id: categoryId
             }

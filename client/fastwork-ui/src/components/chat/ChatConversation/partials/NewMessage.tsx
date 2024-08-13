@@ -22,16 +22,15 @@ const NewMessage = () => {
         
         const handleOnSend = async () => {
             if (authUser && newMessage.trim()) {
-                console.log([{ content: newMessage, sender_id: authUser.id }]);
-                // const { error } = await supabase
-                //     .from("messages")
-                //     .insert([{ content: newMessage, sender_id: authUser.id }]);
+                const { error } = await supabase
+                    .from("messages")
+                    .insert([{ content: newMessage, sender_id: authUser.id }]);
 
-                // if (error) {
-                //     console.log("error", error)
-                // } else {
-                //     setNewMessage('');
-                // }
+                if (error) {
+                    console.log("error", error)
+                } else {
+                    setNewMessage('');
+                }
             }
         };
 

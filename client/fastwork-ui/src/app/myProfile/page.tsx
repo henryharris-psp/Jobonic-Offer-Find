@@ -2,10 +2,10 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { baseURL, SERVER_AUTH, token } from "@/baseURL";
 import { useRouter } from "next/navigation";
-import httpClient from '@/client/httpClient';
-import {getProfileId} from "@/functions/helperFunctions";
+import httpClient from "@/client/httpClient";
+import { RootState } from "@/store";
+import { useSelector } from "react-redux";
 
 type EducationInstance = {
     id: string;
@@ -54,7 +54,9 @@ type User = {
     userId: number;
 };
 
-export default function MyProfile(): React.ReactNode {
+const MyProfile = () => {
+    const { authUser } = useSelector((state: RootState) => state.auth);
+
     const [manualProfile, setManualProfile] = useState(true);
 
     // userProfilefields
@@ -73,10 +75,14 @@ export default function MyProfile(): React.ReactNode {
     const [aboutMeField, setAboutMeField] = useState<string>("");
     const [skillsField, setSkillsField] = useState<string>("");
 
-    const [experienceList, setExperienceList] = useState<ExperienceInstance[]>([]);
+    const [experienceList, setExperienceList] = useState<ExperienceInstance[]>(
+        []
+    );
     const [companyField, setCompanyField] = useState<string>("");
-    const [experienceStartDateField, setExperienceStartDateField] = useState<string>("");
-    const [experienceEndDateField, setExperienceEndDateField] = useState<string>("");
+    const [experienceStartDateField, setExperienceStartDateField] =
+        useState<string>("");
+    const [experienceEndDateField, setExperienceEndDateField] =
+        useState<string>("");
 
     const [educationList, setEducationList] = useState<EducationInstance[]>([]);
     const [institutionField, setInstitutionField] = useState<string>("");
@@ -84,24 +90,25 @@ export default function MyProfile(): React.ReactNode {
     const [startDateField, setStartDateField] = useState<string>("");
     const [endDateField, setEndDateField] = useState<string>("");
     const [paymentMethod, setPaymentMethod] = useState<string>("CREDIT_CARD");
-    const [receivePaymentMethod, setReceivePaymentMethod] = useState<string>("CREDIT_CARD");
+    const [receivePaymentMethod, setReceivePaymentMethod] =
+        useState<string>("CREDIT_CARD");
 
     const [formState, setFormState] = useState({
         education: {
-            id: '',
+            id: "",
             profileId: 0,
-            institute: '',
-            degree: '',
-            startDate: '',
-            endDate: '',
+            institute: "",
+            degree: "",
+            startDate: "",
+            endDate: "",
         },
         experience: {
-            id: '',
+            id: "",
             profileId: 0,
-            company: '',
-            experienceStartDate: '',
-            experienceEndDate: '',
-        }
+            company: "",
+            experienceStartDate: "",
+            experienceEndDate: "",
+        },
     });
 
     const [otherInfoField, setOtherInfoField] = useState<string>("");
@@ -166,7 +173,6 @@ export default function MyProfile(): React.ReactNode {
 
     const router = useRouter();
     const dummyPostId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
-    const replaceURL = 'http://localhost:8081'
 
     const addMode = (
         inputKey: string,
@@ -185,15 +191,19 @@ export default function MyProfile(): React.ReactNode {
         console.log(showNewEntry[inputKey]);
     };
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const handleChange = (
+        event: React.ChangeEvent<
+            HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+        >
+    ) => {
         const { id, value } = event.target;
-        const [section, field] = id.split('.');
-        setFormState(prevState => ({
+        const [section, field] = id.split(".");
+        setFormState((prevState) => ({
             ...prevState,
             [section]: {
                 ...prevState[section],
-                [field]: value
-            }
+                [field]: value,
+            },
         }));
     };
 
@@ -219,44 +229,37 @@ export default function MyProfile(): React.ReactNode {
             endDate: formState.experience.experienceEndDate,
         };
         let skillsEntry = {
-            "profileId": userId,
-            "skillIds": selectedSkills,
+            profileId: userId,
+            skillIds: selectedSkills,
         };
         console.log(educationEntry);
         console.log(experienceEntry);
         console.log(selectedSkills);
         try {
             if (inputKey == "user-education") {
-                const response = await httpClient.post(`${replaceURL}/api/v1/${inputKey}`, educationEntry, {
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                });
+                const response = await httpClient.post(inputKey, educationEntry );
                 console.log("Save successful:", response.data);
-            } else if (inputKey == 'user-experience') {
-                const response = await httpClient.post(`${replaceURL}/api/v1/${inputKey}`, experienceEntry, {
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    }
-                })
+            } else if (inputKey == "user-experience") {
+                const response = await httpClient.post(inputKey, experienceEntry );
                 console.log("Save successful:", response.data);
             } else if (inputKey == "skills") {
-                const skillIdsParams = selectedSkills.map(skillId => `skillIds=${skillId}`).join('&');
-                const response = await httpClient.post(`${replaceURL}/api/v1/user-skill?profileId=${userId}&${skillIdsParams}`, null, {
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    }
-                });
+                const skillIdsParams = selectedSkills
+                    .map((skillId) => `skillIds=${skillId}`)
+                    .join("&");
+                const response = await httpClient.post(`user-skill?profileId=${userId}&${skillIdsParams}`);
                 console.log("Save successful:", response.data);
             }
             if (inputKey == "user-education") {
-                setEducationList((prevList: EducationInstance[]) => [...prevList, educationEntry]);
+                setEducationList((prevList: EducationInstance[]) => [
+                    ...prevList,
+                    educationEntry,
+                ]);
                 console.log(educationList);
             } else if (inputKey == "user-experience") {
-                setExperienceList((prevList: ExperienceInstance[]) => [...prevList, experienceEntry]);
+                setExperienceList((prevList: ExperienceInstance[]) => [
+                    ...prevList,
+                    experienceEntry,
+                ]);
                 console.log(experienceList);
             } else if (inputKey == "skills") {
                 //setSkillsField(skillsEntry.skills);
@@ -282,7 +285,7 @@ export default function MyProfile(): React.ReactNode {
 
     const fetchSkills = async () => {
         try {
-            const response = await httpClient.get(`http://localhost:8081/api/v1/skill/all`);
+            const response = await httpClient.get("skill/all");
             setSkillsList(response.data);
         } catch (error) {
             console.error("Error fetching skills:", error);
@@ -291,7 +294,7 @@ export default function MyProfile(): React.ReactNode {
 
     const fetchUserSkills = async () => {
         try {
-            const response = await httpClient.get(`${replaceURL}/api/v1/user-skill/all?profileId=${userId}`);
+            const response = await httpClient.get(`user-skill/all?profileId=${userId}`);
             const displayData = response.data.reverse();
             setUserSkillsList(displayData);
         } catch (error) {
@@ -301,7 +304,7 @@ export default function MyProfile(): React.ReactNode {
 
     const fetchEducation = async () => {
         try {
-            const response = await httpClient.get(`${replaceURL}/api/v1/user-education/all?userId=${userId}`);
+            const response = await httpClient.get(`user-education/all?userId=${userId}`);
             const displayData = response.data.reverse();
             setEducationList(displayData);
         } catch (error) {
@@ -312,7 +315,7 @@ export default function MyProfile(): React.ReactNode {
     const fetchExperience = async () => {
         //const userId = await getProfileId();
         try {
-            const response = await httpClient.get(`${replaceURL}/api/v1/user-experience/all?userId=${userId}`);
+            const response = await httpClient.get(`user-experience/all?userId=${userId}`);
             const displayData = response.data.reverse();
             setExperienceList(displayData);
         } catch (error) {
@@ -337,15 +340,11 @@ export default function MyProfile(): React.ReactNode {
         let abortController = new AbortController();
         const fetchUserData = async () => {
             try {
-                const initResponse = await httpClient.get(`${SERVER_AUTH}/v1/user/init-data`);
-                const authServerUserId = initResponse.data;
-                const authId = authServerUserId.id;
-
-                const userDataResponse = await httpClient.get(`${replaceURL}/api/v1/user/profile?id=${authId}`);
-                const userData = userDataResponse.data;
+                const res = await httpClient.get(`user/profile?id=${authUser?.id}`);
+                const userData = res.data;
                 const jobonicId = userData.id;
-                setUserId(jobonicId);
 
+                setUserId(jobonicId);
                 setCompanyName(userData.companyName);
                 setPhoneNumber(userData.phoneNumber);
                 setAddress(userData.address);
@@ -372,7 +371,7 @@ export default function MyProfile(): React.ReactNode {
         console.log(userId);
     }, [userId]);
 
-    const filteredSkills = skills.filter(skill =>
+    const filteredSkills = skills.filter((skill) =>
         skill.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -408,27 +407,34 @@ export default function MyProfile(): React.ReactNode {
                     height={100}
                     className="rounded-full"
                 />
-                <h3 className="text-2xl font-semibold text-gray-900 ml-8">emm</h3>
+                <h3 className="text-2xl font-semibold text-gray-900 ml-8">
+                    emm
+                </h3>
             </div>
 
             {/* About Me */}
             <div className="flex flex-col justify-start w-full pb-16">
                 <div className="flex space-x-2">
-                    <h2 className="text-2xl font-bold text-gray-900">About Me</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">
+                        About Me
+                    </h2>
                 </div>
                 <h3 className="text-lg font-medium text-gray-400">
-                    This was written with AI from what you&apos;ve written. Click to edit
-                    and make it more you!
+                    This was written with AI from what you&apos;ve written.
+                    Click to edit and make it more you!
                 </h3>
                 <input
                     type="text"
                     id="about-me"
                     placeholder={
-                        !aboutMeField ? "incoming bza student from nus" : aboutMeField
+                        !aboutMeField
+                            ? "incoming bza student from nus"
+                            : aboutMeField
                     }
-                    className={`text-black ${enabledInputs["aboutMe"]
-                        ? "border bg-white"
-                        : "border-none bg-transparent"
+                    className={`text-black ${
+                        enabledInputs["aboutMe"]
+                            ? "border bg-white"
+                            : "border-none bg-transparent"
                     } rounded`}
                     ref={aboutMeRef}
                     disabled={!enabledInputs["aboutMe"]}
@@ -454,7 +460,10 @@ export default function MyProfile(): React.ReactNode {
                 </div>
                 <div className="flex flex-wrap mb-4">
                     {userSkillsList.map((skill) => (
-                        <div key={skill.id} className="bg-gray-200 text-gray-900 p-2 m-1 rounded">
+                        <div
+                            key={skill.id}
+                            className="bg-gray-200 text-gray-900 p-2 m-1 rounded"
+                        >
                             {skill.name}
                         </div>
                     ))}
@@ -470,9 +479,10 @@ export default function MyProfile(): React.ReactNode {
                     {filteredSkills.map((skill, index) => (
                         <button
                             key={index}
-                            className={`btn ${selectedSkills.includes(skill.name)
-                                ? "bg-[#0B2147] text-white"
-                                : "bg-white text-gray-900"
+                            className={`btn ${
+                                selectedSkills.includes(skill.name)
+                                    ? "bg-[#0B2147] text-white"
+                                    : "bg-white text-gray-900"
                             } border border-gray-300 rounded-lg p-2 mb-2`}
                             onClick={() => handleSkillClick(skill)}
                         >
@@ -494,7 +504,9 @@ export default function MyProfile(): React.ReactNode {
             {/* Education */}
             <div className="flex flex-col justify-start w-full pb-16 space-y-2.5">
                 <div className="flex flex-row space-x-2 items-center">
-                    <h2 className="text-2xl font-bold text-gray-900">Education</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">
+                        Education
+                    </h2>
                     <svg
                         onClick={(e) => addMode("user-education", e)}
                         className="w-6 h-6 text-gray-800 dark:text-white cursor-pointer"
@@ -511,24 +523,30 @@ export default function MyProfile(): React.ReactNode {
                             clipRule="evenodd"
                         />
                     </svg>
-                    <h3 className="text-xs text-grey-400 items-center select-none">Add Education</h3>
+                    <h3 className="text-xs text-grey-400 items-center select-none">
+                        Add Education
+                    </h3>
                 </div>
                 <div className="">
-                    {showNewEntry['user-education'] && (
-                        <div className='space-y-2.5 bg-white p-4 border-b'>
+                    {showNewEntry["user-education"] && (
+                        <div className="space-y-2.5 bg-white p-4 border-b">
                             <div className="grid grid-cols-3 items-center">
-                                <h3 className="flex flex-col">Education Institution</h3>
+                                <h3 className="flex flex-col">
+                                    Education Institution
+                                </h3>
                                 <input
                                     type="text"
                                     id="education.institute"
                                     placeholder="Enter your institution"
-                                    className={`text-black col-span-2 ${enabledInputs["user-education"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
+                                    className={`text-black col-span-2 ${
+                                        enabledInputs["user-education"]
+                                            ? "border bg-white"
+                                            : "border-none bg-transparent"
                                     } rounded`}
                                     ref={institutionRef}
                                     disabled={!enabledInputs["user-education"]}
-                                    onChange={handleChange} />
+                                    onChange={handleChange}
+                                />
                             </div>
                             <div className="grid grid-cols-3 items-center">
                                 <h3 className="flex flex-col">Degree</h3>
@@ -536,9 +554,10 @@ export default function MyProfile(): React.ReactNode {
                                     type="text"
                                     id="education.degree"
                                     placeholder="Enter your degree"
-                                    className={`text-black w-full col-span-2 ${enabledInputs["user-education"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
+                                    className={`text-black w-full col-span-2 ${
+                                        enabledInputs["user-education"]
+                                            ? "border bg-white"
+                                            : "border-none bg-transparent"
                                     } rounded`}
                                     ref={degreeRef}
                                     disabled={!enabledInputs["user-education"]}
@@ -551,9 +570,10 @@ export default function MyProfile(): React.ReactNode {
                                     type="date"
                                     id="education.startDate"
                                     placeholder="Enter start date (YYYY-MM-DD)"
-                                    className={`text-black w-full col-span-2 ${enabledInputs["user-education"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
+                                    className={`text-black w-full col-span-2 ${
+                                        enabledInputs["user-education"]
+                                            ? "border bg-white"
+                                            : "border-none bg-transparent"
                                     } rounded`}
                                     ref={startDateRef}
                                     disabled={!enabledInputs["user-education"]}
@@ -566,9 +586,10 @@ export default function MyProfile(): React.ReactNode {
                                     type="date"
                                     id="education.endDate"
                                     placeholder="Enter end date (YYYY-MM-DD)"
-                                    className={`text-black w-full col-span-2 ${enabledInputs["user-education"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
+                                    className={`text-black w-full col-span-2 ${
+                                        enabledInputs["user-education"]
+                                            ? "border bg-white"
+                                            : "border-none bg-transparent"
                                     } rounded`}
                                     ref={endDateRef}
                                     disabled={!enabledInputs["user-education"]}
@@ -578,9 +599,14 @@ export default function MyProfile(): React.ReactNode {
                         </div>
                     )}
                     {educationList.map((education, index) => (
-                        <div key={index} className="space-y-2.5 bg-white p-4 border-b">
+                        <div
+                            key={index}
+                            className="space-y-2.5 bg-white p-4 border-b"
+                        >
                             <div className="grid grid-cols-3 items-center">
-                                <h3 className="flex flex-col">Education Institution</h3>
+                                <h3 className="flex flex-col">
+                                    Education Institution
+                                </h3>
                                 <input
                                     type="text"
                                     id="education.institute"
@@ -623,13 +649,17 @@ export default function MyProfile(): React.ReactNode {
                     ))}
 
                     {enabledInputs["user-education"] && (
-                        <button onClick={() => handleSave("user-education")}
-                                className="mt-2 bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 px-4 rounded">
+                        <button
+                            onClick={() => handleSave("user-education")}
+                            className="mt-2 bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 px-4 rounded"
+                        >
                             Save
                         </button>
                     )}
                     {feedbackMessage["education"] && (
-                        <p className="text-sm mt-2">{feedbackMessage["education"]}</p>
+                        <p className="text-sm mt-2">
+                            {feedbackMessage["education"]}
+                        </p>
                     )}
                 </div>
             </div>
@@ -637,7 +667,9 @@ export default function MyProfile(): React.ReactNode {
             {/* Experience */}
             <div className="flex flex-col justify-start w-full pb-16 space-y-2.5">
                 <div className="flex flex-row space-x-2 items-center">
-                    <h2 className="text-2xl font-bold text-gray-900">Experience</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">
+                        Experience
+                    </h2>
                     <svg
                         onClick={(e) => addMode("user-experience", e)}
                         className="w-6 h-6 text-gray-800 dark:text-white cursor-pointer"
@@ -654,24 +686,28 @@ export default function MyProfile(): React.ReactNode {
                             clipRule="evenodd"
                         />
                     </svg>
-                    <h3 className="text-xs text-grey-400 items-center select-none">Add Experience</h3>
+                    <h3 className="text-xs text-grey-400 items-center select-none">
+                        Add Experience
+                    </h3>
                 </div>
                 <div className="">
-                    {showNewEntry['user-experience'] && (
-                        <div className='space-y-2.5 bg-white p-4 border-b'>
+                    {showNewEntry["user-experience"] && (
+                        <div className="space-y-2.5 bg-white p-4 border-b">
                             <div className="grid grid-cols-3 items-center">
                                 <h3 className="flex flex-col">Company</h3>
                                 <input
                                     type="text"
                                     id="experience.company"
                                     placeholder="Enter your company"
-                                    className={`text-black col-span-2 ${enabledInputs["user-experience"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
+                                    className={`text-black col-span-2 ${
+                                        enabledInputs["user-experience"]
+                                            ? "border bg-white"
+                                            : "border-none bg-transparent"
                                     } rounded`}
                                     ref={companyRef}
                                     disabled={!enabledInputs["user-experience"]}
-                                    onChange={handleChange} />
+                                    onChange={handleChange}
+                                />
                             </div>
                             <div className="grid grid-cols-3 items-center">
                                 <h3 className="flex flex-col">Start Date</h3>
@@ -679,9 +715,10 @@ export default function MyProfile(): React.ReactNode {
                                     type="date"
                                     id="experience.experienceStartDate"
                                     placeholder="Enter start date (YYYY-MM-DD)"
-                                    className={`text-black w-full col-span-2 ${enabledInputs["user-experience"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
+                                    className={`text-black w-full col-span-2 ${
+                                        enabledInputs["user-experience"]
+                                            ? "border bg-white"
+                                            : "border-none bg-transparent"
                                     } rounded`}
                                     ref={experienceStartDateRef}
                                     disabled={!enabledInputs["user-experience"]}
@@ -694,9 +731,10 @@ export default function MyProfile(): React.ReactNode {
                                     type="date"
                                     id="experience.experienceEndDate"
                                     placeholder="Enter end date (YYYY-MM-DD)"
-                                    className={`text-black w-full col-span-2 ${enabledInputs["user-experience"]
-                                        ? "border bg-white"
-                                        : "border-none bg-transparent"
+                                    className={`text-black w-full col-span-2 ${
+                                        enabledInputs["user-experience"]
+                                            ? "border bg-white"
+                                            : "border-none bg-transparent"
                                     } rounded`}
                                     ref={experienceEndDateRef}
                                     disabled={!enabledInputs["user-experience"]}
@@ -706,7 +744,10 @@ export default function MyProfile(): React.ReactNode {
                         </div>
                     )}
                     {experienceList.map((exp, index) => (
-                        <div key={index} className="space-y-2.5 bg-white p-4 border-b">
+                        <div
+                            key={index}
+                            className="space-y-2.5 bg-white p-4 border-b"
+                        >
                             <div className="grid grid-cols-3 items-center">
                                 <h3 className="flex flex-col">Company</h3>
                                 <input
@@ -741,13 +782,17 @@ export default function MyProfile(): React.ReactNode {
                     ))}
 
                     {enabledInputs["user-experience"] && (
-                        <button onClick={() => handleSave("user-experience")}
-                                className="mt-2 bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 px-4 rounded">
+                        <button
+                            onClick={() => handleSave("user-experience")}
+                            className="mt-2 bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 px-4 rounded"
+                        >
                             Save
                         </button>
                     )}
                     {feedbackMessage["experience"] && (
-                        <p className="text-sm mt-2">{feedbackMessage["experience"]}</p>
+                        <p className="text-sm mt-2">
+                            {feedbackMessage["experience"]}
+                        </p>
                     )}
                 </div>
             </div>
@@ -763,11 +808,14 @@ export default function MyProfile(): React.ReactNode {
                     type="text"
                     id="otherInfo"
                     placeholder={
-                        !otherInfoField ? "Enter something about yourself" : otherInfoField
+                        !otherInfoField
+                            ? "Enter something about yourself"
+                            : otherInfoField
                     }
-                    className={`text-black ${enabledInputs["otherInfo"]
-                        ? "border bg-white"
-                        : "border-none bg-transparent"
+                    className={`text-black ${
+                        enabledInputs["otherInfo"]
+                            ? "border bg-white"
+                            : "border-none bg-transparent"
                     } rounded`}
                     ref={otherInfoRef}
                     disabled={!enabledInputs["otherInfo"]}
@@ -782,7 +830,9 @@ export default function MyProfile(): React.ReactNode {
                     </button>
                 )}
                 {feedbackMessage["otherInfo"] && (
-                    <p className="text-sm mt-2">{feedbackMessage["otherInfo"]}</p>
+                    <p className="text-sm mt-2">
+                        {feedbackMessage["otherInfo"]}
+                    </p>
                 )}
             </div>
 
@@ -794,7 +844,10 @@ export default function MyProfile(): React.ReactNode {
                     </h2>
                 </div>
                 <div className="mb-4">
-                    <label className="block text-lg font-semibold mb-2" htmlFor="credit-card">
+                    <label
+                        className="block text-lg font-semibold mb-2"
+                        htmlFor="credit-card"
+                    >
                         Credit Card Number
                     </label>
                     <input
@@ -806,7 +859,10 @@ export default function MyProfile(): React.ReactNode {
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-lg font-semibold mb-2" htmlFor="card-expiry-date">
+                    <label
+                        className="block text-lg font-semibold mb-2"
+                        htmlFor="card-expiry-date"
+                    >
                         Card Expiry Date
                     </label>
                     <input
@@ -814,11 +870,16 @@ export default function MyProfile(): React.ReactNode {
                         id="card-expiry-date"
                         placeholder="MM/YY"
                         className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
-                        onChange={(e) => setCardExpiryDate(e.target.value as unknown as Date)}
+                        onChange={(e) =>
+                            setCardExpiryDate(e.target.value as unknown as Date)
+                        }
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-lg font-semibold mb-2" htmlFor="bank-account">
+                    <label
+                        className="block text-lg font-semibold mb-2"
+                        htmlFor="bank-account"
+                    >
                         Bank Account Number
                     </label>
                     <input
@@ -830,7 +891,10 @@ export default function MyProfile(): React.ReactNode {
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-lg font-semibold mb-2" htmlFor="crypto-address">
+                    <label
+                        className="block text-lg font-semibold mb-2"
+                        htmlFor="crypto-address"
+                    >
                         Cryptocurrency Address
                     </label>
                     <input
@@ -842,7 +906,10 @@ export default function MyProfile(): React.ReactNode {
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-lg font-semibold mb-2" htmlFor="crypto-type">
+                    <label
+                        className="block text-lg font-semibold mb-2"
+                        htmlFor="crypto-type"
+                    >
                         Type of Cryptocurrency
                     </label>
                     <input
@@ -854,7 +921,10 @@ export default function MyProfile(): React.ReactNode {
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-lg font-semibold mb-2" htmlFor="payment-method">
+                    <label
+                        className="block text-lg font-semibold mb-2"
+                        htmlFor="payment-method"
+                    >
                         Select how you want to pay
                     </label>
                     <select
@@ -868,21 +938,25 @@ export default function MyProfile(): React.ReactNode {
                     </select>
                 </div>
                 <div className="mb-4">
-                    <label className="block text-lg font-semibold mb-2" htmlFor="payment-receive-method">
+                    <label
+                        className="block text-lg font-semibold mb-2"
+                        htmlFor="payment-receive-method"
+                    >
                         Select how you want to be paid
                     </label>
                     <select
                         id="payment-receive-method"
                         value={receivePaymentMethod}
                         className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
-                        onChange={(e) => setReceivePaymentMethod(e.target.value)}
+                        onChange={(e) =>
+                            setReceivePaymentMethod(e.target.value)
+                        }
                     >
                         <option value="CREDIT_CARD">Credit Card</option>
                         <option value="CRYPTOCURRENCY">Cryptocurrency</option>
                     </select>
                 </div>
-
             </div>
         </div>
     );
-}
+};

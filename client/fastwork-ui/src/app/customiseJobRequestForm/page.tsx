@@ -84,7 +84,7 @@ const CustomiseJobRequestForm: React.FC = () => {
 
   const fetchCategory = async () => {
     try {
-      const response = await httpClient.get(`http://localhost:8081/api/v1/category/all`);
+      const response = await httpClient.get('category/all');
       setCategoryList(response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -130,7 +130,7 @@ const CustomiseJobRequestForm: React.FC = () => {
     console.log('Service Data:', JSON.stringify(serviceData, null, 2));
 
     try {
-      const response = await httpClient.post(`http://localhost:8081/api/v1/service`, serviceData);
+      const response = await httpClient.post('service', serviceData);
       
       const savedService = response.data;
       console.log('Response Data:', savedService);

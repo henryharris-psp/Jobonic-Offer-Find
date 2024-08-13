@@ -10,7 +10,7 @@ const initializeSkills = async (skills: string[]) => {
         for (const skill of skills) {
             if (!existingSkills.includes(skill)) {
                 try {
-                    await httpClient.post(`http://localhost:8081/api/v1/skill`, { name: skill });
+                    await httpClient.post('skill', { name: skill });
                 } catch (error) {
                     if (error instanceof AxiosError) {
                         console.error('Error adding skill:', error.response?.data || error.message);

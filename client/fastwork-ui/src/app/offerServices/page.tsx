@@ -67,7 +67,7 @@ export default function OfferServicesPage(): ReactNode {
   // Fetch all services from the backend API
   const fetchServices = async () => {
     try {
-      const response = await httpClient.post(`http://localhost:8081/api/v1/service/all`, {
+      const response = await httpClient.post('service/all', {
         pageNumber: 1,
         pageSize: 100,
         sortBy: '',
@@ -89,7 +89,7 @@ export default function OfferServicesPage(): ReactNode {
     const temp: Service[] = []; // Temporary array to store fetched services
     const fetchPromises = searchResults.map(async (service) => {
       try {
-        const response = await httpClient.get(`http://localhost:8081/api/v1/service/get?serviceId=${service.id}`);
+        const response = await httpClient.get(`service/get?serviceId=${service.id}`);
         const servicesResponse = response.data;
         console.log(servicesResponse);
         temp.push(servicesResponse);
@@ -103,7 +103,7 @@ export default function OfferServicesPage(): ReactNode {
 
   // Fetch all categories from the backend API
   const fetchCategory = async () => {
-    const response = await httpClient.get(`http://localhost:8081/api/v1/category/all`);
+    const response = await httpClient.get('category/all');
     setCategoryList(response.data);
   };
 

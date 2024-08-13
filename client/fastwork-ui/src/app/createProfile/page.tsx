@@ -112,7 +112,7 @@ export default function CreateProfile(): React.ReactNode {
 
             //console.log('User updated successfully:', response.data);
 
-            const response = await httpClient.post(`http://localhost:8081/api/v1/user?id=${userId}`, userData);
+            const response = await httpClient.post(`user?id=${userId}`, userData);
             console.log('User created successfully:', response.data);
         } catch (error) {
             if (axios.isAxiosError(error)) {
