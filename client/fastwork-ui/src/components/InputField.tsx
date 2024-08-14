@@ -59,7 +59,7 @@ const InputField = ({
             formik?.errors[name] && formik?.touched[name]
               ? 'border border-red-500 hover:border-red-500 focus:border-red-500 hover:outline-0 focus:outline-0'
               : 'border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 hover:border-gray-400'
-          } h-10 rounded-md`}
+          } h-12 rounded-md`}
           placeholder={placeholder}
           onChange={handleChange}
         />

@@ -7,12 +7,16 @@ import store from "@/store";
 import { Provider, useDispatch } from "react-redux";
 import useWindowResize from "@/hooks/useWindowResize";
 import NavBar from "@/components/NavBar";
+<<<<<<< Updated upstream
 import initializeSkills from "@/utils/initialiseSkills";
 import { parseCSVFile } from "@/utils/parseCSVFile";
 import { useEffect } from "react";
 import { authenticate } from "@/store/reducers/authReducer";
 import { getUserId } from "@/functions/helperFunctions";
 import initialiseCategories from "@/utils/initialiseCategories";
+=======
+import { AuthContextProvider } from "@/app/context/AuthContext";
+>>>>>>> Stashed changes
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -109,12 +113,15 @@ const RootLayout = ({
 
     return (
         <html lang="en">
-            <body className={inter.className}>
-                <NavBar />
-                <main>{children}</main>
-                <Footer />
-                {/* <ChatBox /> */}
-            </body>
+            <AuthContextProvider>
+                <script src="https://accounts.google.com/gsi/client" async defer></script>
+                <body className={inter.className}>
+                    <NavBar />
+                    <main>{children}</main>
+                    <Footer />
+                    {/* <ChatBox /> */}
+                </body>
+            </AuthContextProvider>
         </html>
     );
 };

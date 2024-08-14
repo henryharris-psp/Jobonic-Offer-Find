@@ -281,19 +281,25 @@ export const RegisterForm = (): React.ReactNode => {
             Verify the OTP
           </h1>
           <div className="mb-6">
-            <InputField label="Check OTP In Email" type="text" name="checkOTP" placeholder="OTP Number" />
+            <InputField label="Check OTP In Email" type="text" name="checkOTP" placeholder="OTP Number"/>
+
           </div>
           <div className="flex items-center justify-center">
             <Button type="submit"
-              variant="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2">
+                    variant="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2">
               Confirm OTP
             </Button>
+            <button type="button"
+                    //variant="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2"
+                    onClick={() => setRegisterForm('authRegister')}>
+              Back to Register
+            </button>
           </div>
         </Form>
       }
       {registerForm === 'jobonicRegister' &&
-        <Form
-          onSubmit={handleSubmitJobonicRegister}
+          <Form
+              onSubmit={handleSubmitJobonicRegister}
           validationSchema={validationSchemaJobonic}
           initialValues={{
             companyName: '',
