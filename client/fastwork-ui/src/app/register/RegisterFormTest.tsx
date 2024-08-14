@@ -6,8 +6,7 @@ import InputField from "@/components/InputField";
 import Link from "next/link";
 import { useEffect, useRef, useState, MouseEvent } from "react";
 import * as Yup from "yup";
-import axios from "axios";
-import {baseURL, SERVER_AUTH } from "@/baseURL";
+import { SERVER_AUTH } from "@/baseURL";
 import { useRouter } from "next/navigation";
 import httpClient from "@/client/httpClient";
 import httpAuth from "@/client/httpAuth";
@@ -109,7 +108,6 @@ export const RegisterForm = (): React.ReactNode => {
     };
 
     const handleSubmitJobonicRegister = async (values: { [key: string]: any }): Promise<any> => {
-        const URL = `${baseURL}/api/v1/user`;
         const payload = {
             "companyName": values.companyName,
             "phoneNumber": values.phoneNumber,
@@ -125,7 +123,7 @@ export const RegisterForm = (): React.ReactNode => {
             "userId": userId
         };
         try {
-            const response = await httpClient.post(URL, payload);
+            const response = await httpClient.post('user', payload);
             //router.push('/');
             //return response;
             localStorage.setItem('registerFormPage', 'authRegister');

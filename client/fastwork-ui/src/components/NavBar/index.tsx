@@ -1,147 +1,77 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Drawer from "@/components/Drawer";
-import Settings from "@/components/Settings";
-import { useRouter, usePathname } from "next/navigation";
-import { AUTH_UI_URL, baseURL, SERVER_AUTH } from "@/baseURL";
-import httpAuth from "@/client/httpAuth";
 import { Bars3Icon } from '@heroicons/react/24/solid';
-import { availableLanguages, pageLinks } from "@/data/nav-bar";
 import SideDrawer from "../SideDrawer";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
-import CaretUpIcon from "../../../public/icons/CaretDownIcon";
-import DropDownButton from "../DropDownButton";
 import DesktopNavLinks from "./partials/DesktopNavLinks";
 import MobileNavLinks from "./partials/MobileNavLinks";
+import LoginSignUpButtonGroup from "./partials/LoginSignUpButtonGroup";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import AuthUserAvatarDropDown from "./partials/AuthUserAvatarDropDown";
 
-export interface NavBarProps {
-    showOnlyLogo?: boolean;
-    isEmployer?: boolean;
-    signedIn?: boolean;
-}
-
-const NavBar = ({
-    showOnlyLogo = false,
-    isEmployer = false,
-    signedIn = true,
-}: NavBarProps) => {
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
-    const [selectedLanguage, setSelectedLanguage] = useState("English");
-    const router = useRouter();
-    const pathname = usePathname();
-    const [token, setToken] = useState<string | null>(null);
+const NavBar = () => {
+    const { isAuthenticated } = useSelector((state: RootState) => state.auth );
     const [registerForm, setRegisterForm] = useState<string | null>(null);
-    const [user, setUser] = useState<UserAuthData>({
-        id: null,
-        username: "",
-        firstName: "",
-        lastName: "",
-        email: "",
-    });
+    const [showMobileNavDrawer, setShowMobileNavDrawer] = useState<boolean>(false);
 
     useEffect(() => {
-        setToken(localStorage.getItem("access_token"));
         setRegisterForm(localStorage.getItem("registerFormPage"));
     }, []);
 
-    const fetchUserAuth = async () => {
-        const response = await httpAuth.get(`${SERVER_AUTH}/v1/user/init-data`);
-        setUser(response.data);
-    };
-
-    const handleDropdownToggle = useCallback(() => {
-        setIsDropdownOpen((prev) => !prev);
-    }, []);
-
-    const handleLanguageDropdownToggle = useCallback(() => {
-        setIsLanguageDropdownOpen((prev) => !prev);
-    }, []);
-
-    const handleSignOut = useCallback(() => {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
-        setToken(null);
-        setIsDropdownOpen(false);
-        router.push("/");
-    }, [router]);
-
-    const handleLogoClick = useCallback(() => {
-        router.push("/");
-    }, [router]);
-
-    const handleDrawerCloseClicked = useCallback((): void => {
-        setIsDrawerOpen(false);
-    }, []);
-
-    const handleLogin = (
-        event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-    ) => {
-        event.preventDefault();
-        window.location.href = `${AUTH_UI_URL}/authentication?page=logout`;
-    };
-
-    const getLinkClass = useCallback(
-        (path: string) => {
-            return pathname === path ? "bg-white text-[#35617C]" : "";
-        },
-        [pathname]
-    );
-
-    useEffect(() => {
-        if (token) {
-            void fetchUserAuth();
-        }
-    }, [token]);
-
-
-    //new
-    const { isMobile } = useSelector((state: RootState) => state.ui);
-    const [showMobileNavDrawer, setShowMobileNavDrawer] = useState<boolean>(false);
-
     return (
-        <div className="h-16 p-4 sticky top-0 z-50 bg-gradient-to-r from-[#35617C] to-[#10294D]">
-            <div className="container mx-auto flex h-full items-center justify-between">
-                <div className="flex items-center justify-center">
-                    <span
-                        className="text-2xl font-semibold text-white cursor-pointer flex items-center"
-                        onClick={handleLogoClick}
+        <div className="flex h-16 sticky top-0 z-50 bg-gradient-to-r from-[#35617C] to-[#10294D]">
+            <div className="flex-1 space-x-5 flex items-center justify-between mx-4 md:mx-6 lg:mx-10">
+
+                {/* jobonic logo */}
+                <div className="flex items-cente space-x-3">
+                    <button 
+                        className="flex items-center md:hidden"
+                        onClick={() => setShowMobileNavDrawer(true)}
                     >
+                        <Bars3Icon className="size-7 text-white hover:opacity-70 active:opacity-50" />
+                    </button>
+                    <Link href="/">
                         <img
                             src="/jobonic.svg"
                             alt="Jobonic Logo"
                             className="h-8 w-auto"
                         />
-                    </span>
+                    </Link>
                 </div>
-                
-                { isMobile ? (
-                    //mobile nav drawer toggle
-                    <button 
-                        className="flex items-center"
-                        onClick={() => setShowMobileNavDrawer(true)}
-                    >
-                        <Bars3Icon className="size-8 text-white hover:opacity-70 active:opacity-50" />
-                    </button>
-                ) : (
-                    <DesktopNavLinks
-                        registerForm={registerForm}
-                        selectedLanguage={selectedLanguage}
-                        setSelectedLanguage={setSelectedLanguage}
-                    />
-                )}
+
+                {/* desktop nav links */}
+                <div className="flex items-center space-x-3">
+                    <div className="hidden md:block">
+                        <DesktopNavLinks/>
+                    </div>
+                    { isAuthenticated ? (
+                        registerForm === "jobonicRegister" ? (
+                            <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+                                <button
+                                    type="button"
+                                    className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-2 py-1 text-center me-2 mb-2 mt-1"
+                                >
+                                    <Link href="/register">Create Profile</Link>
+                                </button>
+                            </div>
+                        ) : (
+                            <AuthUserAvatarDropDown/>
+                        )
+                    ) : (
+                        <LoginSignUpButtonGroup/>
+                    )}
+                </div>
             </div>
 
             <SideDrawer
                 show={showMobileNavDrawer}
-                position="right"
+                position="left"
                 fullScreen
                 onClose={() => setShowMobileNavDrawer(false)}
                 zStack={10}
+                type="front"
             >
                 <MobileNavLinks/>
             </SideDrawer>

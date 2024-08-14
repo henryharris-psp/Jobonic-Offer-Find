@@ -8,15 +8,12 @@ import { RootState } from "@/store";
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { ChatProvider, useChat } from "@/contexts/chat";
-import httpClient from "@/client/httpClient";
-import { SERVER_AUTH } from "@/baseURL";
 import ProgressList from "@/components/chat/ProgressList";
 
 const ChatPage = () => {
-    const { isMobile } = useSelector((state: RootState) => state.ui);
+    const { isMobile, screenSize } = useSelector((state: RootState) => state.ui);
+    const { authUser } = useSelector((state: RootState) => state.auth );
     const { 
-        currentUser,
-        setCurrentUser,
         showChatList, 
         setShowChatList,
         showProgressList,
@@ -24,26 +21,6 @@ const ChatPage = () => {
     } = useChat();
 
     const [activeChat, setActiveChat] = useState<People>(people[0]);
-
-    //fetch authenticated user on mounted
-    useEffect( () => {
-
-        console.log('fdfdfdf');
-
-        const controller = new AbortController();
-        const signal = controller.signal;
-
-        (async () => {
-            try {
-                const res = await httpClient.get(`${SERVER_AUTH}/v1/user/init-data`, { signal });
-                setCurrentUser(res.data);
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        })();
-
-        return () => controller.abort();
-    }, []);
 
     //chatlist section handler
         const maxChatListWidth = 500;
@@ -72,10 +49,11 @@ const ChatPage = () => {
             return () => window.removeEventListener('mousemove', resize);
         }, [isResizable]);
 
-        useEffect( () => {
-            setShowChatList(!isMobile);
-            setShowProgressList(!isMobile);
-        }, [isMobile]);
+    //drawers watcher
+    useEffect( () => {
+        setShowChatList(!isMobile);
+        setShowProgressList(!isMobile && screenSize !== 'lg');
+    }, [screenSize, isMobile]);
 
     return (
         <div
@@ -84,7 +62,7 @@ const ChatPage = () => {
                 height: "91vh",
             }}
         >
-            { !currentUser ? (
+            { !authUser ? (
                 <div className="flex-1 flex items-center justify-center">
                     <span>Please Login first</span>
                 </div>
@@ -96,6 +74,7 @@ const ChatPage = () => {
                         width={chatListWidth}
                         animate={isMobile}
                         zStack={9}
+                        type={ isMobile ? 'front' : 'slide'}
                     >
                         <ChatList 
                             onActiveChatChange={setActiveChat}
@@ -122,6 +101,7 @@ const ChatPage = () => {
                         animate
                         position="right"
                         zStack={9}
+                        type={ isMobile || screenSize === 'lg' ? 'front' : 'slide'}
                     >
                         <ProgressList/>
                     </SideDrawer>

@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ${DB_URL:jdbc:oracle:thin:@//localhost:1521/ORCLCDB}
+    username: ${DB_USERNAME:sys as sysdba}
+    password: ${DB_PASSWORD:laconic}
     driver-class-name: oracle.jdbc.OracleDriver
   jpa:
     hibernate:

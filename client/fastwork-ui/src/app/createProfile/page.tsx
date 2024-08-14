@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import axios from 'axios';
 import httpClient from '@/client/httpClient';
-import { baseURL, SERVER_AUTH, token } from "@/baseURL";
 
 const countryCodes = [
     { code: '+65', name: 'Singapore' },
@@ -31,7 +30,8 @@ export default function CreateProfile(): React.ReactNode {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await httpClient.get(`${SERVER_AUTH}/v1/user/init-data`);
+                const laconicAuthServerUrl = process.env.NEXT_PUBLIC_APP_URL;
+                const response = await httpClient.get(`${laconicAuthServerUrl}/user/init-data`);
                 const userData = response.data;
                 setUserId(userData.id);
                 setContactNumber(userData.phoneNumber);
@@ -112,9 +112,8 @@ export default function CreateProfile(): React.ReactNode {
 
             //console.log('User updated successfully:', response.data);
 
-            const response = await httpClient.put(`http://localhost:8081/api/v1/user?id=${userId}`, userData);
+            const response = await httpClient.post(`user?id=${userId}`, userData);
             console.log('User created successfully:', response.data);
-            //router.push('/myProfile');
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error('Error updating user from Axios:', error.response?.data || error.message);

@@ -9,7 +9,6 @@ import marketing from "@/../public/marketing.svg";
 import prog from "@/../public/prog.svg";
 import translate from "@/../public/translate.svg";
 import httpClient from "@/client/httpClient";
-import { baseURL } from "@/baseURL";
 
 export default function FindServices() {
   //need to get from API

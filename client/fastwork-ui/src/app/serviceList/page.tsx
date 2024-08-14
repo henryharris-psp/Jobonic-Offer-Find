@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
+import Service from '../types';
 import { useRouter } from 'next/navigation';
 import ServiceMatchCard from '@/components/ServiceMatchCard'; // Ensure this path is correct
-import { Service } from '@/types';
+// import { Service } from '@/types';
 import httpClient from '@/client/httpClient';
 import { baseURL } from '@/baseURL';
 
@@ -27,16 +28,14 @@ const ServiceMatches = (): React.ReactElement => {
   const router = useRouter();
   const [categoryList, setCategoryList] = useState<Category[]>([]);
 
-  // Fetch categories so that we can filter the jobs based on category selected on the left of the page
   const fetchCategory = async () => {
     const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
     setCategoryList(response.data);
   };
 
-  // Fetch services data from the backend API
   const fetchServices = async () => {
     try {
-      const response = await httpClient.post(`http://localhost:8081/api/v1/service/all`, {
+      const response = await httpClient.post(`https://api-jobonic.laconic.co.th/api/v1/service/all`, {
         pageNumber: 1,
         pageSize: 100,
         sortBy: '',
@@ -45,8 +44,6 @@ const ServiceMatches = (): React.ReactElement => {
           searchKeyword: ''
         }
       });
-
-      // Filter out service offers because service requests and service offers share the same service object
       const filteredServices = response.data.content.filter((service: any) => service.serviceRequestDTO !== null);
 
       // Map filtered services to match the expected structure for ServiceMatchCard
@@ -81,42 +78,35 @@ const ServiceMatches = (): React.ReactElement => {
     }
   };
 
-  // Handle click on a service to open modal with details
   const handleServiceClick = (service: Service) => {
     setSelectedService(service);
     setIsModalOpen(true);
   };
 
-  // Close the modal
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedService(null);
   };
 
-  // Handle click on the chat button to navigate to the chat page
   const handleChatClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent event propagation
     router.push('/chat'); // Navigate to the ChatMessage component
   };
 
-  // Toggle sort dropdown visibility
   const handleSortClick = () => {
     setIsSortDropdownOpen(!isSortDropdownOpen);
   };
 
-  // Handle selection of a sort option
   const handleSortOptionClick = (option: string) => {
     setSelectedSortOption(option);
     console.log(`Selected sorting option: ${option}`);
     setIsSortDropdownOpen(false);
   };
 
-  // Toggle filter dropdown visibility
   const handleFilterClick = () => {
     setIsFilterDropdownOpen(!isFilterDropdownOpen);
   };
 
-  // Apply filters and update appliedFilters state
   const handleFilterApply = () => {
     setAppliedFilters({
       minPrice: minPrice,
@@ -127,7 +117,6 @@ const ServiceMatches = (): React.ReactElement => {
     setIsFilterDropdownOpen(false);
   };
 
-  // Clear all filters and reset states
   const handleClearFilters = () => {
     setMinPrice('');
     setMaxPrice('');
@@ -141,10 +130,8 @@ const ServiceMatches = (): React.ReactElement => {
     setIsFilterDropdownOpen(false);
   };
 
-  // Check if any filters are applied
   const areFiltersApplied = appliedFilters.minPrice !== '' || appliedFilters.maxPrice !== '' || appliedFilters.deadline !== '';
 
-  // Fetch categories and services on component mount
   useEffect(() => {
     fetchCategory();
     fetchServices();
@@ -281,7 +268,6 @@ const ServiceMatches = (): React.ReactElement => {
             </div>
           </section>
 
-          {/* Modal to show service details */}
           {isModalOpen && selectedService && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                 <div className="bg-white rounded-lg p-6 w-full max-w-lg max-h-full overflow-auto">
@@ -297,7 +283,7 @@ const ServiceMatches = (): React.ReactElement => {
                     </div>
                   </div>
                   <div className="max-h-96 overflow-y-auto">
-                    {selectedService.reviewsDetail?.map((review, index) => (
+                    {selectedService.reviewsDetail?.map((review: any , index : any) => (
                         <div key={index} className="flex items-start mb-4">
                           <Image src="/group-image.jpg" alt={review.reviewer} width={40} height={40} className="rounded-full" /> {/* Replace with actual reviewer image */}
                           <div className="ml-4">

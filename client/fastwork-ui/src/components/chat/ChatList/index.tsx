@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { fromServiceProviderStatus, fromClientStatus, people, chatFilters } from "@/data/chat";
 import SearchBox from "./partials/SearchBox";
 import SelectAndSearchBox from "./partials/SelectAndSearchBox";
-import { People, CurrentUser } from "@/types/chat";
+import { People } from "@/types/chat";
+import { User } from "@/types/users";
 
 interface ChatListProps {
     onActiveChatChange: (value: People) => void;
@@ -15,7 +16,7 @@ const ChatList = ({
     const [roleFilter, setRoleFilter] = useState('All');
     const [fromClientStatusFilter, setFromClientStatusFilter] = useState('All');
     const [fromServiceProviderStatusFilter, setFromServiceProviderStatusFilter] = useState('All');
-    const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {

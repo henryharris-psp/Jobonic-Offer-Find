@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import httpClient from '@/client/httpClient';
-import { baseURL } from '@/baseURL';
 
 const JobDescription = (): React.ReactElement => {
   const [serviceData, setServiceData] = useState<any>(null);
@@ -14,7 +13,7 @@ const JobDescription = (): React.ReactElement => {
     if (serviceId) {
       const fetchServiceData = async () => {
         try {
-          const response = await httpClient.get(`http://localhost:8081/api/v1/service/get?serviceId=${serviceId}`);
+          const response = await httpClient.get(`service/get?serviceId=${serviceId}`);
           setServiceData(response.data);
           setLoading(false);
         } catch (error) {

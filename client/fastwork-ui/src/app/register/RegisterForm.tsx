@@ -6,8 +6,7 @@ import InputField from "@/components/InputField";
 import Link from "next/link";
 import { useEffect, useRef, useState, MouseEvent } from "react";
 import * as Yup from "yup";
-import axios from "axios";
-import {baseURL, SERVER_AUTH } from "@/baseURL";
+import { SERVER_AUTH } from "@/baseURL";
 import { useRouter } from "next/navigation";
 import httpClient from "@/client/httpClient";
 import httpAuth from "@/client/httpAuth";
@@ -90,11 +89,7 @@ export const RegisterForm = (): React.ReactNode => {
     const URL = `${SERVER_AUTH}/v1/login/verify/otp?userId=${userId}&otp=${values.checkOTP}`;
     try {
       await httpAuth.post(URL);
-      const response = await httpAuth.post('/v1/login', userLogin, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      });
+      const response = await httpAuth.post('/v1/login', userLogin);
       httpClient.defaults.headers.common.Authorization = `Bearer ${response.data.access_token}`;
       localStorage.setItem('access_token', response.data.access_token);
       localStorage.setItem('refresh_token', response.data.refresh_token);
@@ -109,7 +104,6 @@ export const RegisterForm = (): React.ReactNode => {
   };
 
   const handleSubmitJobonicRegister = async (values: { [key: string]: any }): Promise<any> => {
-    const URL = `${baseURL}/api/v1/user`;
     const payload = {
       "companyName": values.companyName,
       "phoneNumber": values.phoneNumber,
@@ -125,7 +119,7 @@ export const RegisterForm = (): React.ReactNode => {
       "userId": userId
     };
     try {
-      const response = await httpClient.post(URL, payload);
+      const response = await httpClient.post('user', payload);
       //router.push('/');
       //return response;
       localStorage.setItem('registerFormPage', 'authRegister');
@@ -287,19 +281,25 @@ export const RegisterForm = (): React.ReactNode => {
             Verify the OTP
           </h1>
           <div className="mb-6">
-            <InputField label="Check OTP In Email" type="text" name="checkOTP" placeholder="OTP Number" />
+            <InputField label="Check OTP In Email" type="text" name="checkOTP" placeholder="OTP Number"/>
+
           </div>
           <div className="flex items-center justify-center">
             <Button type="submit"
-              variant="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2">
+                    variant="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2">
               Confirm OTP
             </Button>
+            <button type="button"
+                    //variant="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2"
+                    onClick={() => setRegisterForm('authRegister')}>
+              Back to Register
+            </button>
           </div>
         </Form>
       }
       {registerForm === 'jobonicRegister' &&
-        <Form
-          onSubmit={handleSubmitJobonicRegister}
+          <Form
+              onSubmit={handleSubmitJobonicRegister}
           validationSchema={validationSchemaJobonic}
           initialValues={{
             companyName: '',

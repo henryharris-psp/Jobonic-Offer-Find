@@ -1,7 +1,5 @@
 'use client';
 
-import { baseURL } from '@/baseURL';
-import httpClient from '@/client/httpClient';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import initialiseCategories from "@/utils/initialiseCategories";
@@ -12,8 +10,8 @@ const CategorySuggestions = (): React.ReactElement => {
 
   const fetchCategory = async () => {
     try {
-      const response = await initialiseCategories();
-      setCategoryList(response.data);
+      const res = await initialiseCategories();
+      setCategoryList(res.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
     }

@@ -1,10 +1,11 @@
 import { supabase } from "@/app/config/supabaseClient";
-import { useChat } from "@/contexts/chat";
+import { RootState } from "@/store";
 import { PaperClipIcon, PhotoIcon } from "@heroicons/react/24/solid";
 import React, { ChangeEvent, KeyboardEvent, useState } from "react";
+import { useSelector } from "react-redux";
 
 const NewMessage = () => {
-    const { currentUser } = useChat();
+    const { authUser } = useSelector((state: RootState) => state.auth);
     const [newMessage, setNewMessage] = useState('');
 
     //methods
@@ -20,10 +21,10 @@ const NewMessage = () => {
         };
         
         const handleOnSend = async () => {
-            if (currentUser && newMessage.trim()) {
+            if (authUser && newMessage.trim()) {
                 const { error } = await supabase
                     .from("messages")
-                    .insert([{ content: newMessage, sender_id: currentUser.id }]);
+                    .insert([{ content: newMessage, sender_id: authUser.id }]);
 
                 if (error) {
                     console.log("error", error)

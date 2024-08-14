@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import httpClient from "@/client/httpClient";
-import { baseURL, SERVER_AUTH, token } from "@/baseURL";
+import { SERVER_AUTH } from "@/baseURL";
 
 // Define types for the User and SkillInstance
 type User = {
@@ -53,20 +53,11 @@ function ComponentSelectSkills() {
     useEffect(() => {
         const fetchServiceData = async () => {
             try {
-                const response = await httpClient.get(`${SERVER_AUTH}/v1/user/init-data`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'accept': 'application/json'
-                    }
-                });
+                const response = await httpClient.get(`${SERVER_AUTH}/v1/user/init-data`);
                 const userData = response.data;
                 const userId = userData.id;
 
-                const servicesResponse = await httpClient.get(`http://localhost:8081/api/v1/service/user`, {
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "accept": "application/json",
-                    },
+                const servicesResponse = await httpClient.get('service/user', {
                     params: { profileId: userId }
                 });
 
@@ -83,7 +74,7 @@ function ComponentSelectSkills() {
     // Fetch all available skills
     const fetchSkills = async () => {
         try {
-            const response = await httpClient.get(`${baseURL}/api/v1/skill/all`);
+            const response = await httpClient.get('skill/all');
             console.log("Skills fetched:", response.data);
             setSkillsList(response.data);
         } catch (error) {
@@ -143,17 +134,10 @@ function ComponentSelectSkills() {
             location: "On Nut"
         };
 
-        const endpoint = `http://localhost:8081/api/v1/service/updateOffer?serviceOfferId=${serviceData.serviceOfferDTO.id}`;
-        console.log('Updating service with data:', updateData);
-        console.log('Endpoint:', endpoint);
+        const endpoint = `service/updateOffer?serviceOfferId=${serviceData.serviceOfferDTO.id}`;
 
         try {
-            const response = await httpClient.put(endpoint, updateData, {
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            });
+            const response = await httpClient.put(endpoint, updateData);
             console.log(response.data);
             router.push("/aiServiceMatches"); // Redirect to service matches page after updating
         } catch (error) {

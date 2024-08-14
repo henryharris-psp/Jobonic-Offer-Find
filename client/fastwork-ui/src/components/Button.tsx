@@ -37,17 +37,18 @@ const Button = ({
   }
 
   return (
-    <button
-      type={type}
-      className={buttonClassName}
-      disabled={submitButton?.isSubmitting}
-      tabIndex={tabIndex}
-      role={role}
-      onClick={handleSubmit}
-    >
-      {submitButton?.isSubmitting ? <span className='loading loading-spinner loading-md text-white ' /> : children}
-      {title}
-    </button>
+      <button
+          type={type}
+          className={buttonClassName}
+          disabled={submitButton?.isSubmitting}
+          tabIndex={tabIndex}
+          role={role}
+          onClick={handleSubmit}
+      >
+        {submitButton?.isSubmitting ? "Loading": children}
+        {title}
+      </button>
+  //<span className='loading loading-spinner loading-md text-white '/>
   );
 };
 

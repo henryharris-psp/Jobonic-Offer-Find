@@ -18,7 +18,7 @@ const OfferingServiceSection: React.FC = (): React.ReactNode => {
     };
 
     return (
-        <section className="py-16 flex justify-end items-center px-12 md:px-20">
+        <section className="py-16 flex justify-end items-center">
             <div className="text-right">
                 <h2
                     className="text-3xl md:text-5xl font-bold mb-1"

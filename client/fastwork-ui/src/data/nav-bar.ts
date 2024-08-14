@@ -1,6 +1,7 @@
+import { Language } from '@/types/ui';
 import { v4 as uuid } from 'uuid';
 
-export const availableLanguages = ['English', '中文', 'ไทย'];
+export const availableLanguages: Language[] = ['English', '中文', 'ไทย'];
 
 export const pageLinks = [
     {

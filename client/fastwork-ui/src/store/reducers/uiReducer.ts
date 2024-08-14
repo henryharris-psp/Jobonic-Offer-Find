@@ -1,15 +1,16 @@
+import { BreakPoint, Language } from "@/types/ui";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-export type BreakPoint = 'sm' | 'md' | 'lg' | 'xl';
 
 export interface UIState {
     isMobile: boolean;
     screenSize: BreakPoint;
+    selectedLanguage: Language;
 }
 
 const initialState: UIState = {
     isMobile: false,
     screenSize: 'lg',
+    selectedLanguage: 'English'
 };
 
 const uiSlice = createSlice({
@@ -19,12 +20,16 @@ const uiSlice = createSlice({
         setScreenSize: (state, action: PayloadAction<BreakPoint>) => {
             state.screenSize = action.payload;
             state.isMobile = action.payload === 'sm';
+        },
+        setSelectedLanguage: (state, action: PayloadAction<Language>) => {
+            state.selectedLanguage = action.payload;
         }
     }
 });
 
 export const {
-    setScreenSize
+    setScreenSize,
+    setSelectedLanguage
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

@@ -17,7 +17,7 @@ const SatisfiedCollaborators: React.FC<SatisfiedCollaboratorsProps> = ({
   testimonials,
 }) => {
   return (
-    <section className="py-16 px-4 md:px-0">
+    <section className="py-16">
       <div className="max-w-5xl mx-auto text-center">
         <h2
           className="text-3xl md:text-5xl font-bold mb-12"

@@ -1,5 +1,5 @@
 
-import { AUTH_UI_URL, baseURL, SERVER_AUTH} from '@/baseURL';
+import { SERVER_AUTH} from '@/baseURL';
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 const ENDPOINT_LOGIN = `${SERVER_AUTH}/v1/login`;
 const ENDPOINT_REFRESH_TOKEN = `${SERVER_AUTH}/v1/login/refresh-token`;
@@ -20,8 +20,11 @@ interface OriginalRequest extends AxiosRequestConfig {
     _retry: boolean;
 }
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const laconicAuthPageUrl = process.env.NEXT_PUBLIC_LACONIC_AUTH_PAGE_URL;
+
 const httpClient = axios.create({
-    baseURL: `${baseURL}`
+    baseURL: apiUrl
 });
 
 httpClient.interceptors.request.use((config) => {
@@ -56,13 +59,13 @@ httpClient.interceptors.response.use((response) => response,
                 } catch (e) {
                     const error = e as AxiosError;
                     if ((error.response?.status === 400 || error.response?.status === 401 || error.response?.status === 500) && error.config?.url === ENDPOINT_REFRESH_TOKEN) {
-                        window.location.href = `${AUTH_UI_URL}/authentication?page=logout`;
+                        window.location.href = `${laconicAuthPageUrl}/authentication?page=logout`;
                     }
                     return Promise.reject(error);
                 }
             }
         } else if (error.response?.status === 401 && originalRequest._retry && error.config?.url === ENDPOINT_REFRESH_TOKEN) {
-            window.location.href = `${AUTH_UI_URL}/authentication?page=logout`;
+            window.location.href = `${laconicAuthPageUrl}/authentication?page=logout`;
             return Promise.reject(error);
         }
         return Promise.reject(error);

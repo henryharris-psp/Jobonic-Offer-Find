@@ -1,15 +1,15 @@
 import React, { useMemo, useState } from "react";
 import CaretDownIcon from "../../public/icons/CaretDownIcon";
 
-interface Option {
+export interface DropDownButtonOption {
     value: string;
     label: string;
 }
 
 interface DropDownButtonProps {
     value?: any;
-    options: Option[];
-    onChange: (value: Option) => void;
+    options: DropDownButtonOption[];
+    onChange: (value: DropDownButtonOption) => void;
 }
 
 const DropDownButton = ({
@@ -24,23 +24,23 @@ const DropDownButton = ({
     }, [value]);
 
     return (
-        <li
-            className="p-2 hover:bg-white hover:text-[#35617C] overflow-hidden hover:overflow-visible rounded-md relative"
+        <div 
+            className="relative"
             onMouseEnter={() => setIsHover(true)}
             onMouseLeave={() => setIsHover(false)}
         >
-            <button className="flex items-center space-x-2">
+            <button className="flex items-center space-x-1 text-white p-2 rounded">
                 <p>{ selectedOption?.label }</p>
-                <CaretDownIcon className={`w-4 h-4 transition-transform ${
-                    isHover ? 'rotate-180 text-black' : 'text-white'
+                <CaretDownIcon className={`size-4 transition-transform ${
+                    isHover ? 'rotate-180' : ''
                 }`}/>
             </button>
-            {isHover && (
-                <ul className="text-black absolute right-0 mt-2 w-28 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+            { isHover ? (
+                <ul className="text-black absolute right-0 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10 overflow-hidden">
                     {options.map( option => (
                         <li
                             key={option.value}
-                            className="p-2 hover:bg-gray-100 hover:rounded-t-md cursor-pointer"
+                            className="p-2 hover:bg-gray-100 cursor-pointer"
                             onClick={() => onChange(option)}
                         >
                             <span className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -49,8 +49,8 @@ const DropDownButton = ({
                         </li>
                     ))}
                 </ul>
-            )}
-        </li>
+            ) : ''}
+        </div>
     );
 };
 
