@@ -12,7 +12,7 @@ const initialiseCategories = async () => {
         const categories = await parseCSVFile(file);
 
         // Fetch existing categories from the database
-        const existingCategoriesResponse = await httpClient.get('category/all');
+        const existingCategoriesResponse = await httpClient.get('/category/all');
         const existingCategories = existingCategoriesResponse.data;
 
         // Check if the number of categories in the CSV file is larger
@@ -26,7 +26,7 @@ const initialiseCategories = async () => {
                             id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // Example ID, consider replacing with actual logic
                             name: category,
                         };
-                        const response = await httpClient.post(`https://localhost:8081/api/v1/category`, payload);
+                        const response = await httpClient.post(`/category`, payload);
                         console.log(`Category ${category} posted successfully`, response.data);
                     } catch (error) {
                         console.error(`Error posting category ${category}:`, error);
@@ -38,7 +38,7 @@ const initialiseCategories = async () => {
             console.log('Existing categories:', existingCategories);
         }
 
-        const returnResponse = await httpClient.get(`https://localhost:8081/api/v1/category/all`);
+        const returnResponse = await httpClient.get(`/category/all`);
         return returnResponse;
     } catch (error) {
         console.error('Error initializing categories:', error);
