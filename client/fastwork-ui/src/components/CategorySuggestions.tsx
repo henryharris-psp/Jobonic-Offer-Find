@@ -4,6 +4,18 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import initialiseCategories from "@/utils/initialiseCategories";
 
+// Utility function to filter categories by unique name
+const filterUniqueCategories = (categories: Category[]): Category[] => {
+  const uniqueNames = new Set<string>();
+  return categories.filter(category => {
+    const isDuplicate = uniqueNames.has(category.name.toLowerCase());
+    if (!isDuplicate) {
+      uniqueNames.add(category.name.toLowerCase());
+      return true;
+    }
+    return false;
+  });
+};
 
 const CategorySuggestions = (): React.ReactElement => {
   const [categoryList, setCategoryList] = useState<Category[]>([]);
@@ -11,7 +23,8 @@ const CategorySuggestions = (): React.ReactElement => {
   const fetchCategory = async () => {
     try {
       const res = await initialiseCategories();
-      setCategoryList(res.data);
+      const uniqueCategories = filterUniqueCategories(res.data);
+      setCategoryList(uniqueCategories);
     } catch (error) {
       console.error('Error fetching categories:', error);
     }

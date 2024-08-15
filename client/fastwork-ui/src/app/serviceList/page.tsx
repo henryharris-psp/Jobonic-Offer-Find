@@ -28,9 +28,26 @@ const ServiceMatches = (): React.ReactElement => {
   const router = useRouter();
   const [categoryList, setCategoryList] = useState<Category[]>([]);
 
+  // Fetch all categories from the backend API
   const fetchCategory = async () => {
-    const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
-    setCategoryList(response.data);
+    try {
+      const response = await httpClient.get('/category/all');
+      const categories = response.data;
+
+      // Create a Set to track unique names
+      const uniqueNames = new Set();
+      
+      // Filter the categories to only include those with unique names
+      const filteredCategories = categories.filter(category => {
+        const isDuplicate = uniqueNames.has(category.name);
+        uniqueNames.add(category.name);
+        return !isDuplicate;
+      });
+
+      setCategoryList(filteredCategories);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
   };
 
   const fetchServices = async () => {

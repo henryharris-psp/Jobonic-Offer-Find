@@ -1,48 +1,69 @@
-// src/utils/initializeCategories.ts
 import httpClient from '@/client/httpClient';
 import { parseCSVFile } from '@/utils/parseCSVFile';
 
-// Function to fetch categories from the backend enum
 const initialiseCategories = async () => {
     try {
         // Fetch and parse the CSV file
-        const response = await fetch('/workCategories.csv');
-        const blob = await response.blob();
+        const csvResponse = await fetch('/workCategories.csv');
+        const blob = await csvResponse.blob();
         const file = new File([blob], 'categories.csv');
-        const categories = await parseCSVFile(file);
+        const csvCategories: string[] = await parseCSVFile(file);
+
+        // Fetch all categories from the backend API
+        const fetchCategories = async () => {
+            try {
+                const response = await httpClient.get('/category/all');
+                const backendCategories = response.data;
+
+                // Filter backend categories by name to ensure uniqueness
+                const uniqueCategoriesByName = Array.from(
+                    new Map(
+                        backendCategories.map((category: { name: string }) => [category.name, category])
+                    ).values()
+                );
+
+                console.log("Filtered Categories:", uniqueCategoriesByName);
+                return uniqueCategoriesByName;
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+                return [];
+            }
+        };
 
         // Fetch existing categories from the database
-        const existingCategoriesResponse = await httpClient.get('/category/all');
-        const existingCategories = existingCategoriesResponse.data;
+        const existingCategories = await fetchCategories();
 
-        // Check if the number of categories in the CSV file is larger
-        if (categories.length > existingCategories.length) {
-            // Post new categories
-            for (const category of categories) {
-                // Check if the category is already present in existing categories
-                if (!existingCategories.some((existingCategory: { name: string }) => existingCategory.name === category)) {
-                    try {
-                        const payload = {
-                            id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // Example ID, consider replacing with actual logic
-                            name: category,
-                        };
-                        const response = await httpClient.post(`/category`, payload);
-                        console.log(`Category ${category} posted successfully`, response.data);
-                    } catch (error) {
-                        console.error(`Error posting category ${category}:`, error);
-                    }
+        // Add new categories from CSV if they don't exist in the backend
+        for (const category of csvCategories) {
+            if (!existingCategories.some((existingCategory: { name: string }) => existingCategory.name === category)) {
+                try {
+                    const payload = {
+                        id: generateUniqueId(), // Replace with actual ID generation logic
+                        name: category,
+                    };
+                    const response = await httpClient.post(`/category`, payload);
+                    console.log(`Category ${category} posted successfully`, response.data);
+                } catch (error) {
+                    console.error(`Error posting category ${category}:`, error);
                 }
             }
-        } else {
-            console.log('No new categories to add. Fetching existing categories.');
-            console.log('Existing categories:', existingCategories);
         }
 
-        const returnResponse = await httpClient.get(`/category/all`);
-        return returnResponse;
+        const finalCategoriesResponse = await httpClient.get(`/category/all`);
+        return finalCategoriesResponse;
     } catch (error) {
         console.error('Error initializing categories:', error);
+        return null;
     }
+};
+
+// Example function to generate unique IDs (you can replace this with your own logic)
+const generateUniqueId = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = (Math.random() * 16) | 0;
+        const v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+    });
 };
 
 export default initialiseCategories;
