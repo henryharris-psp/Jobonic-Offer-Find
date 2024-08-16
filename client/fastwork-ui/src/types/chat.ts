@@ -9,7 +9,7 @@ export interface Message {
     rating?: number;
     description?: string[];
     price?: string;
-    sentByCurrentUser?: boolean;
+    sendByAuthUser?: boolean;
 }
 
 export interface ActiveChat {
