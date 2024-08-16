@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { fromServiceProviderStatus, fromClientStatus, people, chatFilters } from "@/data/chat";
 import SearchBox from "./partials/SearchBox";
 import SelectAndSearchBox from "./partials/SelectAndSearchBox";
-import { People, CurrentUser } from "@/types/chat";
+import { People } from "@/types/chat";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 interface ChatListProps {
     onActiveChatChange: (value: People) => void;
@@ -11,18 +13,10 @@ interface ChatListProps {
 const ChatList = ({
     onActiveChatChange
 }: ChatListProps) => {
-
+    const { authUser } = useSelector((state: RootState) => state.auth ); 
     const [roleFilter, setRoleFilter] = useState('All');
     const [fromClientStatusFilter, setFromClientStatusFilter] = useState('All');
     const [fromServiceProviderStatusFilter, setFromServiceProviderStatusFilter] = useState('All');
-    const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
-
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const userData = localStorage.getItem('userInfo');
-            setCurrentUser(userData ? JSON.parse(userData) : null);
-        }
-    }, []);
 
     return (
         <div className="flex-1 bg-[#CFEDF4]">
@@ -88,7 +82,7 @@ const ChatList = ({
                 </div>
 
                 {people
-                    .filter((people) => people.id !== currentUser?.id)
+                    .filter((people) => people.id !== authUser?.id)
                     .map((people) => (
                         <div
                             className="flex p-2 hover:bg-blue-300 rounded-md justify-between cursor-pointer"
