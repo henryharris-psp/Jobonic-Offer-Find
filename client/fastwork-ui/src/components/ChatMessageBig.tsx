@@ -9,7 +9,7 @@ interface MessageProps {
     sender_id?: string | number;
     recipient? : string;
     recipient_id?: number | string;
-    sentByCurrentUser?: boolean;
+    sentByAuthUser?: boolean;
   };
   currentUserId: string | number | undefined
 }
