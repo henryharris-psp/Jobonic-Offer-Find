@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import Service from '../types';
+import {Service} from '@/types/service';
 import { useRouter } from 'next/navigation';
 import ServiceMatchCard from '@/components/ServiceMatchCard'; // Ensure this path is correct
 // import { Service } from '@/types';
@@ -29,13 +29,13 @@ const ServiceMatches = (): React.ReactElement => {
   const [categoryList, setCategoryList] = useState<Category[]>([]);
 
   const fetchCategory = async () => {
-    const response = await httpClient.get(`${baseURL}/api/v1/category/all`);
+    const response = await httpClient.get(`/category/all`);
     setCategoryList(response.data);
   };
 
   const fetchServices = async () => {
     try {
-      const response = await httpClient.post(`https://api-jobonic.laconic.co.th/api/v1/service/all`, {
+      const response = await httpClient.post(`/service/all`, {
         pageNumber: 1,
         pageSize: 100,
         sortBy: '',

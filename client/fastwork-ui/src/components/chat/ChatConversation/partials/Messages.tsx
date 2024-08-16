@@ -1,19 +1,18 @@
 import { supabase } from "@/app/config/supabaseClient";
-import { RootState } from "@/store";
-import { User } from "@/types/users";
+import { useChat } from "@/contexts/chat";
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { CurrentUser } from "@/types/chat";
 
 interface Message {
     id: number;
     content: string;
     sender_id: number;
-    sender: User;
+    sender: CurrentUser;
     created_at: Date;
 }
 
 const Messages = () => {
-    const { authUser } = useSelector((state: RootState) => state.auth);
+    const { currentUser } = useChat();
     const messagesScreenRef = useRef<HTMLDivElement | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
 
@@ -54,8 +53,8 @@ const Messages = () => {
             setMessages(messagesWithSenders);
         };
 
-        const isSentByAuthUser = (senderId: number) : boolean => {
-            return senderId === authUser?.id
+        const isSentByCurrentUser = (senderId: number) : boolean => {
+            return senderId === currentUser?.id
         }
     
     //subscribe to channel and listen
@@ -114,10 +113,10 @@ const Messages = () => {
                 <div 
                     key={msg.id} 
                     className={`flex flex-row
-                        ${ isSentByAuthUser(msg.sender_id) ? 'justify-end' : 'justify-start' }
+                        ${ isSentByCurrentUser(msg.sender_id) ? 'justify-end' : 'justify-start' }
                     `}
                 >
-                    <div className={`flex items-end mx-3 ${ isSentByAuthUser(msg.sender_id)
+                    <div className={`flex items-end mx-3 ${ isSentByCurrentUser(msg.sender_id)
                         ? 'flex-row-reverse'
                         : 'flex-row'
                     }`}>
@@ -125,7 +124,7 @@ const Messages = () => {
                             {/* avatar */}
                             <img src={'/avatar.svg'} alt="Profile Pic" className="h-8 w-8 rounded-full" />
                         </div>
-                        <div className={`flex items-center justify-center p-3 mx-2 rounded-xl break-words max-w-sm ${ isSentByAuthUser(msg.sender_id)
+                        <div className={`flex items-center justify-center p-3 mx-2 rounded-xl break-words max-w-sm ${ isSentByCurrentUser(msg.sender_id)
                             ? "bg-[#0C2348] text-white"
                             : "bg-gray-200 text-black"
                         }`}>

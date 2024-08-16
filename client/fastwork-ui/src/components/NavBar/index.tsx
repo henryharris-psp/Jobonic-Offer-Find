@@ -26,7 +26,7 @@ const NavBar = () => {
 
                 {/* jobonic logo */}
                 <div className="flex items-cente space-x-3">
-                    <button 
+                    <button
                         className="flex items-center md:hidden"
                         onClick={() => setShowMobileNavDrawer(true)}
                     >

@@ -26,7 +26,7 @@ const initialiseCategories = async () => {
                             id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // Example ID, consider replacing with actual logic
                             name: category,
                         };
-                        const response = await httpClient.post(`/category`, payload);
+                        const response = await httpClient.post(`https://localhost:8081/api/v1/category`, payload);
                         console.log(`Category ${category} posted successfully`, response.data);
                     } catch (error) {
                         console.error(`Error posting category ${category}:`, error);

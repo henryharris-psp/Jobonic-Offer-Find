@@ -103,7 +103,7 @@ export default function OfferServicesPage(): ReactNode {
 
   // Fetch all categories from the backend API
   const fetchCategory = async () => {
-    const response = await httpClient.get('category/all');
+    const response = await httpClient.get('/category/all');
     setCategoryList(response.data);
   };
 

@@ -5,9 +5,8 @@ import { useRouter } from "next/navigation"; // Correct import for Next.js 13 an
 import ChatMessageBig from "@/components/ChatMessageBig";
 
 import { supabase } from "@/app/config/supabaseClient";
-import { Message, ActiveChat } from "@/types/chat";
+import { Message, ActiveChat, CurrentUser } from "@/types/chat";
 import ContractCard from "@/components/ContractCard";
-import { User } from "@/types/users";
 
 interface RecipientUser {
     id: number;
@@ -26,7 +25,7 @@ const Details: React.FC<DetailsProps> = ({
 }) => {
     const [newMessage, setNewMessage] = useState("");
     const [messages, setMessages] = useState<Message[]>(activeChat.messages);
-    const [currentUser, setCurrentUser] = useState<User>();
+    const [currentUser, setCurrentUser] = useState<CurrentUser>();
     const [isContractVisible, setIsContractVisible] = useState(false);
     const [showAcceptModal, setShowAcceptModal] = useState(false);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
