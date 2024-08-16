@@ -1,47 +1,46 @@
 // src/utils/initializeCategories.ts
-import httpClient from '@/client/httpClient';
-import { parseCSVFile } from '@/utils/parseCSVFile';
+import httpClient from "@/client/httpClient";
+import { parseCSVFile } from "@/utils/parseCSVFile";
+import { v4 as uuid } from "uuid";
 
-// Function to fetch categories from the backend enum
 const initialiseCategories = async () => {
     try {
         // Fetch and parse the CSV file
-        const response = await fetch('/workCategories.csv');
+        const response = await  fetch("/workCategories.csv");
         const blob = await response.blob();
-        const file = new File([blob], 'categories.csv');
+        const file = new File([blob], "categories.csv");
         const categories = await parseCSVFile(file);
 
         // Fetch existing categories from the database
-        const existingCategoriesResponse = await httpClient.get('/category/all');
-        const existingCategories = existingCategoriesResponse.data;
+        const existingCategoriesResponse = await httpClient.get("category/all");
+        const existingCategories = existingCategoriesResponse.data.map( (category: { name: string }) => category.name );
 
-        // Check if the number of categories in the CSV file is larger
-        if (categories.length > existingCategories.length) {
-            // Post new categories
-            for (const category of categories) {
-                // Check if the category is already present in existing categories
-                if (!existingCategories.some((existingCategory: { name: string }) => existingCategory.name === category)) {
-                    try {
-                        const payload = {
-                            id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // Example ID, consider replacing with actual logic
-                            name: category,
-                        };
-                        const response = await httpClient.post(`https://localhost:8081/api/v1/category`, payload);
-                        console.log(`Category ${category} posted successfully`, response.data);
-                    } catch (error) {
-                        console.error(`Error posting category ${category}:`, error);
-                    }
+        const newCategories = categories.filter( category => !existingCategories.includes(category));
+
+        if(newCategories.length > 0){
+            const createNewCategories = async () => {
+                const apiCalls = newCategories.map((newCategory) =>
+                    httpClient.post("category", {
+                        id: uuid(),
+                        name: newCategory,
+                    })
+                    .then((res) => res.data)
+                    .catch((error) => {
+                        console.error("Error Creating New Category", error);
+                    })
+                );
+    
+                try {
+                    const results = await Promise.all(apiCalls);
+                    console.log("All new categories created successfully:", results);
+                } catch (error) {
+                    console.error("One new category failed to create:", error);
                 }
-            }
-        } else {
-            console.log('No new categories to add. Fetching existing categories.');
-            console.log('Existing categories:', existingCategories);
+            };
+            createNewCategories();
         }
-
-        const returnResponse = await httpClient.get(`/category/all`);
-        return returnResponse;
     } catch (error) {
-        console.error('Error initializing categories:', error);
+        console.error("Error initializing categories:", error);
     }
 };
 

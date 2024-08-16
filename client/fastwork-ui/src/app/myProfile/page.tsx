@@ -198,13 +198,13 @@ const MyProfile = () => {
     ) => {
         const { id, value } = event.target;
         const [section, field] = id.split(".");
-        setFormState((prevState) => ({
-            ...prevState,
-            [section]: {
-                ...prevState[section],
-                [field]: value,
-            },
-        }));
+        // setFormState((prevState) => ({
+        //     ...prevState,
+        //     [section]: {
+        //         ...prevState[section],
+        //         [field]: value,
+        //     },
+        // }));
     };
 
     const handleSave = async (inputKey: string) => {
@@ -960,3 +960,5 @@ const MyProfile = () => {
         </div>
     );
 };
+
+export default MyProfile;

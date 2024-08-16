@@ -88,7 +88,7 @@ export const LoginForm = (): React.ReactNode => {
 
     return (
         <section className="flex flex-col items-center justify-center">
-            <div className="p-8 rounded-lg shadow-md w-full max-w-3xl bg-gray-100 max-w-md">
+            <div className="p-8 rounded-lg shadow-md w-full max-w-3xl bg-gray-100">
                 <div className="">
                     <h1 className="font-bold text-3xl text-center text-[#002D74]">Login</h1>
                     <p className="text-sm mt-4 mb-4 text-[#002D74]">
