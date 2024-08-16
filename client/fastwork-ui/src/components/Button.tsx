@@ -17,7 +17,7 @@ interface ButtonProps {
 
 const Button = ({
   title,
-  type,
+  type = 'button',
   border,
   block,
   size,
@@ -27,6 +27,7 @@ const Button = ({
   children,
   onClick,
 }: ButtonProps): React.ReactElement => {
+  const handleClick = () => {}
   const submitButton = useFormikContext()
   const buttonClasses = [border, block, size, variant].filter(Boolean).join(' ')
   let buttonClassName = `btn ${buttonClasses} disabled:bg-primary `

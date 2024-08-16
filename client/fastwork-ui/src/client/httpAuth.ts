@@ -20,6 +20,9 @@ interface OriginalRequest extends AxiosRequestConfig {
     _retry: boolean;
 }
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const laconicAuthPageUrl = process.env.NEXT_PUBLIC_LACONIC_AUTH_PAGE_URL;
+
 const httpAuth = axios.create({
     baseURL: `${SERVER_AUTH}`
 });

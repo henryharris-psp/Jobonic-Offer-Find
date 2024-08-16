@@ -84,7 +84,7 @@ const CustomiseJobRequestForm: React.FC = () => {
 
   const fetchCategory = async () => {
     try {
-      const response = await httpClient.get('category/all');
+      const response = await httpClient.get('/category/all');
       setCategoryList(response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);

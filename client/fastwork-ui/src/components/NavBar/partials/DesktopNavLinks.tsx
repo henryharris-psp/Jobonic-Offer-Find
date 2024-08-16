@@ -13,20 +13,20 @@ const DesktopNavLinks = () => {
     const { selectedLanguage } = useSelector((state: RootState) => state.ui);
 
     //methods
-        const handleOnAppLanguageChange = (option: DropDownButtonOption) => {
-            dispatch(setSelectedLanguage(option.value as Language));
-        }
+    const handleOnAppLanguageChange = (option: DropDownButtonOption) => {
+        dispatch(setSelectedLanguage(option.value as Language));
+    }
     return (
         //desktop nav links
         <div className="flex items-center space-x-4 text-sm">
             <ul className="flex space-x-3 text-white items-center font-medium">
                 {pageLinks.map((page) => (
-                    <Link 
+                    <Link
                         href={page.path}
                         key={page.id}
                         className={`p-2 text-center cursor-pointer rounded-md ${
                             page.path === currentPathName ? 'bg-white text-[#35617C]' : 'hover:bg-[#0C2348] hover:text-white'
-                        }`}    
+                        }`}
                     >
                         <p>{page.name}</p>
                     </Link>
@@ -46,6 +46,3 @@ const DesktopNavLinks = () => {
 };
 
 export default DesktopNavLinks;
-
-
-

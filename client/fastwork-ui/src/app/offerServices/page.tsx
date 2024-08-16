@@ -67,7 +67,7 @@ export default function OfferServicesPage(): ReactNode {
   // Fetch all services from the backend API
   const fetchServices = async () => {
     try {
-      const response = await httpClient.post('/service/all', {
+      const response = await httpClient.post('service/all', {
         pageNumber: 1,
         pageSize: 100,
         sortBy: '',
@@ -76,7 +76,6 @@ export default function OfferServicesPage(): ReactNode {
           searchKeyword: ''
         }
       });
-      console.log("Service All", response.data)
       // Filter out services that do not have a serviceRequestDTO
       const filteredServices = response.data.content.filter((service: Service) => service.serviceRequestDTO !== null);
       setJobDataList(filteredServices);
@@ -104,24 +103,8 @@ export default function OfferServicesPage(): ReactNode {
 
   // Fetch all categories from the backend API
   const fetchCategory = async () => {
-    try {
-      const response = await httpClient.get('/category/all');
-      const categories = response.data;
-
-      // Create a Set to track unique names
-      const uniqueNames = new Set();
-      
-      // Filter the categories to only include those with unique names
-      const filteredCategories = categories.filter(category => {
-        const isDuplicate = uniqueNames.has(category.name);
-        uniqueNames.add(category.name);
-        return !isDuplicate;
-      });
-
-      setCategoryList(filteredCategories);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
+    const response = await httpClient.get('/category/all');
+    setCategoryList(response.data);
   };
 
   // Fetch user data and user ID on component mount

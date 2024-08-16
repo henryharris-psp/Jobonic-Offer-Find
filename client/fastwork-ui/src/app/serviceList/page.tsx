@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import Service from '../types';
+import {Service} from '@/types/service';
 import { useRouter } from 'next/navigation';
 import ServiceMatchCard from '@/components/ServiceMatchCard'; // Ensure this path is correct
 // import { Service } from '@/types';
@@ -28,31 +28,14 @@ const ServiceMatches = (): React.ReactElement => {
   const router = useRouter();
   const [categoryList, setCategoryList] = useState<Category[]>([]);
 
-  // Fetch all categories from the backend API
   const fetchCategory = async () => {
-    try {
-      const response = await httpClient.get('/category/all');
-      const categories = response.data;
-
-      // Create a Set to track unique names
-      const uniqueNames = new Set();
-      
-      // Filter the categories to only include those with unique names
-      const filteredCategories = categories.filter(category => {
-        const isDuplicate = uniqueNames.has(category.name);
-        uniqueNames.add(category.name);
-        return !isDuplicate;
-      });
-
-      setCategoryList(filteredCategories);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
+    const response = await httpClient.get(`/category/all`);
+    setCategoryList(response.data);
   };
 
   const fetchServices = async () => {
     try {
-      const response = await httpClient.post(`https://api-jobonic.laconic.co.th/api/v1/service/all`, {
+      const response = await httpClient.post(`/service/all`, {
         pageNumber: 1,
         pageSize: 100,
         sortBy: '',

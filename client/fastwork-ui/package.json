@@ -12,6 +12,7 @@
     "@heroicons/react": "^2.1.5",
     "@mantine/rte": "^5.10.5",
     "@nextui-org/react": "^2.3.5",
+    "@reduxjs/toolkit": "^2.2.7",
     "@supabase/supabase-js": "^2.44.4",
     "@types/uuid": "^10.0.0",
     "autoprefixer": "^10.4.19",
@@ -33,6 +34,7 @@
     "papaparse": "^5.4.1",
     "react": "^18",
     "react-dom": "^18",
+    "react-redux": "^9.1.2",
     "react-toastify": "^10.0.5",
     "uuid": "^10.0.0",
     "yup": "^1.4.0"

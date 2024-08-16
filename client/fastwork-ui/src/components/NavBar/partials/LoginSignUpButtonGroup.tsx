@@ -1,13 +1,16 @@
 import Link from "next/link";
 import React from "react";
+import {useRouter} from "next/navigation";
 
 const LoginSignUpButtonGroup = () => {
 
+    const router = useRouter();
     //methods
         const handleLogIn = () => {
             const laconicAuthPageUrl = process.env.NEXT_PUBLIC_LACONIC_AUTH_PAGE_URL;
             window.location.href = `${laconicAuthPageUrl}/authentication?page=logout`;
             // dispatch(login());
+            //router.push("/login");
         }
 
     return (
