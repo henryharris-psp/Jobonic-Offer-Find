@@ -8,7 +8,6 @@ import { Provider, useDispatch } from "react-redux";
 import useWindowResize from "@/hooks/useWindowResize";
 import NavBar from "@/components/NavBar";
 import initializeSkills from "@/utils/initialiseSkills";
-import { parseCSVFile } from "@/utils/parseCSVFile";
 import { useEffect } from "react";
 import { authenticate } from "@/store/reducers/authReducer";
 import { getUserId } from "@/functions/helperFunctions";
@@ -55,19 +54,6 @@ const dummyProfile = {
     rating: 4.7,
 };
 
-// Load and initialize skills from CSV file. To be removed for production.
-const fetchAndInitializeSkills = async () => {
-    try {
-        const response = await fetch("/skillList.csv");
-        const blob = await response.blob();
-        const file = new File([blob], "skills.csv");
-        const skills = await parseCSVFile(file);
-        await initializeSkills(skills);
-    } catch (error) {
-        console.error("Error initializing skills:", error);
-    }
-};
-
 const RootLayout = ({
     children,
 }: Readonly<{
@@ -105,7 +91,7 @@ const RootLayout = ({
 
         // Initialize categories on app start. To be removed for production.
         initialiseCategories();
-        fetchAndInitializeSkills();
+        initializeSkills();
     }, []);
 
     return (
