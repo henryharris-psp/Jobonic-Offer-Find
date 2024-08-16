@@ -34,7 +34,7 @@ export const LoginForm = (): React.ReactNode => {
 
     const handleGoogleSignIn = async () => {
         try {
-            googleSignIn();
+            await googleSignIn();
         } catch (error) {
             console.log('Google Sign-In error:', error);
         }

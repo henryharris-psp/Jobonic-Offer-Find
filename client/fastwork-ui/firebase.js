@@ -1,9 +1,6 @@
-// Import the necessary Firebase modules
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getAnalytics } from "firebase/analytics";
-
-// Your Firebase configuration object
+import { getAnalytics,isSupported } from "firebase/analytics";
 const firebaseConfig = {
     apiKey: "AIzaSyAyJLAH4iTq3cAexHB48jKCIQ5coU89sP0",
     authDomain: "jobonic-7eb9a.firebaseapp.com",
@@ -14,11 +11,16 @@ const firebaseConfig = {
     measurementId: "G-0WNDP6WEFR"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase Analytics and Authentication
-export const analytics = getAnalytics(app);
+let analytics;
+isSupported().then((supported) => {
+    if (supported) {
+        analytics = getAnalytics(app);
+    }
+}).catch(console.error);
+
 export const auth = getAuth(app);
 
+export { analytics };
 export default app;
