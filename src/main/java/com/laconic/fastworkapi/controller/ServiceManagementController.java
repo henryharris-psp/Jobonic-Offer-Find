@@ -1,10 +1,12 @@
 package com.laconic.fastworkapi.controller;
 
 import com.laconic.fastworkapi.dto.ServiceDTO;
+import com.laconic.fastworkapi.dto.ServiceFilterDTO;
 import com.laconic.fastworkapi.dto.ServiceRequestDTO;
 import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
+import com.laconic.fastworkapi.entity.ServiceManagement;
 import com.laconic.fastworkapi.helper.APIDocsHelper;
 import com.laconic.fastworkapi.service.IManagementService;
 import com.laconic.fastworkapi.service.IOfferService;
@@ -80,6 +82,12 @@ public class ServiceManagementController {
     public ServiceRequestDTO updateRequest(@RequestParam UUID serviceRequestId,
                                            @RequestBody ServiceRequestDTO serviceRequestDTO) {
         return this.requestService.update(serviceRequestId, serviceRequestDTO);
+    }
+
+    @Operation(summary = APIDocsHelper.ServiceAPI.FILTER_SERVICE)
+    @PostMapping("/filter")
+    public List<ServiceManagement> filterService(@RequestBody ServiceFilterDTO serviceFilterDTO) {
+        return managementService.getFilterByPriceAndDate(serviceFilterDTO);
     }
 
 }

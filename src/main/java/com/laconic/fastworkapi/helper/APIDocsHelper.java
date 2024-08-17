@@ -47,6 +47,7 @@ public class APIDocsHelper {
         public static final String UPDATE_OFFER = "Updates service offer";
         public static final String DELETE_REQUEST = "Deletes service request";
         public static final String DELETE_OFFER = "Deletes service offer";
+        public static final String FILTER_SERVICE = "Filter Services";
     }
 
     @UtilityClass
