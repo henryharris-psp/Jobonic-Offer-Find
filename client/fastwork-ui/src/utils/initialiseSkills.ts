@@ -17,7 +17,6 @@ const initialiseSkills = async () => {
 
         const newSkills = skills.filter( skill => !existingSkills.includes(skill));
 
-        console.log(newSkills.length, existingSkills.length, skills.length);
         if(newSkills.length > 0){
             const createNewSkills = async () => {
                 const apiCalls = newSkills.map((newSkill) =>

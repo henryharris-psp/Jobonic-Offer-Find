@@ -5,6 +5,8 @@ export const getUserId = async () => {
     try {
         const laconicAuthServerUrl = process.env.NEXT_PUBLIC_LACONIC_AUTH_SERVER_URL;
         const response = await httpClient.get(`${laconicAuthServerUrl}/user/init-data`);
+
+        console.log('auth user - ', response.data);
         return response.data.id;
     } catch (error: any) {
         console.error('Error fetching user ID:', error);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Bars3Icon } from '@heroicons/react/24/solid';
 import SideDrawer from "../SideDrawer";
@@ -12,13 +12,8 @@ import { RootState } from "@/store";
 import AuthUserAvatarDropDown from "./partials/AuthUserAvatarDropDown";
 
 const NavBar = () => {
-    const { isAuthenticated } = useSelector((state: RootState) => state.auth );
-    const [registerForm, setRegisterForm] = useState<string | null>(null);
+    const { authUser } = useSelector((state: RootState) => state.auth );
     const [showMobileNavDrawer, setShowMobileNavDrawer] = useState<boolean>(false);
-
-    useEffect(() => {
-        setRegisterForm(localStorage.getItem("registerFormPage"));
-    }, []);
 
     return (
         <div className="flex h-16 sticky top-0 z-50 bg-gradient-to-r from-[#35617C] to-[#10294D]">
@@ -46,14 +41,14 @@ const NavBar = () => {
                     <div className="hidden md:block">
                         <DesktopNavLinks/>
                     </div>
-                    { isAuthenticated ? (
-                        registerForm === "jobonicRegister" ? (
+                    { authUser ? (
+                        !authUser.profile ? (
                             <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
                                 <button
                                     type="button"
                                     className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-2 py-1 text-center me-2 mb-2 mt-1"
                                 >
-                                    <Link href="/register">Create Profile</Link>
+                                    <Link href="/createProfile">Create Profile</Link>
                                 </button>
                             </div>
                         ) : (
