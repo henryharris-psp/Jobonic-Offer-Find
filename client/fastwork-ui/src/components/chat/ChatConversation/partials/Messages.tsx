@@ -1,4 +1,4 @@
-import { supabase } from "@/app/config/supabaseClient";
+import { supabase } from "@/config/supabaseClient";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";

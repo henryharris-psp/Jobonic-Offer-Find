@@ -8,9 +8,9 @@ import InputField from '@/components/InputField';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { decodeJWT } from '../helper/decoder';
-import { useAuth } from '../context/AuthContext';
-import MyGoogleButton from '../button/MyGoogleButton';
-import MyAppleLoginButton from '../button/AppleButton';
+import { useAuth } from '../../contexts/AuthContext';
+import MyGoogleButton from '@/components/google_apple_button/MyGoogleButton';
+import MyAppleLoginButton from '@/components/google_apple_button/AppleButton';
 import {AUTH_UI_URL, baseURL, SERVER_AUTH} from '@/baseURL';
 
 interface LoginFormValues {

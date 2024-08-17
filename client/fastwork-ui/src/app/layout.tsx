@@ -11,8 +11,12 @@ import initializeSkills from "@/utils/initialiseSkills";
 import { useEffect } from "react";
 import { authenticate as reduxAuthenticate } from "@/store/reducers/authReducer";
 import initialiseCategories from "@/utils/initialiseCategories";
+<<<<<<< Updated upstream
 import { AuthContextProvider } from "@/app/context/AuthContext";
 import axios from "axios";
+=======
+import { AuthContextProvider } from "@/contexts/AuthContext";
+>>>>>>> Stashed changes
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -66,8 +70,10 @@ const authenticate = async (accessToken: string, refreshToken: string) => {
 
 const RootLayout = ({
     children,
+    showFooter = true,
 }: Readonly<{
     children: React.ReactNode;
+    showFooter?: boolean;
 }>) => {
     useWindowResize();
     const dispatch = useDispatch();
@@ -116,7 +122,7 @@ const RootLayout = ({
                 <body className={inter.className}>
                     <NavBar />
                     <main>{children}</main>
-                    <Footer />
+                    {showFooter && <Footer />}
                     {/* <ChatBox /> */}
                 </body>
             </AuthContextProvider>
@@ -126,12 +132,14 @@ const RootLayout = ({
 
 const RootLayoutWithRedux = ({
     children,
+    showFooter =true,
 }: Readonly<{
     children: React.ReactNode;
+    showFooter?: boolean;
 }>) => {
     return (
         <Provider store={store}>
-            <RootLayout>{children}</RootLayout>
+            <RootLayout showFooter={showFooter}>{children}</RootLayout>
         </Provider>
     );
 };

@@ -1,4 +1,4 @@
-import { supabase } from "@/app/config/supabaseClient";
+import { supabase } from "@/config/supabaseClient";
 import { RootState } from "@/store";
 import { PaperClipIcon, PhotoIcon } from "@heroicons/react/24/solid";
 import React, { ChangeEvent, KeyboardEvent, useState } from "react";
