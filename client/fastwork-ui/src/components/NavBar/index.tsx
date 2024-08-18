@@ -42,18 +42,7 @@ const NavBar = () => {
                         <DesktopNavLinks/>
                     </div>
                     { authUser ? (
-                        !authUser.profile ? (
-                            <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                                <button
-                                    type="button"
-                                    className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-2 py-1 text-center me-2 mb-2 mt-1"
-                                >
-                                    <Link href="/createProfile">Create Profile</Link>
-                                </button>
-                            </div>
-                        ) : (
-                            <AuthUserAvatarDropDown/>
-                        )
+                        <AuthUserAvatarDropDown/>
                     ) : (
                         <LoginSignUpButtonGroup/>
                     )}
