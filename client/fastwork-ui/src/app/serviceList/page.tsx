@@ -8,6 +8,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import SortingFilterDropDown from "@/components/SortingDropDown";
 import { Sorting, SortingValue } from "@/types/Sorting";
+import PaginationButtons from "@/components/PaginationButtons";
 
 const sortings: Sorting[] = [
     {
@@ -40,6 +41,21 @@ const sortings: Sorting[] = [
     }
 ]
 
+const defaultFilters = {
+    searchKeyword: '',
+    minPricePerHour: '',
+    maxPricePerHour: '',
+    deadlineDate: '',
+    categoryId: ''
+}
+
+const defaultPagination = {
+    currentPage: 1,
+    itemsPerPage: 2,
+    totalPages: 0,
+    totalElements: 0
+}
+
 const ServiceList = () => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [isCategoriesFetching, setIsCategoriesFetching] = useState<boolean>(false);
@@ -48,21 +64,23 @@ const ServiceList = () => {
     const [isServicesFetching, setIsServicesFetching] = useState<boolean>(false);
 
     const [sorting, setSorting] = useState<SortingValue>(sortings[0].value);
+    const [filters, setFilters] = useState<ServiceFilter>(defaultFilters);
+    const [pagination, setPagination] = useState(defaultPagination);
 
-    const [filters, setFilters] = useState<ServiceFilter>({
-        searchKeyword: '',
-        minPricePerHour: '',
-        maxPricePerHour: '',
-        deadlineDate: ''
-    });
-
-    const [pagination, setPagination] = useState({
-        currentPage: 1,
-        itemsPerPage: 100
-    });
-
-    //fetch categories on mounted
+    //mounted
         useEffect( () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchKeyword = urlParams.get("searchKeyword");
+            const category = urlParams.get("category");
+            
+            if(searchKeyword || category){
+                setFilters( prev => ({
+                    ...prev,
+                    searchKeyword: searchKeyword ?? '',
+                    categoryId: category ?? ''
+                }))
+            }
+
             const controller = new AbortController();
             const signal = controller.signal;
             setIsCategoriesFetching(true);
@@ -92,12 +110,19 @@ const ServiceList = () => {
                 }
 
                 const servicesData = await fetchServices(signal, payload);
-                if (servicesData) setServices(servicesData);
+                if (servicesData){
+                    setServices(servicesData.content);
+                    setPagination( prev => ({
+                        ...prev,
+                        totalPages: servicesData.totalPages,
+                        totalElements: servicesData.totalElements
+                    }));
+                };
                 setIsServicesFetching(false);
             })();
 
             return () => controller.abort();
-        }, [filters, sorting, pagination]);
+        }, [filters, sorting, pagination.currentPage]);
 
     //methods
         const handleOnFilterChange = (newFilters: object) => {
@@ -111,6 +136,20 @@ const ServiceList = () => {
 
         const handleOnSortingChange = (newSorting: SortingValue) => {
             setSorting(newSorting);
+        }
+
+        const handleOnClickNextPage = () => {
+            setPagination( prev => ({
+                ...prev,
+                currentPage: prev.currentPage + 1
+            }));
+        }
+
+        const handleOnClickPreviousPage = () => {
+            setPagination( prev => ({
+                ...prev,
+                currentPage: prev.currentPage - 1
+            }))
         }
         
     return (
@@ -161,18 +200,22 @@ const ServiceList = () => {
                 <div className="flex-1 flex flex-col pb-10 space-y-5">
 
                     {/* filter buttons */}
-                    <div className="flex justify-end space-x-2 items-center">
-                        <SearchFilterDropDown
-                            minPricePerHour={filters.minPricePerHour}
-                            maxPricePerHour={filters.maxPricePerHour}
-                            deadlineDate={filters.deadlineDate}
-                            onChange={handleOnFilterChange}
-                        />
-                        <SortingFilterDropDown
-                            selectedSorting={sorting}
-                            sortings={sortings}
-                            onChange={handleOnSortingChange}
-                        />
+                    <div className="flex justify-between items-center">
+                        <span className="font-bold text-xl">Match Services: {pagination.totalElements}</span>
+
+                        <div className="flex flex-row items-center space-x-2">
+                            <SearchFilterDropDown
+                                minPricePerHour={filters.minPricePerHour}
+                                maxPricePerHour={filters.maxPricePerHour}
+                                deadlineDate={filters.deadlineDate}
+                                onChange={handleOnFilterChange}
+                            />
+                            <SortingFilterDropDown
+                                selectedSorting={sorting}
+                                sortings={sortings}
+                                onChange={handleOnSortingChange}
+                            />
+                        </div>
                     </div>
 
                     {/* service list */}
@@ -193,6 +236,17 @@ const ServiceList = () => {
                             )}
                         </div>
                     </div>
+
+                    { services.length !== 0 ? (
+                        <div className="flex justify-end">
+                            <PaginationButtons
+                                currentPage={pagination.currentPage}
+                                totalPage={pagination.totalPages}
+                                onClickNext={handleOnClickNextPage}
+                                onClickPrevious={handleOnClickPreviousPage}
+                            />
+                        </div>
+                    ) : ''}
 
                 </div>
 

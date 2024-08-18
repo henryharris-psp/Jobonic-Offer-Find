@@ -72,7 +72,8 @@ export interface ServiceFilter {
     searchKeyword: string,
     minPricePerHour: string,
     maxPricePerHour: string,
-    deadlineDate: string
+    deadlineDate: string,
+    categoryId: string
 }
 
 export interface ServicePayload {
@@ -81,4 +82,13 @@ export interface ServicePayload {
     sortBy: string; // current - bestmatch(emptyString), price, rating
     sortOrder: 'ASC' | 'DESC';
     filter: ServiceFilter
+}
+
+export interface ServiceApiResponse {
+    pageNo: number,
+    pageSize: number,
+    totalPages: number,
+    totalElements: number,
+    content: Service[]
+    last: boolean;
 }
