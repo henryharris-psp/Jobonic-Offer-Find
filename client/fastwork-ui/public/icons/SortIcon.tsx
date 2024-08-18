@@ -1,6 +1,6 @@
 import { IconProps } from "./interface";
 
-const CaretDownIcon = ({ className }: IconProps) => {
+const SortIcon = ({ className }: IconProps) => {
     return (
         <svg
             className={className}
@@ -10,11 +10,11 @@ const CaretDownIcon = ({ className }: IconProps) => {
         >
             <path
                 fillRule="evenodd"
-                d="M5.292 7.292a1 1 0 011.414 0L10 10.586l3.293-3.294a1 1 111.414 1.414l-4 4a1 1 01-1.414 0l-4-4a1 1 010-1.414z"
+                d="M12.832 3.445a1 1 0 0 0-1.664 0l-4 6A1 1 0 0 0 8 11h8a1 1 0 0 0 .832-1.555l-4-6Zm-1.664 17.11a1 1 0 0 0 1.664 0l4-6A1 1 0 0 0 16 13H8a1 1 0 0 0-.832 1.555l4 6Z"
                 clipRule="evenodd"
             />
         </svg>
     );
 };
 
-export default CaretDownIcon;
+export default SortIcon;
