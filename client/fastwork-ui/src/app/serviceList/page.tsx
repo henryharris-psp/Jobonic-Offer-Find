@@ -6,7 +6,7 @@ import { Category } from "@/types/general";
 import { Service, ServiceFilter, ServicePayload } from "@/types/service";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import SortingFilterDropDown from "@/components/SortingFilterDropDown";
+import SortingFilterDropDown from "@/components/SortingDropDown";
 import { Sorting, SortingValue } from "@/types/Sorting";
 
 const sortings: Sorting[] = [

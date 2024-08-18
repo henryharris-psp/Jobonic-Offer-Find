@@ -3,17 +3,17 @@ import { CheckIcon } from "@heroicons/react/24/solid";
 import React, { useState } from "react";
 import SortIcon from "../../public/icons/SortIcon";
 
-interface SortingFilterDropDownProps {
+interface SortingDropDownProps {
     selectedSorting: SortingValue;
     sortings: Sorting[];
     onChange: (sorting: SortingValue) => void;
 }
 
-const SortingFilterDropDown = ({
+const SortingDropDown = ({
     selectedSorting,
     sortings,
     onChange,
-}: SortingFilterDropDownProps) => {
+}: SortingDropDownProps) => {
     const [show, setShow] = useState<boolean>(false);
 
     //methods
@@ -62,4 +62,4 @@ const SortingFilterDropDown = ({
     );
 };
 
-export default SortingFilterDropDown;
+export default SortingDropDown;
