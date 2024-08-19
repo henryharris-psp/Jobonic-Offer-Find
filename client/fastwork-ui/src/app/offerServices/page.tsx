@@ -12,6 +12,7 @@ import PaginationButtons from "@/components/PaginationButtons";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import ServiceRequestCard from "@/components/ServiceRequestCard";
 
 type UserData = {
     id?: number;
@@ -295,19 +296,33 @@ const OfferService = () => {
                                 <span>Searching Services...</span>
                             ) : (
                                 services.map( service => 
-                                    <ServiceMatchCard
-                                        key={service.id}
-                                        service={service}
-                                        profile={service.profileDTO}
-                                        onClick={() => console.log('fdf')}
-                                        onChatClick={() => console.log('fdf')}
+                                    <ServiceRequestCard
+                                        serviceRequest={{
+                                        title: service.title, // Correctly pass the title from the service object
+                                        work_category: service.categoryDTO.name,
+                                        //company: map profileId to username or firstName + lastName in User table
+                                        company: "Jeremy",
+                                        location: service.location ?? 'a',
+                                        employment_type: service.employmentType ?? 'a',
+                                        description_1: service.description1 ?? '',
+                                        description_2: service.description2 ?? '',
+                                        description_3: service.description3 ?? '',
+                                        examples_of_work: service.serviceRequestDTO?.workExample ?? 'a',
+                                        submission_deadline: service.serviceRequestDTO?.submissionDeadline ?? '11/08',
+                                        budget: service.price.toString() ?? '0',
+                                        //add priceUnit here and in ServiceRequestCard component
+                                        language: service.languageSpoken ?? 'English',
+                                        days_left: '', // This would need calculation based on the current date and submission_deadline
+                                      }} 
+                                      hasProfile={true} 
+                                      profilePic={'/jobonic.svg'} 
                                     />
                                 )
                             )}
                         </div>
                     </div>
 
-                    { services.length !== 0 ? (
+                    { pagination.totalElements !== 0 ? (
                         <div className="flex justify-end">
                             <PaginationButtons
                                 currentPage={pagination.currentPage}

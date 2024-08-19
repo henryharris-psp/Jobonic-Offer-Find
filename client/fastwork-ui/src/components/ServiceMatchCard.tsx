@@ -162,9 +162,9 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
                     <span className="text-sm font-bold">
                         ${service.price}/{service.priceUnit}
                     </span>
-                    <button
+                    <Link
+                        href="/chat"
                         className="flex items-center justify-center"
-                        onClick={onChatClick}
                     >
                         <span>
                             <svg
@@ -183,7 +183,7 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
                                 />
                             </svg>
                         </span>
-                    </button>
+                    </Link>
                     <button
                         className={`text-gray-600 hover:text-gray-900`}
                         onClick={handleWishlistClick}

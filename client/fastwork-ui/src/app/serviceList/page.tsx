@@ -237,7 +237,7 @@ const ServiceList = () => {
                         </div>
                     </div>
 
-                    { services.length !== 0 ? (
+                    { pagination.totalElements !== 0 ? (
                         <div className="flex justify-end">
                             <PaginationButtons
                                 currentPage={pagination.currentPage}

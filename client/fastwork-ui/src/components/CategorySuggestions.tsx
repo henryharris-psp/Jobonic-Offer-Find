@@ -18,8 +18,8 @@ const CategorySuggestions = (): React.ReactElement => {
         const signal = controller.signal;
         setIsLoading(true);
         (async () => {
-            try{
-                const res = await httpClient.get('category/all', { signal });
+            try {
+                const res = await httpClient.get("category/all", { signal });
                 setCategoryList(res.data);
             } catch (error) {
                 console.log(error);
@@ -27,13 +27,12 @@ const CategorySuggestions = (): React.ReactElement => {
                 setIsLoading(false);
             }
         })();
-        
+
         return () => controller.abort();
     }, []);
 
     return (
         <div className="flex flex-row flex-wrap p-10 md:p-20">
-
             <div className="flex flex-col w-full lg:max-w-72 mt-3 mb-10 mx-2">
                 <h2 className="text-4xl md:text-4xl font-bold text-black mb-1">
                     No idea what you&apos;d like?
@@ -49,21 +48,16 @@ const CategorySuggestions = (): React.ReactElement => {
             </div>
 
             <div className="flex-1 flex flex-wrap items-center min-w-96">
-                { isLoading ? (
-                    skeletonCount.map( id => (
-                        <CategorySkeleton key={id}/>
-                    ))
-                ) : (
-                    categoryList.map( (category: Category) => (
-                        <CategoryItem 
-                             key={category.id}
-                             id={category.id}
-                             name={category.name}
+                {isLoading
+                    ? skeletonCount.map((id) => <CategorySkeleton key={id} />)
+                    : categoryList.map((category: Category) => (
+                        <CategoryItem
+                            key={category.id}
+                            id={category.id}
+                            name={category.name}
                         />
-                    ))
-                )}
+                    ))}
             </div>
-
         </div>
     );
 };
