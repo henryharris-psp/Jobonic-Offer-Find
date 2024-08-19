@@ -8,9 +8,9 @@ import InputField from '@/components/InputField';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { decodeJWT } from '../helper/decoder';
-import { useAuth } from '../context/AuthContext';
-import MyGoogleButton from '../button/MyGoogleButton';
-import MyAppleLoginButton from '../button/AppleButton';
+import { useAuth } from '../../contexts/AuthContext';
+import MyGoogleButton from '@/components/google_apple_button/MyGoogleButton';
+import MyAppleLoginButton from '@/components/google_apple_button/AppleButton';
 import {AUTH_UI_URL, baseURL, SERVER_AUTH} from '@/baseURL';
 
 interface LoginFormValues {
@@ -88,7 +88,7 @@ export const LoginForm = (): React.ReactNode => {
 
     return (
         <section className="flex flex-col items-center justify-center">
-            <div className="p-8 rounded-lg shadow-md w-full max-w-3xl bg-gray-100 max-w-md">
+            <div className="p-8 rounded-lg shadow-md w-full max-w-lg bg-gray-100">
                 <div className="">
                     <h1 className="font-bold text-3xl text-center text-[#002D74]">Login</h1>
                     <p className="text-sm mt-4 mb-4 text-[#002D74]">

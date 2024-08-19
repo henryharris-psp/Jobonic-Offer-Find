@@ -1,308 +1,258 @@
-'use client';
+'use client'
+import ServiceMatchCard from "@/components/ServiceMatchCard";
+import SearchFilterDropDown from "@/components/SearchFilterDropDown";
+import { fetchCategories, fetchServices } from "@/functions/helperFunctions";
+import { Category } from "@/types/general";
+import { Service, ServiceFilter, ServicePayload } from "@/types/service";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import SortingFilterDropDown from "@/components/SortingDropDown";
+import { Sorting, SortingValue } from "@/types/Sorting";
+import PaginationButtons from "@/components/PaginationButtons";
 
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import {Service} from '@/types/service';
-import { useRouter } from 'next/navigation';
-import ServiceMatchCard from '@/components/ServiceMatchCard'; // Ensure this path is correct
-// import { Service } from '@/types';
-import httpClient from '@/client/httpClient';
-import { baseURL } from '@/baseURL';
-
-const ServiceMatches = (): React.ReactElement => {
-  const [services, setServices] = useState<Service[]>([]);
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
-  const [selectedSortOption, setSelectedSortOption] = useState('Best Match');
-  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [deadline, setDeadline] = useState('');
-  const [appliedFilters, setAppliedFilters] = useState({
-    minPrice: '',
-    maxPrice: '',
-    deadline: ''
-  });
-
-  const router = useRouter();
-  const [categoryList, setCategoryList] = useState<Category[]>([]);
-
-  const fetchCategory = async () => {
-    const response = await httpClient.get(`/category/all`);
-    setCategoryList(response.data);
-  };
-
-  const fetchServices = async () => {
-    try {
-      const response = await httpClient.post(`/service/all`, {
-        pageNumber: 1,
-        pageSize: 100,
-        sortBy: '',
-        sortOrder: 'DESC',
-        filter: {
-          searchKeyword: ''
+const sortings: Sorting[] = [
+    {
+        label: 'Best Match',
+        value: {
+            sortBy: '',
+            sortOrder: 'DESC'
         }
-      });
-      const filteredServices = response.data.content.filter((service: any) => service.serviceRequestDTO !== null);
-
-      // Map filtered services to match the expected structure for ServiceMatchCard
-      const mappedServices: Service[] = filteredServices.map((service: any) => ({
-        id: service.id,
-        name: service.title,
-        image: '/profile-pic.jpg', // Placeholder image
-        rating: 0, // Default rating
-        reviews: 20, // Assuming a static number of reviews for now
-        price: `$${service.serviceOfferDTO?.price}/hr` || 'N/A',
-        description: service.serviceRequestDTO.description1,
-        reviewsDetail: [
-          {
-            reviewer: 'John',
-            comment: 'Great service!',
-            rating: 5,
-          },
-          {
-            reviewer: 'Timmy',
-            comment: 'Very professional.',
-            rating: 4,
-          },
-        ],
-        numSold: 10, // Assuming a static number sold for now
-        bullet1: service.serviceOfferDTO?.descriptionI || '',
-        bullet2: service.serviceOfferDTO?.descriptionII || '',
-        bullet3: service.serviceOfferDTO?.descriptionIII || '',
-      }));
-      setServices(filteredServices);
-    } catch (error) {
-      console.error('Error fetching services:', error);
+    },
+    {
+        label: 'Price: Lowest to Highest',
+        value: {
+            sortBy: 'price',
+            sortOrder: 'ASC'
+        }
+    },
+    {
+        label: 'Price: Highest to Lowest',
+        value: {
+            sortBy: 'price',
+            sortOrder: 'DESC'
+        }
+    },
+    {
+        label: 'Rating',
+        value: {
+            sortBy: 'rating',
+            sortOrder: 'DESC'
+        }
     }
-  };
+]
 
-  const handleServiceClick = (service: Service) => {
-    setSelectedService(service);
-    setIsModalOpen(true);
-  };
+const defaultFilters = {
+    searchKeyword: '',
+    minPricePerHour: '',
+    maxPricePerHour: '',
+    deadlineDate: '',
+    categoryId: ''
+}
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedService(null);
-  };
+const defaultPagination = {
+    currentPage: 1,
+    itemsPerPage: 2,
+    totalPages: 0,
+    totalElements: 0
+}
 
-  const handleChatClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent event propagation
-    router.push('/chat'); // Navigate to the ChatMessage component
-  };
+const ServiceList = () => {
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [isCategoriesFetching, setIsCategoriesFetching] = useState<boolean>(false);
 
-  const handleSortClick = () => {
-    setIsSortDropdownOpen(!isSortDropdownOpen);
-  };
+    const [services, setServices] = useState<Service[]>([]);
+    const [isServicesFetching, setIsServicesFetching] = useState<boolean>(false);
 
-  const handleSortOptionClick = (option: string) => {
-    setSelectedSortOption(option);
-    console.log(`Selected sorting option: ${option}`);
-    setIsSortDropdownOpen(false);
-  };
+    const [sorting, setSorting] = useState<SortingValue>(sortings[0].value);
+    const [filters, setFilters] = useState<ServiceFilter>(defaultFilters);
+    const [pagination, setPagination] = useState(defaultPagination);
 
-  const handleFilterClick = () => {
-    setIsFilterDropdownOpen(!isFilterDropdownOpen);
-  };
+    //mounted
+        useEffect( () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchKeyword = urlParams.get("searchKeyword");
+            const category = urlParams.get("category");
+            
+            if(searchKeyword || category){
+                setFilters( prev => ({
+                    ...prev,
+                    searchKeyword: searchKeyword ?? '',
+                    categoryId: category ?? ''
+                }))
+            }
 
-  const handleFilterApply = () => {
-    setAppliedFilters({
-      minPrice: minPrice,
-      maxPrice: maxPrice,
-      deadline: deadline
-    });
-    console.log(`Filter applied with Min Price: ${minPrice}, Max Price: ${maxPrice}, Deadline: ${deadline}`);
-    setIsFilterDropdownOpen(false);
-  };
+            const controller = new AbortController();
+            const signal = controller.signal;
+            setIsCategoriesFetching(true);
 
-  const handleClearFilters = () => {
-    setMinPrice('');
-    setMaxPrice('');
-    setDeadline('');
-    setAppliedFilters({
-      minPrice: '',
-      maxPrice: '',
-      deadline: ''
-    });
-    console.log('Filters cleared');
-    setIsFilterDropdownOpen(false);
-  };
+            ( async () => {
+                const categoriesData = await fetchCategories(signal);
+                if (categoriesData) setCategories(categoriesData);
+                setIsCategoriesFetching(false);
+            })();
 
-  const areFiltersApplied = appliedFilters.minPrice !== '' || appliedFilters.maxPrice !== '' || appliedFilters.deadline !== '';
+            return () => controller.abort();
+        }, []);
 
-  useEffect(() => {
-    fetchCategory();
-    fetchServices();
-  }, []);
+    //fetch services depends on payload
+        useEffect(() => {
+            const controller = new AbortController();
+            const signal = controller.signal;
+            setIsServicesFetching(true);
 
-  return (
-      <div className="min-h-screen flex flex-col">
-        <div className="py-16 px-16">
-          <section className="flex-grow">
-            <div className="max-w-7xl mx-auto text-center">
-              <h1 className="text-5xl font-bold text-black">Services List</h1>
-              <button onClick={() => router.push("/customiseJobRequestForm")} className="mt-8 text-white py-2 px-4 rounded-lg inline-block hover:bg-[#D0693B] bg-[#0B2147]">
-                Not what you are looking for?
-              </button>
+            ( async () => {
+                const payload: ServicePayload = {
+                    pageNumber: pagination.currentPage,
+                    pageSize: pagination.itemsPerPage,
+                    sortBy: sorting.sortBy,
+                    sortOrder: sorting.sortOrder,
+                    filter: filters
+                }
 
-              {/* Filter and Sort buttons */}
-              <div className="flex justify-end space-x-4 pt-4">
-                <div className="relative">
-                  <button
-                      className="flex items-center justify-center w-full text-white bg-[#0B2147] hover:bg-[#D0693B] rounded-lg py-2 px-4 text-sm"
-                      onClick={handleFilterClick}
-                  >
-                  <span>
-                    <svg className="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M5.05 3C3.291 3 2.352 5.024 3.51 6.317l5.422 6.059v4.874c0 .472.227.917.613 1.2l3.069 2.25c1.01.742 2.454.036 2.454-1.2v-7.124l5.422-6.059C21.647 5.024 20.708 3 18.95 3H5.05Z"/>
-                    </svg>
-                  </span>Filter
-                    {areFiltersApplied && (
-                        <svg className="w-4 h-4 text-[#0C2348] ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                    )}
-                  </button>
-                  {isFilterDropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-md shadow-lg z-10 p-4">
-                        <h3 className="font-semibold mb-2">Filter by:</h3>
-                        <div className="mb-2 flex items-center justify-between">
-                          <label className="block text-sm font-medium text-gray-700">Min Price/hr</label>
-                          {appliedFilters.minPrice && <span className="text-[#0C2348]">✔</span>}
-                        </div>
-                        <input
-                            type="number"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                            value={minPrice}
-                            onChange={(e) => setMinPrice(Number(e.target.value) >= 0 ? e.target.value : '')}
-                        />
-                        <div className="mb-2 flex items-center justify-between">
-                          <label className="block text-sm font-medium text-gray-700">Max Price/hr</label>
-                          {appliedFilters.maxPrice && <span className="text-[#0C2348]">✔</span>}
-                        </div>
-                        <input
-                            type="number"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                            value={maxPrice}
-                            onChange={(e) => setMaxPrice(Number(e.target.value) >= 0 ? e.target.value : '')}
-                        />
-                        <div className="mb-2 flex items-center justify-between">
-                          <label className="block text-sm font-medium text-gray-700">Latest Deadline</label>
-                          {appliedFilters.deadline && <span className="text-[#0C2348]">✔</span>}
-                        </div>
-                        <input
-                            type="date"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                            value={deadline}
-                            onChange={(e) => setDeadline(e.target.value)}
-                        />
-                        <div className="flex space-x-2 mt-4">
-                          <button
-                              className="w-full bg-[#0C2348] text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none"
-                              onClick={handleFilterApply}
-                          >
-                            Apply Filters
-                          </button>
-                          <button
-                              className="w-full bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600 focus:outline-none"
-                              onClick={handleClearFilters}
-                          >
-                            Clear Filters
-                          </button>
-                        </div>
-                      </div>
-                  )}
-                </div>
-                <div className="relative">
-                  <button
-                      className="flex items-center justify-center w-full text-white bg-[#0B2147] hover:bg-[#D0693B] rounded-lg py-2 px-4 text-sm"
-                      onClick={handleSortClick}
-                  >
-                  <span>
-                    <svg className="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                      <path fillRule="evenodd" d="M12.832 3.445a1 1 0 0 0-1.664 0l-4 6A1 1 0 0 0 8 11h8a1 1 0 0 0 .832-1.555l-4-6Zm-1.664 17.11a1 1 0 0 0 1.664 0l4-6A1 1 0 0 0 16 13H8a1 1 0 0 0-.832 1.555l4 6Z" clipRule="evenodd"/>
-                    </svg>
-                  </span>Sort
-                  </button>
-                  {isSortDropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
-                        <ul className="py-1 text-sm text-gray-700">
-                          {['Best Match', 'Popularity', 'Price: Lowest to Highest', 'Price: Highest to Lowest', 'Rating'].map(option => (
-                              <li key={option} className={`flex justify-between items-center px-4 py-2 cursor-pointer hover:bg-gray-100 ${selectedSortOption === option ? 'font-bold' : ''}`} onClick={() => handleSortOptionClick(option)}>
-                                {option}
-                                {selectedSortOption === option && (
-                                    <svg className="w-4 h-4 text-[#0C2348]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                )}
-                              </li>
-                          ))}
-                        </ul>
-                      </div>
-                  )}
-                </div>
-              </div>
+                const servicesData = await fetchServices('offer', signal, payload);
+                if (servicesData){
+                    setServices(servicesData.content);
+                    setPagination( prev => ({
+                        ...prev,
+                        totalPages: servicesData.totalPages,
+                        totalElements: servicesData.totalElements
+                    }));
+                };
+                setIsServicesFetching(false);
+            })();
 
-              <div className="flex pt-8">
-                <div className="job-category overflow-y-auto w-1/5 pr-4">
-                  <h2 className='font-semibold text-center'>Work Category</h2>
-                  {categoryList.map((category, index) => (
-                      <div key={index} className="py-2 border-b border-gray-400 hover:text-blue-500 cursor-pointer">{category.name}</div>
-                  ))}
-                </div>
-                <div className="flex flex-wrap w-4/5">
-                  {services.map((service, index) => (
-                      <div key={index} className="pb-8">
-                        <ServiceMatchCard
-                            service = {service}  // Pass the service object
-                            user = {service.profileDTO} // Pass the user object
-                            onClick = {handleServiceClick}
-                            onChatClick = {handleChatClick}
-                        />
-                      </div>
-                  ))}
-                </div>
-              </div>
+            return () => controller.abort();
+        }, [filters, sorting, pagination.currentPage]);
+
+    //methods
+        const handleOnFilterChange = (newFilters: object) => {
+            setFilters( prev => {
+                return {
+                    ...prev,
+                    ...newFilters
+                }
+            });
+        }
+
+        const handleOnSortingChange = (newSorting: SortingValue) => {
+            setSorting(newSorting);
+        }
+
+        const handleOnClickNextPage = () => {
+            setPagination( prev => ({
+                ...prev,
+                currentPage: prev.currentPage + 1
+            }));
+        }
+
+        const handleOnClickPreviousPage = () => {
+            setPagination( prev => ({
+                ...prev,
+                currentPage: prev.currentPage - 1
+            }))
+        }
+        
+    return (
+        <div className="flex flex-col min-h-screen">
+
+            {/* top section */}
+            <div className="flex flex-col items-center space-y-8 my-10">
+                <h1 className="text-5xl font-bold text-black">
+                    Services List
+                </h1>
+                <Link
+                    href="/customiseJobRequestForm"
+                    className="text-white py-2 px-4 rounded-lg inline-block hover:bg-[#D0693B] bg-[#0B2147]"
+                >
+                    Not what you are looking for?
+                </Link>
             </div>
-          </section>
 
-          {isModalOpen && selectedService && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg p-6 w-full max-w-lg max-h-full overflow-auto">
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-2xl font-bold">{selectedService.title}</h2>
-                    <button className="text-gray-600 hover:text-gray-900" onClick={closeModal}>✖</button>
-                  </div>
-                  <div className="flex items-center mb-4">
-                    <Image src={selectedService.profileDTO.image} alt={selectedService.title} width={50} height={50} className="rounded-full" />
-                    <div className="ml-4">
-                      <h3 className="text-lg font-bold">{selectedService.title}</h3>
-                      <p>{selectedService.description}</p>
+            <div className="flex-1 flex flex-row space-x-4 mx-12 overflow-hidden">
+
+                {/* category list */}
+                <div className="flex flex-col w-64 max-h-96 bg-white rounded-lg overflow-hidden border border-gray-300">
+                    <div className="flex items-center justify-center py-3 bg-gray-50 border-b border-b-gray-100">
+                        <span className="text-xl font-bold">
+                            Work Category
+                        </span>       
                     </div>
-                  </div>
-                  <div className="max-h-96 overflow-y-auto">
-                    {selectedService.reviewsDetail?.map((review: any , index : any) => (
-                        <div key={index} className="flex items-start mb-4">
-                          <Image src="/group-image.jpg" alt={review.reviewer} width={40} height={40} className="rounded-full" /> {/* Replace with actual reviewer image */}
-                          <div className="ml-4">
-                            <h4 className="text-md font-bold">{review.reviewer}</h4>
-                            <p>{review.comment}</p>
-                            <div className="flex items-center">
-                              <span className="text-yellow-500">{Array(review.rating).fill('★').join('')}</span>
-                              {review.rating < 5 && <span className="text-gray-300">{Array(5 - review.rating).fill('★').join('')}</span>}
-                            </div>
-                          </div>
+                    <div className="flex-1 overflow-auto py-2">
+                        <div className="flex flex-col bg-white rounded-lg">
+                            { isCategoriesFetching ? (
+                                <span className="py-3 px-7 text-center">Loading...</span>
+                            ) : (
+                                categories.map( category => 
+                                    <button 
+                                        key={category.id}
+                                        className="flex items-center justify-center hover:bg-gray-50 active:bg-gray-200 py-3 px-7 border-b border-b-gray-100 last:border-0"
+                                        onClick={() => console.log(category.id)}
+                                    >
+                                        <span className="text-gray-600">{category.name}</span>
+                                    </button>
+                                )
+                            )}
                         </div>
-                    ))}
-                  </div>
+                    </div>
                 </div>
-              </div>
-          )}
+
+                {/* services list and filter buttons */}
+                <div className="flex-1 flex flex-col pb-10 space-y-5">
+
+                    {/* filter buttons */}
+                    <div className="flex justify-between items-center">
+                        <span className="font-bold text-xl">Match Services: {pagination.totalElements}</span>
+
+                        <div className="flex flex-row items-center space-x-2">
+                            <SearchFilterDropDown
+                                minPricePerHour={filters.minPricePerHour}
+                                maxPricePerHour={filters.maxPricePerHour}
+                                deadlineDate={filters.deadlineDate}
+                                onChange={handleOnFilterChange}
+                            />
+                            <SortingFilterDropDown
+                                selectedSorting={sorting}
+                                sortings={sortings}
+                                onChange={handleOnSortingChange}
+                            />
+                        </div>
+                    </div>
+
+                    {/* service list */}
+                    <div className="container mx-auto">
+                        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
+                            { isServicesFetching ? (
+                                <span>Searching Services...</span>
+                            ) : (
+                                services.map( service => 
+                                    <ServiceMatchCard
+                                        key={service.id}
+                                        service={service}
+                                        profile={service.profileDTO}
+                                        onClick={() => console.log('fdf')}
+                                        onChatClick={() => console.log('fdf')}
+                                    />
+                                )
+                            )}
+                        </div>
+                    </div>
+
+                    { pagination.totalElements !== 0 ? (
+                        <div className="flex justify-end">
+                            <PaginationButtons
+                                currentPage={pagination.currentPage}
+                                totalPage={pagination.totalPages}
+                                onClickNext={handleOnClickNextPage}
+                                onClickPrevious={handleOnClickPreviousPage}
+                            />
+                        </div>
+                    ) : ''}
+
+                </div>
+
+            </div>
         </div>
-      </div>
-  );
+    );
 };
 
-export default ServiceMatches;
+export default ServiceList;

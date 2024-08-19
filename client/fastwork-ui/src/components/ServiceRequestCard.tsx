@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from 'next/image';
 import location from "@/../public/location-pin.svg";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface ServiceRequest {
   title: string;
@@ -78,7 +79,7 @@ const ServiceRequestCard = ({
 
   const handleServiceRequestClick = () => {
     console.log('Service request card clicked');
-    router.push('/description');
+    // router.push('/description');
   };
 
   const handleApply = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -163,7 +164,7 @@ const ServiceRequestCard = ({
             {/* chat and apply buttons */}
             {applyDisplay && (
                 <div className="flex items-center justify-center mt-2 space-x-2">
-                  <button onClick={handleChat}>
+                  <Link href="/chat">
                     <svg
                         className="w-10 h-10 text-[#0B2147] dark:text-white hover:text-[#D0693B]"
                         aria-hidden="true"
@@ -179,7 +180,7 @@ const ServiceRequestCard = ({
                           clipRule="evenodd"
                       />
                     </svg>
-                  </button>
+                  </Link>
                   <button
                       className="bg-[#0B2147] text-white rounded-xl px-4 py-2 hover:bg-[#D0693B] text-sm"
                       onClick={handleApply}

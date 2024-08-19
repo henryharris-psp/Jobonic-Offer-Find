@@ -6,7 +6,7 @@ import InputField from "@/components/InputField";
 import Link from "next/link";
 import { useEffect, useRef, useState, MouseEvent } from "react";
 import * as Yup from "yup";
-import { SERVER_AUTH } from "@/baseURL";
+import {baseURL, SERVER_AUTH} from "@/baseURL";
 import { useRouter } from "next/navigation";
 import httpClient from "@/client/httpClient";
 import httpAuth from "@/client/httpAuth";
@@ -102,19 +102,9 @@ export const RegisterForm: React.FC = () => {
         const URL = `${SERVER_AUTH}/v1/login/verify/otp?userId=${userId}&otp=${values.checkOTP}`;
         try {
             await httpAuth.post(URL);
-            const response = await httpAuth.post(`${SERVER_AUTH}/v1/login`, userLogin);
 
-            //Authorization header
-            httpClient.defaults.headers.common.Authorization = `Bearer ${response.data.access_token}`;
-
-            // Store tokens and other data
-            localStorage.setItem('access_token', response.data.access_token);
-            localStorage.setItem('refresh_token', response.data.refresh_token);
-            localStorage.setItem('registerFormPage', 'jobonicRegister');
-
-            // Redirect to login page after successful verification
             const laconicAuthPageUrl = process.env.NEXT_PUBLIC_LACONIC_AUTH_PAGE_URL;
-            window.location.href = `${laconicAuthPageUrl}/authentication?page=logout`; // Replace '/login' with the correct login page URL
+            window.location.href = `${laconicAuthPageUrl}/authentication?page=logout`;
 
             // Show success toast message
             toast.success('Success verify OTP');
@@ -123,9 +113,103 @@ export const RegisterForm: React.FC = () => {
             console.error('Error:', error);
         }
     };
+    // const handleSubmitCheckOTP = async (values: { [key: string]: any }): Promise<void> => {
+    //     const userId = localStorage.getItem('userId');
+    //     const URL = `${SERVER_AUTH}/v1/login/verify/otp?userId=${userId}&otp=${values.checkOTP}`;
+    //
+    //     try {
+    //         // Verify OTP
+    //         await httpAuth.post(URL);
+    //const response = await httpAuth.post(`${SERVER_AUTH}/v1/login`, userLogin);
+    //
+    //             //Authorization header
+    //             httpClient.defaults.headers.common.Authorization = `Bearer ${response.data.access_token}`;
+    //
+    //             // Store tokens and other data
+    //             localStorage.setItem('access_token', response.data.access_token);
+    //             localStorage.setItem('refresh_token', response.data.refresh_token);
+    //             localStorage.setItem('registerFormPage', 'jobonicRegister');
+    //         const laconicAuthPageUrl = process.env.NEXT_PUBLIC_LACONIC_AUTH_PAGE_URL;
+    //         window.location.href = `${laconicAuthPageUrl}/authentication?page=logout`;
+    //
+    //         // Show success toast message
+    //         toast.success('Successfully verified OTP and completed Jobonic registration');
+    //     } catch (error) {
+    //         toast.error('OTP is invalid');
+    //         console.error('Error:', error);
+    //     }
+    // };
+
+    // const handleSubmitCheckOTP = async (values: { [key: string]: any }): Promise<void> => {
+    //     const userId = localStorage.getItem('userId');
+    //     const URL = `${SERVER_AUTH}/v1/login/verify/otp?userId=${userId}&otp=${values.checkOTP}`;
+    //
+    //     try {
+    //         // Verify OTP
+    //         await httpAuth.post(URL);
+    //
+    //         // Update the register form page to 'jobonicRegister'
+    //         localStorage.setItem('registerFormPage', 'jobonicRegister');
+    //         setRegisterForm('jobonicRegister'); // Update the form state to display jobonic registration
+    //
+    //         toast.success('OTP successfully verified. Proceeding to Jobonic registration.');
+    //     } catch (error) {
+    //         toast.error('OTP is invalid');
+    //         console.error('Error:', error);
+    //     }
+    // };
+
+    // const handleSubmitJobonicRegister = async (values: { [key: string]: any }): Promise<void> => {
+    //     const URL = `http://localhost:8081/api/v1/user`;
+    //     const userId = localStorage.getItem('userId');
+    //     console.log('User Id:', userId);
+    //
+    //     const payload = {
+    //         companyName: values.companyName,
+    //         phoneNumber: values.phoneNumber,
+    //         address: values.address,
+    //         image: "",
+    //         cardNumber: values.cardNumber,
+    //         cardExpiryDate: values.cardExpiryDate,
+    //         walletAddress: values.walletAddress,
+    //         review: 0,
+    //         userExperienceList: [],
+    //         userEducationList: [],
+    //         skills: [],
+    //         userId: userId // Using userId from localStorage
+    //     };
+    //
+    //     try {
+    //         // Submit Jobonic registration
+    //         await httpClient.post(URL, payload);
+    //
+    //         // Log in after successful Jobonic registration
+    //         const response = await httpAuth.post(`${SERVER_AUTH}/v1/login`, userLogin);
+    //
+    //         // Set Authorization header
+    //         const accessToken = response.data.access_token;
+    //         console.log('Access Token:', accessToken);
+    //         httpClient.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+    //         console.log('Authorization Header:', httpClient.defaults.headers.common.Authorization);
+    //
+    //         // Store tokens and other data
+    //         localStorage.setItem('access_token', accessToken);
+    //         localStorage.setItem('refresh_token', response.data.refresh_token);
+    //
+    //         // Redirect to logout page after successful registration and login
+    //         const laconicAuthPageUrl = process.env.NEXT_PUBLIC_LACONIC_AUTH_PAGE_URL;
+    //         window.location.href = `${laconicAuthPageUrl}/authentication?page=logout`;
+    //
+    //         toast.success('Jobonic registration and login completed successfully.');
+    //     } catch (error) {
+    //         console.error('Error during Jobonic registration:', error);
+    //         toast.error('Failed to complete Jobonic registration.');
+    //     }
+    // };
 
 
     const handleSubmitJobonicRegister = async (values: { [key: string]: any }): Promise<void> => {
+        const URL = `${SERVER_AUTH}/v1/user/signup`;
         const payload = {
             companyName: values.companyName,
             phoneNumber: values.phoneNumber,
@@ -141,7 +225,7 @@ export const RegisterForm: React.FC = () => {
             userId: userId
         };
         try {
-            await httpClient.post('user', payload);
+            await httpClient.post(URL, payload);
             localStorage.setItem('registerFormPage', 'authRegister');
             window.location.href = '/myProfile';
             setRegisterForm(localStorage.getItem('registerFormPage'));
@@ -224,7 +308,7 @@ export const RegisterForm: React.FC = () => {
                         <button
                             type="button"
                             onClick={() => setRegisterForm('authRegister')}
-                            className="btn-primary flex justify-center text-blue-900 hover:text-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 mb-2"
+                            className="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2"
                         >
                             Back to Register
                         </button>
@@ -264,12 +348,19 @@ export const RegisterForm: React.FC = () => {
                         >
                             Complete Registration
                         </Button>
+                        <button
+                            type="button"
+                            onClick={() => setRegisterForm('authRegister')}
+                            className="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2"
+                        >
+                            Back to Register
+                        </button>
                     </div>
                 </Form>
             )}
             <div className="mt-6 text-sm text-center text-gray-500">
                 Already have an account?{' '}
-                <Link href="/auth/sign-in">
+                <Link href="https://auth.laconic.co.th/authentication?page=login">
                     <span className="font-medium text-blue-600 hover:text-orange-500">Login here</span>
                 </Link>
             </div>

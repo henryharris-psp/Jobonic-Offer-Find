@@ -1,12 +1,11 @@
 "use client";
-
 import TopSection from "../components/home/TopSection";
 import SatisfiedCollaborators from "../components/SatisfiedCollaborators";
-import Link from "next/link";
-import "./globals.css";
+import Link from "next/link"; // Import Link from next/link
 import CanvasComponent from "../components/HomeAniBG";
 import FindingServiceSection from "@/components/home/FindingServiceSection";
 import OfferingServiceSection from "@/components/home/OfferingServiceSection";
+import "./globals.css";
 
 const testimonials = [
     {
@@ -53,9 +52,9 @@ const testimonials = [
     },
 ];
 
-export default function Home() {
+const Home = () => {
     return (
-        <div>
+        <div className="mx-5 sm:mx-16">
             {/* Top Section */}
             <TopSection />
 
@@ -84,6 +83,7 @@ export default function Home() {
     );
 }
 
+export default Home;
 /*
 import SearchBar from "../components/SearchBar";
 import CategoryCard from "@/components/CategoryCard";

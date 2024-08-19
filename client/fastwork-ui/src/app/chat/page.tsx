@@ -111,8 +111,10 @@ const ChatPage = () => {
     );
 };
 
-export default () => (
+const ChatPageWithProvider = () => (
     <ChatProvider>
         <ChatPage/>
     </ChatProvider>
 );
+
+export default ChatPageWithProvider;

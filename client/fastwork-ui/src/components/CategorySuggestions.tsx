@@ -1,61 +1,65 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import initialiseCategories from "@/utils/initialiseCategories";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import httpClient from "@/client/httpClient";
+import CategoryItem from "./findServices/CategoryItem";
+import { Category } from "../types/general";
+import CategorySkeleton from "./findServices/CategoryItemSkeleton";
 
-// Utility function to filter categories by unique name
-const filterUniqueCategories = (categories: Category[]): Category[] => {
-  const uniqueNames = new Set<string>();
-  return categories.filter(category => {
-    const isDuplicate = uniqueNames.has(category.name.toLowerCase());
-    if (!isDuplicate) {
-      uniqueNames.add(category.name.toLowerCase());
-      return true;
-    }
-    return false;
-  });
-};
+const skeletonCount = Array.from({ length: 15 }, (_, index) => index);
 
 const CategorySuggestions = (): React.ReactElement => {
-  const [categoryList, setCategoryList] = useState<Category[]>([]);
+    const [categoryList, setCategoryList] = useState<Category[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
-  const fetchCategory = async () => {
-    try {
-      const res = await initialiseCategories();
-      const uniqueCategories = filterUniqueCategories(res.data);
-      setCategoryList(uniqueCategories);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
-  };
+    useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
+        setIsLoading(true);
+        (async () => {
+            try {
+                const res = await httpClient.get("category/all", { signal });
+                setCategoryList(res.data);
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setIsLoading(false);
+            }
+        })();
 
-  useEffect(() => {
-    fetchCategory();
-  }, []);
-  
-  return (
-    <section className="py-16 px-4 md:px-0">
-      <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-start">
-        <div className="text-left mb-8 md:mb-0 md:mr-8">
-          <h2 className="text-2xl md:text-4xl font-bold text-black mb-1">No idea what you’d like?</h2>
-          <p className="text-gray-500 mb-4">Here are some services available</p>
-          <Link href="/serviceList">
-            <button className="bg-[#0B2147] text-white py-2 px-4 rounded-lg hover:bg-[#D0693B]">More</button>
-          </Link>
+        return () => controller.abort();
+    }, []);
+
+    return (
+        <div className="flex flex-row flex-wrap p-10 md:p-20">
+            <div className="flex flex-col w-full lg:max-w-72 mt-3 mb-10 mx-2">
+                <h2 className="text-4xl md:text-4xl font-bold text-black mb-1">
+                    No idea what you&apos;d like?
+                </h2>
+                <p className="text-gray-500 mb-4">
+                    Here are some services available
+                </p>
+                <Link href="/serviceList">
+                    <button className="bg-[#0B2147] text-white py-2 px-4 rounded-lg hover:bg-[#D0693B]">
+                        More
+                    </button>
+                </Link>
+            </div>
+
+            <div className="flex-1 flex flex-wrap items-center min-w-96">
+                {isLoading
+                    ? skeletonCount.map((id) => <CategorySkeleton key={id} />)
+                    : categoryList.map((category: Category) => (
+                        <CategoryItem
+                            key={category.id}
+                            id={category.id}
+                            name={category.name}
+                        />
+                    ))}
+            </div>
         </div>
-        <div className="flex flex-wrap items-center gap-4 mt-6">
-          {categoryList.map((category, index) => (
-            <Link key={index} href={`/serviceList?category=${encodeURIComponent(category.name)}`}>
-              <div className="bg-[#0B2147] text-white rounded-lg px-4 py-2 shadow-md hover:cursor-pointer hover:bg-[#D0693B]">
-                {category.name}
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+    );
+};
 
 export default CategorySuggestions;

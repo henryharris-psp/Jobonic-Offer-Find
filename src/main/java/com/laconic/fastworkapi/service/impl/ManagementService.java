@@ -20,6 +20,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -103,6 +106,33 @@ public class ManagementService implements IManagementService {
         return getServiceWithProfile(service, user);
     }
 
+    // Fetch the services filtered by price and date
+    @Override
+    public List<ServiceManagement> getFilterByPriceAndDate(ServiceFilterDTO serviceFilterDTO) {
+        Double minPrice = serviceFilterDTO.getMinPrice();
+        Double maxPrice = serviceFilterDTO.getMaxPrice();
+        LocalDate submissionDeadline = serviceFilterDTO.getSubmissionDeadline();
+
+        // If submissionDeadline is not null, ensure it's in LocalDate format
+        if (submissionDeadline == null && serviceFilterDTO.getSubmissionDeadline() != null) {
+            submissionDeadline = parseDate(String.valueOf(serviceFilterDTO.getSubmissionDeadline()));
+        }
+
+        return this.serviceRepo.findAndFilterByPriceAndDate(minPrice, maxPrice, submissionDeadline);
+    }
+
+    private LocalDate parseDate(String dateString) {
+        if (dateString == null || dateString.isEmpty()) {
+            return null; // or handle as appropriate
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        try {
+            return LocalDate.parse(dateString, formatter);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format: " + dateString, e);
+        }
+    }
+
     @Override
     public PaginationDTO<ServiceDTO.WithProfile> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
@@ -118,5 +148,14 @@ public class ManagementService implements IManagementService {
                 .collect(Collectors.toList());
 
         return PaginationHelper.getResponse(servicePage, servicesWithProfile);
+    }
+
+    //Convert Entity To DTO
+    public ServiceFilterDTO convertEntityToDTO(ServiceManagement serviceManagement) {
+        ServiceFilterDTO dto = new ServiceFilterDTO();
+        dto.setMinPrice(serviceManagement.getPrice());
+        dto.setMaxPrice(serviceManagement.getPrice());
+        dto.setSubmissionDeadline(serviceManagement.getServiceRequest().getSubmissionDeadline());
+        return dto;
     }
 }

@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation"; // Correct import for Next.js 13 and later
 import ChatMessageBig from "@/components/ChatMessageBig";
 
-import { supabase } from "@/app/config/supabaseClient";
+import { supabase } from "@/config/supabaseClient";
 import { Message, ActiveChat, CurrentUser } from "@/types/chat";
 import ContractCard from "@/components/ContractCard";
 
