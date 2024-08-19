@@ -109,7 +109,7 @@ const ServiceList = () => {
                     filter: filters
                 }
 
-                const servicesData = await fetchServices(signal, payload);
+                const servicesData = await fetchServices('offer', signal, payload);
                 if (servicesData){
                     setServices(servicesData.content);
                     setPagination( prev => ({
@@ -237,7 +237,7 @@ const ServiceList = () => {
                         </div>
                     </div>
 
-                    { services.length !== 0 ? (
+                    { pagination.totalElements !== 0 ? (
                         <div className="flex justify-end">
                             <PaginationButtons
                                 currentPage={pagination.currentPage}

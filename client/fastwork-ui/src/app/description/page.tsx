@@ -1,11 +1,11 @@
-import JobDescription from '@/components/JobDescription'
+'use client';
 
-export default function Description (): React.ReactNode {
+import React from 'react'
+
+const Description = () => {
   return (
-    <div 
-    className='flex flex-col min-h-screen w-full'
-    >
-      <JobDescription></JobDescription>
-    </div>
+    <div>Description</div>
   )
 }
+
+export default Description;

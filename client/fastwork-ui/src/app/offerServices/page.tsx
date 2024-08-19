@@ -1,409 +1,344 @@
 'use client';
 
-import React, { useState, useEffect, ReactNode } from 'react';
-import ServiceRequestCard from '@/components/ServiceRequestCard'; // Importing the ServiceRequestCard component
-import { useRouter } from 'next/navigation';
-import axios from 'axios';
-import { checkProfile, getCategoryName } from '@/functions/helperFunctions';
-import httpClient from "@/client/httpClient";
+import ServiceMatchCard from "@/components/ServiceMatchCard";
+import SearchFilterDropDown from "@/components/SearchFilterDropDown";
+import { fetchCategories, fetchServices } from "@/functions/helperFunctions";
+import { Category } from "@/types/general";
+import { Service, ServiceFilter, ServicePayload } from "@/types/service";
+import Link from "next/link";
+import SortingFilterDropDown from "@/components/SortingDropDown";
+import { Sorting, SortingValue } from "@/types/Sorting";
+import PaginationButtons from "@/components/PaginationButtons";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import ServiceRequestCard from "@/components/ServiceRequestCard";
 
 type UserData = {
-  id?: number;
-  email?: string;
+    id?: number;
+    email?: string;
+  };
+  
+  interface ServiceRequestDTO {
+    id: string;
+    submissionDeadline: string;
+    workExample: string;
+  }
+  
+  interface CategoryDTO {
+    id: string;
+    name: string;
+  }
+
+
+const sortings: Sorting[] = [
+    {
+        label: 'Best Match',
+        value: {
+            sortBy: '',
+            sortOrder: 'DESC'
+        }
+    },
+    {
+        label: 'Price: Lowest to Highest',
+        value: {
+            sortBy: 'price',
+            sortOrder: 'ASC'
+        }
+    },
+    {
+        label: 'Price: Highest to Lowest',
+        value: {
+            sortBy: 'price',
+            sortOrder: 'DESC'
+        }
+    },
+    {
+        label: 'Rating',
+        value: {
+            sortBy: 'rating',
+            sortOrder: 'DESC'
+        }
+    }
+]
+
+const defaultFilters = {
+    searchKeyword: '',
+    minPricePerHour: '',
+    maxPricePerHour: '',
+    deadlineDate: '',
+    categoryId: ''
+}
+
+const defaultPagination = {
+    currentPage: 1,
+    itemsPerPage: 12,
+    totalPages: 0,
+    totalElements: 0
+}
+
+const OfferService = () => {
+    const { authUser } = useSelector((state: RootState) => state.auth );
+
+    const [searchKeywordInput, setSearchKeywordInput] = useState('');
+
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [isCategoriesFetching, setIsCategoriesFetching] = useState<boolean>(false);
+
+    const [services, setServices] = useState<Service[]>([]);
+    const [isServicesFetching, setIsServicesFetching] = useState<boolean>(false);
+
+    const [sorting, setSorting] = useState<SortingValue>(sortings[0].value);
+    const [filters, setFilters] = useState<ServiceFilter>(defaultFilters);
+    const [pagination, setPagination] = useState(defaultPagination);
+
+    //mounted
+        useEffect( () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchKeyword = urlParams.get("searchKeyword");
+            const category = urlParams.get("category");
+            
+            if(searchKeyword || category){
+                setFilters( prev => ({
+                    ...prev,
+                    searchKeyword: searchKeyword ?? '',
+                    categoryId: category ?? ''
+                }))
+            }
+
+            const controller = new AbortController();
+            const signal = controller.signal;
+            setIsCategoriesFetching(true);
+
+            ( async () => {
+                const categoriesData = await fetchCategories(signal);
+                if (categoriesData) setCategories(categoriesData);
+                setIsCategoriesFetching(false);
+            })();
+
+            return () => controller.abort();
+        }, []);
+
+    //fetch services depends on payload
+        useEffect(() => {
+            const controller = new AbortController();
+            const signal = controller.signal;
+            setIsServicesFetching(true);
+
+            ( async () => {
+                const payload: ServicePayload = {
+                    pageNumber: pagination.currentPage,
+                    pageSize: pagination.itemsPerPage,
+                    sortBy: sorting.sortBy,
+                    sortOrder: sorting.sortOrder,
+                    filter: filters
+                }
+
+                const servicesData = await fetchServices('request', signal, payload);
+                if (servicesData){
+                    setServices(servicesData.content);
+                    setPagination( prev => ({
+                        ...prev,
+                        totalPages: servicesData.totalPages,
+                        totalElements: servicesData.totalElements
+                    }));
+                };
+                setIsServicesFetching(false);
+            })();
+
+            return () => controller.abort();
+        }, [filters, sorting, pagination.currentPage]);
+
+    //methods
+        const handleOnFilterChange = (newFilters: object) => {
+            setFilters( prev => {
+                return {
+                    ...prev,
+                    ...newFilters
+                }
+            });
+        }
+
+        const handleOnSearchKeywordChange = (event: ChangeEvent<HTMLInputElement>) => {
+            setSearchKeywordInput(event.target.value);
+        }
+
+        const handleOnSortingChange = (newSorting: SortingValue) => {
+            setSorting(newSorting);
+        }
+
+        const handleOnClickNextPage = () => {
+            setPagination( prev => ({
+                ...prev,
+                currentPage: prev.currentPage + 1
+            }));
+        }
+
+        const handleOnClickPreviousPage = () => {
+            setPagination( prev => ({
+                ...prev,
+                currentPage: prev.currentPage - 1
+            }))
+        }
+
+        const handleOnSearch = (event: FormEvent) => {
+            event.preventDefault();
+            setFilters(() => {
+                setPagination(defaultPagination);
+                return {
+                    ...defaultFilters,
+                    searchKeyword: searchKeywordInput
+                }
+            });
+        }
+        
+    return (
+        <div className="flex flex-col min-h-screen">
+
+            {/* top section */}
+            <div className="flex flex-col items-center space-y-8 my-10">
+                <h1 className="text-5xl font-bold text-black">
+                    Services Requests
+                </h1>
+
+                <form className="relative" onSubmit={handleOnSearch}>
+                    <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                        <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                        </svg>
+                    </div>
+                    <input 
+                        type="search" 
+                        id="default-search"
+                        className="block min-w-96 w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50
+                        focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
+                        dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="e.g. I have a service to offer"
+                        value={searchKeywordInput}
+                        onChange={handleOnSearchKeywordChange}
+                        required 
+                    />
+                    <button 
+                        type="submit" 
+                        className="text-white absolute right-2.5 bottom-2.5 bg-[#0B2147] hover:bg-[#D0693B] focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-black dark:hover:bg-gray-700 dark:focus:ring-gray-800"
+                    >
+                        Search
+                    </button>
+                </form>
+
+                <div className="flex flex-row items-center space-x-3">
+                    <span className="text-xl font-bold">
+                        No requests match your skills?
+                    </span>
+                    <Link
+                        href={authUser?.profile ? '/customiseService' : '/createProfile'}
+                        className="text-white py-2 px-4 rounded-lg inline-block hover:bg-[#D0693B] bg-[#0B2147]"
+                    >
+                        Personalise your service offer
+                    </Link>
+                </div>
+            </div>
+
+            <div className="flex-1 flex flex-row space-x-4 mx-12 overflow-hidden">
+
+                {/* category list */}
+                <div className="flex flex-col w-64 max-h-96 bg-white rounded-lg overflow-hidden border border-gray-300">
+                    <div className="flex items-center justify-center py-3 bg-gray-50 border-b border-b-gray-100">
+                        <span className="text-xl font-bold">
+                            Work Category
+                        </span>       
+                    </div>
+                    <div className="flex-1 overflow-auto py-2">
+                        <div className="flex flex-col bg-white rounded-lg">
+                            { isCategoriesFetching ? (
+                                <span className="py-3 px-7 text-center">Loading...</span>
+                            ) : (
+                                categories.map( category => 
+                                    <button 
+                                        key={category.id}
+                                        className="flex items-center justify-center hover:bg-gray-50 active:bg-gray-200 py-3 px-7 border-b border-b-gray-100 last:border-0"
+                                        onClick={() => console.log(category.id)}
+                                    >
+                                        <span className="text-gray-600">{category.name}</span>
+                                    </button>
+                                )
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* services list and filter buttons */}
+                <div className="flex-1 flex flex-col pb-10 space-y-5">
+
+                    {/* filter buttons */}
+                    <div className="flex justify-between items-center">
+                        <span className="font-bold text-xl">Match Requests: {pagination.totalElements}</span>
+
+                        <div className="flex flex-row items-center space-x-2">
+                            <SearchFilterDropDown
+                                minPricePerHour={filters.minPricePerHour}
+                                maxPricePerHour={filters.maxPricePerHour}
+                                deadlineDate={filters.deadlineDate}
+                                onChange={handleOnFilterChange}
+                            />
+                            <SortingFilterDropDown
+                                selectedSorting={sorting}
+                                sortings={sortings}
+                                onChange={handleOnSortingChange}
+                            />
+                        </div>
+                    </div>
+
+                    {/* service list */}
+                    <div className="container mx-auto">
+                        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
+                            { isServicesFetching ? (
+                                <span>Searching Services...</span>
+                            ) : (
+                                services.map( service => 
+                                    <ServiceRequestCard
+                                        serviceRequest={{
+                                        title: service.title, // Correctly pass the title from the service object
+                                        work_category: service.categoryDTO.name,
+                                        //company: map profileId to username or firstName + lastName in User table
+                                        company: "Jeremy",
+                                        location: service.location ?? 'a',
+                                        employment_type: service.employmentType ?? 'a',
+                                        description_1: service.description1 ?? '',
+                                        description_2: service.description2 ?? '',
+                                        description_3: service.description3 ?? '',
+                                        examples_of_work: service.serviceRequestDTO?.workExample ?? 'a',
+                                        submission_deadline: service.serviceRequestDTO?.submissionDeadline ?? '11/08',
+                                        budget: service.price.toString() ?? '0',
+                                        //add priceUnit here and in ServiceRequestCard component
+                                        language: service.languageSpoken ?? 'English',
+                                        days_left: '', // This would need calculation based on the current date and submission_deadline
+                                      }} 
+                                      hasProfile={true} 
+                                      profilePic={'/jobonic.svg'} 
+                                    />
+                                )
+                            )}
+                        </div>
+                    </div>
+
+                    { pagination.totalElements !== 0 ? (
+                        <div className="flex justify-end">
+                            <PaginationButtons
+                                currentPage={pagination.currentPage}
+                                totalPage={pagination.totalPages}
+                                onClickNext={handleOnClickNextPage}
+                                onClickPrevious={handleOnClickPreviousPage}
+                            />
+                        </div>
+                    ) : ''}
+
+                </div>
+
+            </div>
+        </div>
+    );
 };
 
-interface ServiceRequestDTO {
-  id: string;
-  submissionDeadline: string;
-  workExample: string;
-}
+export default OfferService;
 
-interface CategoryDTO {
-  id: string;
-  name: string;
-}
-
-interface Service {
-  id: string;
-  serviceOfferDTO?: any;
-  serviceRequestDTO?: ServiceRequestDTO;
-  profileId: number;
-  title: string;
-  employmentType: string,
-  description: string,
-  description1: string,
-  description2: string,
-  description3: string,
-  languageSpoken: string,
-  location: string,
-  categoryDTO: CategoryDTO,
-  price: number,
-  priceUnit: string
-}
-
-export default function OfferServicesPage(): ReactNode {
-  const router = useRouter(); // Using Next.js router for navigation
-  const [user, setUser] = useState<UserData>({});
-  const [userID, setUserID] = useState<number>(0);
-  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
-  const [selectedSortOption, setSelectedSortOption] = useState('Best Match');
-  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [deadline, setDeadline] = useState('');
-  const [appliedFilters, setAppliedFilters] = useState({
-    minPrice: '',
-    maxPrice: '',
-    deadline: ''
-  });
-
-  const [jobDataList, setJobDataList] = useState<Service[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<Service[]>([]);
-  const [serviceDisplay, setServiceDisplay] = useState<Service[]>([]);
-  const [inputValue, setInputValue] = useState('');
-  const [categoryList, setCategoryList] = useState<Category[]>([]);
-
-  // Fetch all services from the backend API
-  const fetchServices = async () => {
-    try {
-      const response = await httpClient.post('service/all', {
-        pageNumber: 1,
-        pageSize: 100,
-        sortBy: '',
-        sortOrder: 'DESC',
-        filter: {
-          searchKeyword: ''
-        }
-      });
-      // Filter out services that do not have a serviceRequestDTO
-      const filteredServices = response.data.content.filter((service: Service) => service.serviceRequestDTO !== null);
-      setJobDataList(filteredServices);
-    } catch (error) {
-      console.error('Error fetching services:', error);
-    }
-  };
-
-  // Fetch services by their IDs from the search results
-  const fetchServicesById = async () => {
-    const temp: Service[] = []; // Temporary array to store fetched services
-    const fetchPromises = searchResults.map(async (service) => {
-      try {
-        const response = await httpClient.get(`service/get?serviceId=${service.id}`);
-        const servicesResponse = response.data;
-        console.log(servicesResponse);
-        temp.push(servicesResponse);
-      } catch (error) {
-        console.error('Error fetching services:', error);
-      }
-    });
-    await Promise.all(fetchPromises);
-    setServiceDisplay(temp);
-  };
-
-  // Fetch all categories from the backend API
-  const fetchCategory = async () => {
-    const response = await httpClient.get('/category/all');
-    setCategoryList(response.data);
-  };
-
-  // Fetch user data and user ID on component mount
-  useEffect(() => {
-    fetchServices();
-    fetchCategory();
-    fetchUserIdAndData();
-  }, []);
-
-  // Fetch services by ID whenever search results change
-  useEffect(() => {
-    fetchServicesById();
-    console.log(searchResults);
-  }, [searchResults]);
-
-  // Handle the search form submission
-  const handleSearchSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    try {
-      const response = await axios.get(`http://localhost:5000/search?query=${encodeURIComponent(searchQuery)}`);
-      setSearchResults(response.data.results);
-    } catch (error) {
-      console.error('Error fetching search results:', error);
-    }
-  };
-
-  // Fetch user ID and data from the backend API
-  const fetchUserIdAndData = async () => {
-    try {
-      const response = await httpClient.get(`https://api-auths.laconic.co.th/v1/user/init-data`);
-      const userData = response.data;
-      const userId = userData.id;
-
-      setUser({
-        id: userId,
-        email: userData.email
-      });
-      setUserID(userId);
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  };
-
-  // Handle the creation of a new service offer
-  const handleCreateServiceOffer = async (event: React.FormEvent) => {
-    event.preventDefault();
-    const profile = await checkProfile(userID);
-    if (profile) {
-      router.push('/customiseService');
-    } else {
-      router.push('/createProfile');
-    }
-  };
-
-  // Toggle sort dropdown visibility
-  const handleSortClick = () => {
-    setIsSortDropdownOpen(!isSortDropdownOpen);
-  };
-
-  // Handle selection of a sort option
-  const handleSortOptionClick = (option: string) => {
-    setSelectedSortOption(option);
-    console.log(`Selected sorting option: ${option}`);
-    setIsSortDropdownOpen(false);
-  };
-
-  // Toggle filter dropdown visibility
-  const handleFilterClick = () => {
-    setIsFilterDropdownOpen(!isFilterDropdownOpen);
-  };
-
-  // Apply filters and update appliedFilters state
-  const handleFilterApply = () => {
-    setAppliedFilters({
-      minPrice: minPrice,
-      maxPrice: maxPrice,
-      deadline: deadline
-    });
-    console.log(`Filter applied with Min Price: ${minPrice}, Max Price: ${maxPrice}, Deadline: ${deadline}`);
-    setIsFilterDropdownOpen(false);
-  };
-
-  // Clear all filters and reset states
-  const handleClearFilters = () => {
-    setMinPrice('');
-    setMaxPrice('');
-    setDeadline('');
-    setAppliedFilters({
-      minPrice: '',
-      maxPrice: '',
-      deadline: ''
-    });
-    console.log('Filters cleared');
-    setIsFilterDropdownOpen(false);
-  };
-
-  // Check if any filters are applied
-  const areFiltersApplied = appliedFilters.minPrice !== '' || appliedFilters.maxPrice !== '' || appliedFilters.deadline !== '';
-
-  return (
-      <div>
-        <div className="p-16">
-          <h2 className="flex flex-col justify-center items-center font-bold text-5xl text-black">Service Requests</h2>
-          <form className="max-w-2xl mx-auto pt-8" onSubmit={handleSearchSubmit}>
-            <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                </svg>
-              </div>
-              <input type="search" id="default-search"
-                     className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50
-                      focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
-                      dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                     placeholder="e.g. I have a service to offer"
-                     value={inputValue}
-                     onChange={(e) => setInputValue(e.target.value)}
-                     required />
-              <button type="submit" onClick={() => setSearchQuery(inputValue)} className="text-white absolute right-2.5 bottom-2.5 bg-[#0B2147] hover:bg-[#D0693B] focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-black dark:hover:bg-gray-700 dark:focus:ring-gray-800">
-                Search
-              </button>
-            </div>
-          </form>
-          <div className="flex items-center justify-center pt-8 text-black">
-            <h2 className="text-xl font-semibold">No requests match your skills?</h2>
-            <span>
-            <button onClick={(e) => handleCreateServiceOffer(e)} className="text-md px-3 py-2 bg-[#0C2348] text-white rounded-lg font-medium hover:bg-[#D0693B] focus:outline-none ml-2">
-              Personalise your service offer
-            </button>
-          </span>
-          </div>
-
-          <div className="flex justify-end space-x-4 pt-4">
-            <div className="relative">
-              <button
-                  className="flex items-center justify-center w-full text-white bg-[#0B2147] hover:bg-[#D0693B] rounded-lg py-2 px-4 text-sm"
-                  onMouseEnter={() => setIsFilterDropdownOpen(true)}
-                  onMouseLeave={() => setIsFilterDropdownOpen(false)}
-                  style={{ borderColor: 'transparent' }}>
-              <span>
-                <svg className="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M5.05 3C3.291 3 2.352 5.024 3.51 6.317l5.422 6.059v4.874c0 .472.227.917.613 1.2l3.069 2.25c1.01.742 2.454.036 2.454-1.2v-7.124l5.422-6.059C21.647 5.024 20.708 3 18.95 3H5.05Z"/>
-                </svg>
-              </span>Filter
-                {areFiltersApplied && (
-                    <svg className="w-4 h-4 text-[#0C2348] ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                )}
-              </button>
-              {isFilterDropdownOpen && (
-                  <div className="absolute right-0 w-64 bg-white border border-gray-200 rounded-md shadow-lg z-10 p-4"
-                       onMouseEnter={() => setIsFilterDropdownOpen(true)}
-                       onMouseLeave={() => setIsFilterDropdownOpen(false)}>
-                    <h3 className="font-semibold mb-2">Filter by:</h3>
-                    <div className="mb-2 flex items-center justify-between">
-                      <label className="block text-sm font-medium text-gray-700">Min Price/hr</label>
-                      {appliedFilters.minPrice && <span className="text-[#0C2348]">✔</span>}
-                    </div>
-                    <input
-                        type="number"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                        value={minPrice}
-                        onChange={(e) => setMinPrice(Number(e.target.value) >= 0 ? e.target.value : '')}
-                    />
-                    <div className="mb-2 flex items-center justify-between">
-                      <label className="block text-sm font-medium text-gray-700">Max Price/hr</label>
-                      {appliedFilters.maxPrice && <span className="text-[#0C2348]">✔</span>}
-                    </div>
-                    <input
-                        type="number"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                        value={maxPrice}
-                        onChange={(e) => setMaxPrice(Number(e.target.value) >= 0 ? e.target.value : '')}
-                    />
-                    <div className="mb-2 flex items-center justify-between">
-                      <label className="block text-sm font-medium text-gray-700">Latest Deadline</label>
-                      {appliedFilters.deadline && <span className="text-[#0C2348]">✔</span>}
-                    </div>
-                    <input
-                        type="date"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                        value={deadline}
-                        onChange={(e) => setDeadline(e.target.value)}
-                    />
-                    <div className="flex space-x-2 mt-4">
-                      <button
-                          className="w-full bg-[#0B2147] text-white py-2 rounded-lg hover:bg-[#D0693B] focus:outline-none"
-                          onClick={handleFilterApply}
-                          style={{ borderColor: 'transparent' }}
-                      >
-                        Apply Filters
-                      </button>
-                      <button
-                          className="w-full bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600 focus:outline-none"
-                          onClick={handleClearFilters}
-                      >
-                        Clear Filters
-                      </button>
-                    </div>
-                  </div>
-              )}
-            </div>
-            <div className="relative">
-              <button
-                  className="flex items-center justify-center w-full text-white bg-[#0B2147] hover:bg-[#D0693B] rounded-lg py-2 px-4 text-sm"
-                  onMouseEnter={() => setIsSortDropdownOpen(true)}
-                  onMouseLeave={() => setIsSortDropdownOpen(false)}
-                  style={{ borderColor: 'transparent' }}>
-              <span>
-                <svg className="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                  <path fillRule="evenodd" d="M12.832 3.445a1 1 0 0 0-1.664 0l-4 6A1 1 0 0 0 8 11h8a1 1 0 0 0 .832-1.555l-4-6Zm-1.664 17.11a1 1 0 0 0 1.664 0l4-6A1 1 0 0 0 16 13H8a1 1 0 0 0-.832 1.555l4 6Z" clipRule="evenodd"/>
-                </svg>
-              </span>Sort
-              </button>
-              {isSortDropdownOpen && (
-                  <div className="absolute right-0 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10"
-                       onMouseEnter={() => setIsSortDropdownOpen(true)}
-                       onMouseLeave={() => setIsSortDropdownOpen(false)}>
-                    <ul className="py-1 text-sm text-gray-700">
-                      {['Best Match', 'Popularity', 'Price: Lowest to Highest', 'Price: Highest to Lowest', 'Rating'].map(option => (
-                          <li key={option} className={`flex justify-between items-center px-4 py-2 cursor-pointer hover:bg-gray-100 ${selectedSortOption === option ? 'font-bold' : ''}`} onClick={() => handleSortOptionClick(option)}>
-                            {option}
-                            {selectedSortOption === option && (
-                                <svg className="w-4 h-4 text-[#0C2348]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                            )}
-                          </li>
-                      ))}
-                    </ul>
-                  </div>
-              )}
-            </div>
-          </div>
-
-          {/* Work Category Sidebar and Service Requests */}
-          <div className='flex pt-8'>
-            <div className="job-category overflow-y-auto w-1/5">
-              <h2 className='font-semibold text-center'>Work Category</h2>
-              {categoryList.map((category, index) => (
-                  <div key={index} className="py-1 border-b border-gray-400 hover:text-blue-500 cursor-pointer text-sm">{category.name}</div>
-              ))}
-            </div>
-
-            {/* Display services based on search query */}
-            {searchQuery.trim() === '' ? (
-                <div className="flex flex-wrap pr-0 mr-0 w-4/5">
-                  {jobDataList.map((jobData, index) => (
-                      <div key={index} className="w-full sm:w-1/2 md:w-1/3 pb-4 flex justify-stretch">
-                        <ServiceRequestCard serviceRequest={{
-                          title: jobData.title, // Correctly pass the title from the service object
-                          work_category: jobData.categoryDTO.name,
-                          //company: map profileId to username or firstName + lastName in User table
-                          company: "Jeremy",
-                          location: jobData.location ?? 'a',
-                          employment_type: jobData.employmentType ?? 'a',
-                          description_1: jobData.description1 ?? '',
-                          description_2: jobData.description2 ?? '',
-                          description_3: jobData.description3 ?? '',
-                          examples_of_work: jobData.serviceRequestDTO?.workExample ?? 'a',
-                          submission_deadline: jobData.serviceRequestDTO?.submissionDeadline ?? '11/08',
-                          budget: jobData.price.toString() ?? '0',
-                          //add priceUnit here and in ServiceRequestCard component
-                          language: jobData.languageSpoken ?? 'English',
-                          days_left: '', // This would need calculation based on the current date and submission_deadline
-                        }} hasProfile={true} profilePic={'/jobonic.svg'} />
-                      </div>
-                  ))}
-                </div>
-            ) : (
-                <div className="flex flex-wrap pr-0 mr-0 w-4/5">
-                  {serviceDisplay.map((result, index) => (
-                      <div key={index} className="w-full sm:w-1/2 md:w-1/3 px-2 pb-4 flex justify-end">
-                        <ServiceRequestCard serviceRequest={{
-                          title: result.title, // Correctly pass the title from the service object
-                          work_category: result.categoryDTO.name,
-                          //company: map profileId to username or firstName + lastName in User table
-                          company: "Jeremy",
-                          location: result.location ?? '',
-                          employment_type: result.employmentType ?? '',
-                          description_1: result.description1 ?? '',
-                          description_2: result.description2 ?? '',
-                          description_3: result.description3 ?? '',
-                          examples_of_work: result.serviceRequestDTO?.workExample ?? '',
-                          submission_deadline: result.serviceRequestDTO?.submissionDeadline ?? '11/08',
-                          //budget: '0',
-                          budget: result.price.toString() ?? '0',
-                          //add priceUnit here and in ServiceRequestCard component
-                          language: result.languageSpoken ?? '',
-                          days_left: '', // This would need calculation based on the current date and submission_deadline
-                        }} hasProfile={true} profilePic={'/jobonic.svg'} />
-                      </div>
-                  ))}
-                </div>
-            )}
-          </div>
-        </div>
-      </div>
-  );
-}
