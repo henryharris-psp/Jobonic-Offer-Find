@@ -3,6 +3,11 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import httpClient from "@/client/httpClient";
+import CategoryItem from "./findServices/CategoryItem";
+import { Category } from "../types/general";
+import CategorySkeleton from "./findServices/CategoryItemSkeleton";
+
+const skeletonCount = Array.from({ length: 15 }, (_, index) => index);
 
 const CategorySuggestions = (): React.ReactElement => {
     const [categoryList, setCategoryList] = useState<Category[]>([]);
@@ -29,9 +34,9 @@ const CategorySuggestions = (): React.ReactElement => {
     return (
         <div className="flex flex-row flex-wrap p-10 md:p-20">
 
-            <div className="flex flex-col w-52 m-2">
-                <h2 className="text-2xl md:text-4xl font-bold text-black mb-1">
-                    No idea what you’d like?
+            <div className="flex flex-col w-full lg:max-w-72 mt-3 mb-10 mx-2">
+                <h2 className="text-4xl md:text-4xl font-bold text-black mb-1">
+                    No idea what you&apos;d like?
                 </h2>
                 <p className="text-gray-500 mb-4">
                     Here are some services available
@@ -43,20 +48,20 @@ const CategorySuggestions = (): React.ReactElement => {
                 </Link>
             </div>
 
-            <div className="flex-1 flex flex-wrap items-center m-2 min-w-96">
-                {categoryList.map((category, index) => (
-                    <Link
-                        key={index}
-                        href={`/serviceList?category=${encodeURIComponent(
-                            category.name
-                        )}`}
-                        className="m-2"
-                    >
-                        <div className="bg-[#0B2147] text-white rounded-lg px-4 py-2 shadow-md hover:cursor-pointer hover:bg-[#D0693B]">
-                            {category.name}
-                        </div>
-                    </Link>
-                ))}
+            <div className="flex-1 flex flex-wrap items-center min-w-96">
+                { isLoading ? (
+                    skeletonCount.map( id => (
+                        <CategorySkeleton key={id}/>
+                    ))
+                ) : (
+                    categoryList.map( (category: Category) => (
+                        <CategoryItem 
+                             key={category.id}
+                             id={category.id}
+                             name={category.name}
+                        />
+                    ))
+                )}
             </div>
 
         </div>

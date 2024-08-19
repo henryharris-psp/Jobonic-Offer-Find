@@ -9,99 +9,117 @@ import useWindowResize from "@/hooks/useWindowResize";
 import NavBar from "@/components/NavBar";
 import initializeSkills from "@/utils/initialiseSkills";
 import { useEffect } from "react";
-import { authenticate } from "@/store/reducers/authReducer";
-import { getUserId } from "@/functions/helperFunctions";
+import { authenticate as reduxAuthenticate } from "@/store/reducers/authReducer";
 import initialiseCategories from "@/utils/initialiseCategories";
-import { AuthContextProvider } from "@/app/context/AuthContext";
+
+import axios from "axios";
+import { AuthContextProvider } from "@/contexts/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const dummyProfile = {
-    name: "John Doe",
-    email: "user@gmail.com",
-    services: [
-        "Web Development",
-        "App Development",
-        "UI/UX Design",
-        "SEO Optimization",
-    ],
-    description:
-        "Experienced full-stack developer with a passion for creating modern and responsive web applications. Skilled in both front-end and back-end technologies.",
-    skills: [
-        "JavaScript",
-        "React",
-        "Node.js",
-        "PHP",
-        "Laravel",
-        "TailwindCSS",
-        "MySQL",
-        "HTML/CSS",
-    ],
-    experience: [
-        "3 years as a Front-End Developer at TechCorp",
-        "2 years as a Full-Stack Developer at CodeMasters",
-        "1 year as a Freelance Web Developer",
-    ],
-    education: [
-        "Bachelor's in Computer Science from State University",
-        "Certified JavaScript Developer",
-    ],
-    otherInformation: [
-        "Fluent in English and Spanish",
-        "Enjoys contributing to open-source projects",
-        "Active member of local developer community",
-    ],
-    rating: 4.7,
+const getAuthUserDetails = async (token: string) => {
+    const laconicAuthServerUrl =process.env.NEXT_PUBLIC_LACONIC_AUTH_SERVER_URL;
+    try{
+        const res = await axios.get(`${laconicAuthServerUrl}/user/init-data`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return res.data;
+    } catch {
+        return null;
+    }
+}
+
+const getAuthUserProfile = async (userId: string | number, token: string) => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    try{
+        const res = await axios.get(`${apiUrl}/user/profile?id=${userId}`,{
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return res.data;
+    } catch {
+        return null;
+    }
+}
+
+const authenticate = async (accessToken: string, refreshToken: string) => {
+    const authUserDetails = await getAuthUserDetails(accessToken);
+
+    if (!authUserDetails) {
+        throw new Error('Authentication failed');
+    }
+
+    const authUserProfile = await getAuthUserProfile(authUserDetails?.id, accessToken);
+
+    // Save working token
+    localStorage.setItem('access_token', accessToken);
+    localStorage.setItem('refresh_token', refreshToken);
+
+    return {
+        ...authUserDetails,
+        profile: authUserProfile,
+    };
 };
 
 const RootLayout = ({
     children,
+    showFooter = true,
 }: Readonly<{
     children: React.ReactNode;
+    showFooter?: boolean;
 }>) => {
     useWindowResize();
     const dispatch = useDispatch();
 
-    //initial auth check on page load
+    //boot method
     useEffect(() => {
-        //temporary login
-        const urlParams = new URLSearchParams(window.location.search);
-        const refreshToken = urlParams.get("refresh_token");
-        const accessToken = urlParams.get("access_token");
-
-        if (accessToken && refreshToken) {
-            // Use access token for API calls in PMS
-            localStorage.setItem("refresh_token", refreshToken);
-            localStorage.setItem("access_token", accessToken);
-            window.location.href = "/";
-        } else {
-            //temporary
-            (async () => {
-                try {
-                    const userId = await getUserId();
-                    dispatch(authenticate({
-                        id: userId,
-                        ...dummyProfile
-                    }));
-                } catch (error) {
-                    console.log("Session Expired", error);
+        (async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const newRefreshToken = urlParams.get("refresh_token");
+            const newAccessToken = urlParams.get("access_token");
+    
+            if(newAccessToken && newRefreshToken){
+                try{
+                    await authenticate(newAccessToken, newRefreshToken);
+                    window.location.href = '/';
+                } catch {
+                    console.log('cannot authenticate with new token');
                 }
-            })();
-        }
+            } else {
+                const storedAccessToken = localStorage.getItem('access_token');
+                const storedRefreshToken = localStorage.getItem('refresh_token');
 
-        // Initialize categories on app start. To be removed for production.
-        initialiseCategories();
-        initializeSkills();
+                if(storedAccessToken && storedRefreshToken){
+                    try{
+                        const authUser = await authenticate(storedAccessToken, storedRefreshToken);
+                        dispatch(reduxAuthenticate(authUser));
+                    } catch {
+                        console.log('Token expired. Login Again');
+                    }
+                }
+            }
+
+            initialiseCategories();
+            initializeSkills();
+        })();
     }, []);
 
     return (
         <html lang="en">
             <AuthContextProvider>
-                <script src="https://accounts.google.com/gsi/client" async defer></script>
+                <script
+                    src="https://accounts.google.com/gsi/client"
+                    async
+                    defer
+                ></script>
                 <body className={inter.className}>
                     <NavBar />
                     <main>{children}</main>
-                    <Footer />
+                    {showFooter && <Footer />}
                     {/* <ChatBox /> */}
                 </body>
             </AuthContextProvider>
@@ -111,12 +129,14 @@ const RootLayout = ({
 
 const RootLayoutWithRedux = ({
     children,
+    showFooter =true,
 }: Readonly<{
     children: React.ReactNode;
+    showFooter?: boolean;
 }>) => {
     return (
         <Provider store={store}>
-            <RootLayout>{children}</RootLayout>
+            <RootLayout showFooter={showFooter}>{children}</RootLayout>
         </Provider>
     );
 };

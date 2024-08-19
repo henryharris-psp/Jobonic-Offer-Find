@@ -59,7 +59,7 @@ httpClient.interceptors.response.use((response) => response,
                 } catch (e) {
                     const error = e as AxiosError;
                     if ((error.response?.status === 400 || error.response?.status === 401 || error.response?.status === 500) && error.config?.url === ENDPOINT_REFRESH_TOKEN) {
-                        window.location.href = `${laconicAuthPageUrl}/authentication?page=logout`;
+                        //window.location.href = `${laconicAuthPageUrl}/authentication?page=logout`;
                     }
                     return Promise.reject(error);
                 }

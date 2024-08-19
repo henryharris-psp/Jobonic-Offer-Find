@@ -1,9 +1,11 @@
 package com.laconic.fastworkapi.service;
 
 import com.laconic.fastworkapi.dto.ServiceDTO;
+import com.laconic.fastworkapi.dto.ServiceFilterDTO;
 import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
+import com.laconic.fastworkapi.entity.ServiceManagement;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,7 +16,10 @@ public interface IManagementService {
     String remove(UUID id);
 
     List<ServiceDTO.WithProfile> getAllByUser(Long profileId);
+
     ServiceDTO.WithProfile getById(UUID id);
+
+    List<ServiceManagement> getFilterByPriceAndDate(ServiceFilterDTO serviceFilterDTO);
 
     PaginationDTO<ServiceDTO.WithProfile> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
 }

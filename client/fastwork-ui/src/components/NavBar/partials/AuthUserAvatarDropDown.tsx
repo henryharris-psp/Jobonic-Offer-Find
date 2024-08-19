@@ -32,12 +32,22 @@ const AuthUserAvatarDropDown = () => {
                 />
             </button>
             {isHover && (
-                <ul className="text-black absolute right-0 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
-                    <li className="px-4 py-3 text-sm hover:bg-gray-100 hover:rounded-t-md cursor-pointer">
+                <ul className="text-black absolute right-0 w-48 overflow-hidden bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                    { !authUser?.profile ? (
+                        <li className="flex justify-center p-2">
+                            <Link
+                                href="/createProfile"
+                                className="text-white w-full bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-2 py-1 text-center"
+                            >
+                                Create Profile
+                            </Link>
+                        </li>
+                    ) : ''}
+                    <li className="px-4 py-3 text-sm hover:bg-gray-100 cursor-pointer">
                         <label htmlFor="">{authUser?.email}</label>
                     </li>
                     <hr />
-                    <li className="px-4 py-3 text-sm hover:bg-gray-100 hover:rounded-t-md cusor-pointer">
+                    <li className="px-4 py-3 text-sm hover:bg-gray-100 cursor-pointer">
                         <Link href="/myDashboard">My Dashboard</Link>
                     </li>
                     <li className="px-4 py-3 text-sm hover:bg-gray-100 text-black cursor-pointer">
@@ -47,7 +57,7 @@ const AuthUserAvatarDropDown = () => {
                         <Link href="/myRewardsEmployer">My Rewards</Link>
                     </li>
                     <li
-                        className="px-4 py-3 text-sm hover:bg-gray-100 hover:rounded-b-md cursor-pointer"
+                        className="px-4 py-3 text-sm hover:bg-gray-100 cursor-pointer"
                         onClick={handleLogOut}
                     >
                         Sign Out
