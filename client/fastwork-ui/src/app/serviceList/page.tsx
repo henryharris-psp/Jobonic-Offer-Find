@@ -109,7 +109,7 @@ const ServiceList = () => {
                     filter: filters
                 }
 
-                const servicesData = await fetchServices(signal, payload);
+                const servicesData = await fetchServices('offer', signal, payload);
                 if (servicesData){
                     setServices(servicesData.content);
                     setPagination( prev => ({

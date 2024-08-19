@@ -1,6 +1,6 @@
 import httpClient from '@/client/httpClient';
 import { Category } from '@/types/general';
-import { ServiceApiResponse, ServicePayload } from '@/types/service';
+import { Service, ServiceApiResponse, ServicePayload } from '@/types/service';
 
 // function to get user ID from the init endpoint
 export const getUserId = async () => {
@@ -83,12 +83,24 @@ export const getCategoryName = async (categoryId: string) => {
 
 
 export const fetchServices = async (
+    type: 'offer' | 'request',
     signal: AbortSignal,
-    payload: ServicePayload,
+    payload: ServicePayload
 ): Promise<ServiceApiResponse | undefined> => {
     try {
         const res = await httpClient.post<ServiceApiResponse>('service/all', payload, { signal });
-        return res.data;
+        const services = res.data.content.filter((service: Service) => {
+            return type === 'request' 
+            ? service.serviceRequestDTO !== null
+            : service.serviceRequestDTO === null //TODO: temporay
+        });
+
+        const resData = {
+            ...res.data,
+            totalElements: services.length, //TODO: temporay
+            content: services,
+        }
+        return resData;
     } catch (error: any) {
         if (error.name === 'AbortError') {
             console.log('Fetch services aborted');
