@@ -103,8 +103,8 @@ const RootLayout = ({
                 }
             }
 
-            initialiseCategories();
-            initializeSkills();
+            // initialiseCategories();
+            // initializeSkills();
         })();
     }, []);
 

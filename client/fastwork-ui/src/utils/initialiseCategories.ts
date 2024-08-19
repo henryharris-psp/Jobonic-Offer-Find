@@ -37,7 +37,7 @@ const initialiseCategories = async () => {
                     console.error("One new category failed to create:", error);
                 }
             };
-            createNewCategories();
+            // createNewCategories();
         }
     } catch (error) {
         console.error("Error initializing categories:", error);

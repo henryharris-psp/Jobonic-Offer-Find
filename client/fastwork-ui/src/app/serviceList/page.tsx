@@ -51,7 +51,7 @@ const defaultFilters = {
 
 const defaultPagination = {
     currentPage: 1,
-    itemsPerPage: 2,
+    itemsPerPage: 20,
     totalPages: 0,
     totalElements: 0
 }
