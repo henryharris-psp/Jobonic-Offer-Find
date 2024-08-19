@@ -29,6 +29,20 @@ export default function CreateProfile(): React.ReactNode {
     const [roles, setRoles] = useState([]);
     const [errors, setErrors] = useState({ phoneNumber: '', address: '' });
 
+    const [username, setUsername] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [companyName, setCompanyName] = useState('');
+    const [image, setImage] = useState('');
+    const [cardNumber, setCardNumber] = useState('');
+    const [cardExpiryDate, setCardExpiryDate] = useState('');
+    const [walletAddress, setWalletAddress] = useState('');
+    const [numReviews, setNumReviews] = useState(0);
+    const [userExperienceList, setUserExperienceList] = useState([]);
+    const [userEducationList, setUserEducationList] = useState([]);
+    const [skills, setSkills] = useState([]);
+
     const handleBack = () => {
         if (page3) {
             setPage3(false);
@@ -37,7 +51,7 @@ export default function CreateProfile(): React.ReactNode {
         } else if (page1) {
             setPage1(false);
         } else {
-            router.back(); // Use this to go back in history
+            router.back();
         }
     };
 
@@ -51,65 +65,30 @@ export default function CreateProfile(): React.ReactNode {
         }
     };
 
-    // useEffect(() => {
-    //     setErrors({
-    //         phoneNumber: '',
-    //         address: '',
-    //     });
-    // }, []);
-    //
-    // const validatePhoneNumber = (phoneNumber: string) => {
-    //     const phoneRegex = /^[0-9]{10,15}$/;
-    //     return phoneRegex.test(phoneNumber);
-    // };
-    //
-    // const validateAddress = (address: string | any[]) => {
-    //
-    //     return address.length >= 5;
-    // };
-    //
-    // const handleBack = () => {
-    //     router.back();
-    // };
-    //
-    // const handleNext = () => {
-    //     let valid = true;
-    //     let phoneError = '';
-    //     let addressError = '';
-    //
-    //     if (!validatePhoneNumber(contactNumber)) {
-    //         phoneError = 'Invalid phone number. It should contain 10-15 digits.';
-    //         valid = false;
-    //     }
-    //
-    //     if (!validateAddress(address)) {
-    //         addressError = 'Address must be at least 5 characters long.';
-    //         valid = false;
-    //     }
-    //
-    //     setErrors({ phoneNumber: phoneError, address: addressError });
-    //
-    //     if (valid) {
-    //         setPage1(true);
-    //     }
-    // };
-
-
-
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                // const laconicAuthServerUrl = process.env.NEXT_PUBLIC_AUTH_SERVER_URL;
                 const laconicAuthServerUrl = process.env.NEXT_PUBLIC_LACONIC_AUTH_SERVER_URL;
                 const response = await httpClient.get(`${laconicAuthServerUrl}/user/init-data`);
                 const userData = response.data;
-                console.log('User Data Id: ',userData.id);
-                setUserId(userData.id);
+                console.log('User Data Id: ', userData.id);
+                setUserId(userData.id); // Set dynamic userId
                 setContactNumber(userData.phoneNumber);
                 setAddress(userData.address);
                 setRoles(userData.roles);
-                console.log(userData.id);
-                console.log(userData.roles);
+                setUsername(userData.username || '');
+                setFirstName(userData.firstName || '');
+                setLastName(userData.lastName || '');
+                setEmail(userData.email || '');
+                setCompanyName(userData.companyName || '');
+                setImage(userData.image || '');
+                setCardNumber(userData.cardNumber || '');
+                setCardExpiryDate(userData.cardExpiryDate || '');
+                setWalletAddress(userData.walletAddress || '');
+                setNumReviews(userData.numReviews || 0);
+                setUserExperienceList(userData.userExperienceList || []);
+                setUserEducationList(userData.userEducationList || []);
+                setSkills(userData.skills || []);
             } catch (error) {
                 console.error('Error fetching user data:', error);
             }
@@ -117,8 +96,6 @@ export default function CreateProfile(): React.ReactNode {
 
         fetchUserData();
     }, []);
-
-
 
     const handleSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
         setPage3(true);
@@ -132,61 +109,27 @@ export default function CreateProfile(): React.ReactNode {
         const fullPhoneNumber = `${countryCode}${contactNumber}`;
 
         const userData = {
-            "id": userId,
-            "companyName": "string",
-            "phoneNumber": fullPhoneNumber,
-            "address": address,
-            "image": "string",
-            "cardNumber": "string",
-            "cardExpiryDate": "2024-07-16",
-            "walletAddress": "string",
-            "review": 0,
-            "userExperienceList": [
-                {
-                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "profileId": userId,
-                    "company": "string",
-                    "startDate": "2024-07-16",
-                    "endDate": "2024-07-16"
-                }
-            ],
-            "userEducationList": [
-                {
-                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "profileId": 0,
-                    "institute": "string",
-                    "degree": "string",
-                    "startDate": "2024-07-16",
-                    "endDate": "2024-07-16"
-                }
-            ],
-            "skills": [
-                {
-                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "name": "string"
-                }
-            ],
-            "roles": [
-                {
-                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "roleType": "ADMIN"
-                }
-            ],
-            "userId": userId
+            id: userId, // Dynamic userId
+            username,
+            firstName,
+            lastName,
+            email,
+            companyName,
+            phoneNumber: fullPhoneNumber,
+            address,
+            image,
+            cardNumber,
+            cardExpiryDate,
+            walletAddress,
+            numReviews,
+            userExperienceList,
+            userEducationList,
+            skills,
+            userId: userId,
         };
 
         try {
-            //console.log(userData);
-            // const response = await axios.put(`${baseURL}/api/v1/user?id=${userId}`, userData, {
-            //     headers: {
-            //         'Authorization': `Bearer ${token}`,
-            //         'Content-Type': 'application/json',
-            //     },
-            // });
-
-            //console.log('User updated successfully:', response.data);
-
-            const response = await httpClient.post(`user?id=${userId}`, userData);
+            const response = await httpClient.post(`user`, userData);
             console.log('User created successfully:', response.data);
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -209,7 +152,7 @@ export default function CreateProfile(): React.ReactNode {
 
                 {/* Flex container for country code and phone number */}
                 <div className="max-w-4xl mx-auto w-full mt-8 flex items-center gap-4 relative">
-                    <div className="w-1/3">
+                    <div className="w-34-m">
                         <select
                             value={countryCode}
                             onChange={(e) => setCountryCode(e.target.value)}
@@ -284,17 +227,9 @@ export default function CreateProfile(): React.ReactNode {
                             value={phoneOtp}
                             onChange={(e) => setPhoneOtp(e.target.value)}
                             className="p-5 w-full text-gray-900 border border-gray-300 rounded-lg bg-gray-100 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mr-4" />
-                        {/*<button*/}
-                        {/*    className="text-white bg-[#0B2147] hover:bg-[#D0693B] pt-3 pb-3 pl-4 pr-4 rounded-lg text-md"*/}
-                        {/*    style={{ borderColor: 'transparent' }}>Verify OTP*/}
-                        {/*</button>*/}
                     </div>
                     <div className="w-full mb-4"
                         >
-                        {/*<input type="text" id="email-otp" placeholder="Email OTP"*/}
-                        {/*    value={emailOtp}*/}
-                        {/*    onChange={(e) => setEmailOtp(e.target.value)}*/}
-                        {/*    className="p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-100 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mr-4" />*/}
                         <a href="#" id="resend-otp-link" className="text-blue-600 hover:text-teal-600 text-center">Resend OTP</a>
                     </div>
                 </div>
