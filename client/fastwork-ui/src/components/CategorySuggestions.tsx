@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import httpClient from "@/client/httpClient";
-import CategoryItem from "./FindServices/CategoryItem";
+import CategoryItem from "./findServices/CategoryItem";
 import { Category } from "../types/general";
-import CategorySkeleton from "./FindServices/CategoryItemSkeleton";
+import CategorySkeleton from "./findServices/CategoryItemSkeleton";
 
 const skeletonCount = Array.from({ length: 15 }, (_, index) => index);
 

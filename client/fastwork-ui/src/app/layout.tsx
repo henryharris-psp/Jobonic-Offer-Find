@@ -11,12 +11,9 @@ import initializeSkills from "@/utils/initialiseSkills";
 import { useEffect } from "react";
 import { authenticate as reduxAuthenticate } from "@/store/reducers/authReducer";
 import initialiseCategories from "@/utils/initialiseCategories";
-<<<<<<< Updated upstream
-import { AuthContextProvider } from "@/app/context/AuthContext";
+
 import axios from "axios";
-=======
 import { AuthContextProvider } from "@/contexts/AuthContext";
->>>>>>> Stashed changes
 
 const inter = Inter({ subsets: ["latin"] });
 

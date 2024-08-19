@@ -3,14 +3,14 @@ import { useRouter } from "next/navigation";
 import React, { useRef } from "react";
 
 const TopSectionFindServices = (): React.ReactElement => {
-    const inputRef = useRef(null);
+    const inputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        const searchKeyword = inputRef?.current?.value;
+        const searchKeyword = (inputRef.current as HTMLInputElement)?.value ?? '';
         if(searchKeyword){
-            router.push(`/serviceList?keyword=${searchKeyword}`);
+            router.push(`/serviceList?searchKeyword=${searchKeyword}`);
         }
     }
 

@@ -1,4 +1,6 @@
 import httpClient from '@/client/httpClient';
+import { Category } from '@/types/general';
+import { ServiceApiResponse, ServicePayload } from '@/types/service';
 
 // function to get user ID from the init endpoint
 export const getUserId = async () => {
@@ -76,5 +78,37 @@ export const getCategoryName = async (categoryId: string) => {
     } catch (error: any) {
         console.error('Error fetching profile details:', error);
         throw error;
+    }
+};
+
+
+export const fetchServices = async (
+    signal: AbortSignal,
+    payload: ServicePayload,
+): Promise<ServiceApiResponse | undefined> => {
+    try {
+        const res = await httpClient.post<ServiceApiResponse>('service/all', payload, { signal });
+        return res.data;
+    } catch (error: any) {
+        if (error.name === 'AbortError') {
+            console.log('Fetch services aborted');
+        } else {
+            console.error('Fetch services error:', error);
+        }
+    }
+};
+
+export const fetchCategories = async (
+    signal: AbortSignal,
+): Promise<Category[] | undefined>  => {
+    try {
+        const res = await httpClient.get('category/all', { signal });
+        return res.data;
+    } catch (error: any) {
+        if (error.name === 'AbortError') {
+            console.log('Fetch categories aborted');
+        } else {
+            console.error('Fetch categories error:', error);
+        }
     }
 };
