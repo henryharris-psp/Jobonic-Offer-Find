@@ -37,7 +37,7 @@ const initialiseSkills = async () => {
                     console.error("One new skill failed to create:", error);
                 }
             };
-            createNewSkills();
+            // createNewSkills();
         }
     } catch (error) {
         console.error("Error initializing skills:", error);
