@@ -15,6 +15,7 @@ import com.laconic.fastworkapi.repo.IUserRepo;
 import com.laconic.fastworkapi.repo.specification.GenericSpecification;
 import com.laconic.fastworkapi.service.IManagementService;
 import com.laconic.fastworkapi.utils.EntityMapper;
+import com.laconic.fastworkapi.utils.ServiceManagementSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -157,5 +158,25 @@ public class ManagementService implements IManagementService {
         dto.setMaxPrice(serviceManagement.getPrice());
         dto.setSubmissionDeadline(serviceManagement.getServiceRequest().getSubmissionDeadline());
         return dto;
+    }
+
+
+    public PaginationDTO<ServiceDTO.WithProfile> filterServices(UUID categoryId, Double minPrice, Double maxPrice, PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        if (minPrice == null) {
+            minPrice = 0.0;
+        }
+        if (maxPrice == null) {
+            maxPrice = Double.MAX_VALUE;
+        }
+
+        Specification<ServiceManagement> specification = ServiceManagementSpecification.filterByCategoryAndPrice(
+                categoryId, minPrice, maxPrice);
+
+        Page<ServiceManagement> servicePage = serviceRepo.findAll(specification, pageAndFilterDTO.getPageRequest());
+        List<ServiceDTO.WithProfile> servicesWithProfile = servicePage.stream()
+                .map(service -> getServiceWithProfile(service, service.getProfile()))
+                .collect(Collectors.toList());
+
+        return PaginationHelper.getResponse(servicePage, servicesWithProfile);
     }
 }

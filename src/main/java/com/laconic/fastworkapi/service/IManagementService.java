@@ -22,4 +22,6 @@ public interface IManagementService {
     List<ServiceManagement> getFilterByPriceAndDate(ServiceFilterDTO serviceFilterDTO);
 
     PaginationDTO<ServiceDTO.WithProfile> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
+
+    PaginationDTO<ServiceDTO.WithProfile> filterServices(UUID categoryId, Double minPrice, Double maxPrice, PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
 }

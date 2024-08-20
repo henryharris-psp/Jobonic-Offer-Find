@@ -90,4 +90,13 @@ public class ServiceManagementController {
         return managementService.getFilterByPriceAndDate(serviceFilterDTO);
     }
 
+    @Operation(summary = APIDocsHelper.ServiceAPI.FILTER_SERVICES)
+    @PostMapping("/filters")
+    public PaginationDTO<ServiceDTO.WithProfile> filterServices(
+            @RequestParam(required = false) UUID categoryId,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        return this.managementService.filterServices(categoryId, minPrice, maxPrice, pageAndFilterDTO);
+    }
 }
