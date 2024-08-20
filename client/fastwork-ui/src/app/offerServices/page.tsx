@@ -1,6 +1,5 @@
 'use client';
 
-import ServiceMatchCard from "@/components/ServiceMatchCard";
 import SearchFilterDropDown from "@/components/SearchFilterDropDown";
 import { fetchCategories, fetchServices } from "@/functions/helperFunctions";
 import { Category } from "@/types/general";
@@ -92,6 +91,7 @@ const OfferService = () => {
     const [filters, setFilters] = useState<ServiceFilter>(defaultFilters);
     const [pagination, setPagination] = useState(defaultPagination);
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
     //mounted
         useEffect( () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -191,7 +191,7 @@ const OfferService = () => {
                 }
             });
         }
-        
+
     return (
         <div className="flex flex-col min-h-screen">
 
@@ -231,7 +231,11 @@ const OfferService = () => {
                         No requests match your skills?
                     </span>
                     <Link
-                        href={authUser?.profile ? '/customiseService' : '/createProfile'}
+                        href={
+                            authUser
+                                ? '/customiseService'
+                                : '/register'
+                        }
                         className="text-white py-2 px-4 rounded-lg inline-block hover:bg-[#D0693B] bg-[#0B2147]"
                     >
                         Personalise your service offer
