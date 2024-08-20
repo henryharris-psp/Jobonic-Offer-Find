@@ -7,10 +7,12 @@ import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
 import com.laconic.fastworkapi.entity.Profile;
 import com.laconic.fastworkapi.entity.ServiceManagement;
+import com.laconic.fastworkapi.entity.ServiceRequest;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.helper.PaginationHelper;
 import com.laconic.fastworkapi.repo.ICategoryRepo;
 import com.laconic.fastworkapi.repo.IServiceRepo;
+import com.laconic.fastworkapi.repo.IServiceRequestRepo;
 import com.laconic.fastworkapi.repo.IUserRepo;
 import com.laconic.fastworkapi.repo.specification.GenericSpecification;
 import com.laconic.fastworkapi.service.IManagementService;
@@ -32,12 +34,14 @@ import java.util.stream.Collectors;
 @Service
 public class ManagementService implements IManagementService {
     private final IServiceRepo serviceRepo;
+    private final IServiceRequestRepo serviceRequestRepo;
     private final IUserRepo userRepo;
     private final ICategoryRepo categoryRepo;
 
     @Autowired
-    public ManagementService(IServiceRepo serviceRepo, IUserRepo userRepo, ICategoryRepo categoryRepo) {
+    public ManagementService(IServiceRepo serviceRepo, IServiceRequestRepo serviceRequestRepo, IUserRepo userRepo, ICategoryRepo categoryRepo) {
         this.serviceRepo = serviceRepo;
+        this.serviceRequestRepo = serviceRequestRepo;
         this.userRepo = userRepo;
         this.categoryRepo = categoryRepo;
     }
@@ -62,72 +66,80 @@ public class ManagementService implements IManagementService {
         );
     }
 
+    private static ServiceDTO.GetRequestService mapToGetRequestService(ServiceRequest service) {
+        return new ServiceDTO.GetRequestService(
+                service.getId(),
+                service.getSubmissionDeadline(),
+                service.getWorkExample()
+        );
+    }
+
     @Override
     public ServiceDTO.WithProfile save(ServiceDTO serviceDTO) {
-        var user = this.userRepo.findById(serviceDTO.getProfileId())
-                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
-                        serviceDTO.getProfileId().toString()));
-        var category = this.categoryRepo.findById(serviceDTO.getCategoryId())
-                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.CATEGORY, "id",
-                        serviceDTO.getCategoryId().toString()));
+        var user = userRepo.findById(serviceDTO.getProfileId())
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id", serviceDTO.getProfileId().toString()));
+
+        var category = categoryRepo.findById(serviceDTO.getCategoryId())
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.CATEGORY, "id", serviceDTO.getCategoryId().toString()));
+
         var serviceManagement = EntityMapper.mapToEntity(serviceDTO, ServiceManagement.class);
         serviceManagement.setProfile(user);
         serviceManagement.setCategory(category);
-        var service = this.serviceRepo.save(serviceManagement);
-        return getServiceWithProfile(service, user);
+
+        var savedService = serviceRepo.save(serviceManagement);
+        return getServiceWithProfile(savedService, user);
     }
 
     @Override
     public String remove(UUID id) {
-        var service = this.serviceRepo.findById(id)
-                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
-                        id.toString()));
+        var service = serviceRepo.findById(id)
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id", id.toString()));
+
         service.setActive(false);
-        this.serviceRepo.save(service);
+        serviceRepo.save(service);
         return String.format(AppMessage.DELETE_MESSAGE, AppMessage.SERVICE);
     }
 
     @Override
     public List<ServiceDTO.WithProfile> getAllByUser(Long profileId) {
-        var user = this.userRepo.findById(profileId)
-                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
-                        profileId.toString()));
-        var services = this.serviceRepo.findAllByProfileId(profileId);
-        return services.stream().map(s -> getServiceWithProfile(s, user)).toList();
+        var user = userRepo.findById(profileId)
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id", profileId.toString()));
+
+        return serviceRepo.findAllByProfileId(profileId)
+                .stream()
+                .map(service -> getServiceWithProfile(service, user))
+                .collect(Collectors.toList());
     }
 
     @Override
     public ServiceDTO.WithProfile getById(UUID id) {
-        var service = this.serviceRepo.findById(id)
-                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
-                        id.toString()));
-        var user = this.userRepo.findById(service.getProfile().getId())
-                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
-                        service.getProfile().getId().toString()));
+        var service = serviceRepo.findById(id)
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id", id.toString()));
+
+        var user = service.getProfile();
         return getServiceWithProfile(service, user);
     }
 
-    // Fetch the services filtered by price and date
     @Override
     public List<ServiceManagement> getFilterByPriceAndDate(ServiceFilterDTO serviceFilterDTO) {
         Double minPrice = serviceFilterDTO.getMinPrice();
         Double maxPrice = serviceFilterDTO.getMaxPrice();
         LocalDate submissionDeadline = serviceFilterDTO.getSubmissionDeadline();
 
-        // If submissionDeadline is not null, ensure it's in LocalDate format
         if (submissionDeadline == null && serviceFilterDTO.getSubmissionDeadline() != null) {
-            submissionDeadline = parseDate(String.valueOf(serviceFilterDTO.getSubmissionDeadline()));
+            submissionDeadline = parseDate(serviceFilterDTO.getSubmissionDeadline().toString());
         }
 
-        return this.serviceRepo.findAndFilterByPriceAndDate(minPrice, maxPrice, submissionDeadline);
+        return serviceRepo.findAndFilterByPriceAndDate(minPrice, maxPrice, submissionDeadline);
     }
 
     private LocalDate parseDate(String dateString) {
         if (dateString == null || dateString.isEmpty()) {
-            return null; // or handle as appropriate
+            return null;
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
         try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             return LocalDate.parse(dateString, formatter);
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Invalid date format: " + dateString, e);
@@ -137,27 +149,35 @@ public class ManagementService implements IManagementService {
     @Override
     public PaginationDTO<ServiceDTO.WithProfile> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
-        Specification<ServiceManagement> specs =
-                GenericSpecification.hasKeyword(keyword, Set.of("title"));
+        Specification<ServiceManagement> specs = GenericSpecification.hasKeyword(keyword, Set.of("title"));
 
-        Page<ServiceManagement> servicePage = keyword != null ?
-                this.serviceRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
-                : this.serviceRepo.findAll(pageAndFilterDTO.getPageRequest());
+        Page<ServiceManagement> servicePage = (keyword != null) ?
+                serviceRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
+                : serviceRepo.findAll(pageAndFilterDTO.getPageRequest());
 
-        List<ServiceDTO.WithProfile> servicesWithProfile = servicePage.stream()
+        List<ServiceDTO.WithProfile> servicesWithProfile = servicePage
+                .stream()
                 .map(service -> getServiceWithProfile(service, service.getProfile()))
                 .collect(Collectors.toList());
 
         return PaginationHelper.getResponse(servicePage, servicesWithProfile);
     }
 
-    //Convert Entity To DTO
-    public ServiceFilterDTO convertEntityToDTO(ServiceManagement serviceManagement) {
-        ServiceFilterDTO dto = new ServiceFilterDTO();
-        dto.setMinPrice(serviceManagement.getPrice());
-        dto.setMaxPrice(serviceManagement.getPrice());
-        dto.setSubmissionDeadline(serviceManagement.getServiceRequest().getSubmissionDeadline());
-        return dto;
+    @Override
+    public PaginationDTO<ServiceDTO.GetRequestService> getAllRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
+        Specification<ServiceRequest> specs = GenericSpecification.hasKeyword(keyword, Set.of("title"));
+
+        Page<ServiceRequest> servicePage = (keyword != null) ?
+                serviceRequestRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
+                : serviceRequestRepo.findAll(pageAndFilterDTO.getPageRequest());
+
+        List<ServiceDTO.GetRequestService> requestServices = servicePage
+                .stream()
+                .map(ManagementService::mapToGetRequestService)
+                .collect(Collectors.toList());
+
+        return PaginationHelper.getResponse(servicePage, requestServices);
     }
 
 

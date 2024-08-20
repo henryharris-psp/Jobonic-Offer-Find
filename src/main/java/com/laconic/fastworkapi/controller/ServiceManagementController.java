@@ -47,7 +47,7 @@ public class ServiceManagementController {
     }
 
     @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL)
-    @PostMapping("/all")
+    @PostMapping("/offer/all")
     public PaginationDTO<ServiceDTO.WithProfile> getAllServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         return this.managementService.getAllServices(pageAndFilterDTO);
     }
@@ -88,6 +88,12 @@ public class ServiceManagementController {
     @PostMapping("/filter")
     public List<ServiceManagement> filterService(@RequestBody ServiceFilterDTO serviceFilterDTO) {
         return managementService.getFilterByPriceAndDate(serviceFilterDTO);
+    }
+
+    @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL_REQUEST_SERVICE)
+    @PostMapping("/request/all")
+    public PaginationDTO<ServiceDTO.GetRequestService> getAllRequestServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        return this.managementService.getAllRequestService(pageAndFilterDTO);
     }
 
     @Operation(summary = APIDocsHelper.ServiceAPI.FILTER_SERVICES)
