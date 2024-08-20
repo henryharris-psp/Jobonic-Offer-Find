@@ -50,7 +50,7 @@ public class APIDocsHelper {
         public static final String DELETE_REQUEST = "Deletes service request";
         public static final String DELETE_OFFER = "Deletes service offer";
         public static final String FILTER_SERVICE = "Filter Services";
-        public static final String GET_ALL_REQUEST = "Get all service request with pagination and sorting";
+        public static final String GET_ALL_REQUEST = "Get all service request by profileId with pagination and sorting";
     }
 
     @UtilityClass
