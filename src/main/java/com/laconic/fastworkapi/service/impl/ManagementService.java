@@ -66,6 +66,14 @@ public class ManagementService implements IManagementService {
         );
     }
 
+    private static ServiceDTO.GetRequestService mapToGetRequestService(ServiceRequest service) {
+        return new ServiceDTO.GetRequestService(
+                service.getId(),
+                service.getSubmissionDeadline(),
+                service.getWorkExample()
+        );
+    }
+
     @Override
     public ServiceDTO.WithProfile save(ServiceDTO serviceDTO) {
         var user = this.userRepo.findById(serviceDTO.getProfileId())
@@ -153,6 +161,23 @@ public class ManagementService implements IManagementService {
                 .collect(Collectors.toList());
 
         return PaginationHelper.getResponse(servicePage, servicesWithProfile);
+    }
+
+    @Override
+    public PaginationDTO<ServiceDTO.GetRequestService> getAllRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
+        Specification<ServiceRequest> specs = GenericSpecification.hasKeyword(keyword, Set.of("title"));
+
+        Page<ServiceRequest> servicePage = (keyword != null) ?
+                serviceRequestRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
+                : serviceRequestRepo.findAll(pageAndFilterDTO.getPageRequest());
+
+        List<ServiceDTO.GetRequestService> requestServices = servicePage
+                .stream()
+                .map(ManagementService::mapToGetRequestService)
+                .collect(Collectors.toList());
+
+        return PaginationHelper.getResponse(servicePage, requestServices);
     }
 
     //Convert Entity To DTO

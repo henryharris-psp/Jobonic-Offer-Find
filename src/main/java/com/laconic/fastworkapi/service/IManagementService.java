@@ -24,6 +24,8 @@ public interface IManagementService {
 
     PaginationDTO<ServiceDTO.WithProfile> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
 
+    PaginationDTO<ServiceDTO.GetRequestService> getAllRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
+
     PaginationDTO<ServiceDTO.WithProfile> filterServices(UUID categoryId, Double minPrice, Double maxPrice, PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
 
     PaginationDTO<ServiceRequestDTO> getAllServiceRequests(Long profileId, PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
