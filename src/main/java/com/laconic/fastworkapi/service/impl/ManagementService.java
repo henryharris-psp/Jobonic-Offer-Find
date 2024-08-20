@@ -7,15 +7,17 @@ import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
 import com.laconic.fastworkapi.entity.Profile;
 import com.laconic.fastworkapi.entity.ServiceManagement;
+import com.laconic.fastworkapi.entity.ServiceRequest;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.helper.PaginationHelper;
 import com.laconic.fastworkapi.repo.ICategoryRepo;
 import com.laconic.fastworkapi.repo.IServiceRepo;
+import com.laconic.fastworkapi.repo.IServiceRequestRepo;
 import com.laconic.fastworkapi.repo.IUserRepo;
 import com.laconic.fastworkapi.repo.specification.GenericSpecification;
+import com.laconic.fastworkapi.repo.specification.ServiceManagementSpecification;
 import com.laconic.fastworkapi.service.IManagementService;
 import com.laconic.fastworkapi.utils.EntityMapper;
-import com.laconic.fastworkapi.utils.ServiceManagementSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -34,12 +36,14 @@ public class ManagementService implements IManagementService {
     private final IServiceRepo serviceRepo;
     private final IUserRepo userRepo;
     private final ICategoryRepo categoryRepo;
+    private final IServiceRequestRepo serviceRequestRepo;
 
     @Autowired
-    public ManagementService(IServiceRepo serviceRepo, IUserRepo userRepo, ICategoryRepo categoryRepo) {
+    public ManagementService(IServiceRepo serviceRepo, IUserRepo userRepo, ICategoryRepo categoryRepo, IServiceRequestRepo serviceRequestRepo) {
         this.serviceRepo = serviceRepo;
         this.userRepo = userRepo;
         this.categoryRepo = categoryRepo;
+        this.serviceRequestRepo = serviceRequestRepo;
     }
 
     private static ServiceDTO.WithProfile getServiceWithProfile(ServiceManagement service, Profile user) {
@@ -178,5 +182,22 @@ public class ManagementService implements IManagementService {
                 .collect(Collectors.toList());
 
         return PaginationHelper.getResponse(servicePage, servicesWithProfile);
+    }
+
+    @Override
+    public PaginationDTO<ServiceRequestDTO> getAllServiceRequests(Long profileId, PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        Specification<ServiceRequest> specification = null;
+
+        if (profileId != null) {
+            specification = (root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("profile").get("id"), profileId);
+        }
+
+        Page<ServiceRequest> serviceRequests = this.serviceRequestRepo.findAll(specification, pageAndFilterDTO.getPageRequest());
+        List<ServiceRequestDTO> serviceRequestDTOS = serviceRequests.stream()
+                .map(serviceRequest -> EntityMapper.mapToEntity(serviceRequest, ServiceRequestDTO.class))
+                .collect(Collectors.toList());
+
+        return PaginationHelper.getResponse(serviceRequests, serviceRequestDTOS);
     }
 }

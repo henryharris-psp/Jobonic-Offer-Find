@@ -99,4 +99,10 @@ public class ServiceManagementController {
             @RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         return this.managementService.filterServices(categoryId, minPrice, maxPrice, pageAndFilterDTO);
     }
+
+    @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL_REQUEST)
+    @PostMapping("request/all")
+    public PaginationDTO<ServiceRequestDTO> getAllServiceRequests(@RequestParam(required = false) Long profileId, @RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        return this.managementService.getAllServiceRequests(profileId, pageAndFilterDTO);
+    }
 }

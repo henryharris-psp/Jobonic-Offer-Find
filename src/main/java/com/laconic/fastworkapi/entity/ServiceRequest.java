@@ -1,10 +1,7 @@
 package com.laconic.fastworkapi.entity;
 
 import com.laconic.fastworkapi.entity.audit.Auditable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,5 +24,8 @@ public class ServiceRequest extends Auditable<UUID> {
     private UUID id;
     private LocalDate submissionDeadline;
     private String workExample;
+    @ManyToOne
+    @JoinColumn(name = "profileId")
+    private Profile profile;
     private boolean isActive = true;
 }

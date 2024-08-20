@@ -1,4 +1,4 @@
-package com.laconic.fastworkapi.utils;
+package com.laconic.fastworkapi.repo.specification;
 
 import com.laconic.fastworkapi.entity.ServiceManagement;
 import jakarta.persistence.criteria.Predicate;
