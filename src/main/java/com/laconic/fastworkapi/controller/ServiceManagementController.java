@@ -47,7 +47,7 @@ public class ServiceManagementController {
     }
 
     @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL)
-    @PostMapping("/all")
+    @PostMapping("/offer/all")
     public PaginationDTO<ServiceDTO.WithProfile> getAllServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         return this.managementService.getAllServices(pageAndFilterDTO);
     }
@@ -90,4 +90,25 @@ public class ServiceManagementController {
         return managementService.getFilterByPriceAndDate(serviceFilterDTO);
     }
 
+    @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL_REQUEST_SERVICE)
+    @PostMapping("/request/all")
+    public PaginationDTO<ServiceDTO.GetRequestService> getAllRequestServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        return this.managementService.getAllRequestService(pageAndFilterDTO);
+    }
+
+    @Operation(summary = APIDocsHelper.ServiceAPI.FILTER_SERVICES)
+    @PostMapping("/filters")
+    public PaginationDTO<ServiceDTO.WithProfile> filterServices(
+            @RequestParam(required = false) UUID categoryId,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        return this.managementService.filterServices(categoryId, minPrice, maxPrice, pageAndFilterDTO);
+    }
+
+    @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL_REQUEST)
+    @PostMapping("request/all/page")
+    public PaginationDTO<ServiceRequestDTO> getAllServiceRequests(@RequestParam(required = false) Long profileId, @RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        return this.managementService.getAllServiceRequests(profileId, pageAndFilterDTO);
+    }
 }

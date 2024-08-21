@@ -23,11 +23,13 @@ public class ServiceRequestDTO implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate submissionDeadline;
     private String workExample;
+    private Long profileId;
 
     public ServiceRequestDTO(ServiceRequest serviceRequest) {
         this.id = serviceRequest.getId();
         this.submissionDeadline = serviceRequest.getSubmissionDeadline();
         this.workExample = serviceRequest.getWorkExample();
+        this.profileId = serviceRequest.getProfile().getId();
     }
 
     public ServiceRequest updateServiceRequest(ServiceRequest serviceRequest) {

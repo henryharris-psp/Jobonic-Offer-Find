@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -44,5 +45,9 @@ public class ServiceDTO implements Serializable {
                               String description1, String description2, String description3, String languageSpoken,
                               String location, CategoryDTO categoryDTO, double price,
                               PriceUnit priceUnit) implements Serializable {
+    }
+
+    public record GetRequestService(UUID id, LocalDate submissionDeadline,
+                                    String workExample) implements Serializable {
     }
 }

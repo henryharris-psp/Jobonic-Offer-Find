@@ -6,6 +6,8 @@ import Link from "next/link";
 import Toast from "./Toast";
 import { Service } from "@/types/service";
 import { Profile } from "@/types/users";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 interface ServiceMatchCardProps {
     service: Service;
@@ -20,16 +22,26 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
     onClick,
     onChatClick,
 }) => {
+
+    const { authUser } = useSelector((state: RootState) => state.auth);
     const [isWishlisted, setIsWishlisted] = useState(false); // State to track if the service is wishlisted
     const [toastMessage, setToastMessage] = useState<string | null>(null); // State for displaying toast messages
 
     // Handle click event for adding/removing the service from wishlist
     const handleWishlistClick = (e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent event propagation
+
+        console.log("Profile : ", authUser?.profile)
+
+        if (!authUser?.profile) {
+            // If the user is not logged in, redirect to the registration page
+            window.location.href = '/register';
+            return;
+        }
+
+        // Toggle wishlist state and show toast message
         setIsWishlisted((prev) => !prev);
-        setToastMessage(
-            isWishlisted ? "Removed from wishlist" : "Added to wishlist"
-        );
+        setToastMessage(isWishlisted ? "Removed from wishlist" : "Added to wishlist");
 
         // Hide the toast message after 3 seconds
         setTimeout(() => {

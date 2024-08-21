@@ -7,12 +7,15 @@ import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
 import com.laconic.fastworkapi.entity.Profile;
 import com.laconic.fastworkapi.entity.ServiceManagement;
+import com.laconic.fastworkapi.entity.ServiceRequest;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.helper.PaginationHelper;
 import com.laconic.fastworkapi.repo.ICategoryRepo;
 import com.laconic.fastworkapi.repo.IServiceRepo;
+import com.laconic.fastworkapi.repo.IServiceRequestRepo;
 import com.laconic.fastworkapi.repo.IUserRepo;
 import com.laconic.fastworkapi.repo.specification.GenericSpecification;
+import com.laconic.fastworkapi.repo.specification.ServiceManagementSpecification;
 import com.laconic.fastworkapi.service.IManagementService;
 import com.laconic.fastworkapi.utils.EntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +36,14 @@ public class ManagementService implements IManagementService {
     private final IServiceRepo serviceRepo;
     private final IUserRepo userRepo;
     private final ICategoryRepo categoryRepo;
+    private final IServiceRequestRepo serviceRequestRepo;
 
     @Autowired
-    public ManagementService(IServiceRepo serviceRepo, IUserRepo userRepo, ICategoryRepo categoryRepo) {
+    public ManagementService(IServiceRepo serviceRepo, IUserRepo userRepo, ICategoryRepo categoryRepo, IServiceRequestRepo serviceRequestRepo) {
         this.serviceRepo = serviceRepo;
         this.userRepo = userRepo;
         this.categoryRepo = categoryRepo;
+        this.serviceRequestRepo = serviceRequestRepo;
     }
 
     private static ServiceDTO.WithProfile getServiceWithProfile(ServiceManagement service, Profile user) {
@@ -58,6 +63,14 @@ public class ManagementService implements IManagementService {
                 EntityMapper.mapToResponse(service.getCategory(), CategoryDTO.class),
                 service.getPrice(),
                 service.getPriceUnit()
+        );
+    }
+
+    private static ServiceDTO.GetRequestService mapToGetRequestService(ServiceRequest service) {
+        return new ServiceDTO.GetRequestService(
+                service.getId(),
+                service.getSubmissionDeadline(),
+                service.getWorkExample()
         );
     }
 
@@ -150,6 +163,23 @@ public class ManagementService implements IManagementService {
         return PaginationHelper.getResponse(servicePage, servicesWithProfile);
     }
 
+    @Override
+    public PaginationDTO<ServiceDTO.GetRequestService> getAllRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
+        Specification<ServiceRequest> specs = GenericSpecification.hasKeyword(keyword, Set.of("title"));
+
+        Page<ServiceRequest> servicePage = (keyword != null) ?
+                serviceRequestRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
+                : serviceRequestRepo.findAll(pageAndFilterDTO.getPageRequest());
+
+        List<ServiceDTO.GetRequestService> requestServices = servicePage
+                .stream()
+                .map(ManagementService::mapToGetRequestService)
+                .collect(Collectors.toList());
+
+        return PaginationHelper.getResponse(servicePage, requestServices);
+    }
+
     //Convert Entity To DTO
     public ServiceFilterDTO convertEntityToDTO(ServiceManagement serviceManagement) {
         ServiceFilterDTO dto = new ServiceFilterDTO();
@@ -157,5 +187,42 @@ public class ManagementService implements IManagementService {
         dto.setMaxPrice(serviceManagement.getPrice());
         dto.setSubmissionDeadline(serviceManagement.getServiceRequest().getSubmissionDeadline());
         return dto;
+    }
+
+
+    public PaginationDTO<ServiceDTO.WithProfile> filterServices(UUID categoryId, Double minPrice, Double maxPrice, PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        if (minPrice == null) {
+            minPrice = 0.0;
+        }
+        if (maxPrice == null) {
+            maxPrice = Double.MAX_VALUE;
+        }
+
+        Specification<ServiceManagement> specification = ServiceManagementSpecification.filterByCategoryAndPrice(
+                categoryId, minPrice, maxPrice);
+
+        Page<ServiceManagement> servicePage = serviceRepo.findAll(specification, pageAndFilterDTO.getPageRequest());
+        List<ServiceDTO.WithProfile> servicesWithProfile = servicePage.stream()
+                .map(service -> getServiceWithProfile(service, service.getProfile()))
+                .collect(Collectors.toList());
+
+        return PaginationHelper.getResponse(servicePage, servicesWithProfile);
+    }
+
+    @Override
+    public PaginationDTO<ServiceRequestDTO> getAllServiceRequests(Long profileId, PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        Specification<ServiceRequest> specification = null;
+
+        if (profileId != null) {
+            specification = (root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("profile").get("id"), profileId);
+        }
+
+        Page<ServiceRequest> serviceRequests = this.serviceRequestRepo.findAll(specification, pageAndFilterDTO.getPageRequest());
+        List<ServiceRequestDTO> serviceRequestDTOS = serviceRequests.stream()
+                .map(serviceRequest -> EntityMapper.mapToEntity(serviceRequest, ServiceRequestDTO.class))
+                .collect(Collectors.toList());
+
+        return PaginationHelper.getResponse(serviceRequests, serviceRequestDTOS);
     }
 }

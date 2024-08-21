@@ -40,7 +40,9 @@ public class APIDocsHelper {
     public static class ServiceAPI {
         public static final String SAVE_SERVICE = "Saves and returns a service";
         public static final String DELETE_SERVICE = "Removes a service";
-        public static final String GET_ALL = "Get all services with pagination and sorting";
+        public static final String GET_ALL = "Get all services with pagination and sorting.Filter by title";
+        public static final String GET_ALL_REQUEST_SERVICE = "Get all request service with pagination and sorting";
+        public static final String FILTER_SERVICES = "Get services with pagination and sorting.Filter services using categoryId, minPrice and maxPrice";
         public static final String GET_ALL_BY_USER = "List all services by user id";
         public static final String GET_ALL_BY_ID = "List all services by service id";
         public static final String UPDATE_REQUEST = "Updates service request";
@@ -48,6 +50,7 @@ public class APIDocsHelper {
         public static final String DELETE_REQUEST = "Deletes service request";
         public static final String DELETE_OFFER = "Deletes service offer";
         public static final String FILTER_SERVICE = "Filter Services";
+        public static final String GET_ALL_REQUEST = "Get all service request by profileId with pagination and sorting";
     }
 
     @UtilityClass

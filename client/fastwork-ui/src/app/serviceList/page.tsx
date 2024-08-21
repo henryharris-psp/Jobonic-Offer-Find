@@ -9,6 +9,8 @@ import React, { useEffect, useState } from "react";
 import SortingFilterDropDown from "@/components/SortingDropDown";
 import { Sorting, SortingValue } from "@/types/Sorting";
 import PaginationButtons from "@/components/PaginationButtons";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 const sortings: Sorting[] = [
     {
@@ -57,6 +59,9 @@ const defaultPagination = {
 }
 
 const ServiceList = () => {
+    
+    const { authUser } = useSelector((state: RootState) => state.auth );
+
     const [categories, setCategories] = useState<Category[]>([]);
     const [isCategoriesFetching, setIsCategoriesFetching] = useState<boolean>(false);
 
@@ -161,7 +166,11 @@ const ServiceList = () => {
                     Services List
                 </h1>
                 <Link
-                    href="/customiseJobRequestForm"
+                    href={
+                        authUser
+                            ? '/customiseJobRequestForm'
+                            : '/register'
+                    }
                     className="text-white py-2 px-4 rounded-lg inline-block hover:bg-[#D0693B] bg-[#0B2147]"
                 >
                     Not what you are looking for?
