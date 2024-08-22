@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation"; // Correct import for Next.js 13 and later
+import { useRouter } from "next/navigation";
 import ChatMessageBig from "@/components/ChatMessageBig";
-
 import { supabase } from "@/config/supabaseClient";
 import { Message, ActiveChat, CurrentUser } from "@/types/chat";
 import ContractCard from "@/components/ContractCard";
-
+import ServiceRequestCard from "@/components/ServiceRequestCard";
+import {getProfileId} from "@/functions/helperFunctions";
+import httpClient from "@/client/httpClient";
 interface RecipientUser {
     id: number;
     fullName: string;
@@ -19,10 +20,7 @@ interface DetailsProps {
     recipientUser?: RecipientUser;
 }
 
-const Details: React.FC<DetailsProps> = ({
-    activeChat,
-    recipientUser,
-}) => {
+const Details: React.FC<DetailsProps> = ({ activeChat, recipientUser }) => {
     const [newMessage, setNewMessage] = useState("");
     const [messages, setMessages] = useState<Message[]>(activeChat.messages);
     const [currentUser, setCurrentUser] = useState<CurrentUser>();
@@ -36,15 +34,33 @@ const Details: React.FC<DetailsProps> = ({
         { id: 2, deliverable: "First draft of logo", payment: "$150" },
         { id: 3, deliverable: "Final logo delivery", payment: "$200" },
     ]);
-    const [focusStates, setFocusStates] = useState<{ [key: number]: boolean }>(
-        {}
-    );
+    const [focusStates, setFocusStates] = useState<{ [key: number]: boolean }>({});
     const [file, setFile] = useState<File | null>(null);
     const [isAccepted, setIsAccepted] = useState(false);
-
+    const [isOpenModal, setIsOpenModal] = useState(false);
+    const [showContractCard, setShowContractCard] = useState(true);
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
+    const [profileId, setProfileId] = useState<string>('');
+    const [serviceId, setServiceId] = useState<string>('');
+
+    useEffect(() => {
+       
+        const fetchData = async () => {
+            try {
+                const profileResponse = await httpClient.get('/user/profile');
+                const serviceResponse = await httpClient.get('/service');
+
+                setProfileId(profileResponse.data.id);
+                setServiceId(serviceResponse.data.id);
+            } catch (error) {
+                console.error('Error fetching profile or service data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const userData = localStorage.getItem("userInfo");
@@ -112,20 +128,24 @@ const Details: React.FC<DetailsProps> = ({
     };
 
     const handleViewContractDetails = () => {
-        setIsContractVisible(true);
+        setIsOpenModal(true);
     };
 
-    const handleCloseContract = () => {
-        setIsContractVisible(false);
+    const handleCloseModal = () => {
+        setIsOpenModal(false);
     };
+
+    const handleModalContent = () => {
+        if(showContractCard){
+            setShowContractCard(false);
+        }else {
+            setIsOpenModal(false);
+        }
+    }
 
     const handleAccept = () => {
         setIsAccepted(true);
         setShowAcceptModal(true);
-    };
-
-    const handleCloseAcceptModal = () => {
-        setShowAcceptModal(false);
     };
 
     const handleConfirmAccept = () => {
@@ -159,12 +179,16 @@ const Details: React.FC<DetailsProps> = ({
         setCheckpoints(newCheckpoints);
     };
 
-    const handleFocus = (id: number) => {
-        setFocusStates({ ...focusStates, [id]: false });
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files[0]) {
+            setFile(event.target.files[0]);
+        }
     };
 
-    const handleBlur = (id: number) => {
-        setFocusStates({ ...focusStates, [id]: false });
+    const handleSubmitWork = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
     };
 
     const handlePayAll = () => {
@@ -175,22 +199,6 @@ const Details: React.FC<DetailsProps> = ({
         router.push("/payment");
     };
 
-    const handleClosePaymentModal = () => {
-        setShowPaymentModal(false);
-    };
-
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files[0]) {
-            setFile(event.target.files[0]);
-        }
-    };
-
-    const handleSubmitWork = () => {
-        // Trigger the file input click event
-        if (fileInputRef.current) {
-            fileInputRef.current.click();
-        }
-    };
 
     return (
         <div className="px-4 py-3 border-b border-b-gray-200">
@@ -255,6 +263,20 @@ const Details: React.FC<DetailsProps> = ({
                     >
                         View Contract
                     </button>
+                    {isOpenModal && (
+                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                            <div
+                                className="bg-white w-[60%] p-2 rounded-lg ml-8 sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[60%]">
+                                <button
+                                    className="bg-[#E1824F] text-white p-2 rounded-3xl mb-2"
+                                    onClick={handleCloseModal}
+                                >
+                                    ❌
+                                </button>
+                                <ContractCard handleCloseModal={handleCloseModal} serviceId={serviceId} profileId={profileId}/>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
             <div className="text-center text-xs text-gray-500">
