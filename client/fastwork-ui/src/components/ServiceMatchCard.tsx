@@ -175,7 +175,12 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
                         ${service.price}/{service.priceUnit}
                     </span>
                     <Link
-                        href="/chat"
+                        href={{ 
+                            pathname: '/chat', 
+                            query: {
+                                service: JSON.stringify(service)
+                            }
+                        }}
                         className="flex items-center justify-center"
                     >
                         <span>
@@ -194,7 +199,7 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
                                     clipRule="evenodd"
                                 />
                             </svg>
-                        </span>
+                        </span>x
                     </Link>
                     <button
                         className={`text-gray-600 hover:text-gray-900`}

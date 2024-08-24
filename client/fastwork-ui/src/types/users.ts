@@ -7,7 +7,7 @@ export interface Profile {
     companyName: string;
     phoneNumber: string;
     address: string;
-    image: string;
+    image: string | null;
     cardNumber: string;
     cardExpiryDate: string;
     walletAddress: string;

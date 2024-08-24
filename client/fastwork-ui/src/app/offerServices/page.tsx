@@ -1,5 +1,4 @@
 'use client';
-
 import SearchFilterDropDown from "@/components/SearchFilterDropDown";
 import { fetchCategories, fetchServices } from "@/functions/helperFunctions";
 import { Category } from "@/types/general";
@@ -71,7 +70,7 @@ const defaultFilters = {
 
 const defaultPagination = {
     currentPage: 1,
-    itemsPerPage: 12,
+    itemsPerPage: 3,
     totalPages: 0,
     totalElements: 0
 }
@@ -91,7 +90,6 @@ const OfferService = () => {
     const [filters, setFilters] = useState<ServiceFilter>(defaultFilters);
     const [pagination, setPagination] = useState(defaultPagination);
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
     //mounted
         useEffect( () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -134,7 +132,7 @@ const OfferService = () => {
                     filter: filters
                 }
 
-                const servicesData = await fetchServices('request', signal, payload);
+                const servicesData = await fetchServices('offer', signal, payload); //request
                 if (servicesData){
                     setServices(servicesData.content);
                     setPagination( prev => ({
@@ -301,25 +299,27 @@ const OfferService = () => {
                             ) : (
                                 services.map( service => 
                                     <ServiceRequestCard
+                                        service={service}//TODO: remove
+                                        key={service.id}
                                         serviceRequest={{
-                                        title: service.title, // Correctly pass the title from the service object
-                                        work_category: service.categoryDTO.name,
-                                        //company: map profileId to username or firstName + lastName in User table
-                                        company: "Jeremy",
-                                        location: service.location ?? 'a',
-                                        employment_type: service.employmentType ?? 'a',
-                                        description_1: service.description1 ?? '',
-                                        description_2: service.description2 ?? '',
-                                        description_3: service.description3 ?? '',
-                                        examples_of_work: service.serviceRequestDTO?.workExample ?? 'a',
-                                        submission_deadline: service.serviceRequestDTO?.submissionDeadline ?? '11/08',
-                                        budget: service.price.toString() ?? '0',
-                                        //add priceUnit here and in ServiceRequestCard component
-                                        language: service.languageSpoken ?? 'English',
-                                        days_left: '', // This would need calculation based on the current date and submission_deadline
-                                      }} 
-                                      hasProfile={true} 
-                                      profilePic={'/jobonic.svg'} 
+                                            title: service.title, // Correctly pass the title from the service object
+                                            work_category: 'gg',
+                                            //company: map profileId to username or firstName + lastName in User table
+                                            company: "Jeremy",
+                                            location: service.location ?? 'a',
+                                            employment_type: service.employmentType ?? 'a',
+                                            description_1: service.description1 ?? '',
+                                            description_2: service.description2 ?? '',
+                                            description_3: service.description3 ?? '',
+                                            examples_of_work: service.serviceRequestDTO?.workExample ?? 'a',
+                                            submission_deadline: service.serviceRequestDTO?.submissionDeadline ?? '11/08',
+                                            budget: service.price.toString() ?? '0',
+                                            //add priceUnit here and in ServiceRequestCard component
+                                            language: service.languageSpoken ?? 'English',
+                                            days_left: '', // This would need calculation based on the current date and submission_deadline
+                                        }} 
+                                        hasProfile={true} 
+                                        profilePic={'/jobonic.svg'} 
                                     />
                                 )
                             )}
