@@ -14,6 +14,9 @@ import java.util.UUID;
 public interface IManagementService {
     ServiceDTO.WithProfile save(ServiceDTO serviceDTO);
 
+    //update service
+    ServiceDTO.WithProfile updateService(ServiceDTO serviceDTO);
+
     String remove(UUID id);
 
     List<ServiceDTO.WithProfile> getAllByUser(Long profileId);

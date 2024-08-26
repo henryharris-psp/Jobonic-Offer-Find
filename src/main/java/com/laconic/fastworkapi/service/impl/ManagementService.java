@@ -8,6 +8,8 @@ import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
 import com.laconic.fastworkapi.entity.Profile;
 import com.laconic.fastworkapi.entity.ServiceManagement;
 import com.laconic.fastworkapi.entity.ServiceRequest;
+import com.laconic.fastworkapi.enums.EmploymentType;
+import com.laconic.fastworkapi.enums.PriceUnit;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.helper.PaginationHelper;
 import com.laconic.fastworkapi.repo.ICategoryRepo;
@@ -86,6 +88,50 @@ public class ManagementService implements IManagementService {
         serviceManagement.setProfile(user);
         serviceManagement.setCategory(category);
         var service = this.serviceRepo.save(serviceManagement);
+        return getServiceWithProfile(service, user);
+    }
+
+    /*
+    @Author     : Soe
+    @Created At : Aug 26, 2024
+    @Note       : update method for service offer
+     */
+    @Override
+    public ServiceDTO.WithProfile updateService(ServiceDTO serviceDTO) {
+
+        var user = this.userRepo.findById(serviceDTO.getProfileId())
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
+                        serviceDTO.getProfileId().toString()));
+
+        var serviceManagement = this.serviceRepo.findById(serviceDTO.getId())
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
+                        serviceDTO.getId().toString()));
+
+        if (serviceManagement != null) {
+
+            //resign from the old data from table
+            serviceManagement.setServiceOffer(serviceManagement.getServiceOffer());
+            serviceManagement.setServiceRequest(serviceManagement.getServiceRequest());
+            serviceManagement.setProfile(user);
+            serviceManagement.setCategory(serviceManagement.getCategory());
+
+            serviceManagement.setTitle(serviceDTO.getTitle());
+            serviceManagement.setEmploymentType(serviceDTO.getEmploymentType());
+            serviceManagement.setDescription(serviceDTO.getDescription());
+            serviceManagement.setDescription1(serviceDTO.getDescription1());
+            serviceManagement.setDescription2(serviceDTO.getDescription2());
+            serviceManagement.setDescription3(serviceDTO.getDescription3());
+            serviceManagement.setLanguageSpoken(serviceDTO.getLanguageSpoken());
+            serviceManagement.setLocation(serviceDTO.getLocation());
+            serviceManagement.setPrice(serviceDTO.getPrice());
+            serviceManagement.setPriceUnit(serviceDTO.getPriceUnit());
+
+        } else {
+            throw new IllegalArgumentException("Service with id " + serviceDTO.getId() + " not found");
+        }
+
+        var service = this.serviceRepo.save(serviceManagement);
+
         return getServiceWithProfile(service, user);
     }
 
