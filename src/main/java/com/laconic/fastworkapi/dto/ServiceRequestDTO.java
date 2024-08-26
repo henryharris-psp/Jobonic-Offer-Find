@@ -24,6 +24,7 @@ public class ServiceRequestDTO implements Serializable {
     private LocalDate submissionDeadline;
     private String workExample;
     private Long profileId;
+    private UUID serviceId;
 
     public ServiceRequestDTO(ServiceRequest serviceRequest) {
         this.id = serviceRequest.getId();

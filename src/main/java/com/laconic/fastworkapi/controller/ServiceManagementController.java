@@ -77,6 +77,12 @@ public class ServiceManagementController {
         return this.managementService.updateService(serviceDTO);
     }
 
+    @Operation(summary = APIDocsHelper.ServiceAPI.UPDATE_REQUEST)
+    @PutMapping("/request/update")
+    public ServiceRequestDTO updateServiceRequest(@RequestBody ServiceRequestDTO serviceRequestDTO) {
+        return this.requestService.updateServiceRequest(serviceRequestDTO);
+    }
+
     @Operation(summary = APIDocsHelper.ServiceAPI.DELETE_REQUEST)
     @DeleteMapping("/request")
     public String deleteRequest(@RequestParam UUID serviceRequestId) {
