@@ -1,6 +1,5 @@
 package com.laconic.fastworkapi.service;
 
-import com.laconic.fastworkapi.dto.ServiceDTO;
 import com.laconic.fastworkapi.dto.ServiceRequestDTO;
 
 import java.util.UUID;

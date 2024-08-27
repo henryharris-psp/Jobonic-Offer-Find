@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.controller;
 
+import com.laconic.fastworkapi.dto.ExtendedServiceRequestDTO;
 import com.laconic.fastworkapi.dto.ServiceDTO;
 import com.laconic.fastworkapi.dto.ServiceFilterDTO;
 import com.laconic.fastworkapi.dto.ServiceRequestDTO;
@@ -104,8 +105,8 @@ public class ServiceManagementController {
 
     @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL_REQUEST_SERVICE)
     @PostMapping("/request/all")
-    public PaginationDTO<ServiceDTO.GetRequestService> getAllRequestServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
-        return this.managementService.getAllRequestService(pageAndFilterDTO);
+    public PaginationDTO<ExtendedServiceRequestDTO> getAllRequestServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        return this.managementService.getAllExtendedRequestService(pageAndFilterDTO);
     }
 
     @Operation(summary = APIDocsHelper.ServiceAPI.FILTER_SERVICES)

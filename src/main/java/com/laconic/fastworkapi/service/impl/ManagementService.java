@@ -8,8 +8,6 @@ import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
 import com.laconic.fastworkapi.entity.Profile;
 import com.laconic.fastworkapi.entity.ServiceManagement;
 import com.laconic.fastworkapi.entity.ServiceRequest;
-import com.laconic.fastworkapi.enums.EmploymentType;
-import com.laconic.fastworkapi.enums.PriceUnit;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.helper.PaginationHelper;
 import com.laconic.fastworkapi.repo.ICategoryRepo;
@@ -22,6 +20,7 @@ import com.laconic.fastworkapi.service.IManagementService;
 import com.laconic.fastworkapi.utils.EntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -271,4 +270,24 @@ public class ManagementService implements IManagementService {
 
         return PaginationHelper.getResponse(serviceRequests, serviceRequestDTOS);
     }
+
+    /**
+     * @Author : soe
+     * @CreatedAt : Aug 27, 2024
+     * @Note : Get All request services and related of theirs with pagination and filter
+     */
+    @Override
+    public PaginationDTO<ExtendedServiceRequestDTO> getAllExtendedRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
+        Pageable pageable = pageAndFilterDTO.getPageRequest();
+
+        // Fetch the paginated and sorted data
+        Page<ExtendedServiceRequestDTO> servicePage = (keyword != null) ?
+                serviceRequestRepo.findAllExtendedServiceRequestDetails(pageable)
+                : serviceRequestRepo.findAllExtendedServiceRequestDetails(pageable);
+
+        // Return the paginated response
+        return PaginationHelper.getResponse(servicePage, servicePage.getContent());
+    }
+
 }

@@ -1,21 +1,16 @@
 package com.laconic.fastworkapi.service.impl;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.laconic.fastworkapi.constants.AppMessage;
-import com.laconic.fastworkapi.dto.ServiceDTO;
 import com.laconic.fastworkapi.dto.ServiceRequestDTO;
-import com.laconic.fastworkapi.entity.ServiceManagement;
 import com.laconic.fastworkapi.entity.ServiceRequest;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.IServiceRepo;
 import com.laconic.fastworkapi.repo.IServiceRequestRepo;
 import com.laconic.fastworkapi.repo.IUserRepo;
 import com.laconic.fastworkapi.service.IRequestService;
-import com.laconic.fastworkapi.utils.EntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
