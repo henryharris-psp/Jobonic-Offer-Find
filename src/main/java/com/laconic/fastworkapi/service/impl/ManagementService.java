@@ -278,16 +278,17 @@ public class ManagementService implements IManagementService {
      */
     @Override
     public PaginationDTO<ExtendedServiceRequestDTO> getAllExtendedRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
-        var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
-        Pageable pageable = pageAndFilterDTO.getPageRequest();
-
-        // Fetch the paginated and sorted data
-        Page<ExtendedServiceRequestDTO> servicePage = (keyword != null) ?
-                serviceRequestRepo.findAllExtendedServiceRequestDetails(pageable)
-                : serviceRequestRepo.findAllExtendedServiceRequestDetails(pageable);
-
-        // Return the paginated response
-        return PaginationHelper.getResponse(servicePage, servicePage.getContent());
+//        var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
+//        Pageable pageable = pageAndFilterDTO.getPageRequest();
+//
+//        // Fetch the paginated and sorted data
+//        Page<ExtendedServiceRequestDTO> servicePage = (keyword != null) ?
+//                serviceRequestRepo.findAllExtendedServiceRequestDetails(pageable)
+//                : serviceRequestRepo.findAllExtendedServiceRequestDetails(pageable);
+//
+//        // Return the paginated response
+//        return PaginationHelper.getResponse(servicePage, servicePage.getContent());
+        return null;
     }
 
 }
