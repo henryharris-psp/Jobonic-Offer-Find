@@ -28,4 +28,9 @@ public class ServiceRequest extends Auditable<UUID> {
     @JoinColumn(name = "profileId")
     private Profile profile;
     private boolean isActive = true;
+
+    @OneToOne
+    @JoinColumn(name = "SERVICE_MANAGEMENT_ID")
+    private ServiceManagement serviceManagement;
+
 }

@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.controller;
 
+import com.laconic.fastworkapi.dto.ExtendedServiceRequestDTO;
 import com.laconic.fastworkapi.dto.ServiceDTO;
 import com.laconic.fastworkapi.dto.ServiceFilterDTO;
 import com.laconic.fastworkapi.dto.ServiceRequestDTO;
@@ -71,6 +72,18 @@ public class ServiceManagementController {
         return this.offerService.remove(serviceOfferId);
     }
 
+    @Operation(summary = APIDocsHelper.ServiceAPI.UPDATE_OFFER)
+    @PutMapping("/offer/update")
+    public ServiceDTO.WithProfile updateService(@RequestBody ServiceDTO serviceDTO) {
+        return this.managementService.updateService(serviceDTO);
+    }
+
+    @Operation(summary = APIDocsHelper.ServiceAPI.UPDATE_REQUEST)
+    @PutMapping("/request/update")
+    public ServiceRequestDTO updateServiceRequest(@RequestBody ServiceRequestDTO serviceRequestDTO) {
+        return this.requestService.updateServiceRequest(serviceRequestDTO);
+    }
+
     @Operation(summary = APIDocsHelper.ServiceAPI.DELETE_REQUEST)
     @DeleteMapping("/request")
     public String deleteRequest(@RequestParam UUID serviceRequestId) {
@@ -92,8 +105,8 @@ public class ServiceManagementController {
 
     @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL_REQUEST_SERVICE)
     @PostMapping("/request/all")
-    public PaginationDTO<ServiceDTO.GetRequestService> getAllRequestServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
-        return this.managementService.getAllRequestService(pageAndFilterDTO);
+    public PaginationDTO<ExtendedServiceRequestDTO> getAllRequestServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        return this.managementService.getAllExtendedRequestService(pageAndFilterDTO);
     }
 
     @Operation(summary = APIDocsHelper.ServiceAPI.FILTER_SERVICES)

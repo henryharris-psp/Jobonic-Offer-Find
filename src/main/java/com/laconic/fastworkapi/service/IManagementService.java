@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.service;
 
+import com.laconic.fastworkapi.dto.ExtendedServiceRequestDTO;
 import com.laconic.fastworkapi.dto.ServiceDTO;
 import com.laconic.fastworkapi.dto.ServiceFilterDTO;
 import com.laconic.fastworkapi.dto.ServiceRequestDTO;
@@ -13,6 +14,9 @@ import java.util.UUID;
 
 public interface IManagementService {
     ServiceDTO.WithProfile save(ServiceDTO serviceDTO);
+
+    //update service
+    ServiceDTO.WithProfile updateService(ServiceDTO serviceDTO);
 
     String remove(UUID id);
 
@@ -29,4 +33,7 @@ public interface IManagementService {
     PaginationDTO<ServiceDTO.WithProfile> filterServices(UUID categoryId, Double minPrice, Double maxPrice, PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
 
     PaginationDTO<ServiceRequestDTO> getAllServiceRequests(Long profileId, PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
+
+    PaginationDTO<ExtendedServiceRequestDTO> getAllExtendedRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
+
 }

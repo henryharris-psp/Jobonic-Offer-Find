@@ -2,48 +2,23 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Footer from "../components/footer";
-import ChatBox from "../components/ChatBox";
 import store from "@/store";
 import { Provider, useDispatch } from "react-redux";
 import useWindowResize from "@/hooks/useWindowResize";
 import NavBar from "@/components/NavBar";
-import initializeSkills from "@/utils/initialiseSkills";
 import { useEffect } from "react";
 import { authenticate as reduxAuthenticate } from "@/store/reducers/authReducer";
+import { getAuthUserDetails, getProfileByUserId } from "@/functions/helperFunctions";
 import initialiseCategories from "@/utils/initialiseCategories";
-
-import axios from "axios";
 import { AuthContextProvider } from "@/contexts/AuthContext";
+import initializeSkills from "@/utils/initialiseSkills";
+import ChatBox from "../components/ChatBox";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const getAuthUserDetails = async (token: string) => {
-    const laconicAuthServerUrl =process.env.NEXT_PUBLIC_LACONIC_AUTH_SERVER_URL;
-    try{
-        const res = await axios.get(`${laconicAuthServerUrl}/user/init-data`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
-        return res.data;
-    } catch {
-        return null;
-    }
-}
-
-const getAuthUserProfile = async (userId: string | number, token: string) => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    try{
-        const res = await axios.get(`${apiUrl}/user/profile?id=${userId}`,{
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return res.data;
-    } catch {
-        return null;
-    }
+interface RootLayoutProps {
+    children: React.ReactNode;
+    showFooter?: boolean;
 }
 
 const authenticate = async (accessToken: string, refreshToken: string) => {
@@ -53,7 +28,7 @@ const authenticate = async (accessToken: string, refreshToken: string) => {
         throw new Error('Authentication failed');
     }
 
-    const authUserProfile = await getAuthUserProfile(authUserDetails?.id, accessToken);
+    const authUserProfile = await getProfileByUserId(authUserDetails?.id, accessToken);
 
     // Save working token
     localStorage.setItem('access_token', accessToken);
@@ -68,10 +43,8 @@ const authenticate = async (accessToken: string, refreshToken: string) => {
 const RootLayout = ({
     children,
     showFooter = true,
-}: Readonly<{
-    children: React.ReactNode;
-    showFooter?: boolean;
-}>) => {
+}: Readonly<RootLayoutProps>) => {
+
     useWindowResize();
     const dispatch = useDispatch();
 
@@ -110,7 +83,7 @@ const RootLayout = ({
 
     return (
         <html lang="en">
-            <AuthContextProvider>
+            {/* <AuthContextProvider> */}
                 <script
                     src="https://accounts.google.com/gsi/client"
                     async
@@ -119,10 +92,10 @@ const RootLayout = ({
                 <body className={inter.className}>
                     <NavBar />
                     <main>{children}</main>
-                    {showFooter && <Footer />}
+                    {/* {showFooter && <Footer />} */}
                     {/* <ChatBox /> */}
                 </body>
-            </AuthContextProvider>
+            {/* </AuthContextProvider> */}
         </html>
     );
 };
@@ -130,10 +103,7 @@ const RootLayout = ({
 const RootLayoutWithRedux = ({
     children,
     showFooter =true,
-}: Readonly<{
-    children: React.ReactNode;
-    showFooter?: boolean;
-}>) => {
+}: Readonly<RootLayoutProps>) => {
     return (
         <Provider store={store}>
             <RootLayout showFooter={showFooter}>{children}</RootLayout>

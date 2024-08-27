@@ -20,6 +20,7 @@ import com.laconic.fastworkapi.service.IManagementService;
 import com.laconic.fastworkapi.utils.EntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -86,6 +87,50 @@ public class ManagementService implements IManagementService {
         serviceManagement.setProfile(user);
         serviceManagement.setCategory(category);
         var service = this.serviceRepo.save(serviceManagement);
+        return getServiceWithProfile(service, user);
+    }
+
+    /*
+    @Author     : Soe
+    @Created At : Aug 26, 2024
+    @Note       : update method for service offer
+     */
+    @Override
+    public ServiceDTO.WithProfile updateService(ServiceDTO serviceDTO) {
+
+        var user = this.userRepo.findById(serviceDTO.getProfileId())
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
+                        serviceDTO.getProfileId().toString()));
+
+        var serviceManagement = this.serviceRepo.findById(serviceDTO.getId())
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
+                        serviceDTO.getId().toString()));
+
+        if (serviceManagement != null) {
+
+            //resign from the old data from table
+            serviceManagement.setServiceOffer(serviceManagement.getServiceOffer());
+            serviceManagement.setServiceRequest(serviceManagement.getServiceRequest());
+            serviceManagement.setProfile(user);
+            serviceManagement.setCategory(serviceManagement.getCategory());
+
+            serviceManagement.setTitle(serviceDTO.getTitle());
+            serviceManagement.setEmploymentType(serviceDTO.getEmploymentType());
+            serviceManagement.setDescription(serviceDTO.getDescription());
+            serviceManagement.setDescription1(serviceDTO.getDescription1());
+            serviceManagement.setDescription2(serviceDTO.getDescription2());
+            serviceManagement.setDescription3(serviceDTO.getDescription3());
+            serviceManagement.setLanguageSpoken(serviceDTO.getLanguageSpoken());
+            serviceManagement.setLocation(serviceDTO.getLocation());
+            serviceManagement.setPrice(serviceDTO.getPrice());
+            serviceManagement.setPriceUnit(serviceDTO.getPriceUnit());
+
+        } else {
+            throw new IllegalArgumentException("Service with id " + serviceDTO.getId() + " not found");
+        }
+
+        var service = this.serviceRepo.save(serviceManagement);
+
         return getServiceWithProfile(service, user);
     }
 
@@ -225,4 +270,24 @@ public class ManagementService implements IManagementService {
 
         return PaginationHelper.getResponse(serviceRequests, serviceRequestDTOS);
     }
+
+    /**
+     * @Author : soe
+     * @CreatedAt : Aug 27, 2024
+     * @Note : Get All request services and related of theirs with pagination and filter
+     */
+    @Override
+    public PaginationDTO<ExtendedServiceRequestDTO> getAllExtendedRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
+        Pageable pageable = pageAndFilterDTO.getPageRequest();
+
+        // Fetch the paginated and sorted data
+        Page<ExtendedServiceRequestDTO> servicePage = (keyword != null) ?
+                serviceRequestRepo.findAllExtendedServiceRequestDetails(pageable)
+                : serviceRequestRepo.findAllExtendedServiceRequestDetails(pageable);
+
+        // Return the paginated response
+        return PaginationHelper.getResponse(servicePage, servicePage.getContent());
+    }
+
 }

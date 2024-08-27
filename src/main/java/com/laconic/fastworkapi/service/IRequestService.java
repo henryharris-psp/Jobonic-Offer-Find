@@ -7,4 +7,7 @@ import java.util.UUID;
 public interface IRequestService {
     ServiceRequestDTO update(UUID serviceRequestId, ServiceRequestDTO serviceRequestDTO);
     String remove(UUID serviceRequestId);
+
+    //update for service request
+    ServiceRequestDTO updateServiceRequest(ServiceRequestDTO serviceRequestDTO);
 }

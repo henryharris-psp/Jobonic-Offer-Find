@@ -1,28 +1,137 @@
 'use client'
+import React, { useCallback, useEffect, useState } from "react";
 import ChatConversation from "@/components/chat/ChatConversation";
 import SideDrawer from "@/components/SideDrawer";
 import ChatList from "@/components/chat/ChatList";
-import { people } from "@/data/chat";
-import { People } from "@/types/chat";
+import ProgressList from "@/components/chat/ProgressList";
+import { ChatRoom, Message } from "@/types/chat";
 import { RootState } from "@/store";
-import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { ChatProvider, useChat } from "@/contexts/chat";
-import ProgressList from "@/components/chat/ProgressList";
+import { supabase } from "@/config/supabaseClient";
+import { useSearchParams } from "next/navigation";
+import { getProfileByProfileId } from "@/functions/helperFunctions";
+import { Profile } from "@/types/users";
+import httpClient from "@/client/httpClient";
+import { v4 as uuid } from "uuid";
 
 const ChatPage = () => {
+    //catch url params
+    const params = useSearchParams();
+    const serviceParam = params.get('service');
+    
+    const { chatRooms, setChatRooms, addMessage, addNewChatRoomInLocal, changeChatRoom } = useChat();
     const { isMobile, screenSize } = useSelector((state: RootState) => state.ui);
     const { authUser } = useSelector((state: RootState) => state.auth );
     const { 
         showChatList, 
-        setShowChatList,
         showProgressList,
+        setShowChatList,
         setShowProgressList
     } = useChat();
 
-    const [activeChat, setActiveChat] = useState<People>(people[0]);
+    //methods
+        const loadChatRoomData = async (chatRooms: ChatRoom[]) => {
+            return Promise.all(chatRooms.map(async (chatRoom: ChatRoom) => { 
+                const receiverId = chatRoom.freelancer_id === authUser?.profile.id ? chatRoom.employer_id : chatRoom.freelancer_id;
+                const receiver: Profile = await getProfileByProfileId(receiverId);
+                const serviceRes = await httpClient.get('service/get', {
+                    params: {
+                        serviceId: chatRoom.service_id
+                    }
+                });
+                const service = serviceRes.data;
+                return {
+                    ...chatRoom,
+                    sender: authUser?.profile!,
+                    receiver: receiver,
+                    service: service
+                };
+            }));       
+        }
+    
+        const fetchChatRooms = async () => {
+            if(authUser){
+                const { data: chatRooms, error } = await supabase
+                    .from('chat_rooms')
+                    .select(`*, messages (*)`)
+                    .or(`freelancer_id.eq.${authUser?.profile.id},employer_id.eq.${authUser?.profile.id}`) // get all chatroom for auth user
+                    .order('id', { ascending: false });
+            
+                if (error) {
+                    console.log('Supabase fetching error', error);
+                    return;
+                }
 
-    //chatlist section handler
+                const chatRoomsWithUserData = await loadChatRoomData(chatRooms);
+                setChatRooms(chatRoomsWithUserData);
+
+                if(serviceParam){
+                    const service = JSON.parse(serviceParam);
+                    const existedChatRoom = chatRoomsWithUserData.find( e => e.service_id === service.id );
+
+                    if(existedChatRoom){
+                        changeChatRoom(existedChatRoom);
+                    } else {
+                        const newChatRoom: ChatRoom = {
+                            id: uuid(),
+                            freelancer_id: service.type === 'request' ? service.profileDTO.id : authUser.profile.id,
+                            employer_id: service.type === 'request' ? authUser?.profile.id : service.profileDTO.id,
+                            service_id: service.id,
+                            sender: authUser.profile,
+                            receiver: service.profileDTO,
+                            service: service,
+                            status: 'enquiring' as 'enquiring', 
+                            messages: [],
+                            created_at: 'fdf',
+                            isNew: true
+                        }
+                        
+                        addNewChatRoomInLocal(newChatRoom);
+                        changeChatRoom(newChatRoom);       
+                    }
+                }
+            }
+        };
+
+        const handleOnGetNewMessage = (roomId: number, newMessage: Message) => {
+            addMessage(roomId, newMessage);
+        }
+
+    //onMounted
+        useEffect( () => {
+            if(authUser){
+                fetchChatRooms();
+            }
+        }, [authUser]);
+
+    //listen to new message
+        useEffect(() => {
+            if(authUser && chatRooms.length !== 0){
+                const roomIds = chatRooms.map( e => e.id );
+                const subscription = supabase
+                    .channel("public:chat_rooms")
+                    .on(
+                        "postgres_changes",
+                        {
+                            event: "INSERT",
+                            schema: "public",
+                            table: "messages",
+                            // filter: `room_id=in.(${roomIds.join(',')})`
+                        },
+                        (payload: { new: Message }) => {
+                            handleOnGetNewMessage(payload.new.room_id, payload.new);
+                        }
+                    )
+                    .subscribe();
+
+                return () => {
+                    supabase.removeChannel(subscription);
+                };
+            }
+        }, [authUser, chatRooms]);
+
+    //chatlist section width resize handler
         const maxChatListWidth = 500;
         const minChatListWidth = 1;
 
@@ -50,10 +159,10 @@ const ChatPage = () => {
         }, [isResizable]);
 
     //drawers watcher
-    useEffect( () => {
-        setShowChatList(!isMobile);
-        setShowProgressList(!isMobile && screenSize !== 'lg');
-    }, [screenSize, isMobile]);
+        useEffect( () => {
+            setShowChatList(!['sm', 'md'].includes(screenSize));
+            setShowProgressList(!['sm', 'md', 'lg'].includes(screenSize));
+        }, [screenSize, isMobile]);
 
     return (
         <div
@@ -74,11 +183,9 @@ const ChatPage = () => {
                         width={chatListWidth}
                         animate={isMobile}
                         zStack={9}
-                        type={ isMobile ? 'front' : 'slide'}
+                        type={isMobile ? 'front' : 'slide'}
                     >
-                        <ChatList 
-                            onActiveChatChange={setActiveChat}
-                        />
+                        <ChatList />
                     </SideDrawer>
 
                     {/* resizer */}
@@ -91,9 +198,7 @@ const ChatPage = () => {
                         onMouseUp={ () => setIsResizable(false) }
                     />
 
-                    <ChatConversation
-                        activeChat={activeChat}
-                    />
+                    <ChatConversation />
 
                     <SideDrawer
                         show={showProgressList} 
@@ -103,7 +208,7 @@ const ChatPage = () => {
                         zStack={9}
                         type={ isMobile || screenSize === 'lg' ? 'front' : 'slide'}
                     >
-                        <ProgressList/>
+                        <ProgressList />
                     </SideDrawer>
                 </>  
             )}

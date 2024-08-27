@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { fromServiceProviderStatus, fromClientStatus, people, chatFilters } from "@/data/chat";
+import React, { useState } from "react";
+import { fromServiceProviderStatus, fromClientStatus, chatFilters } from "@/data/chat";
 import SearchBox from "./partials/SearchBox";
 import SelectAndSearchBox from "./partials/SelectAndSearchBox";
-import { People } from "@/types/chat";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
+import { ChatRoom } from "@/types/chat";
+import { useChat } from "@/contexts/chat";
 
-interface ChatListProps {
-    onActiveChatChange: (value: People) => void;
-}
-
-const ChatList = ({
-    onActiveChatChange
-}: ChatListProps) => {
-    const { authUser } = useSelector((state: RootState) => state.auth ); 
+const ChatList = () => {
+    const { activeChatRoom, changeChatRoom, chatRooms } = useChat();
     const [roleFilter, setRoleFilter] = useState('All');
     const [fromClientStatusFilter, setFromClientStatusFilter] = useState('All');
     const [fromServiceProviderStatusFilter, setFromServiceProviderStatusFilter] = useState('All');
+
+    //methods
+        const handleOnChatRoomChange = (chatRoom: ChatRoom) => {
+            changeChatRoom(chatRoom);
+        }
 
     return (
         <div className="flex-1 bg-[#CFEDF4]">
@@ -81,31 +79,47 @@ const ChatList = ({
                     </form>
                 </div>
 
-                {people
-                    .filter((people) => people.id !== authUser?.id)
-                    .map((people) => (
+                { chatRooms.length === 0 ? (
+                    <div className="flex flex-col items-center space-y-3">
+                        <span className="text-gray-400 mt-5 text-sm">You have no chat</span>
+                    </div>
+                ) : (
+                    chatRooms.map((chatRoom) => (
                         <div
-                            className="flex p-2 hover:bg-blue-300 rounded-md justify-between cursor-pointer"
-                            key={people.id}
-                            onClick={() => onActiveChatChange(people)}
+                            key={chatRoom.id}
+                            className={`flex p-2 hover:bg-sky-200 rounded-md justify-between cursor-pointer ${
+                                chatRoom.id === activeChatRoom?.id ? 'bg-blue-200' : ''
+                            }`}
+                            onClick={() => handleOnChatRoomChange(chatRoom)}
                         >
-                            <div className="flex">
+                            <div className="flex items-center space-x-2">
                                 <img
                                     className="w-10 h-10 rounded-full mr-4"
-                                    src={people.avatar || "/avatar.svg"}
-                                    alt={people.fullName}
+                                    src={chatRoom.receiver?.image ?? '/avatar.svg'}
+                                    alt="receiver_avatar"
                                 />
-                                <div className="text-black mt-2 flex items-center text-sm">
-                                    {people.fullName}
+                                <div className="flex flex-col">
+                                    <span className="text-xs text-gray-500">
+                                        RoomID - {`${chatRoom.id ?? 'No room id' }`}
+                                    </span>
+                                    <span>{`${chatRoom.receiver?.id ?? 'No ID' }`}</span>
+                                    <span>{`${chatRoom.receiver?.firstName ?? 'No Profile' }`}</span>
+
+                                    <span className="text-xs text-gray-500">
+                                        {`${chatRoom.service_id ?? 'No serice id' }`}
+                                    </span>
                                 </div>
                             </div>
                             <div className="flex items-center">
                                 <div className="bg-[#0B2147] text-center text-white px-2 py-1 text-xs rounded-md">
-                                    Completed
+                                    <span className="capitalize">
+                                        { chatRoom.status }
+                                    </span>
                                 </div>
                             </div>
                         </div>
-                    ))}
+                    ))
+                )}
             </div>
         </div>
     );

@@ -21,6 +21,7 @@ export interface ServiceRequestDTO {
 
 export interface Service {
     id: string;
+    type: "offer" | "request";
     serviceOfferDTO: any[];
     serviceRequestDTO: {
         id: string;
