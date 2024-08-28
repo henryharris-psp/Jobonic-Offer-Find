@@ -34,11 +34,11 @@ public class CheckpointService implements ICheckpointService {
                         checkpointDTO.getServiceId().toString()));
 
         var matches = this.matchesRepo.findByServiceId(checkpointDTO.getServiceId());
-        if (matches.getNumberOfCheckpointsLeft() <= 0) {
-            throw new NotFoundException("No checkpoints left for this match.");
-        }
-        // Reduce the number of checkpoints left
-        matches.setNumberOfCheckpointsLeft(matches.getNumberOfCheckpointsLeft() - 1);
+//        if (matches.getNumberOfCheckpointsLeft() <= 0) {
+//            throw new NotFoundException("No checkpoints left for this match.");
+//        }
+//        // Reduce the number of checkpoints left
+//        matches.setNumberOfCheckpointsLeft(matches.getNumberOfCheckpointsLeft() - 1);
         this.matchesRepo.save(matches);
         var checkpoint = EntityMapper.mapToEntity(checkpointDTO, Checkpoint.class);
         checkpoint.setService(service);
