@@ -1,14 +1,13 @@
 import { RootState } from "@/store";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
-import { ReactNode, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { ReactNode } from "react";
 
 // inspired from react native navigation
 // front: Traditional drawer which covers the screen with a overlay behind it.
 // back: The drawer is revealed behind the screen on swipe.
 // slide: Both the screen and the drawer slide on swipe to reveal the drawer.
 
-export type DrawerType = 'front' | 'slide'; // 'back' is not support currenly
+export type DrawerType = 'front' | 'slide'; // 'back' is not supported currenly
 
 interface SideDrawerProps {
     show: boolean;
@@ -37,8 +36,6 @@ const SideDrawer = ({
     if (zStack !== undefined && zStack > 10) {
         throw new Error('zStack must be between only 1 to 10');
     }
-
-    const { isMobile } = useSelector((state: RootState) => state.ui);
 
     return (
         <>

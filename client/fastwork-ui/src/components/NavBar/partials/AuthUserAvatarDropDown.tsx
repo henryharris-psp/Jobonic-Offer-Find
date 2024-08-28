@@ -44,7 +44,7 @@ const AuthUserAvatarDropDown = () => {
                         </li>
                     ) : ''}
                     <li className="px-4 py-3 text-sm hover:bg-gray-100 cursor-pointer">
-                        <label htmlFor="">{authUser?.profile.firstName}</label>
+                        <label htmlFor="">{authUser?.profile?.firstName}</label>
                     </li>
                     <li className="px-4 py-3 text-sm hover:bg-gray-100 cursor-pointer">
                         <label htmlFor="">{authUser?.profile.id} {authUser?.email}</label>

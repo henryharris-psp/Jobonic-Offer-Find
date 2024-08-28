@@ -2,7 +2,7 @@ import { useChat } from "@/contexts/chat";
 import { ChatBubbleBottomCenterTextIcon, ChevronLeftIcon, ChevronRightIcon, NumberedListIcon } from "@heroicons/react/24/solid";
 import React from "react";
 
-const Header = () => {
+const TogglesHeader = () => {
     const {
         showChatList, 
         setShowChatList,
@@ -46,4 +46,4 @@ const Header = () => {
     );
 };
 
-export default Header;
+export default TogglesHeader;

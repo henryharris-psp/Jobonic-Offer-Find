@@ -305,7 +305,7 @@ const OfferService = () => {
                                             title: service.title, // Correctly pass the title from the service object
                                             work_category: 'gg',
                                             //company: map profileId to username or firstName + lastName in User table
-                                            company: "Jeremy",
+                                            company: service.profileDTO.firstName,
                                             location: service.location ?? 'a',
                                             employment_type: service.employmentType ?? 'a',
                                             description_1: service.description1 ?? '',

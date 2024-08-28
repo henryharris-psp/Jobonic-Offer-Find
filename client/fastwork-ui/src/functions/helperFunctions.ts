@@ -148,8 +148,9 @@ export const getCategoryName = async (categoryId: string) => {
         payload: ServicePayload
     ): Promise<ServiceApiResponse | undefined> => {
         try {
+            const authUser = await getUser();
             const res = await httpClient.post<ServiceApiResponse>(`service/${type}/all`, payload, { signal });
-            const services = res.data.content.filter( e => e.profileDTO.id !== 1 ).map((service: Service) => ({
+            const services = res.data.content.filter( e => e.profileDTO.id !== authUser?.profile?.id ).map((service: Service) => ({
                 ...service,
                 type: type
             }))
