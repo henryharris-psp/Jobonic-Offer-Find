@@ -28,4 +28,8 @@ public class Checkpoint extends Auditable<UUID> {
     private int numberOfHoursCompleted;
     @Column(columnDefinition = "CLOB")
     private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "match_id")
+    private Matches matches;
 }

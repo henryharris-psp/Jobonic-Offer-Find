@@ -2,8 +2,10 @@ package com.laconic.fastworkapi.service.impl;
 
 import com.laconic.fastworkapi.constants.AppMessage;
 import com.laconic.fastworkapi.dto.MatchesDTO;
+import com.laconic.fastworkapi.entity.Checkpoint;
 import com.laconic.fastworkapi.entity.Matches;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
+import com.laconic.fastworkapi.repo.ICheckpointRepo;
 import com.laconic.fastworkapi.repo.IMatchesRepo;
 import com.laconic.fastworkapi.repo.IServiceRepo;
 import com.laconic.fastworkapi.repo.IUserRepo;
@@ -13,17 +15,20 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class MatchesService implements IMatchesService {
     private final IMatchesRepo matchesRepo;
     private final IUserRepo userRepo;
     private final IServiceRepo serviceRepo;
+    private final ICheckpointRepo checkpointRepo;
 
-    public MatchesService(IMatchesRepo matchesRepo, IUserRepo userRepo, IServiceRepo serviceRepo) {
+    public MatchesService(IMatchesRepo matchesRepo, IUserRepo userRepo, IServiceRepo serviceRepo, ICheckpointRepo checkpointRepo) {
         this.matchesRepo = matchesRepo;
         this.userRepo = userRepo;
         this.serviceRepo = serviceRepo;
+        this.checkpointRepo = checkpointRepo;
     }
 
     @Override
@@ -38,7 +43,15 @@ public class MatchesService implements IMatchesService {
         var match = EntityMapper.mapToEntity(matchesDTO, Matches.class);
         match.setProfile(user);
         match.setService(service);
-        match.setNumberOfCheckpointsLeft(matchesDTO.getNumberOfCheckpoints());
+
+        // Fetch Checkpoint entities from the repository
+        List<Checkpoint> checkpoints = matchesDTO.getCheckPointList().stream()
+                .map(checkpointId -> this.checkpointRepo.findById(checkpointId)
+                        .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.CHECKPOINT, "id", checkpointId.toString())))
+                .collect(Collectors.toList());
+
+        // Associate the checkpoints with the match
+        match.setCheckpoints(checkpoints);
 
         var savedMatch = this.matchesRepo.save(match);
         return EntityMapper.mapToEntity(savedMatch, MatchesDTO.class);
@@ -59,8 +72,8 @@ public class MatchesService implements IMatchesService {
         existingMatch.setProfile(user);
         existingMatch.setService(service);
         existingMatch.setPaymentTotal(matchesDTO.getPaymentTotal());
-        existingMatch.setNumberOfCheckpoints(matchesDTO.getNumberOfCheckpoints());
-        existingMatch.setNumberOfCheckpointsLeft(matchesDTO.getNumberOfCheckpoints());
+//        existingMatch.setNumberOfCheckpoints(matchesDTO.getNumberOfCheckpoints());
+//        existingMatch.setNumberOfCheckpointsLeft(matchesDTO.getNumberOfCheckpoints());
         existingMatch.setPaymentMode(matchesDTO.getPaymentMode());
 
         var updatedMatch = this.matchesRepo.save(existingMatch);
