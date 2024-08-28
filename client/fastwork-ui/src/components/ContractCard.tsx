@@ -100,7 +100,7 @@ const ContractCard: React.FC<{ handleCloseModal: () => void }> = ({ handleCloseM
     };
 
     return (
-        <div className="flex flex-row p-5 border shadow-lg rounded-2xl bg-[#C8E0E2] p-4">
+        <div className="flex flex-row border shadow-lg rounded-2xl bg-[#C8E0E2] p-4">
             <div className="flex flex-col w-[40%] pr-4">
                 <div className="mb-4">
                     <div className="flex justify-start items-center">

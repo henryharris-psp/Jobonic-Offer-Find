@@ -58,6 +58,18 @@ export interface Message {
     created_at: string
 };
 
+export type CollaborationStatus = 
+    'enquiring' |
+    'applied' |
+    'invited' |
+    'Signing Contract' |
+    'to submit' | 
+    'waiting for approval' |
+    'waiting for review' |
+    'completed' |
+    'cancelled';
+;
+
 export type FreelancerChatStatus = 
     'enquiring' |
     'applied' |
@@ -69,6 +81,7 @@ export type FreelancerChatStatus =
 
 export type EmployeerChatStatus = 
     'enquiring' |
+    'invited' | //TODO: temporary
     'applicant' |
     'waiting for submission' |
     'to approve' |

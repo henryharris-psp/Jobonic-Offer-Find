@@ -149,14 +149,25 @@ export const getCategoryName = async (categoryId: string) => {
     ): Promise<ServiceApiResponse | undefined> => {
         try {
             const authUser = await getUser();
-            const res = await httpClient.post<ServiceApiResponse>(`service/${type}/all`, payload, { signal });
+            const res = await httpClient.post<ServiceApiResponse>(`service/offer/all`, payload, { signal });
+
+            //TODO: temporary filter
             const services = res.data.content.filter( e => e.profileDTO.id !== authUser?.profile?.id ).map((service: Service) => ({
                 ...service,
                 type: type
             }))
+
+            //TODO: temporary filter
+            let gg = [];
+
+            if(type === 'offer'){
+                gg = services.filter( e => e.serviceRequestDTO === null );
+            } else {
+                gg = services.filter( e => e.serviceRequestDTO !== null );
+            }
             return {
                 ...res.data,
-                content: services
+                content: gg
             }
         } catch (error: any) {
             if (error.name === 'AbortError') {

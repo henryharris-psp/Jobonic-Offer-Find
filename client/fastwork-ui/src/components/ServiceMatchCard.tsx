@@ -129,6 +129,7 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
             className="relative max-w-96 overflow-hidden bg-white rounded-xl p-6 shadow-md cursor-pointer hover:shadow-lg transition-shadow border border-gray-200"
             onClick={() => onClick(service)}
         >
+            <span>Posted By - {service.profileDTO.email}</span>
             <div className="flex items-center mb-4">
                 <img
                     src={profile.image}
@@ -199,7 +200,7 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
                                     clipRule="evenodd"
                                 />
                             </svg>
-                        </span>x
+                        </span>
                     </Link>
                     <button
                         className={`text-gray-600 hover:text-gray-900`}

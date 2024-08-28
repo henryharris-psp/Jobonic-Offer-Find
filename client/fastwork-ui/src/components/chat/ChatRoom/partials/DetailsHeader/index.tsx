@@ -2,7 +2,7 @@ import ContractCard from "@/components/ContractCard";
 import { useChat } from "@/contexts/chat";
 import { RootState } from "@/store";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import ActionButtons from "./ActionButtons";
 
@@ -26,7 +26,7 @@ const DetailsHeader = () => {
             <div className="flex flex-col bg-white shadow-lg">
                 <div className="flex flex-row flex-wrap gap-5 items-center border-b border-b-gray-200 py-4 px-6">
                     {/* receiver details */}
-                    <div className="flex flex-1 flex-row mb-1 min-w-44 space-x-3 overflow-hidden">
+                    <div className="flex flex-1 flex-row mb-1 min-w-48 space-x-3 overflow-hidden">
                         <Image
                             src="/avatar.svg"
                             alt="avatar"

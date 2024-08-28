@@ -70,7 +70,7 @@ const defaultFilters = {
 
 const defaultPagination = {
     currentPage: 1,
-    itemsPerPage: 3,
+    itemsPerPage: 100,
     totalPages: 0,
     totalElements: 0
 }
@@ -132,7 +132,7 @@ const OfferService = () => {
                     filter: filters
                 }
 
-                const servicesData = await fetchServices('offer', signal, payload); //request
+                const servicesData = await fetchServices('request', signal, payload);
                 if (servicesData){
                     setServices(servicesData.content);
                     setPagination( prev => ({

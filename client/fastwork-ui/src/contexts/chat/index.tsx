@@ -33,6 +33,7 @@ interface ChatContextProps extends ChatState {
     setChatRooms: (chatRooms: ChatRoom[]) => void;
     changeChatRoom: (chatRoom: ChatRoom ) => void;
     addMessage: (chatRoomId: number, newMessage: Message) => void;
+    updateLocalChatRoom: ( newChatRoom: ChatRoom ) => void; 
 
     //server actions
     loadChatRoomData: (chatRoom: ChatRoom[]) => Promise<ChatRoom[]>;
@@ -94,6 +95,22 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 return Promise.resolve();
             };
 
+            const updateLocalChatRoom = async (newChatRoom: ChatRoom) => {
+                const updatedChatRoomsWithData = await loadChatRoomData([newChatRoom]);
+                const updatedChatRoomWithData = updatedChatRoomsWithData[0];
+                const chatRoomExists = state.chatRooms.some(oldChatRoom => oldChatRoom.id === updatedChatRoomWithData.id);
+
+                const newChatRooms = chatRoomExists
+                    ? state.chatRooms.map(oldChatRoom =>
+                        oldChatRoom.id === updatedChatRoomWithData.id ? updatedChatRoomWithData : oldChatRoom
+                        )
+                    : [...state.chatRooms, updatedChatRoomWithData];
+        
+                // Update local state with newly new messsage
+                dispatch({ type: 'SET_CHAT_ROOMS', payload: newChatRooms });
+                dispatch({ type: 'SET_ACTIVE_CHAT_ROOM', payload: updatedChatRoomWithData });
+            }
+
         //fetch from jobonic db
         const loadChatRoomData = async (chatRooms: ChatRoom[]) => {
             return Promise.all(chatRooms.map(async (chatRoom: ChatRoom) => { 
@@ -153,8 +170,6 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             const updatedChatRoom = data[0];
             const updatedChatRoomsWithData = await loadChatRoomData([updatedChatRoom]);
             const updatedChatRoomWithData = updatedChatRoomsWithData[0];
-
-            console.log(updatedChatRoomWithData);
             
             const newChatRooms = state.chatRooms.map(chatRoom => 
                 chatRoomId === chatRoom.id ? updatedChatRoomWithData : chatRoom
@@ -226,6 +241,7 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 setChatRooms,
                 changeChatRoom,
                 addMessage,
+                updateLocalChatRoom,
 
                 //server actions
                 loadChatRoomData,

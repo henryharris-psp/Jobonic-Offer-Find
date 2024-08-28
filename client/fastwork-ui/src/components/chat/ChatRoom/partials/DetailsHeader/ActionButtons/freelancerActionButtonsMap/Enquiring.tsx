@@ -15,7 +15,9 @@ const Enquiring = () => {
 
     const handleOnClickDecline = () => {
         if(activeChatRoom){
-            deleteChatRoom(activeChatRoom?.id);
+            if(confirm('Are you sure to decline?')){
+                deleteChatRoom(activeChatRoom?.id);
+            }
         }
     }
 
