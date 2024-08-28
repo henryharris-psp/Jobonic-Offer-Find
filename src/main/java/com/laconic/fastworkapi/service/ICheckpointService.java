@@ -2,11 +2,12 @@ package com.laconic.fastworkapi.service;
 
 import com.laconic.fastworkapi.dto.CheckpointDTO;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
 public interface ICheckpointService {
-    CheckpointDTO save(CheckpointDTO checkpointDTO);
+    CheckpointDTO save(CheckpointDTO checkpointDTO) throws IOException;
 
     CheckpointDTO update(UUID id, CheckpointDTO checkpointDTO);
 
