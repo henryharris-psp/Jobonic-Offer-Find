@@ -1,9 +1,9 @@
 'use client'
-import React, { useCallback, useEffect, useState,Suspense  } from "react";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
 import SideDrawer from "@/components/SideDrawer";
 import ChatList from "@/components/chat/ChatList";
 import ProgressList from "@/components/chat/ProgressList";
-import { Message } from "@/types/chat";
+import { ChatRoom, Message } from "@/types/chat";
 import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 import { ChatProvider, useChat } from "@/contexts/chat";
@@ -16,7 +16,15 @@ const ChatPage = () => {
     const params = useSearchParams();
     const serviceParam = params.get('service');
     
-    const { chatRooms, setChatRooms, addMessage, createNewChatRoom, changeChatRoom, loadChatRoomData } = useChat();
+    const { 
+        chatRooms, 
+        setChatRooms, 
+        addMessage, 
+        createNewChatRoom, 
+        changeChatRoom, 
+        loadChatRoomData,
+        insertOrUpdateLocalChatRoom
+    } = useChat();
     const { isMobile, screenSize } = useSelector((state: RootState) => state.ui);
     const { authUser } = useSelector((state: RootState) => state.auth );
     const { 
@@ -52,8 +60,9 @@ const ChatPage = () => {
                     if(existedChatRoom){
                         changeChatRoom(existedChatRoom);
                     } else {
-                        const freelancerId = service.type === 'request' ? service.profileDTO.id : authUser.profile.id;
-                        const employerId = service.type === 'request' ? authUser?.profile.id : service.profileDTO.id;
+                        //if authUser click on service request, authUser will become freelancer.
+                        const freelancerId = service.type === 'request' ? authUser?.profile.id : service.profileDTO.id;
+                        const employerId = service.type === 'request' ? service.profileDTO.id : authUser?.profile.id;
                         const serviceId = service.id;
 
                         const newChatRoom = await createNewChatRoom(serviceId, freelancerId, employerId);
@@ -67,6 +76,15 @@ const ChatPage = () => {
             addMessage(roomId, newMessage);
         }
 
+        const handleOnChatRoomChange = async (chatRoom: ChatRoom) => {
+            try{
+                const chatRoomsWithUserData = await loadChatRoomData([chatRoom]);
+                insertOrUpdateLocalChatRoom(chatRoomsWithUserData[0]);
+            } catch {
+                console.log('error')
+            }
+        }
+
     //onMounted
         useEffect( () => {
             if(authUser){
@@ -76,29 +94,63 @@ const ChatPage = () => {
         }, [authUser]);
 
     //listen to new message
-        useEffect(() => {
-            if(authUser && chatRooms.length !== 0){
-                const roomIds = chatRooms.map( e => e.id );
-                const subscription = supabase
-                    .channel("public:chat_rooms")
-                    .on(
-                        "postgres_changes",
-                        {
-                            event: "INSERT",
-                            schema: "public",
-                            table: "messages",
-                            // filter: room_id=in.(${roomIds.join(',')}) TODO: listen to only related chat rooms
-                        },
-                        (payload: { new: Message }) => {
-                            handleOnGetNewMessage(payload.new.room_id, payload.new);
+    useEffect(() => {
+        if (authUser && chatRooms.length !== 0) {
+            const roomIds = chatRooms.map(e => e.id);
+    
+            // Subscription for messages
+            const messageSubscription = supabase
+                .channel("public:messages")
+                .on(
+                    "postgres_changes",
+                    {
+                        event: "INSERT",
+                        schema: "public",
+                        table: "messages",
+                        // filter: `room_id=in.(${roomIds.join(',')})`, // Listen to only related chat rooms
+                    },
+                    (payload: { new: Message }) => {
+                        handleOnGetNewMessage(payload.new.room_id, payload.new);
+                    }
+                )
+                .subscribe();
+    
+            // Subscription for chat_rooms
+            const chatRoomSubscription = supabase
+                .channel("public:chat_rooms")
+                .on(
+                    "postgres_changes",
+                    {
+                        event: "UPDATE",
+                        schema: "public",
+                        table: "chat_rooms",
+                    },
+                    async (payload: { new: ChatRoom }) => {
+                        const updatedChatRoom = payload.new;
+                        
+                        // Fetch related messages
+                        const { data: messages, error } = await supabase
+                            .from("messages")
+                            .select("*")
+                            .eq("room_id", updatedChatRoom.id);
+                        
+                        if (error) {
+                            console.error("Error fetching related messages:", error);
+                        } else {
+                            updatedChatRoom.messages = messages;
+                            handleOnChatRoomChange(updatedChatRoom);
                         }
-                    )
-                    .subscribe();
-return () => {
-                    supabase.removeChannel(subscription);
-                };
-            }
-        }, [authUser, chatRooms]);
+                    }
+                )
+                .subscribe();
+    
+            return () => {
+                supabase.removeChannel(messageSubscription);
+                supabase.removeChannel(chatRoomSubscription);
+            };
+        }
+    }, [authUser, chatRooms]);
+    
 
     //chatlist section width resize handler
         const maxChatListWidth = 500;
@@ -186,9 +238,9 @@ return () => {
 };
 
 const ChatPageWithProvider = () => (
-    <Suspense >
+    <Suspense>
         <ChatProvider>
-        <ChatPage/>
+            <ChatPage/>
         </ChatProvider>
     </Suspense>
 );

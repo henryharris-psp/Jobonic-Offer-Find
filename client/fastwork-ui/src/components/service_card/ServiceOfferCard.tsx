@@ -6,10 +6,19 @@ interface ServiceCardProps {
     description: string[];
     rating: string;
     image: string;
+    onClick: () => void
 }
 
-const ServiceOfferCard: React.FC<ServiceCardProps> = ({ title, description, rating, image }) => (
-    <div className="bg-[#CFEDF4] rounded-xl flex flex-col p-6 shadow-lg text-center">
+const ServiceOfferCard: React.FC<ServiceCardProps> = ({ 
+    title, 
+    description, 
+    rating, 
+    image, 
+    onClick
+}) => (
+    <div className="hover:bg-orange-200 cursor-pointer  bg-[#CFEDF4] rounded-xl flex flex-col p-6 shadow-lg text-center"
+        onClick={onClick}
+    >
         <div className="flex flex-wrap justify-start items-center">
             <img src="/profile.png" alt={title} className="rounded-full w-12 h-12 mr-2"/>
             <h3 className="text-md font-bold mt-2 mr-2">{title}</h3>

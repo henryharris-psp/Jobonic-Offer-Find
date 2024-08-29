@@ -73,6 +73,8 @@ const ContractCard: React.FC = () => {
         console.log("Contract Payload:", JSON.stringify(contractPayload, null, 2));
         console.log("Payment Total:", contractPayload.paymentTotal, "Type:", typeof contractPayload.paymentTotal);
     
+        // Log milestone payloads for debugging
+        //
     
         try {
             // Post contract payload
@@ -189,177 +191,173 @@ const ContractCard: React.FC = () => {
     };
 
     return (
-        <div className="fixed z-50 top-0 bottom-0 right-0 left-0 bg-gray-500 bg-opacity-50 flex flex-col items-center justify-center">
-            <div className=" w-auto items-center p-5 border bg-[#CFEDF4] rounded-2xl shadow-lg max-h-screen overflow-y-auto hide-scrollbar"
-                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                {showSuccessMessage && (
-                    <div className="fixed top-0 left-0 right-0 flex items-center justify-center bg-green-500 text-white py-3 px-6 z-50 rounded-md shadow-lg">
-                        Contract created successfully!
+        <div className=" w-auto items-center p-5 border bg-[#CFEDF4] rounded-2xl shadow-lg max-h-screen overflow-y-auto hide-scrollbar"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {showSuccessMessage && (
+                <div className="fixed top-0 left-0 right-0 flex items-center justify-center bg-green-500 text-white py-3 px-6 z-50 rounded-md shadow-lg">
+                    Contract created successfully!
+                </div>
+            )}
+
+            <div className="flex">
+
+                <div className="flex flex-col mb-4 sm:mb-0">
+                    <div className="flex justify-start items-center mt-4 mb-6 ">
+                        <img src="/profile.png" alt="Profile" className="w-16 h-16 rounded-full"/>
+                        <h2 className="text-xl font-bold ml-6">Logo designer</h2>
                     </div>
-                )}
 
-                <div className="flex">
-
-                    <div className="flex flex-col mb-4 sm:mb-0">
-                        <div className="flex justify-start items-center mt-4 mb-6 ">
-                            <img src="/profile.png" alt="Profile" className="w-16 h-16 rounded-full"/>
-                            <h2 className="text-xl font-bold ml-6">Logo designer</h2>
+                    <div className="ml-4">
+                        <div className="flex items-center">
+                            <p className="text-gray-500 text-sm">
+                                Price:
+                            </p>
+                            <div className=" text-gray-500 text-sm ml-16">
+                                {isEditMode ? (
+                                    <input
+                                    type="number"
+                                    value={price ?? ''}
+                                    placeholder="$200"
+                                    onChange={(e) => setPrice(Number(e.target.value) || 0)} // Convert to a number, default to 0 if NaN
+                                        className="border-gray-300 bg-[#e8f3f3] text-sm rounded-lg p-4"
+                                    />
+                                ) : (
+                                    `$${price}`
+                                )}
+                            </div>
                         </div>
 
-                        <div className="ml-4">
-                            <div className="flex items-center">
-                                <p className="text-gray-500 text-sm">
-                                    Price:
-                                </p>
-                                <div className=" text-gray-500 text-sm ml-16">
-                                    {isEditMode ? (
-                                        <input
-                                        type="number"
-                                        value={price ?? ''}
-                                        placeholder="$200"
-                                        onChange={(e) => setPrice(Number(e.target.value) || 0)} // Convert to a number, default to 0 if NaN
-                                            className="border-gray-300 bg-[#e8f3f3] text-sm rounded-lg p-4"
-                                        />
-                                    ) : (
-                                        `$${price}`
-                                    )}
-                                </div>
+                        <div className="flex items-center mt-4">
+                            <p className="mt-2 text-gray-500 text-sm">Deliverable:</p>
+                            <div className="ml-6 text-gray-500 text-sm mt-2">
+
+                                {isEditMode ? (
+
+                                    <input
+
+                                        type="text"
+                                        placeholder="Set of milestones"
+                                        value={deliverables}
+                                        onChange={(e) => setDeliverables(e.target.value)}
+                                        className="border-gray-300 bg-[#e8f3f3] text-sm rounded-lg p-4"
+                                    />
+                                ) : (
+                                    deliverables
+                                )}
                             </div>
-
-                            <div className="flex items-center mt-4">
-                                <p className="mt-2 text-gray-500 text-sm">Deliverable:</p>
-                                <div className="ml-6 text-gray-500 text-sm mt-2">
-
-                                    {isEditMode ? (
-
-                                        <input
-
-                                            type="text"
-                                            placeholder="Set of milestones"
-                                            value={deliverables}
-                                            onChange={(e) => setDeliverables(e.target.value)}
-                                            className="border-gray-300 bg-[#e8f3f3] text-sm rounded-lg p-4"
-                                        />
-                                    ) : (
-                                        deliverables
-                                    )}
-                                </div>
-                            </div>
-
                         </div>
-                    </div>
-                    <div className="flex flex-col ml-6 mr-16 max-h-96 mt-4 overflow-y-auto xs:flex-col"
-                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                        {showMilestones && milestones.map((milestone, index) => (
-                            <React.Fragment key={index}>
-                                <div className="flex justify-start items-center mb-4">
-                                    <h2 className="font-bold mr-4 text-center p-4 text-sm">{milestone.title}</h2>
 
-                                    <ul className="font-bold text-sm flex-grow ml-6">
-                                        {milestone.tasks.map((task, taskIndex) => (
-                                            <li key={taskIndex} className="flex items-center mb-2">
-                                                <span className="mr-3 text-lg" style={{marginRight: '8px'}}>•</span>
-                                                <span style={{paddingLeft: '4px'}}>
-                                                {isEditMode ? (
-                                                    <>
-                                                        <input
-                                                            type="text"
-                                                            value={task}
-                                                            onChange={(e) => handleMilestoneChange(index, taskIndex, e.target.value)}
-                                                            className="border bg-[#e8f3f3] text-sm rounded-lg p-1 ml-4"
-                                                        />
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handleRemoveMilestoneTask(index, taskIndex)}
-                                                            className="text-gray-500 text-xs ml-2"
-                                                        >
-                                                            ➖
-                                                        </button>
-                                                    </>
-                                                ) : (
-                                                    task
-                                                )}
-                                                </span>
-                                            </li>
-                                        ))}
-                                        {isEditMode && (
-                                            <button
-                                                type="button"
-                                                onClick={() => handleAddMilestoneTask(index)}
-                                                className="text-gray-500 text-xs ml-1 flex items-center"
-                                            >
-                                                ➕ Add Task
-                                            </button>
-                                        )}
-                                    </ul>
-                                    <p className="font-bold text-sm ml-6 mb-2 mr-4">
-                                        {isEditMode ? (
-                                            <input
-                                                type="text"
-                                                placeholder="Payment"
-                                                value={milestone.payment}
-                                                onChange={(e) => handlePaymentChange(index, e.target.value)}
-                                                className="border bg-[#e8f3f3] text-sm rounded-lg p-1 ml-2 mr-4"
-                                            />
-                                        ) : (
-                                            milestone.payment
-                                        )}
-                                    </p>
-                                </div>
-                                <div className="h-[1px] bg-[#b6b6b4] w-full m-0 mb-4"></div>
-                            </React.Fragment>
-                        ))}
-
-                        {isEditMode && (
-                            <div className="flex flex-col justify-center items-center ml-10 mt-10">
-                                <button
-                                    type="button"
-                                    onClick={handleAddMilestone}
-                                    className="text-gray-500 text-sm ml-10 flex items-center mb-2"
-                                >
-                                    <PlusIcon className="w-12 h-12 rounded-3xl bg-[#E1824F] font-bold text-white"/>
-                                </button>
-                                <p className="font-bold ml-6">Add Milestone</p>
-                            </div>
-                        )}
                     </div>
                 </div>
+                <div className="flex flex-col ml-6 mr-16 max-h-96 mt-4 overflow-y-auto xs:flex-col"
+                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    {showMilestones && milestones.map((milestone, index) => (
+                        <React.Fragment key={index}>
+                            <div className="flex justify-start items-center mb-4">
+                                <h2 className="font-bold mr-4 text-center p-4 text-sm">{milestone.title}</h2>
 
-                <div className="flex flex-row justify-center items-center w-full mb-4 sm:mt-4 sm:ml-4">
+                                <ul className="font-bold text-sm flex-grow ml-6">
+                                    {milestone.tasks.map((task, taskIndex) => (
+                                        <li key={taskIndex} className="flex items-center mb-2">
+                                            <span className="mr-3 text-lg" style={{marginRight: '8px'}}>•</span>
+                                            <span style={{paddingLeft: '4px'}}>
+                                            {isEditMode ? (
+                                                <>
+                                                    <input
+                                                        type="text"
+                                                        value={task}
+                                                        onChange={(e) => handleMilestoneChange(index, taskIndex, e.target.value)}
+                                                        className="border bg-[#e8f3f3] text-sm rounded-lg p-1 ml-4"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveMilestoneTask(index, taskIndex)}
+                                                        className="text-gray-500 text-xs ml-2"
+                                                    >
+                                                        ➖
+                                                    </button>
+                                                </>
+                                            ) : (
+                                                task
+                                            )}
+                                            </span>
+                                        </li>
+                                    ))}
+                                    {isEditMode && (
+                                        <button
+                                            type="button"
+                                            onClick={() => handleAddMilestoneTask(index)}
+                                            className="text-gray-500 text-xs ml-1 flex items-center"
+                                        >
+                                            ➕ Add Task
+                                        </button>
+                                    )}
+                                </ul>
+                                <p className="font-bold text-sm ml-6 mb-2 mr-4">
+                                    {isEditMode ? (
+                                        <input
+                                            type="text"
+                                            placeholder="Payment"
+                                            value={milestone.payment}
+                                            onChange={(e) => handlePaymentChange(index, e.target.value)}
+                                            className="border bg-[#e8f3f3] text-sm rounded-lg p-1 ml-2 mr-4"
+                                        />
+                                    ) : (
+                                        milestone.payment
+                                    )}
+                                </p>
+                            </div>
+                            <div className="h-[1px] bg-[#b6b6b4] w-full m-0 mb-4"></div>
+                        </React.Fragment>
+                    ))}
 
-                    {isEditMode ? (
-                        <>
-
-                        <button
-                            className="bg-[#E1824F] text-white rounded-3xl text-md p-2 mb-4 mt-4 w-40 sm:w-auto sm:px-10"
-                            onClick={handleEditContract}
-                        >
-                            Save Contract
-                        </button>
-                        </>
-                    ) : (
-                        <>
-
-                        <button
-                            className="bg-[#E1824F] text-white rounded-3xl text-md mt-4 p-2 mb-4 w-40 sm:w-auto sm:px-10"
-                            onClick={handleSaveMilestones}
-                        >
-                           Confirm
-                        </button>
-
-                    <button
-                        className="bg-[#E1824F] text-white rounded-3xl text-md p-2 mt-4 ml-4 mb-4 w-40 sm:w-auto sm:px-10"
-                        onClick={handleEditContract}
-                    >
-                        Edit Contract
-                    </button>
-                        </>
-                )
-                }
+                    {isEditMode && (
+                        <div className="flex flex-col justify-center items-center ml-10 mt-10">
+                            <button
+                                type="button"
+                                onClick={handleAddMilestone}
+                                className="text-gray-500 text-sm ml-10 flex items-center mb-2"
+                            >
+                                <PlusIcon className="w-12 h-12 rounded-3xl bg-[#E1824F] font-bold text-white"/>
+                            </button>
+                            <p className="font-bold ml-6">Add Milestone</p>
+                        </div>
+                    )}
                 </div>
             </div>
 
+            <div className="flex flex-row justify-center items-center w-full mb-4 sm:mt-4 sm:ml-4">
 
+                {isEditMode ? (
+                    <>
+
+                    <button
+                        className="bg-[#E1824F] text-white rounded-3xl text-md p-2 mb-4 mt-4 w-40 sm:w-auto sm:px-10"
+                        onClick={handleEditContract}
+                    >
+                        Save Contract
+                    </button>
+                    </>
+                ) : (
+                    <>
+
+                    <button
+                        className="bg-[#E1824F] text-white rounded-3xl text-md mt-4 p-2 mb-4 w-40 sm:w-auto sm:px-10"
+                        onClick={handleSaveMilestones}
+                    >
+                        Confirm
+                    </button>
+
+                <button
+                    className="bg-[#E1824F] text-white rounded-3xl text-md p-2 mt-4 ml-4 mb-4 w-40 sm:w-auto sm:px-10"
+                    onClick={handleEditContract}
+                >
+                    Edit Contract
+                </button>
+                    </>
+            )
+            }
+            </div>
         </div>
     );
 };
