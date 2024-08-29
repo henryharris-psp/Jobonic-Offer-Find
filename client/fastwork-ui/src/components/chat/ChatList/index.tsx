@@ -4,8 +4,11 @@ import SearchBox from "./partials/SearchBox";
 import SelectAndSearchBox from "./partials/SelectAndSearchBox";
 import { ChatRoom } from "@/types/chat";
 import { useChat } from "@/contexts/chat";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 const ChatList = () => {
+    const { authUser } = useSelector((state: RootState) => state.auth );
     const { activeChatRoom, changeChatRoom, chatRooms } = useChat();
     const [roleFilter, setRoleFilter] = useState('All');
     const [fromClientStatusFilter, setFromClientStatusFilter] = useState('All');
@@ -99,15 +102,10 @@ const ChatList = () => {
                                     src={chatRoom.receiver?.image ?? '/avatar.svg'}
                                     alt="receiver_avatar"
                                 />
-                                <div className="flex flex-col">
+                                <div className="flex flex-col space-y-1">
+                                    <span className="font-bold">{`${chatRoom.receiver?.firstName ?? 'No Profile' }`}</span>
                                     <span className="text-xs text-gray-500">
-                                        RoomID - {`${chatRoom.id ?? 'No room id' }`}
-                                    </span>
-                                    <span>{`${chatRoom.receiver?.id ?? 'No ID' }`}</span>
-                                    <span>{`${chatRoom.receiver?.firstName ?? 'No Profile' }`}</span>
-
-                                    <span className="text-xs text-gray-500">
-                                        {`${chatRoom.service_id ?? 'No serice id' }`}
+                                        {authUser?.profile.id === chatRoom?.freelancer_id ? 'is finding service' : 'is offering service'}
                                     </span>
                                 </div>
                             </div>

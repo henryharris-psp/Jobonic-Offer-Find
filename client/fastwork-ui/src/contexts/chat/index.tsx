@@ -33,7 +33,7 @@ interface ChatContextProps extends ChatState {
     setChatRooms: (chatRooms: ChatRoom[]) => void;
     changeChatRoom: (chatRoom: ChatRoom ) => void;
     addMessage: (chatRoomId: number, newMessage: Message) => void;
-    updateLocalChatRoom: ( newChatRoom: ChatRoom ) => void; 
+    insertOrUpdateLocalChatRoom: ( newChatRoom: ChatRoom ) => void; 
 
     //server actions
     loadChatRoomData: (chatRoom: ChatRoom[]) => Promise<ChatRoom[]>;
@@ -95,7 +95,7 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 return Promise.resolve();
             };
 
-            const updateLocalChatRoom = async (newChatRoom: ChatRoom) => {
+            const insertOrUpdateLocalChatRoom = async (newChatRoom: ChatRoom) => {
                 const updatedChatRoomsWithData = await loadChatRoomData([newChatRoom]);
                 const updatedChatRoomWithData = updatedChatRoomsWithData[0];
                 const chatRoomExists = state.chatRooms.some(oldChatRoom => oldChatRoom.id === updatedChatRoomWithData.id);
@@ -241,7 +241,7 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 setChatRooms,
                 changeChatRoom,
                 addMessage,
-                updateLocalChatRoom,
+                insertOrUpdateLocalChatRoom,
 
                 //server actions
                 loadChatRoomData,

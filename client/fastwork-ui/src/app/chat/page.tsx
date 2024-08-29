@@ -1,5 +1,5 @@
 'use client'
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
 import SideDrawer from "@/components/SideDrawer";
 import ChatList from "@/components/chat/ChatList";
 import ProgressList from "@/components/chat/ProgressList";
@@ -23,7 +23,7 @@ const ChatPage = () => {
         createNewChatRoom, 
         changeChatRoom, 
         loadChatRoomData,
-        updateLocalChatRoom
+        insertOrUpdateLocalChatRoom
     } = useChat();
     const { isMobile, screenSize } = useSelector((state: RootState) => state.ui);
     const { authUser } = useSelector((state: RootState) => state.auth );
@@ -62,7 +62,7 @@ const ChatPage = () => {
                     } else {
                         //if authUser click on service request, authUser will become freelancer.
                         const freelancerId = service.type === 'request' ? authUser?.profile.id : service.profileDTO.id;
-                        const employerId = service.type === 'request' ? service.profileDTO.id : authUser.profile.id;
+                        const employerId = service.type === 'request' ? service.profileDTO.id : authUser?.profile.id;
                         const serviceId = service.id;
 
                         const newChatRoom = await createNewChatRoom(serviceId, freelancerId, employerId);
@@ -79,7 +79,7 @@ const ChatPage = () => {
         const handleOnChatRoomChange = async (chatRoom: ChatRoom) => {
             try{
                 const chatRoomsWithUserData = await loadChatRoomData([chatRoom]);
-                updateLocalChatRoom(chatRoomsWithUserData[0]);
+                insertOrUpdateLocalChatRoom(chatRoomsWithUserData[0]);
             } catch {
                 console.log('error')
             }
@@ -107,7 +107,7 @@ const ChatPage = () => {
                         event: "INSERT",
                         schema: "public",
                         table: "messages",
-                        filter: `room_id=in.(${roomIds.join(',')})`, // Listen to only related chat rooms
+                        // filter: `room_id=in.(${roomIds.join(',')})`, // Listen to only related chat rooms
                     },
                     (payload: { new: Message }) => {
                         handleOnGetNewMessage(payload.new.room_id, payload.new);
@@ -238,9 +238,11 @@ const ChatPage = () => {
 };
 
 const ChatPageWithProvider = () => (
-    <ChatProvider>
-        <ChatPage/>
-    </ChatProvider>
+    <Suspense>
+        <ChatProvider>
+            <ChatPage/>
+        </ChatProvider>
+    </Suspense>
 );
 
 export default ChatPageWithProvider;
