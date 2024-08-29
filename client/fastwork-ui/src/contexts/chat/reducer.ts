@@ -1,13 +1,13 @@
 import { ChatRoom } from "@/types/chat";
-import { ChatState } from ".";
+import { ChatState, MediaType } from ".";
 
 type ChatAction =
     | { type: 'TOGGLE_CHAT_LIST'; payload: boolean }
     | { type: 'TOGGLE_PROGRESS_LIST'; payload: boolean }
-    | { type: 'REPLACE_ALL_CHAT_ROOMS'; payload: ChatRoom[] }
-    | { type: 'REPLACE_SERVER_CHAT_ROOMS'; payload: ChatRoom[] }
+    | { type: 'SET_CHAT_ROOMS'; payload: ChatRoom[] }
     | { type: 'SET_ACTIVE_CHAT_ROOM'; payload: ChatRoom | null }
     | { type: 'ADD_NEW_CHAT_ROOM'; payload: ChatRoom }
+    | { type: 'SET_SENDING_MEDIA'; payload: MediaType | null }
 
 const reducer = (state: ChatState, action: ChatAction): ChatState => {
     switch (action.type) {
@@ -17,12 +17,7 @@ const reducer = (state: ChatState, action: ChatAction): ChatState => {
         case 'TOGGLE_PROGRESS_LIST': {
             return { ...state, showProgressList: action.payload };
         }
-        case 'REPLACE_SERVER_CHAT_ROOMS': {
-            //ignore newly created chat rooms
-            const newChatRooms = state.chatRooms.filter( e => e.isNew );
-            return { ...state, chatRooms: [...newChatRooms, ...action.payload ]};
-        }
-        case 'REPLACE_ALL_CHAT_ROOMS': {
+        case 'SET_CHAT_ROOMS': {
             return { ...state, chatRooms: action.payload };
         }
         case 'SET_ACTIVE_CHAT_ROOM':{
@@ -30,6 +25,9 @@ const reducer = (state: ChatState, action: ChatAction): ChatState => {
         }
         case 'ADD_NEW_CHAT_ROOM': {
             return { ...state, chatRooms: [action.payload, ...state.chatRooms] };
+        }
+        case 'SET_SENDING_MEDIA': {
+            return { ...state, isSending: action.payload };
         }
         default:
             return state;

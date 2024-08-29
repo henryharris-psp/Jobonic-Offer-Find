@@ -84,11 +84,12 @@ const ChatList = () => {
                         <span className="text-gray-400 mt-5 text-sm">You have no chat</span>
                     </div>
                 ) : (
-                    chatRooms.map((chatRoom) => (
+                    <div className="flex flex-col space-y-2">
+                    { chatRooms.map((chatRoom) => (
                         <div
                             key={chatRoom.id}
                             className={`flex p-2 hover:bg-sky-200 rounded-md justify-between cursor-pointer ${
-                                chatRoom.id === activeChatRoom?.id ? 'bg-blue-200' : ''
+                                chatRoom.id === activeChatRoom?.id ? 'bg-sky-200' : ''
                             }`}
                             onClick={() => handleOnChatRoomChange(chatRoom)}
                         >
@@ -110,15 +111,18 @@ const ChatList = () => {
                                     </span>
                                 </div>
                             </div>
-                            <div className="flex items-center">
-                                <div className="bg-[#0B2147] text-center text-white px-2 py-1 text-xs rounded-md">
-                                    <span className="capitalize">
-                                        { chatRoom.status }
-                                    </span>
+                            { chatRoom.status ? (
+                                <div className="flex items-center">
+                                    <div className="bg-[#0B2147] text-center text-white px-2 py-1 text-xs rounded-md">
+                                        <span className="capitalize">
+                                            { chatRoom.status }
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
+                            ) : ''}
                         </div>
-                    ))
+                    ))}
+                    </div>
                 )}
             </div>
         </div>

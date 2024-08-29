@@ -1,56 +1,41 @@
-'use client'
-import { useFormikContext } from 'formik'
-import { ReactNode } from 'react'
+import { ReactNode } from "react";
 
 interface ButtonProps {
-  title?: string
-  type?: 'button' | 'submit' | 'reset' | undefined
-  border?: string
-  block?: string
-  size?: string
-  variant?: string
-  tabIndex?: number
-  role?: 'button'
-  children: ReactNode
-  onClick?: () => void
+    title: string;
+    fullWidth?: boolean;
+    size?: "xs" | "sm" | "lg" | "xl" | "2xl" | "3xl";
+    icon?: ReactNode;
+    iconPositon?: "start" | "end";
+    onClick: () => void;
 }
 
 const Button = ({
-  title,
-  type = 'button',
-  border,
-  block,
-  size,
-  variant,
-  tabIndex,
-  role,
-  children,
-  onClick,
-}: ButtonProps): React.ReactElement => {
-  const handleClick = () => {}
-  const submitButton = useFormikContext()
-  const buttonClasses = [border, block, size, variant].filter(Boolean).join(' ')
-  let buttonClassName = `btn ${buttonClasses} disabled:bg-primary `
-  if (submitButton?.isSubmitting) buttonClassName += 'opacity-40'
-
-  const handleSubmit = async () => {
-    submitButton?.handleSubmit()
-  }
-
-  return (
-      <button
-          type={type}
-          className={buttonClassName}
-          disabled={submitButton?.isSubmitting}
-          tabIndex={tabIndex}
-          role={role}
-          onClick={handleSubmit}
-      >
-        {submitButton?.isSubmitting ? "Loading": children}
-        {title}
-      </button>
-  //<span className='loading loading-spinner loading-md text-white '/>
-  );
+    title, 
+    fullWidth = false, 
+    size,
+    icon,
+    iconPositon = "start",
+    onClick
+}: ButtonProps) => {
+    return (
+        <button
+            className={`flex items-center space-x-1 whitespace-nowrap text-center bg-[#D0693B] active:opacity-80 shadow px-3 py-2 rounded-lg text-white 
+                ${size ? `text-${size}` : ''}
+                ${fullWidth ? "flex-1" : ''}    
+            `}
+            onClick={onClick}
+        >
+            { icon && iconPositon === 'start' ? (
+                icon
+            ) : ''}
+            <span>
+                {title}
+            </span>
+            { icon && iconPositon === 'end' ? (
+                icon
+            ) : ''}
+        </button>
+    );
 };
 
 export default Button;

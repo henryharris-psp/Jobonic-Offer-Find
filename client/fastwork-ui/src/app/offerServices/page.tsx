@@ -70,7 +70,7 @@ const defaultFilters = {
 
 const defaultPagination = {
     currentPage: 1,
-    itemsPerPage: 3,
+    itemsPerPage: 100,
     totalPages: 0,
     totalElements: 0
 }
@@ -132,7 +132,7 @@ const OfferService = () => {
                     filter: filters
                 }
 
-                const servicesData = await fetchServices('offer', signal, payload); //request
+                const servicesData = await fetchServices('request', signal, payload);
                 if (servicesData){
                     setServices(servicesData.content);
                     setPagination( prev => ({
@@ -305,7 +305,7 @@ const OfferService = () => {
                                             title: service.title, // Correctly pass the title from the service object
                                             work_category: 'gg',
                                             //company: map profileId to username or firstName + lastName in User table
-                                            company: "Jeremy",
+                                            company: service.profileDTO.firstName,
                                             location: service.location ?? 'a',
                                             employment_type: service.employmentType ?? 'a',
                                             description_1: service.description1 ?? '',

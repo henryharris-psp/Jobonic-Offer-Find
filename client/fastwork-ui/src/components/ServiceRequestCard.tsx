@@ -154,6 +154,7 @@ const ServiceRequestCard = ({
                     className="job-card hover:cursor-pointer bg-[#CFEDF4] p-4 rounded-lg shadow-md"
                     onClick={handleServiceRequestClick}
                 >
+                    <span>Posted By - {service.profileDTO.email}</span>
                     {/* Profile Pic */}
                     <div className="flex items-center space-x-1">
                         <span>

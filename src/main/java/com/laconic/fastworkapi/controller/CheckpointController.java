@@ -1,12 +1,14 @@
 package com.laconic.fastworkapi.controller;
 
 import com.laconic.fastworkapi.dto.CheckpointDTO;
+import com.laconic.fastworkapi.entity.Checkpoint;
 import com.laconic.fastworkapi.helper.APIDocsHelper;
 import com.laconic.fastworkapi.service.ICheckpointService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +24,7 @@ public class CheckpointController {
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.SAVE_CHECKPOINT)
     @PostMapping
-    public CheckpointDTO create(@RequestBody CheckpointDTO checkpointDTO) {
+    public CheckpointDTO create(@RequestBody CheckpointDTO checkpointDTO) throws IOException {
         return this.checkpointService.save(checkpointDTO);
     }
 
@@ -46,7 +48,13 @@ public class CheckpointController {
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.GET_CHECKPOINT)
     @GetMapping()
-    public CheckpointDTO getById(@RequestParam UUID serviceId) {
-        return this.checkpointService.getById(serviceId);
+    public CheckpointDTO getById(@RequestParam UUID checkPointId) {
+        return this.checkpointService.getById(checkPointId);
+    }
+
+    @Operation(summary = APIDocsHelper.CheckpointAPI.GET_CHECKPOINT_BY_SERVICE_ID)
+    @GetMapping("/serviceId")
+    public List<Checkpoint> getByServiceId(@RequestParam UUID serviceId) {
+        return this.checkpointService.getCheckPointByServiceId(serviceId);
     }
 }

@@ -23,6 +23,8 @@ public class Matches extends Auditable<UUID> {
     private UUID id;
     private boolean isActive = true;
 
+    private String deliverable;
+
     @ManyToOne
     @JoinColumn(name = "service_id")
     private ServiceManagement service;

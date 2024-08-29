@@ -31,8 +31,8 @@ const DropDownButton = ({
         >
             <button className="flex items-center space-x-1 text-white p-2 rounded">
                 <p>{ selectedOption?.label }</p>
-                <CaretDownIcon className={`size-4 transition-transform ${
-                    isHover ? 'rotate-180' : ''
+                <CaretDownIcon className={`size-2 transition-transform ${
+                    isHover ? '-rotate-180' : ''
                 }`}/>
             </button>
             { isHover ? (

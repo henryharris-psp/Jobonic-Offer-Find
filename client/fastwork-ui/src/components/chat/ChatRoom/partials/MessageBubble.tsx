@@ -10,7 +10,7 @@ const MessageBubble = ({
     created_at
 }: Message) => {
     const { authUser } = useSelector((state: RootState) => state.auth );
-    const isSentByAuthUser = sender_id === authUser?.id;
+    const isSentByAuthUser = sender_id === authUser?.profile?.id;
 
     return (
         <div
@@ -30,7 +30,7 @@ const MessageBubble = ({
                 <div>
                     {/* avatar */}
                     <img
-                        src={"/avatar.svg"}
+                        src="/avatar.svg"
                         alt="Profile Pic"
                         className="h-8 w-8 rounded-full"
                     />

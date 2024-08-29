@@ -1,7 +1,7 @@
 "use client";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Footer from "../components/footer";
+// import Footer from "../components/footer";
 import store from "@/store";
 import { Provider, useDispatch } from "react-redux";
 import useWindowResize from "@/hooks/useWindowResize";
@@ -9,10 +9,9 @@ import NavBar from "@/components/NavBar";
 import { useEffect } from "react";
 import { authenticate as reduxAuthenticate } from "@/store/reducers/authReducer";
 import { getAuthUserDetails, getProfileByUserId } from "@/functions/helperFunctions";
-import initialiseCategories from "@/utils/initialiseCategories";
-import { AuthContextProvider } from "@/contexts/AuthContext";
-import initializeSkills from "@/utils/initialiseSkills";
-import ChatBox from "../components/ChatBox";
+// import initialiseCategories from "@/utils/initialiseCategories";
+// import initializeSkills from "@/utils/initialiseSkills";
+// import ChatBox from "../components/ChatBox";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -83,7 +82,6 @@ const RootLayout = ({
 
     return (
         <html lang="en">
-            {/* <AuthContextProvider> */}
                 <script
                     src="https://accounts.google.com/gsi/client"
                     async
@@ -95,7 +93,6 @@ const RootLayout = ({
                     {/* {showFooter && <Footer />} */}
                     {/* <ChatBox /> */}
                 </body>
-            {/* </AuthContextProvider> */}
         </html>
     );
 };

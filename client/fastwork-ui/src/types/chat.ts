@@ -12,6 +12,7 @@
 //     sentByAuthUser: boolean;
 // }
 
+import { Service } from "./service";
 import { Profile } from "./users";
 
 export interface ActiveChat {
@@ -33,19 +34,19 @@ export interface People {
     status: string;
 }
 
-export interface Service {
-    name: string;
-    image: string;
-    bullet1: string;
-    bullet2: string;
-    bullet3: string;
-    rating: number;
-    reviews: number;
-    price: string;
-    description: string;
-    reviewsDetail: { reviewer: string; comment: string; rating: number }[];
-    numSold: number;
-}
+// export interface Service {
+//     name: string;
+//     image: string;
+//     bullet1: string;
+//     bullet2: string;
+//     bullet3: string;
+//     rating: number;
+//     reviews: number;
+//     price: string;
+//     description: string;
+//     reviewsDetail: { reviewer: string; comment: string; rating: number }[];
+//     numSold: number;
+// }
 
 
 //new
@@ -57,23 +58,36 @@ export interface Message {
     created_at: string
 };
 
-export type ServiceOfferStatus = 
-        'enquiring' |
-        'completed' |
-        'applicant' | 
-        'waiting for submission' |
-        'to review' |
-        'waiting for final submission' |
-        'rejected';
+export type CollaborationStatus = 
+    'enquiring' |
+    'applied' |
+    'invited' |
+    'Signing Contract' |
+    'to submit' | 
+    'waiting for approval' |
+    'waiting for review' |
+    'completed' |
+    'cancelled';
+;
 
-export type ServiceRequestStatus = 
-        'enquiring' |
-        'applied' |
-        'to submit' |
-        'waiting for review' |
-        'waiting for final view' |
-        'cancelled' |
-        'completed';
+export type FreelancerChatStatus = 
+    'enquiring' |
+    'applied' |
+    'to submit' | 
+    'waiting for approval' |
+    'waiting for review' |
+    'completed' |
+    'cancelled';
+
+export type EmployeerChatStatus = 
+    'enquiring' |
+    'invited' | //TODO: temporary
+    'applicant' |
+    'waiting for submission' |
+    'to approve' |
+    'to review' |
+    'completed' |
+    'cancelled';
 
 export interface ChatRoom {
     id: number | string;
@@ -83,7 +97,7 @@ export interface ChatRoom {
     sender: Profile;
     receiver: Profile;
     service: Service;
-    status: ServiceOfferStatus | ServiceRequestStatus
+    status: FreelancerChatStatus | EmployeerChatStatus
     created_at: string;
     messages: Message[],
     isNew?: boolean

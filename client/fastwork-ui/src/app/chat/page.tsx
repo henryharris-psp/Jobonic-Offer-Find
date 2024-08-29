@@ -1,6 +1,5 @@
 'use client'
 import React, { useCallback, useEffect, useState } from "react";
-import ChatConversation from "@/components/chat/ChatConversation";
 import SideDrawer from "@/components/SideDrawer";
 import ChatList from "@/components/chat/ChatList";
 import ProgressList from "@/components/chat/ProgressList";
@@ -10,17 +9,22 @@ import { useSelector } from "react-redux";
 import { ChatProvider, useChat } from "@/contexts/chat";
 import { supabase } from "@/config/supabaseClient";
 import { useSearchParams } from "next/navigation";
-import { getProfileByProfileId } from "@/functions/helperFunctions";
-import { Profile } from "@/types/users";
-import httpClient from "@/client/httpClient";
-import { v4 as uuid } from "uuid";
+import ChatRoomComponent from "@/components/chat/ChatRoom";
 
 const ChatPage = () => {
     //catch url params
     const params = useSearchParams();
     const serviceParam = params.get('service');
     
-    const { chatRooms, setChatRooms, addMessage, addNewChatRoomInLocal, changeChatRoom } = useChat();
+    const { 
+        chatRooms, 
+        setChatRooms, 
+        addMessage, 
+        createNewChatRoom, 
+        changeChatRoom, 
+        loadChatRoomData,
+        updateLocalChatRoom
+    } = useChat();
     const { isMobile, screenSize } = useSelector((state: RootState) => state.ui);
     const { authUser } = useSelector((state: RootState) => state.auth );
     const { 
@@ -31,25 +35,7 @@ const ChatPage = () => {
     } = useChat();
 
     //methods
-        const loadChatRoomData = async (chatRooms: ChatRoom[]) => {
-            return Promise.all(chatRooms.map(async (chatRoom: ChatRoom) => { 
-                const receiverId = chatRoom.freelancer_id === authUser?.profile.id ? chatRoom.employer_id : chatRoom.freelancer_id;
-                const receiver: Profile = await getProfileByProfileId(receiverId);
-                const serviceRes = await httpClient.get('service/get', {
-                    params: {
-                        serviceId: chatRoom.service_id
-                    }
-                });
-                const service = serviceRes.data;
-                return {
-                    ...chatRoom,
-                    sender: authUser?.profile!,
-                    receiver: receiver,
-                    service: service
-                };
-            }));       
-        }
-    
+        //fetch chatrooms from server and create new room if requested chat room is not existed
         const fetchChatRooms = async () => {
             if(authUser){
                 const { data: chatRooms, error } = await supabase
@@ -66,6 +52,7 @@ const ChatPage = () => {
                 const chatRoomsWithUserData = await loadChatRoomData(chatRooms);
                 setChatRooms(chatRoomsWithUserData);
 
+                //new chatroom creation 
                 if(serviceParam){
                     const service = JSON.parse(serviceParam);
                     const existedChatRoom = chatRoomsWithUserData.find( e => e.service_id === service.id );
@@ -73,21 +60,12 @@ const ChatPage = () => {
                     if(existedChatRoom){
                         changeChatRoom(existedChatRoom);
                     } else {
-                        const newChatRoom: ChatRoom = {
-                            id: uuid(),
-                            freelancer_id: service.type === 'request' ? service.profileDTO.id : authUser.profile.id,
-                            employer_id: service.type === 'request' ? authUser?.profile.id : service.profileDTO.id,
-                            service_id: service.id,
-                            sender: authUser.profile,
-                            receiver: service.profileDTO,
-                            service: service,
-                            status: 'enquiring' as 'enquiring', 
-                            messages: [],
-                            created_at: 'fdf',
-                            isNew: true
-                        }
-                        
-                        addNewChatRoomInLocal(newChatRoom);
+                        //if authUser click on service request, authUser will become freelancer.
+                        const freelancerId = service.type === 'request' ? authUser?.profile.id : service.profileDTO.id;
+                        const employerId = service.type === 'request' ? service.profileDTO.id : authUser.profile.id;
+                        const serviceId = service.id;
+
+                        const newChatRoom = await createNewChatRoom(serviceId, freelancerId, employerId);
                         changeChatRoom(newChatRoom);       
                     }
                 }
@@ -98,38 +76,81 @@ const ChatPage = () => {
             addMessage(roomId, newMessage);
         }
 
+        const handleOnChatRoomChange = async (chatRoom: ChatRoom) => {
+            try{
+                const chatRoomsWithUserData = await loadChatRoomData([chatRoom]);
+                updateLocalChatRoom(chatRoomsWithUserData[0]);
+            } catch {
+                console.log('error')
+            }
+        }
+
     //onMounted
         useEffect( () => {
             if(authUser){
+                //get all chat room on initial fetch
                 fetchChatRooms();
             }
         }, [authUser]);
 
     //listen to new message
-        useEffect(() => {
-            if(authUser && chatRooms.length !== 0){
-                const roomIds = chatRooms.map( e => e.id );
-                const subscription = supabase
-                    .channel("public:chat_rooms")
-                    .on(
-                        "postgres_changes",
-                        {
-                            event: "INSERT",
-                            schema: "public",
-                            table: "messages",
-                            // filter: `room_id=in.(${roomIds.join(',')})`
-                        },
-                        (payload: { new: Message }) => {
-                            handleOnGetNewMessage(payload.new.room_id, payload.new);
+    useEffect(() => {
+        if (authUser && chatRooms.length !== 0) {
+            const roomIds = chatRooms.map(e => e.id);
+    
+            // Subscription for messages
+            const messageSubscription = supabase
+                .channel("public:messages")
+                .on(
+                    "postgres_changes",
+                    {
+                        event: "INSERT",
+                        schema: "public",
+                        table: "messages",
+                        filter: `room_id=in.(${roomIds.join(',')})`, // Listen to only related chat rooms
+                    },
+                    (payload: { new: Message }) => {
+                        handleOnGetNewMessage(payload.new.room_id, payload.new);
+                    }
+                )
+                .subscribe();
+    
+            // Subscription for chat_rooms
+            const chatRoomSubscription = supabase
+                .channel("public:chat_rooms")
+                .on(
+                    "postgres_changes",
+                    {
+                        event: "UPDATE",
+                        schema: "public",
+                        table: "chat_rooms",
+                    },
+                    async (payload: { new: ChatRoom }) => {
+                        const updatedChatRoom = payload.new;
+                        
+                        // Fetch related messages
+                        const { data: messages, error } = await supabase
+                            .from("messages")
+                            .select("*")
+                            .eq("room_id", updatedChatRoom.id);
+                        
+                        if (error) {
+                            console.error("Error fetching related messages:", error);
+                        } else {
+                            updatedChatRoom.messages = messages;
+                            handleOnChatRoomChange(updatedChatRoom);
                         }
-                    )
-                    .subscribe();
-
-                return () => {
-                    supabase.removeChannel(subscription);
-                };
-            }
-        }, [authUser, chatRooms]);
+                    }
+                )
+                .subscribe();
+    
+            return () => {
+                supabase.removeChannel(messageSubscription);
+                supabase.removeChannel(chatRoomSubscription);
+            };
+        }
+    }, [authUser, chatRooms]);
+    
 
     //chatlist section width resize handler
         const maxChatListWidth = 500;
@@ -198,7 +219,7 @@ const ChatPage = () => {
                         onMouseUp={ () => setIsResizable(false) }
                     />
 
-                    <ChatConversation />
+                    <ChatRoomComponent />
 
                     <SideDrawer
                         show={showProgressList} 

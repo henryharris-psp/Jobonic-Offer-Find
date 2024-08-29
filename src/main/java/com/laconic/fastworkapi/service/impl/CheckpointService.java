@@ -12,6 +12,7 @@ import com.laconic.fastworkapi.service.ICheckpointService;
 import com.laconic.fastworkapi.utils.EntityMapper;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,25 +28,64 @@ public class CheckpointService implements ICheckpointService {
         this.matchesRepo = matchesRepo;
     }
 
+//    @Override
+//    public CheckpointDTO save(CheckpointDTO checkpointDTO) {
+//        var service = this.serviceRepo.findById(checkpointDTO.getServiceId())
+//                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
+//                        checkpointDTO.getServiceId().toString()));
+//
+//        var matches = this.matchesRepo.findByServiceId(checkpointDTO.getServiceId());
+////        if (matches.getNumberOfCheckpointsLeft() <= 0) {
+////            throw new NotFoundException("No checkpoints left for this match.");
+////        }
+////        // Reduce the number of checkpoints left
+////        matches.setNumberOfCheckpointsLeft(matches.getNumberOfCheckpointsLeft() - 1);
+//        this.matchesRepo.save(matches);
+//        var checkpoint = EntityMapper.mapToEntity(checkpointDTO, Checkpoint.class);
+//        checkpoint.setService(service);
+//        var savedCheckpoint = this.checkpointRepo.save(checkpoint);
+//        return EntityMapper.mapToEntity(savedCheckpoint, CheckpointDTO.class);
+//    }
+
     @Override
-    public CheckpointDTO save(CheckpointDTO checkpointDTO) {
+    public CheckpointDTO save(CheckpointDTO checkpointDTO) throws IOException {
+        // Retrieve associated service
         var service = this.serviceRepo.findById(checkpointDTO.getServiceId())
-                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
-                        checkpointDTO.getServiceId().toString()));
+                .orElseThrow(() -> new NotFoundException("Service not found with ID: " + checkpointDTO.getServiceId()));
 
-        var matches = this.matchesRepo.findByServiceId(checkpointDTO.getServiceId());
-//        if (matches.getNumberOfCheckpointsLeft() <= 0) {
-//            throw new NotFoundException("No checkpoints left for this match.");
-//        }
-//        // Reduce the number of checkpoints left
-//        matches.setNumberOfCheckpointsLeft(matches.getNumberOfCheckpointsLeft() - 1);
-        this.matchesRepo.save(matches);
-        var checkpoint = EntityMapper.mapToEntity(checkpointDTO, Checkpoint.class);
+        var matches = this.matchesRepo.findById(checkpointDTO.getMatchId())
+                .orElseThrow(() -> new NotFoundException("Match not found with ID: " + checkpointDTO.getMatchId()));
+
+        // Uncomment and adjust as needed for business logic
+        // if (matches.getNumberOfCheckpointsLeft() <= 0) {
+        //     throw new NotFoundException("No checkpoints left for this match.");
+        // }
+        // matches.setNumberOfCheckpointsLeft(matches.getNumberOfCheckpointsLeft() - 1);
+        // this.matchesRepo.save(matches);
+
+        // Map DTO to entity
+        Checkpoint checkpoint = new Checkpoint();
+        checkpoint.setId(checkpointDTO.getId());
+        checkpoint.setTitle(checkpointDTO.getTitle());
         checkpoint.setService(service);
-        var savedCheckpoint = this.checkpointRepo.save(checkpoint);
-        return EntityMapper.mapToEntity(savedCheckpoint, CheckpointDTO.class);
-    }
+        checkpoint.setMatches(matches);
+        checkpoint.setPrice(checkpointDTO.getPrice());
+        checkpoint.setNumberOfHoursCompleted(checkpointDTO.getNumberOfHoursCompleted());
+        checkpoint.setDescription(checkpointDTO.getDescription());
+        try {
+            checkpoint.setTasks(checkpointDTO.getTasks()); // Set tasks using JSON conversion
+        } catch (IOException e) {
+            // Handle JSON conversion exception or provide default value
+            checkpoint.setTasks(new String[0]); // Default to empty array if conversion fails
+        }
 
+        // Save entity
+        var savedCheckpoint = this.checkpointRepo.save(checkpoint);
+
+        // Map saved entity to DTO
+        CheckpointDTO savedCheckpointDTO = new CheckpointDTO(savedCheckpoint);
+        return savedCheckpointDTO;
+    }
 
     @Override
     public CheckpointDTO update(UUID id, CheckpointDTO checkpointDTO) {
@@ -82,6 +122,11 @@ public class CheckpointService implements ICheckpointService {
         existingCheckpoint.setActive(false);
         this.checkpointRepo.save(existingCheckpoint);
         return String.format(AppMessage.DELETE_MESSAGE, AppMessage.CHECKPOINT);
+    }
+
+    @Override
+    public List<Checkpoint> getCheckPointByServiceId(UUID serviceId) {
+        return this.checkpointRepo.findCheckpointByServiceId(serviceId);
     }
 
     private Checkpoint getCheckpoint(UUID id) {
