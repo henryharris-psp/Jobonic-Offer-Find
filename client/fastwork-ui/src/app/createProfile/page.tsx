@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import axios from 'axios';
 import httpClient from '@/client/httpClient';
-import {SERVER_AUTH} from "@/baseURL";
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 const countryCodes = [
     { code: '+65', name: 'Singapore' },
@@ -16,6 +17,8 @@ const countryCodes = [
 
 export default function CreateProfile(): React.ReactNode {
     const router = useRouter();
+
+    const { authUser } = useSelector((state: RootState) => state.auth );
     const [userId, setUserId] = useState<string | null>(null);
     const [page1, setPage1] = useState(false);
     const [page2, setPage2] = useState(false);
@@ -141,7 +144,11 @@ export default function CreateProfile(): React.ReactNode {
     };
 
     if (!page1 && !page2 && !page3) {
-        return (
+        return !authUser ? (
+            <div className="flex-1 h-screen flex items-center justify-center">
+                <span>Please Login first</span>    
+            </div>
+        ) : (
             <div className="common-bg flex flex-col justify-center items-center p-7">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">
                     It seems like you do not have a profile yet.
@@ -214,7 +221,6 @@ export default function CreateProfile(): React.ReactNode {
                     </button>
                 </div>
             </div>
-
         );
     } else if (page1 && !page2 && !page3) {
         return (

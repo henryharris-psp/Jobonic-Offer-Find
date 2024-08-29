@@ -337,10 +337,12 @@ const MyProfile = () => {
 
     // Fetch userdata
     useEffect(() => {
-        let abortController = new AbortController();
+        const controller = new AbortController();
+        const signal = controller.signal;
+
         const fetchUserData = async () => {
             try {
-                const res = await httpClient.get(`user/profile?id=${authUser?.id}`);
+                const res = await httpClient.get(`user/profile?id=${authUser?.id}`, { signal });
                 const userData = res.data;
                 const jobonicId = userData.id;
 
@@ -358,9 +360,7 @@ const MyProfile = () => {
             }
         };
         fetchUserData();
-        return () => {
-            abortController.abort();
-        };
+        return () => controller.abort();
     }, []);
 
     useEffect(() => {
