@@ -73,10 +73,6 @@ const ContractCard: React.FC = () => {
         console.log("Contract Payload:", JSON.stringify(contractPayload, null, 2));
         console.log("Payment Total:", contractPayload.paymentTotal, "Type:", typeof contractPayload.paymentTotal);
     
-       
-    
-        // Log milestone payloads for debugging
-        //
     
         try {
             // Post contract payload
@@ -193,25 +189,12 @@ const ContractCard: React.FC = () => {
     };
 
     return (
-<<<<<<< Updated upstream
-        <div className="flex flex-row border shadow-lg rounded-2xl bg-[#C8E0E2] p-4">
-            <div className="flex flex-col w-[40%] pr-4">
-                <div className="mb-4">
-                    <div className="flex justify-start items-center">
-                        <img
-                            src=""
-                            alt="Profile"
-                            className="w-16 h-16 rounded-full"
-                        />
-                        <h2 className="text-xl font-bold ml-6">Logo designer</h2>
-=======
         <div className="fixed z-50 top-0 bottom-0 right-0 left-0 bg-gray-500 bg-opacity-50 flex flex-col items-center justify-center">
             <div className=" w-auto items-center p-5 border bg-[#CFEDF4] rounded-2xl shadow-lg max-h-screen overflow-y-auto hide-scrollbar"
                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {showSuccessMessage && (
                     <div className="fixed top-0 left-0 right-0 flex items-center justify-center bg-green-500 text-white py-3 px-6 z-50 rounded-md shadow-lg">
                         Contract created successfully!
->>>>>>> Stashed changes
                     </div>
                 )}
 
