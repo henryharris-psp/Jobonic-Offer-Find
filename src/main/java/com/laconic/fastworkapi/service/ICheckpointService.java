@@ -1,6 +1,7 @@
 package com.laconic.fastworkapi.service;
 
 import com.laconic.fastworkapi.dto.CheckpointDTO;
+import com.laconic.fastworkapi.entity.Checkpoint;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,4 +17,6 @@ public interface ICheckpointService {
     List<CheckpointDTO> getAll();
 
     String delete(UUID id);
+
+    List<Checkpoint> getCheckPointByServiceId(UUID serviceId);
 }

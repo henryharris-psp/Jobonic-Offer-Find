@@ -124,6 +124,11 @@ public class CheckpointService implements ICheckpointService {
         return String.format(AppMessage.DELETE_MESSAGE, AppMessage.CHECKPOINT);
     }
 
+    @Override
+    public List<Checkpoint> getCheckPointByServiceId(UUID serviceId) {
+        return this.checkpointRepo.findCheckpointByServiceId(serviceId);
+    }
+
     private Checkpoint getCheckpoint(UUID id) {
         return this.checkpointRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.CHECKPOINT, "id",
                 id.toString()));
