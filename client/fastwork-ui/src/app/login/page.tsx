@@ -1,10 +1,9 @@
-import { LoginForm } from '@/app/login/LoginForm'
+import React from "react";
 
-export default function LoginPage(): React.ReactNode {
+const LoginPage = () => {
   return (
-      <div className='py-10'>
-        <LoginForm />
-      </div>
+    <div>Login</div>
   )
 }
 
+export default LoginPage;
