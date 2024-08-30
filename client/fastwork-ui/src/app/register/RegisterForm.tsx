@@ -1,6 +1,5 @@
 'use client';
 
-import Button from "@/components/Button";
 import Form from "@/components/Form";
 import InputField from "@/components/InputField";
 import Link from "next/link";
@@ -11,7 +10,7 @@ import { useRouter } from "next/navigation";
 import httpClient from "@/client/httpClient";
 import httpAuth from "@/client/httpAuth";
 import { toast } from "react-toastify";
-
+import Button from "@/components/Button";
 // Validation Schemas
 const validationSchemaAuth = Yup.object().shape({
     firstname: Yup.string().required().label('First Name'),
@@ -113,100 +112,6 @@ export const RegisterForm: React.FC = () => {
             console.error('Error:', error);
         }
     };
-    // const handleSubmitCheckOTP = async (values: { [key: string]: any }): Promise<void> => {
-    //     const userId = localStorage.getItem('userId');
-    //     const URL = `${SERVER_AUTH}/v1/login/verify/otp?userId=${userId}&otp=${values.checkOTP}`;
-    //
-    //     try {
-    //         // Verify OTP
-    //         await httpAuth.post(URL);
-    //const response = await httpAuth.post(`${SERVER_AUTH}/v1/login`, userLogin);
-    //
-    //             //Authorization header
-    //             httpClient.defaults.headers.common.Authorization = `Bearer ${response.data.access_token}`;
-    //
-    //             // Store tokens and other data
-    //             localStorage.setItem('access_token', response.data.access_token);
-    //             localStorage.setItem('refresh_token', response.data.refresh_token);
-    //             localStorage.setItem('registerFormPage', 'jobonicRegister');
-    //         const laconicAuthPageUrl = process.env.NEXT_PUBLIC_LACONIC_AUTH_PAGE_URL;
-    //         window.location.href = `${laconicAuthPageUrl}/authentication?page=logout`;
-    //
-    //         // Show success toast message
-    //         toast.success('Successfully verified OTP and completed Jobonic registration');
-    //     } catch (error) {
-    //         toast.error('OTP is invalid');
-    //         console.error('Error:', error);
-    //     }
-    // };
-
-    // const handleSubmitCheckOTP = async (values: { [key: string]: any }): Promise<void> => {
-    //     const userId = localStorage.getItem('userId');
-    //     const URL = `${SERVER_AUTH}/v1/login/verify/otp?userId=${userId}&otp=${values.checkOTP}`;
-    //
-    //     try {
-    //         // Verify OTP
-    //         await httpAuth.post(URL);
-    //
-    //         // Update the register form page to 'jobonicRegister'
-    //         localStorage.setItem('registerFormPage', 'jobonicRegister');
-    //         setRegisterForm('jobonicRegister'); // Update the form state to display jobonic registration
-    //
-    //         toast.success('OTP successfully verified. Proceeding to Jobonic registration.');
-    //     } catch (error) {
-    //         toast.error('OTP is invalid');
-    //         console.error('Error:', error);
-    //     }
-    // };
-
-    // const handleSubmitJobonicRegister = async (values: { [key: string]: any }): Promise<void> => {
-    //     const URL = `http://localhost:8081/api/v1/user`;
-    //     const userId = localStorage.getItem('userId');
-    //     console.log('User Id:', userId);
-    //
-    //     const payload = {
-    //         companyName: values.companyName,
-    //         phoneNumber: values.phoneNumber,
-    //         address: values.address,
-    //         image: "",
-    //         cardNumber: values.cardNumber,
-    //         cardExpiryDate: values.cardExpiryDate,
-    //         walletAddress: values.walletAddress,
-    //         review: 0,
-    //         userExperienceList: [],
-    //         userEducationList: [],
-    //         skills: [],
-    //         userId: userId // Using userId from localStorage
-    //     };
-    //
-    //     try {
-    //         // Submit Jobonic registration
-    //         await httpClient.post(URL, payload);
-    //
-    //         // Log in after successful Jobonic registration
-    //         const response = await httpAuth.post(`${SERVER_AUTH}/v1/login`, userLogin);
-    //
-    //         // Set Authorization header
-    //         const accessToken = response.data.access_token;
-    //         console.log('Access Token:', accessToken);
-    //         httpClient.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-    //         console.log('Authorization Header:', httpClient.defaults.headers.common.Authorization);
-    //
-    //         // Store tokens and other data
-    //         localStorage.setItem('access_token', accessToken);
-    //         localStorage.setItem('refresh_token', response.data.refresh_token);
-    //
-    //         // Redirect to logout page after successful registration and login
-    //         const laconicAuthPageUrl = process.env.NEXT_PUBLIC_LACONIC_AUTH_PAGE_URL;
-    //         window.location.href = `${laconicAuthPageUrl}/authentication?page=logout`;
-    //
-    //         toast.success('Jobonic registration and login completed successfully.');
-    //     } catch (error) {
-    //         console.error('Error during Jobonic registration:', error);
-    //         toast.error('Failed to complete Jobonic registration.');
-    //     }
-    // };
-
 
     const handleSubmitJobonicRegister = async (values: { [key: string]: any }): Promise<void> => {
         const URL = `${SERVER_AUTH}/v1/user/signup`;
@@ -279,11 +184,9 @@ export const RegisterForm: React.FC = () => {
                     </div>
                     <div className="flex items-center justify-center">
                         <Button
-                            type="submit"
-                            variant="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2"
-                        >
-                            Create User
-                        </Button>
+                        title="Create User"
+                        onClick={()=>handleSubmitAuthRegister(ref.current?.values)}
+                        />
                     </div>
                 </Form>
             )}
@@ -299,16 +202,11 @@ export const RegisterForm: React.FC = () => {
                         <InputField label="Check OTP In Email" type="text" name="checkOTP" placeholder="OTP Number" />
                     </div>
                     <div className="flex items-center justify-center">
-                        <Button
-                            type="submit"
-                            variant="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2"
-                        >
-                            Confirm OTP
-                        </Button>
+                        <Button title="Confirm OTP" onClick={()=> handleSubmitCheckOTP(ref.current?.values)}/>
                         <button
                             type="button"
                             onClick={() => setRegisterForm('authRegister')}
-                            className="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2"
+                            className="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 ml-2"
                         >
                             Back to Register
                         </button>
@@ -343,11 +241,11 @@ export const RegisterForm: React.FC = () => {
                     </div>
                     <div className="flex items-center justify-center">
                         <Button
-                            type="submit"
-                            variant="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2"
-                        >
-                            Complete Registration
-                        </Button>
+                            title="Complete Registration"
+                            onClick={() => handleSubmitJobonicRegister(ref.current?.values)}
+                        />
+                            
+                       
                         <button
                             type="button"
                             onClick={() => setRegisterForm('authRegister')}

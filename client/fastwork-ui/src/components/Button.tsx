@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode,MouseEventHandler } from "react";
 
 interface ButtonProps {
     title: string;
@@ -6,7 +6,7 @@ interface ButtonProps {
     size?: "xs" | "sm" | "lg" | "xl" | "2xl" | "3xl";
     icon?: ReactNode;
     iconPositon?: "start" | "end";
-    onClick: () => void;
+    onClick: MouseEventHandler<HTMLButtonElement>;
 }
 
 const Button = ({
