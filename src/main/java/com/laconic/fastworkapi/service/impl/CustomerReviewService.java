@@ -1,9 +1,11 @@
 package com.laconic.fastworkapi.service.impl;
 
+import com.laconic.fastworkapi.constants.AppMessage;
 import com.laconic.fastworkapi.dto.CustomerReviewDTO;
 import com.laconic.fastworkapi.entity.CustomerReview;
 import com.laconic.fastworkapi.entity.Matches;
 import com.laconic.fastworkapi.entity.Profile;
+import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.ICustomerReviewRepo;
 import com.laconic.fastworkapi.repo.IMatchesRepo;
 import com.laconic.fastworkapi.repo.IUserRepo;
@@ -85,6 +87,7 @@ public class CustomerReviewService implements ICustomerReviewService {
         // Update the fields
         existingReview.setNoOfStar(dto.getNoOfStar());
         existingReview.setReview(dto.getReview());
+        existingReview.setActive(dto.isActive());
 
         // Set Profile entity if profileId is provided
         if (dto.getProfileId() != null) {
@@ -112,15 +115,18 @@ public class CustomerReviewService implements ICustomerReviewService {
 
     /**
      * @Author soe
-     * @Note delete method for customer review
+     * @Note delete will change only status of customer review
      */
     @Override
-    public void deleteById(UUID id) {
+    public String deleteById(UUID id) {
 
-        if (!repository.existsById(id)) {
-            throw new RuntimeException("Customer review not found");
-        }
-        repository.deleteById(id);
+        var customerReview = repository.findById(id)
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.CUSTOMER_REVIEW, "id", id.toString()));
+
+        customerReview.setActive(false);
+        this.repository.save(customerReview);
+
+        return String.format(AppMessage.DELETE_MESSAGE, AppMessage.CUSTOMER_REVIEW);
     }
 
     /**
@@ -133,6 +139,7 @@ public class CustomerReviewService implements ICustomerReviewService {
         customerReview.setId(dto.getId());
         customerReview.setNoOfStar(dto.getNoOfStar());
         customerReview.setReview(dto.getReview());
+        customerReview.setActive(dto.isActive());
 
         if (dto.getProfileId() != null) {
             Profile profile = userRepo.findById(dto.getProfileId())
@@ -159,6 +166,7 @@ public class CustomerReviewService implements ICustomerReviewService {
         dto.setId(customerReview.getId());
         dto.setNoOfStar(customerReview.getNoOfStar());
         dto.setReview(customerReview.getReview());
+        dto.setActive(customerReview.isActive());
 
         if (customerReview.getProfile() != null) {
             dto.setProfileId(customerReview.getProfile().getId());

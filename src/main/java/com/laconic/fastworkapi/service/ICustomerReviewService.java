@@ -15,6 +15,6 @@ public interface ICustomerReviewService {
 
     CustomerReviewDTO update(CustomerReviewDTO dto);
 
-    void deleteById(UUID id);
+    String deleteById(UUID id);
 }
 
