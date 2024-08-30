@@ -12,7 +12,7 @@ const initialiseCategories = async () => {
         const categories = await parseCSVFile(file);
 
         // Fetch existing categories from the database
-        const existingCategoriesResponse = await httpClient.get("category/all");
+        const existingCategoriesResponse = await httpClient.get("/category/all");
         const existingCategories = existingCategoriesResponse.data.map( (category: { name: string }) => category.name );
 
         const newCategories = categories.filter( category => !existingCategories.includes(category));

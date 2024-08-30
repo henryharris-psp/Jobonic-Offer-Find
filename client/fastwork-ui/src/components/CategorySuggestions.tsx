@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import httpClient from "@/client/httpClient";
+// @ts-ignore
 import CategoryItem from "./findServices/CategoryItem";
-import { Category } from "../types/general";
+import { Category } from "@/types/general";
+// @ts-ignore
 import CategorySkeleton from "./findServices/CategoryItemSkeleton";
 
 const skeletonCount = Array.from({ length: 15 }, (_, index) => index);
@@ -19,7 +21,8 @@ const CategorySuggestions = (): React.ReactElement => {
         setIsLoading(true);
         (async () => {
             try {
-                const res = await httpClient.get("category/all", { signal });
+                const res = await httpClient.get("/category/all", { signal });
+                console.log('Category ',res);
                 setCategoryList(res.data);
             } catch (error) {
                 console.log(error);

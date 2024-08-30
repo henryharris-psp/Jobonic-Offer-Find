@@ -59,7 +59,7 @@ const CustomiseService: React.FC = () => {
     // Fetch category data from the API
     const fetchCategory = async () => {
         try {
-            const response = await httpClient.get(`category/all`);
+            const response = await httpClient.get(`/category/all`);
             setCategoryList(response.data);
         } catch (error) {
             console.error('Error fetching categories:', error);
