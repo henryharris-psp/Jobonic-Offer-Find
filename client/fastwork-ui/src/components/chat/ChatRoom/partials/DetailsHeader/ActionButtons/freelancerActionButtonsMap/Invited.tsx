@@ -19,7 +19,7 @@ const Invited = () => {
                 const newlySentMessage = await sendMessage('text', acceptMessage);
                 if(newlySentMessage){
                     await updateChatRoom(newlySentMessage.room_id, {
-                        status: 'signing contract'
+                        status: 'signing_contract'
                     });
                 }
             } catch (error) {

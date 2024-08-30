@@ -66,8 +66,11 @@ const ContractCard: React.FC = () => {
             deliverable: deliverables || '',
             paymentTotal: price || 0,
             paymentMode: 'MILESTONE', 
-            status: activeChatRoom.status.toUpperCase() || 'ENQUIRING', 
+            status: activeChatRoom.status.toUpperCase().replace(/\s+/g, '_') || 'ENQUIRING',  // Ensure no spaces
         };
+        
+        console.log("Contract Payload Before Sending:", JSON.stringify(contractPayload, null, 2));
+        
     
         // Log payload for debugging
         console.log("Contract Payload:", JSON.stringify(contractPayload, null, 2));
