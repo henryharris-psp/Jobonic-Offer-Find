@@ -3,6 +3,7 @@ package com.laconic.fastworkapi.enums;
 public enum Status {
     ENQUIRING,
     APPLICANT,
+    SIGNING_CONTRACT,
     WAITING_FOR_SUBMISSION,
     TO_APPROVE,
     TO_REVIEW,
