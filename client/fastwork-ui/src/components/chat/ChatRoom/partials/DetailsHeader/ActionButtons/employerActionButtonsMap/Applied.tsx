@@ -64,7 +64,7 @@ const Applied = () => {
                 onClick={handleOnClickDecline} 
             />
             <Button 
-                title="Hire" 
+                title="Potential Hire" 
                 icon={<CheckIcon className="size-5 font-bold text-bold"/>}
                 iconPositon="start"
                 size="sm"

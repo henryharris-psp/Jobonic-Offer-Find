@@ -38,50 +38,22 @@ public class ExtendedServiceRequestDTO extends ServiceRequestDTO implements Seri
     private PriceUnit priceUnit;
     private String title;
     private UUID categoryId;
-    private String address;
     private LocalDate cardExpiryDate;
     private String cardNumber;
     private String companyName;
-    private String email;
-    private String firstName;
     private String image;
-    private String lastName;
     private String phoneNumber;
     private Double review;
     private Long userId;
-    private String username;
     private String walletAddress;
 
     public ExtendedServiceRequestDTO(
-            UUID id,
-            LocalDate submissionDeadline,
-            String workExample,
-            Long profileId,
-            String description,
-            String description1,
-            String description2,
-            String description3,
-            EmploymentType employmentType,
-            String languageSpoken,
-            String location,
-            Double price,
-            PriceUnit priceUnit,
-            String title,
-            UUID categoryId,
-            String address,
-            LocalDate cardExpiryDate,
-            String cardNumber,
-            String companyName,
-            String email,
-            String firstName,
-            String image,
-            String lastName,
-            String phoneNumber,
-            Double review,
-            Long userId,
-            String username,
-            String walletAddress
-    ) {
+            UUID id, LocalDate submissionDeadline, String workExample, Long profileId,
+            String description, String description1, String description2, String description3,
+            EmploymentType employmentType, String languageSpoken, String location, Double price,
+            PriceUnit priceUnit, String title, UUID categoryId, LocalDate cardExpiryDate,
+            String cardNumber, String companyName, String image, String phoneNumber, Double review,
+            Long userId, String walletAddress) {
         this.id = id;
         this.submissionDeadline = submissionDeadline;
         this.workExample = workExample;
@@ -97,18 +69,13 @@ public class ExtendedServiceRequestDTO extends ServiceRequestDTO implements Seri
         this.priceUnit = priceUnit;
         this.title = title;
         this.categoryId = categoryId;
-        this.address = address;
         this.cardExpiryDate = cardExpiryDate;
         this.cardNumber = cardNumber;
         this.companyName = companyName;
-        this.email = email;
-        this.firstName = firstName;
         this.image = image;
-        this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.review = review;
         this.userId = userId;
-        this.username = username;
         this.walletAddress = walletAddress;
     }
 }

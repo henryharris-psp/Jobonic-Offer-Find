@@ -1,14 +1,12 @@
 import React, { ReactNode, createContext, useContext, useReducer } from "react";
 import reducer from "./reducer";
-import { ChatRoom, Message } from "@/types/chat";
+import { ChatRoom, MediaType, Message } from "@/types/chat";
 import { supabase } from "@/config/supabaseClient";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { getProfileByProfileId } from "@/functions/helperFunctions";
 import { Profile } from "@/types/users";
 import httpClient from "@/client/httpClient";
-
-export type MediaType = 'text' | 'image' | 'contract' | 'service';
 
 export interface ChatState {
     showChatList: boolean;

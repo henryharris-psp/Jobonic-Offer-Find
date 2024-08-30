@@ -6,6 +6,7 @@ import { ChatRoom } from "@/types/chat";
 import { useChat } from "@/contexts/chat";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import StringParser from "@/functions/stringParsers";
 
 const ChatList = () => {
     const { authUser } = useSelector((state: RootState) => state.auth );
@@ -13,6 +14,7 @@ const ChatList = () => {
     const [roleFilter, setRoleFilter] = useState('All');
     const [fromClientStatusFilter, setFromClientStatusFilter] = useState('All');
     const [fromServiceProviderStatusFilter, setFromServiceProviderStatusFilter] = useState('All');
+    const stringParser = new StringParser();
 
     //methods
         const handleOnChatRoomChange = (chatRoom: ChatRoom) => {
@@ -113,7 +115,7 @@ const ChatList = () => {
                                 <div className="flex items-center">
                                     <div className="bg-[#0B2147] text-center text-white px-2 py-1 text-xs rounded-md">
                                         <span className="capitalize">
-                                            { chatRoom.status }
+                                            { stringParser.replaceUnderscoreWithSpace(chatRoom.status)}
                                         </span>
                                     </div>
                                 </div>

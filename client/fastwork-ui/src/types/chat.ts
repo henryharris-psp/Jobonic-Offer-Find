@@ -11,7 +11,6 @@
 //     price?: string;
 //     sentByAuthUser: boolean;
 // }
-
 import { Service } from "./service";
 import { Profile } from "./users";
 
@@ -50,10 +49,14 @@ export interface People {
 
 
 //new
+export type MediaType = 'text' | 'image' | 'contract' | 'service';
+
+
 export interface Message {
     id: string | number;
     room_id: number;
     sender_id: number;
+    media_type: MediaType 
     content: string;
     created_at: string
 };
@@ -62,10 +65,10 @@ export type CollaborationStatus =
     'enquiring' |
     'applied' |
     'invited' |
-    'Signing Contract' |
-    'to submit' | 
-    'waiting for approval' |
-    'waiting for review' |
+    'signing_contract' |
+    'to_submit' | 
+    'waiting_for_approval' |
+    'waiting_for_review' |
     'completed' |
     'cancelled';
 ;
@@ -73,9 +76,9 @@ export type CollaborationStatus =
 export type FreelancerChatStatus = 
     'enquiring' |
     'applied' |
-    'to submit' | 
-    'waiting for approval' |
-    'waiting for review' |
+    'to_submit' | 
+    'waiting_for_approval' |
+    'waiting_for_review' |
     'completed' |
     'cancelled';
 
@@ -83,9 +86,9 @@ export type EmployeerChatStatus =
     'enquiring' |
     'invited' | //TODO: temporary
     'applicant' |
-    'waiting for submission' |
-    'to approve' |
-    'to review' |
+    'waiting_for_submission' |
+    'to_approve' |
+    'to_review' |
     'completed' |
     'cancelled';
 

@@ -7,6 +7,7 @@ import {useChat} from "@/contexts/chat";
 import {PlusIcon} from "@heroicons/react/24/solid";
 import {Fragment} from "react";
 import axios from 'axios';
+import StringParser from '@/functions/stringParsers';
 interface Milestone {
     title: string;
     tasks: string[];
@@ -24,6 +25,7 @@ const ContractCard: React.FC = () => {
     const [showSuccessMessage, setShowSuccessMessage] = useState(false); // State to control success message popup
     const [milestones, setMilestones] = useState<Milestone[]>([]);
     const { authUser } = useSelector((state: RootState) => state.auth);
+    const stringParser = new StringParser();
 
     const handlePriceChange = (newPrice: number) => {
         setPrice(newPrice);
@@ -66,7 +68,7 @@ const ContractCard: React.FC = () => {
             deliverable: deliverables || '',
             paymentTotal: price || 0,
             paymentMode: 'MILESTONE', 
-            status: activeChatRoom.status.toUpperCase().replace(/\s+/g, '_') || 'ENQUIRING',  // Ensure no spaces
+            status: stringParser.convertToUpperCase(activeChatRoom.status ?? ''),  // Ensure no spaces
         };
         
         console.log("Contract Payload Before Sending:", JSON.stringify(contractPayload, null, 2));

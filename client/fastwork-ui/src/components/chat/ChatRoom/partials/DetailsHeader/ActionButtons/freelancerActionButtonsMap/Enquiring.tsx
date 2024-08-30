@@ -3,9 +3,8 @@ import Button from "@/components/Button";
 import { useChat } from "@/contexts/chat";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import ServiceOfferModal from "@/components/service_card/ServiceOfferModal";
-import { Service } from "@/types/service";
 
-const applyMessage = 'I am interested in applying for your service offer. Could you share the details on how I can proceed? Thanks!';
+const applyMessage = 'I am interested in applying for your service offer. Could you share the details on how I can proceed? Here is my service offer card. Thanks!';
 
 const Enquiring = () => {
     const { activeChatRoom, sendMessage, updateChatRoom, deleteChatRoom } = useChat();
@@ -23,10 +22,10 @@ const Enquiring = () => {
         }
     }
 
-    const handleOnClickService = async (selectedService: Service) => {
+    const handleOnClickService = async (selectedServiceId: string) => {
         try {
             await sendMessage('text', applyMessage);
-            const newlySentMessage = await sendMessage('service', selectedService.id);
+            const newlySentMessage = await sendMessage('service', selectedServiceId);
             if(newlySentMessage){
                 await updateChatRoom(newlySentMessage.room_id, {
                     status: 'applied'
