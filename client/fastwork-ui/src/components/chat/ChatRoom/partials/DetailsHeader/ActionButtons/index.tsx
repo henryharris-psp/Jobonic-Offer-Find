@@ -17,12 +17,8 @@ const ActionButtons = () => {
     const { activeChatRoom } = useChat();
     const { authUser } = useSelector((state: RootState) => state.auth);
 
-    const replaceSpaceWithUnderScore = (text: string) => {
-        return text.replace(/ /g, '_');
-    };
-
     const authUserType: 'freelancer' | 'employer' = activeChatRoom?.freelancer_id === authUser?.profile.id ? 'freelancer' : 'employer';
-    const currentStatus = replaceSpaceWithUnderScore(activeChatRoom ? activeChatRoom.status : '');
+    const currentStatus = activeChatRoom ? activeChatRoom.status : '';
     const ActionButtonComponent = actionButtonsMap[authUserType][currentStatus] || null;
 
     return <>{ActionButtonComponent}</>;

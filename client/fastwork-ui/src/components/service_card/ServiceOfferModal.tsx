@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import ServiceOfferCard from "@/components/service_card/ServiceOfferCard";
 import httpClient from "@/client/httpClient";
 import { fetchServices } from "@/functions/helperFunctions";
+import { Service } from "@/types/service";
 
 interface ServiceOfferModalProps {
-    onClick: () => void;
+    onClick: (serviceId: string) => void;
 }
 
 const ServiceOfferModal = ({ 
@@ -20,13 +21,13 @@ const ServiceOfferModal = ({
         SetServiceOfferOpen(true);
     };
 
-    const [services, setServices] = useState([]);
+    const [services, setServices] = useState<Service[]>([]);
 
     useEffect(() => {
-        (async () => {
-            const controller = new AbortController();
-            const signal = controller.signal;
+        const controller = new AbortController();
+        const signal = controller.signal;
 
+        (async () => {
             try {
                 const res = await fetchServices("request", signal, {
                     pageNumber: 1,
@@ -42,12 +43,18 @@ const ServiceOfferModal = ({
                     },
                 });
 
-                setServices(res?.content);
+                setServices(res?.content ?? []);
             } catch (error) {
                 console.log(error);
             }
         })();
+
+        return () => controller.abort();
     }, []);
+
+    const handleOnServiceCardClick = (serviceId: string) => {
+        onClick(serviceId);
+    }
 
     return (
         <div className="">
@@ -58,15 +65,16 @@ const ServiceOfferModal = ({
                 {services.length !== 0 ? services.map((service, index) => (
                     <ServiceOfferCard
                         key={index}
+                        id={service.id}
                         title={service.title}
                         description={[
                             service.description1,
                             service.description2,
                             service.description3
                         ]}
-                        rating="★★★★★"
-                        image={service.image}
-                        onClick={() => onClick(service)}
+                        rating={service.rating}
+                        image={service.profileDTO.image}
+                        onClick={handleOnServiceCardClick}
                     />
                 )): ''}
             </div>

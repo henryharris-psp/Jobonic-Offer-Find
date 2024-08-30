@@ -1,3 +1,4 @@
+'use client'
 import ApplicantCard from "@/components/ApplicantCard";
 import ApplicationPopupCard from "@/components/ApplicationPopupCard";
 import AppliedCard from "@/components/AppliedCard";
@@ -5,7 +6,8 @@ import CancelledServiceCard from "@/components/CancelledServiceCard";
 import CategoryCard from "@/components/CategoryCard";
 import CategorySuggestions from "@/components/CategorySuggestions";
 import DealCard from "@/components/DealCard";
-import React from "react";
+import StarRating from "@/components/StarRating";
+import React, { useState } from "react";
 
 //TODO: only for testing purpose
 const ComponentGallery = () => {
@@ -55,6 +57,8 @@ const ComponentGallery = () => {
                     }
                 ]}
             />
+
+            <StarRating/>
 
             {/* <DealCard
                 image="image"

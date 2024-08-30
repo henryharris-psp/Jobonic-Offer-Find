@@ -5,10 +5,12 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import ActionButtons from "./ActionButtons";
+import StringParser from "@/functions/stringParsers";
 
 const DetailsHeader = () => {
     const { authUser } = useSelector((state: RootState) => state.auth);
     const { activeChatRoom } = useChat();
+    const stringParser = new StringParser();
 
     //modal handler
     const [isOpenModal, setIsOpenModal] = useState(false);
@@ -58,7 +60,7 @@ const DetailsHeader = () => {
                         </div>
                         <div className="bg-[#82BDC5] px-3 py-2 rounded-lg text-sm text-white whitespace-nowrap text-start">
                             <span className="capitalize text-sm">
-                                {activeChatRoom?.status}
+                                {stringParser.replaceUnderscoreWithSpace(activeChatRoom?.status ?? '')}
                             </span>
                         </div>
                     </div>

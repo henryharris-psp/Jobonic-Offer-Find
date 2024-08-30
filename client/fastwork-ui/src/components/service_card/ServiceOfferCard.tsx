@@ -1,42 +1,71 @@
 // ServiceCard.tsx
+import Image from "next/image";
 import React from "react";
+import StarRating from "../StarRating";
 
 interface ServiceCardProps {
+    id: string
     title: string;
     description: string[];
-    rating: string;
+    rating: number;
     image: string;
-    onClick: () => void
+    onClick?: (serviceId: string) => void
 }
 
-const ServiceOfferCard: React.FC<ServiceCardProps> = ({ 
+const ServiceOfferCard = ({
+    id, 
     title, 
     description, 
     rating, 
-    image, 
+    image,
     onClick
-}) => (
-    <div className="hover:bg-orange-200 cursor-pointer  bg-[#CFEDF4] rounded-xl flex flex-col p-6 shadow-lg text-center"
-        onClick={onClick}
-    >
-        <div className="flex flex-wrap justify-start items-center">
-            <img src="/profile.png" alt={title} className="rounded-full w-12 h-12 mr-2"/>
-            <h3 className="text-md font-bold mt-2 mr-2">{title}</h3>
-            <div className="flex items-center mt-2">
-                <span className="text-orange-500">{rating}</span>
+}: ServiceCardProps) => {
+
+    const handleOnClick = () => {
+        onClick?.(id);
+    }
+
+    return (
+        <div 
+            className={`flex min-w-60 bg-[#CFEDF4] rounded-xl overflow-hidden
+                ${ onClick ? 'cursor-pointer hover:bg-sky-200' : ''}
+            `}
+            onClick={handleOnClick}
+        >
+            <div className="flex flex-col m-5 space-y-4">
+
+                <div className="flex flex-row space-x-3">
+                    <Image
+                        width={60}
+                        height={60}
+                        src="/profile.png" 
+                        alt={title}
+                        className="rounded-full w-14 h-14 mt-1"
+                    />
+                    <div className="flex-1 flex flex-col">
+                        <span className="text-lg font-bold">
+                            { title }
+                        </span>
+                        <StarRating value={rating}/>
+                    </div>
+                </div>
+
+                <div className="flex flex-col space-y-2">
+                    { description && description.length !== 0 ? (
+                        description.map( (desc, index) => 
+                            <div key={index} className="flex flex-row space-x-2">
+                                <span className="text-gray-500">•</span>
+                                <span className="mt-1 text-sm text-gray-500">
+                                    { desc }
+                                </span>
+                            </div>
+                        )
+                    ) : ''}
+                </div>
+
             </div>
         </div>
-
-        <ul className="mt-4 flex flex-col justify-start items-start font-bold text-sm space-y-2">
-            {description.map((item, index) => (
-                <li key={index} className="flex items-center text-gray-700 text-left ml-2">
-                    <span className="mr-3 text-lg" style={{marginRight: '8px'}}>•</span>
-                    <span style={{paddingLeft: '4px'}}>{item}</span>
-                </li>
-            ))}
-        </ul>
-    </div>
-
-);
+    )
+};
 
 export default ServiceOfferCard;
