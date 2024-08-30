@@ -44,7 +44,7 @@ const ProgressList: React.FC = () => {
             }
         };
 
-        fetchMilestones();
+        //fetchMilestones();
     }, []);
     const toggleMilestone = (id: number) => {
         setOpenMilestones((prev) =>
