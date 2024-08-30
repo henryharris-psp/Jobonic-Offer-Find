@@ -1,7 +1,8 @@
 import { useChat } from "@/contexts/chat";
 import React, { useEffect, useMemo, useRef } from "react";
-import MessageBubble from "./MessageBubble";
 import MessageBubbleSkeleton from "./MessageBubbleSkeleton";
+import { Message } from "@/types/chat";
+import MessageByMediaType from "./MessageByMediaType";
 
 const Conversation = () => {
     const { activeChatRoom, isSending } = useChat();
@@ -28,8 +29,11 @@ const Conversation = () => {
                     ref={messagesScreenRef}
                     className="flex flex-col space-y-3 py-5 min-h-full"
                 >
-                    {messages.map((message) => (
-                        <MessageBubble key={message.id} {...message} />
+                    {messages.map((message: Message) => (
+                        <MessageByMediaType
+                            key={message.id}
+                            {...message}
+                        />
                     ))}
                     { isSending ? (
                         <MessageBubbleSkeleton/>
