@@ -28,6 +28,8 @@ public class CustomerReview extends Auditable<UUID> {
 
     private String review;
 
+    private boolean isActive = true;
+
     //add relation with matches(contract)
     @ManyToOne
     @JoinColumn(name = "matches_id")

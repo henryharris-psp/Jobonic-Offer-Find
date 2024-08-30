@@ -21,7 +21,7 @@ const CategoryCard = ({categories}: CategoryCardProps): React.ReactElement => {
               <div key={index} className="bg-white rounded-lg p-6 shadow-md h-full hover:cursor-pointer" onClick={() => window.location.href = '/jobList'}>
                 <h3 className="text-lg font-bold mb-2 text-black">{category.category}</h3>
                 <div className="ml-4">
-                  <Image src={category.image} alt={category.category} priority className="lg:w-60 max-w-full h-56 hidden sm:block sm:w-20" />
+                  <Image height={300} width={300} src={`/${category.image}`} alt={category.category} priority className="lg:w-60 max-w-full h-56 hidden sm:block sm:w-20" />
                 </div>
                 <p className="text-sm text-gray-700 mt-2">{category.description}</p>
               </div>

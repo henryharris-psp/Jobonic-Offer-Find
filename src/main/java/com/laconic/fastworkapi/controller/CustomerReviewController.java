@@ -49,7 +49,8 @@ public class CustomerReviewController {
 
     @Operation(summary = APIDocsHelper.CustomerReviewAPI.DELETE_CUSTOMER_REVIEW)
     @DeleteMapping
-    public void deleteById(@RequestParam UUID id) {
-        this.customerReviewService.deleteById(id);
+    public String deleteById(@RequestParam UUID id) {
+
+        return this.customerReviewService.deleteById(id);
     }
 }

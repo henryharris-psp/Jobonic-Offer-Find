@@ -27,4 +27,5 @@ public class AppMessage {
     public final static String DELETE_MESSAGE = "[%s] deleted successfully";
     public final static String SAVE_MESSAGE = "[%s] saved successfully";
     public static final String DOCUMENT_NOT_FOUND = "File not found";
+    public static final String CUSTOMER_REVIEW = "CUSTOMER REVIEW";
 }

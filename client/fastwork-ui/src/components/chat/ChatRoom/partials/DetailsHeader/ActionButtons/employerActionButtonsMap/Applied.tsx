@@ -21,7 +21,7 @@ const Applied = () => {
                 const newlySentMessage = await sendMessage('text', hireMessage);
                 if(newlySentMessage){
                     await updateChatRoom(newlySentMessage.room_id, {
-                        status: 'signing contract'
+                        status: 'signing_contract'
                     });
                 }
             } catch (error) {

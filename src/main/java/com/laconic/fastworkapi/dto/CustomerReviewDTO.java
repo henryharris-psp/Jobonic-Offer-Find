@@ -22,6 +22,8 @@ public class CustomerReviewDTO implements Serializable {
 
     private String review;
 
+    private boolean isActive = true;
+
     private Long profileId;
 
     private UUID matchesId;
