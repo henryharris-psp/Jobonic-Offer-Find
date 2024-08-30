@@ -20,7 +20,6 @@ import com.laconic.fastworkapi.service.IManagementService;
 import com.laconic.fastworkapi.utils.EntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -278,17 +277,65 @@ public class ManagementService implements IManagementService {
      */
     @Override
     public PaginationDTO<ExtendedServiceRequestDTO> getAllExtendedRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
-//        var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
-//        Pageable pageable = pageAndFilterDTO.getPageRequest();
-//
-//        // Fetch the paginated and sorted data
-//        Page<ExtendedServiceRequestDTO> servicePage = (keyword != null) ?
-//                serviceRequestRepo.findAllExtendedServiceRequestDetails(pageable)
-//                : serviceRequestRepo.findAllExtendedServiceRequestDetails(pageable);
-//
-//        // Return the paginated response
-//        return PaginationHelper.getResponse(servicePage, servicePage.getContent());
-        return null;
+        var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
+        Specification<ServiceRequest> specs = GenericSpecification.hasKeyword(keyword, Set.of("title"));
+
+        Page<ServiceRequest> servicePage = (keyword != null) ?
+                serviceRequestRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
+                : serviceRequestRepo.findAll(pageAndFilterDTO.getPageRequest());
+
+        // Map the entities to DTOs
+        List<ExtendedServiceRequestDTO> extendedServiceRequestDTOS = servicePage.stream()
+                .map(this::mapToExtendedServiceRequestDTO)
+                .collect(Collectors.toList());
+
+        // Return the paginated response with the mapped DTOs
+        return PaginationHelper.getResponse(servicePage, extendedServiceRequestDTOS);
     }
 
+    // Internal method to map ServiceRequest to ExtendedServiceRequestDTO
+    private ExtendedServiceRequestDTO mapToExtendedServiceRequestDTO(ServiceRequest serviceRequest) {
+        if (serviceRequest == null) {
+            return null;
+        }
+
+        var serviceManagement = serviceRequest.getServiceManagement();
+        if (serviceManagement == null) {
+            throw new IllegalArgumentException("ServiceManagement is null for ServiceRequest ID: " + serviceRequest.getId());
+        }
+
+        serviceManagement = this.serviceRepo.findById(serviceManagement.getId())
+                .orElseThrow();
+
+        UUID categoryId = null;
+        if (serviceManagement.getCategory() != null) {
+            categoryId = serviceManagement.getCategory().getId();
+        }
+
+        return new ExtendedServiceRequestDTO(
+                serviceRequest.getId(),
+                serviceRequest.getSubmissionDeadline(),
+                serviceRequest.getWorkExample(),
+                serviceManagement.getProfile().getId(),
+                serviceManagement.getDescription(),
+                serviceManagement.getDescription1(),
+                serviceManagement.getDescription2(),
+                serviceManagement.getDescription3(),
+                serviceManagement.getEmploymentType(),
+                serviceManagement.getLanguageSpoken(),
+                serviceManagement.getLocation(),
+                serviceManagement.getPrice(),
+                serviceManagement.getPriceUnit(),
+                serviceManagement.getTitle(),
+                categoryId,
+                serviceManagement.getProfile().getCardExpiryDate(),
+                serviceManagement.getProfile().getCardNumber(),
+                serviceManagement.getProfile().getCompanyName(),
+                serviceManagement.getProfile().getImage(),
+                serviceManagement.getProfile().getPhoneNumber(),
+                serviceManagement.getProfile().getReview(),
+                serviceManagement.getProfile().getUserId(),
+                serviceManagement.getProfile().getWalletAddress()
+        );
+    }
 }
