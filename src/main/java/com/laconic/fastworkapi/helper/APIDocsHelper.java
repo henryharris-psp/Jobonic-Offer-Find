@@ -166,4 +166,13 @@ public class APIDocsHelper {
         public static final String DELETE_CHECKPOINT = "Removes a checkpoint";
         public static final String GET_CHECKPOINT_BY_SERVICE_ID = "Get all checkpoints by service id";
     }
+
+    @UtilityClass
+    public static class CustomerReviewAPI {
+        public static final String SAVE_CUSTOMER_REVIEW = "Saves and returns a customer review";
+        public static final String UPDATE_CUSTOMER_REVIEW = "Updates and returns a customer review";
+        public static final String GET_ALL_CUSTOMER_REVIEW = "Get all customer reviews";
+        public static final String GET_CUSTOMER_REVIEW = "Get single customer review";
+        public static final String DELETE_CUSTOMER_REVIEW = "Removes a customer review";
+    }
 }

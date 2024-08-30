@@ -14,13 +14,24 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomerReview  extends Auditable<UUID> {
+public class CustomerReview extends Auditable<UUID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @OneToOne
+
+    @ManyToOne
+    @JoinColumn(name = "profile_id")
     private Profile profile;
-    private double noOfStar = 0;
+
+    private double noOfStar = 0.0;
+
     private String review;
+
+    private boolean isActive = true;
+
+    //add relation with matches(contract)
+    @ManyToOne
+    @JoinColumn(name = "matches_id")
+    private Matches matches;
 }

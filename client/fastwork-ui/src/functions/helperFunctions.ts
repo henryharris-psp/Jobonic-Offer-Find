@@ -182,7 +182,8 @@ export const getCategoryName = async (categoryId: string) => {
         signal: AbortSignal,
     ): Promise<Category[] | undefined>  => {
         try {
-            const res = await httpClient.get('category/all', { signal });
+            const res = await httpClient.get('/category/all', { signal });
+            console.log('Category',res);
             return res.data;
         } catch (error: any) {
             if (error.name === 'AbortError') {

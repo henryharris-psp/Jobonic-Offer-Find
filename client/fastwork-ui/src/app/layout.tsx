@@ -82,17 +82,17 @@ const RootLayout = ({
 
     return (
         <html lang="en">
-                <script
-                    src="https://accounts.google.com/gsi/client"
-                    async
-                    defer
-                ></script>
-                <body className={inter.className}>
-                    <NavBar />
-                    <main>{children}</main>
-                    {/* {showFooter && <Footer />} */}
-                    {/* <ChatBox /> */}
-                </body>
+            <script
+                src="https://accounts.google.com/gsi/client"
+                async
+                defer
+            ></script>
+            <body className={inter.className}>
+                <NavBar />
+                <main>{children}</main>
+                {/* {showFooter && <Footer />} */}
+                {/* <ChatBox /> */}
+            </body>
         </html>
     );
 };
