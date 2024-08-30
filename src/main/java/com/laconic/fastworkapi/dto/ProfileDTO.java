@@ -21,19 +21,13 @@ public class ProfileDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -4565041716760088438L;
     private Long id;
-    private String username;
-    private String firstName;
-    private String lastName;
-    private String email;
     private String companyName;
     private String phoneNumber;
-    private String address;
     private String image;
     private String cardNumber;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate cardExpiryDate;
     private String walletAddress;
-    private double numReviews;
     private Set<UserExperienceDTO> userExperienceList;
     private Set<UserEducationDTO> userEducationList;
     private Set<SkillDTO> skills;
@@ -47,12 +41,10 @@ public class ProfileDTO implements Serializable {
 //        profile.setLastName(this.lastName);
         profile.setCompanyName(this.companyName);
         profile.setPhoneNumber(this.phoneNumber);
-        profile.setAddress(this.address);
         profile.setImage(this.image);
         profile.setCardNumber(this.cardNumber);
         profile.setCardExpiryDate(this.cardExpiryDate);
         profile.setWalletAddress(this.walletAddress);
-        profile.setReview(this.numReviews);
         return profile;
     }
 }
