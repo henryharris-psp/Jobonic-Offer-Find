@@ -9,9 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -45,6 +43,9 @@ public class Profile extends Auditable<UUID> {
     private Set<UserExperience> userExperienceList = new HashSet<>();
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile", orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<UserEducation> userEducationList = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile", orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<CustomerReview> customerReviews = new ArrayList<>();
 
     public void addEducation(UserEducation education) {
         this.userEducationList.add(education);

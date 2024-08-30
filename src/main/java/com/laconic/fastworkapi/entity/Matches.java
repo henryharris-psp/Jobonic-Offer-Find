@@ -36,6 +36,9 @@ public class Matches extends Auditable<UUID> {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matches", orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Checkpoint> checkpoints;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matches", orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<CustomerReview> customerReviews;
+
     @Builder.Default
     private double paymentTotal = 0;
 
