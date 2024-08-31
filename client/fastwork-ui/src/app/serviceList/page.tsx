@@ -11,6 +11,7 @@ import { Sorting, SortingValue } from "@/types/Sorting";
 import PaginationButtons from "@/components/PaginationButtons";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import ServiceMatchCardSkeleton from "@/components/ServiceMatchCardSkeleton";
 
 const sortings: Sorting[] = [
     {
@@ -58,8 +59,9 @@ const defaultPagination = {
     totalElements: 0
 }
 
+const skeletonCount = Array.from({ length: 6 }, (_, index) => index);
+
 const ServiceList = () => {
-    
     const { authUser } = useSelector((state: RootState) => state.auth );
 
     const [categories, setCategories] = useState<Category[]>([]);
@@ -230,8 +232,10 @@ const ServiceList = () => {
                     {/* service list */}
                     <div className="container mx-auto">
                         <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
-                            { isServicesFetching ? (
-                                <span>Searching Services...</span>
+                            { !isServicesFetching ? (
+                                skeletonCount.map( id => 
+                                    <ServiceMatchCardSkeleton key={id}/>    
+                                )
                             ) : (
                                 services.map( service => 
                                     <ServiceMatchCard

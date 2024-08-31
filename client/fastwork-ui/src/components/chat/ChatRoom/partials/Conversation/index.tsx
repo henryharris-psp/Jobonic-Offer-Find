@@ -1,8 +1,8 @@
 import { useChat } from "@/contexts/chat";
 import React, { useEffect, useMemo, useRef } from "react";
-import MessageBubbleSkeleton from "./MessageBubbleSkeleton";
 import { Message } from "@/types/chat";
 import MessageByMediaType from "./MessageByMediaType";
+import MessageBubbleSkeleton from "./MessageBubbleSkeleton";
 
 const Conversation = () => {
     const { activeChatRoom, isSending } = useChat();
