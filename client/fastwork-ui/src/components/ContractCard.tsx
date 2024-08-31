@@ -26,10 +26,7 @@ const ContractCard: React.FC = () => {
     const [milestones, setMilestones] = useState<Milestone[]>([]);
     const { authUser } = useSelector((state: RootState) => state.auth);
     const stringParser = new StringParser();
-
-    const handlePriceChange = (newPrice: number) => {
-        setPrice(newPrice);
-    };
+    const [errorMessage, setErrorMessage] = useState('');
 
     //Add new milestones
     const handleAddMilestone = () => {
@@ -40,6 +37,16 @@ const ContractCard: React.FC = () => {
             payment: '',
         };
         setMilestones([...milestones, newMilestone]);
+    };
+
+    const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Number(e.target.value);
+        if (value < 0) {
+            setErrorMessage("Can't put a negative value for the price.");
+        } else {
+            setErrorMessage('');
+            setPrice(value || 0); // Default to 0 if NaN or empty
+        }
     };
 
     useEffect(() => {

@@ -23,7 +23,7 @@ const ServiceOfferCardWithLoading = ({
         const signal = controller.signal;
         ( async () => {
             try{
-                const res = await httpClient.get(`service/get?serviceId=${serviceId}`, { signal })
+                const res = await httpClient.get(`/service/get?serviceId=${serviceId}`, { signal })
                 setService(res.data);
             } catch (error) {
                 console.log(error);

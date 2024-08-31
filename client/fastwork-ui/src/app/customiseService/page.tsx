@@ -43,6 +43,7 @@ const CustomiseService: React.FC = () => {
     const [newLinkDescription, setNewLinkDescription] = useState('');
     const [newLinkUrl, setNewLinkUrl] = useState('');
     const router = useRouter();
+    const [errorMessage, setErrorMessage] = useState('');
 
     // Fetch categories when the component mounts
     useEffect(() => {
@@ -55,6 +56,17 @@ const CustomiseService: React.FC = () => {
             setSelectedCategoryName(categoryList[0].name);
         }
     }, [categoryList]);
+
+    //prevent negative value in price
+    const handlePriceChange = (e: { target: { value: string; }; }) => {
+        const value = parseFloat(e.target.value);
+        if (value < 0) {
+            setErrorMessage("Please enter a valid price...");
+        } else {
+            setErrorMessage('');
+            setAskingPrice(value);
+        }
+    };
 
     // Fetch category data from the API
     const fetchCategory = async () => {
@@ -118,8 +130,16 @@ const CustomiseService: React.FC = () => {
             categoryId: categoryId,
             price: askingPrice,
             priceUnit: priceUnit,
-            links: links
+            links: links,
+        
         };
+
+        // Check if price is negative
+    if (serviceData.price === null || serviceData.price < 0) {
+        alert('Price cannot be negative.');
+        return; // Prevent further execution
+    }
+       
 
         console.log('Service Data:', JSON.stringify(serviceData, null, 2));
 
@@ -265,7 +285,7 @@ const CustomiseService: React.FC = () => {
                         id="asking-price"
                         placeholder="Asking Price"
                         className="block w-full p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
-                        onChange={(e) => setAskingPrice(parseFloat(e.target.value))}
+                        onChange={handlePriceChange}
                     />
                     <select
                         className="block p-5 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500"
@@ -278,6 +298,9 @@ const CustomiseService: React.FC = () => {
                         <option value="PROJECT">Project</option>
                     </select>
                 </div>
+                {errorMessage && (
+                <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
+            )}
             </div>
             <div className="max-w-4xl mx-auto w-full mt-8 mb-8">
                 <label className="block text-lg font-semibold mb-2" htmlFor="links">Add links which can help employers know more about you. Enter in order of priority.</label>

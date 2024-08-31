@@ -96,7 +96,7 @@ export interface ChatRoom {
     id: number | string;
     freelancer_id: number; //profileId 
     employer_id: number; //profileId
-    service_id: number;
+    service_id: number | string;
     sender: Profile;
     receiver: Profile;
     service: Service;
