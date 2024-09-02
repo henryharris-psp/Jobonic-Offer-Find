@@ -11,7 +11,7 @@ import StringParser from '@/functions/stringParsers';
 interface Milestone {
     title: string;
     tasks: string[];
-    payment: string;
+    price: string;
 }
 
 const ContractCard: React.FC = () => {
@@ -19,7 +19,8 @@ const ContractCard: React.FC = () => {
     const [showMilestones, setShowMilestones] = useState(false);
     const {activeChatRoom} = useChat();
     const [isEditMode, setIsEditMode] = useState(true);
-    const [price, setPrice] = useState<number | undefined>(undefined);
+    const [paymentTotal, setPrice] = useState<number | undefined>(undefined);
+    const [price, setPayment] = useState<number | undefined>(undefined);
     const [deliverables, setDeliverables] = useState<string>('');
     const [isSaving, setIsSaving] = useState(false); // Track saving state
     const [showSuccessMessage, setShowSuccessMessage] = useState(false); // State to control success message popup
@@ -34,7 +35,7 @@ const ContractCard: React.FC = () => {
         const newMilestone = {
             title: `Milestone ${milestones.length + 1}`,
             tasks: [],
-            payment: '',
+            price: '',
         };
         setMilestones([...milestones, newMilestone]);
     };
@@ -73,7 +74,7 @@ const ContractCard: React.FC = () => {
             serviceId: activeChatRoom.service_id, 
             profileId: activeChatRoom.service?.profileDTO?.id,
             deliverable: deliverables || '',
-            paymentTotal: price || 0,
+            paymentTotal: paymentTotal || 0,
             paymentMode: 'MILESTONE', 
             status: stringParser.convertToUpperCase(activeChatRoom.status ?? ''),  // Ensure no spaces
         };
@@ -97,11 +98,11 @@ const ContractCard: React.FC = () => {
              // Prepare milestone payloads
         const milestonePayloads = milestones.map((milestone) => ({
             serviceId: activeChatRoom.service_id,
-            price: price || 0, 
+             
             matchId : contractResponse.data.id,
             title: milestone.title || '', 
             tasks: milestone.tasks || [],
-            payment: milestone.payment || '', 
+            price: price || 0, 
         }));
 
         console.log("Milestone Payloads:", JSON.stringify(milestonePayloads, null, 2));
@@ -168,7 +169,7 @@ const ContractCard: React.FC = () => {
 
     const handlePaymentChange = (milestoneIndex: number, value: string) => {
         const updatedMilestones = milestones.map((milestone, index) =>
-            index === milestoneIndex ? { ...milestone, payment: value } : milestone
+            index === milestoneIndex ? { ...milestone, price: value } : milestone
         );
         setMilestones(updatedMilestones);
     };
@@ -228,13 +229,13 @@ const ContractCard: React.FC = () => {
                                 {isEditMode ? (
                                     <input
                                     type="number"
-                                    value={price ?? ''}
+                                    value={paymentTotal ?? ''}
                                     placeholder="$200"
                                     onChange={(e) => setPrice(Number(e.target.value) || 0)} // Convert to a number, default to 0 if NaN
                                         className="border-gray-300 bg-[#e8f3f3] text-sm rounded-lg p-4"
                                     />
                                 ) : (
-                                    `$${price}`
+                                    `$${paymentTotal}`
                                 )}
                             </div>
                         </div>
@@ -309,13 +310,13 @@ const ContractCard: React.FC = () => {
                                     {isEditMode ? (
                                         <input
                                             type="text"
-                                            placeholder="Payment"
-                                            value={milestone.payment}
-                                            onChange={(e) => handlePaymentChange(index, e.target.value)}
+                                            placeholder="payment"
+                                            value={price ?? ''}
+                                            onChange={(e) => setPayment(Number(e.target.value) || 0)}
                                             className="border bg-[#e8f3f3] text-sm rounded-lg p-1 ml-2 mr-4"
                                         />
                                     ) : (
-                                        milestone.payment
+                                       `$${price}`
                                     )}
                                 </p>
                             </div>
