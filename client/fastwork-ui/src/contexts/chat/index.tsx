@@ -8,6 +8,7 @@ import { getProfileByProfileId } from "@/functions/helperFunctions";
 import { Profile } from "@/types/users";
 import httpClient from "@/client/httpClient";
 import axios from "axios";
+import { Contract } from "@/types/general";
 
 export interface ChatState {
     showChatList: boolean;
@@ -127,13 +128,14 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
                 //fetching contract
                 const contractRes = await httpClient.get(`http://localhost:8000/api/contracts?serviceId=${chatRoom.service_id}`);
-
+                const contracts: Contract[] = contractRes?.data ?? [];
+                
                 return {
                     ...chatRoom,
                     sender: authUser?.profile!,
                     receiver: receiver,
                     service: service,
-                    contract: contractRes.data ?? null
+                    contracts: contracts
                 };
             }));       
         }

@@ -29,6 +29,4 @@ export interface Contract {
     milestones: Milestone[],
 }
 
-
-
 export type TailwindSizes = "xs" | "sm" | "" | "lg" | "xl" | "2xl" | "3xl" | "4xl";

@@ -10,20 +10,26 @@ import Button from '@/components/Button';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
 interface ContractCardWithLoadingProps {
+    contractId: string | number,
     isSentByAuthUser: boolean
 }
 
 const ContractCardWithLoading = ({
+    contractId,
     isSentByAuthUser
 }: ContractCardWithLoadingProps) => {
     const { activeChatRoom } = useChat();
+    const contracts = activeChatRoom ? activeChatRoom.contracts : [];
+    const contract = contracts.find( e => e.id === contractId);
 
     return (
-        !activeChatRoom?.service_id ? (
+        !contract ? (
             <MediaSkeleton/>
         ) : (
             <div className="flex flex-col mx-2 bg-white rounded-xl border border-gray-200 shadow">
-                <NewContractCard/>
+                <NewContractCard
+                    contract={contract}
+                />
                 { !isSentByAuthUser ? (
                     <div className="flex justify-end mb-4 mx-5 gap-1">
                         <Button
