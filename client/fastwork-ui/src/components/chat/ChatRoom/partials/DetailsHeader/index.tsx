@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import ActionButtons from "./ActionButtons";
 import StringParser from "@/functions/stringParsers";
+import NewContractCard from "@/components/NewContractCard";
 
 const DetailsHeader = () => {
     const { authUser } = useSelector((state: RootState) => state.auth);
@@ -87,7 +88,7 @@ const DetailsHeader = () => {
                         >
                             ❌
                         </button>
-                        <ContractCard handleCloseModal={handleCloseModal} />
+                        <NewContractCard />
                     </div>
                 </div>
             )}

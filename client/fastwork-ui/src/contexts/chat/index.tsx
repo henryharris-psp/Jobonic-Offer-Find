@@ -7,6 +7,7 @@ import { RootState } from "@/store";
 import { getProfileByProfileId } from "@/functions/helperFunctions";
 import { Profile } from "@/types/users";
 import httpClient from "@/client/httpClient";
+import axios from "axios";
 
 export interface ChatState {
     showChatList: boolean;
@@ -110,21 +111,29 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             }
 
         //fetch from jobonic db
+        //TODO: add promise rejection handler
         const loadChatRoomData = async (chatRooms: ChatRoom[]) => {
             return Promise.all(chatRooms.map(async (chatRoom: ChatRoom) => { 
                 const receiverId = chatRoom.freelancer_id === authUser?.profile.id ? chatRoom.employer_id : chatRoom.freelancer_id;
                 const receiver: Profile = await getProfileByProfileId(receiverId);
+
+                //fetching service
                 const serviceRes = await httpClient.get('/service/get', {
                     params: {
                         serviceId: chatRoom.service_id
                     }
                 });
                 const service = serviceRes.data;
+
+                //fetching contract
+                const contractRes = await httpClient.get(`http://localhost:8000/api/contracts?serviceId=${chatRoom.service_id}`);
+
                 return {
                     ...chatRoom,
                     sender: authUser?.profile!,
                     receiver: receiver,
-                    service: service
+                    service: service,
+                    contract: contractRes.data ?? null
                 };
             }));       
         }

@@ -11,6 +11,7 @@
 //     price?: string;
 //     sentByAuthUser: boolean;
 // }
+import { Contract } from "./general";
 import { Service } from "./service";
 import { Profile } from "./users";
 
@@ -103,5 +104,6 @@ export interface ChatRoom {
     status: FreelancerChatStatus | EmployeerChatStatus
     created_at: string;
     messages: Message[],
-    isNew?: boolean
+    isNew?: boolean,
+    contract: Contract
 }

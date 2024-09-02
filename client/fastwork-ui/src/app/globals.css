@@ -10,7 +10,7 @@
   --background-end-rgb: 255, 255, 255;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
     /* --foreground-rgb: 255, 255, 255; */
     --background-start-rgb: 0, 0, 0;
@@ -24,6 +24,21 @@ body {
   padding: 0;
   background: url('/jobonicbackground2.svg') no-repeat top center;
   background-size: cover;
+
+  /* disable text selection */
+  -webkit-user-select: none;
+  /* Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE 10+ */
+  user-select: none;
+  /* Standard syntax */
+}
+
+/* hide scroll indicator */
+::-webkit-scrollbar {
+  display: none;
 }
 
 @layer utilities {
@@ -171,6 +186,7 @@ body {
   overflow: hidden; /* Hide any overflow to prevent scrollbars */
   
 }
+
 
 
 
