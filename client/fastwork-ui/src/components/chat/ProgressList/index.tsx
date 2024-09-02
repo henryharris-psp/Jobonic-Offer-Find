@@ -8,7 +8,7 @@ import { useChat } from '@/contexts/chat';
 interface Milestone {
     id: string;
     title: string;
-    amountToPay: number;
+    price: number;
     tasks: string[];
     isOpen: boolean;
     serviceId: string;
@@ -28,7 +28,7 @@ const ProgressList: React.FC = () => {
     const [milestone, setNewMilestone] = useState<Milestone>({
         id: '',
         title: '',
-        amountToPay: 0,
+        price: 0,
         tasks: [],
         isOpen: false,
         serviceId: '',
@@ -39,11 +39,9 @@ const ProgressList: React.FC = () => {
             try {
 
                 const serviceId = chat.activeChatRoom?.service_id;
-
                 const response = await httpClient.get('/checkpoint/all');
                 const data = response.data;
 
-                
                 data.forEach((milestone: Milestone) => {
                     console.log(`Milestone ID: ${milestone.id}, CreatedBy: ${milestone.serviceId}, ServiceID: ${serviceId}`);
                 });
@@ -51,16 +49,26 @@ const ProgressList: React.FC = () => {
                 // Apply filtering logic
                 const filteredMilestones = data.filter((milestone: Milestone) => milestone.serviceId === serviceId);
 
-                setMilestones(filteredMilestones);
+                // Correctly log the amountToPay for each filtered milestone
+                filteredMilestones.forEach((milestone: Milestone) => {
+                    console.log(`Amount to Pay for Milestone ID ${milestone.id}: ${milestone.price}`);
+                });
+
+                // Sort the filtered milestones in ascending order based on the numeric part of the 'title' field
+                const sortedMilestones = filteredMilestones.sort((a: Milestone, b: Milestone) => {
+                    // Extract the number from the title
+                    const numA = parseInt(a.title.replace(/\D/g, ''), 10);
+                    const numB = parseInt(b.title.replace(/\D/g, ''), 10);
+                    return numA - numB;
+                });
+
+                setMilestones(sortedMilestones);
             } catch (error) {
                 console.error('Error fetching milestones:', error);
             }
         };
-
         fetchMilestones();
     }, [chat.activeChatRoom?.service_id]);
-
-
 
     const toggleMilestone = (id: string) => {
         setOpenMilestones((prev) =>
@@ -74,7 +82,7 @@ const ProgressList: React.FC = () => {
     };
 
     const addMilestone = () => {
-        
+
         setMilestones([...milestones, milestone]);
         setIsModalOpen(false);
     };
@@ -156,7 +164,7 @@ const ProgressList: React.FC = () => {
             <div className="flex justify-between items-center mt-2 mb-2">
                 <span className="font-semibold">Add Another Milestone</span>
                 <SideBarIcon icon={<PlusIcon className="size-3 text-white font-bold cursor-pointer" />}
-                             onClick={() => setIsModalOpen(true)}
+                    onClick={() => setIsModalOpen(true)}
                 />
             </div>
 
@@ -177,24 +185,25 @@ const ProgressList: React.FC = () => {
                         </div>
 
                         <div className="flex-1 mt-4">
-                                <p className="font-bold text-md ml-1 mb-2">Task</p>
-                                <input
-                                    type="text"
-                                    name="todoDescription"
-                                    placeholder="To-Do Description"
-                                    value={milestone.tasks}
-                                    onChange={handleInputChange}
-                                    className="border-green-200 rounded-xl bg-[#e8f3f3] focus:outline-0 hover:outline-0 w-full"
-                                />
-                            </div>
+                            <p className="font-bold text-md ml-1 mb-2">Task</p>
+                            <input
+                                type="text"
+                                name="todoDescription"
+                                placeholder="To-Do Description"
+                                value={milestone.tasks}
+                                onChange={handleInputChange}
+                                className="border-green-200 rounded-xl bg-[#e8f3f3] focus:outline-0 hover:outline-0 w-full"
+                            />
+                        </div>
 
                         <div className="flex-1 mt-4">
                             <p className="font-bold text-md ml-1 mb-2">Amount To Pay</p>
                             <input
                                 type="text"
-                                name="amountToPay"
+                                name="price"
                                 placeholder="Amount to Pay"
-                                value={milestone.amountToPay}
+                                value={milestone.price
+                                }
                                 onChange={handleInputChange}
                                 className="border-green-200 rounded-xl bg-[#e8f3f3] focus:outline-0 hover:outline-0 w-full"
                             />
@@ -233,7 +242,7 @@ const ProgressList: React.FC = () => {
                             <div className="ml-4 mt-2">
                                 <ul className="list-disc list-outside font-bold text-sm ml-6">
                                     <li>{milestone.tasks.join(', ')}</li>
-                                    <li>{`Amount to pay: ${milestone.amountToPay}`}</li>
+                                    <li>{`Amount to pay: ${milestone.price}`}</li>
                                 </ul>
                                 {milestone.title === 'Review' ? (
                                     <button
@@ -328,6 +337,9 @@ const ProgressList: React.FC = () => {
                     </div>
                 </div>
             )}
+            <div>
+
+            </div>
             {/* Review Popup */}
             {isReviewPopupOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
