@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import Button from "@/components/Button";
 import { useChat } from "@/contexts/chat";
 import { PaperAirplaneIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import Modal from "@/components/Modal";
 
 const inviteMessage = `
     I have reviewed your work and am impressed with your skills. 
-    I'd like to discuss the possibility of collaborating on a project. Are you available for a quick chat to explore this further?
+    I'd like to discuss the possibility of collaborating on a project. 
+    Are you available for a quick chat to explore this further?
 `;
 
 const Enquiring = () => {
@@ -56,7 +58,11 @@ const Enquiring = () => {
                     onClick={handleOnClickInvite} 
                 />
             </div>
-            { showServiceSelectionModal ? (
+
+            <Modal
+                isOpen={showServiceSelectionModal}
+                onClose={() => setShowServiceSelectionModal(false)}
+            >
                 <div 
                     className="flex items-center justify-center fixed top-0 right-0 left-0 bottom-0 bg-gray-700 bg-opacity-50"
                     onClick={() => setShowServiceSelectionModal(false)}    
@@ -87,7 +93,7 @@ const Enquiring = () => {
 
                     </div>
                 </div>
-            ) : ''}
+            </Modal>
         </>
     );
 };

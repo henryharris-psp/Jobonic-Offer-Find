@@ -11,6 +11,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import ServiceRequestCard from "@/components/ServiceRequestCard";
+import ServiceMatchCardSkeleton from "@/components/ServiceMatchCardSkeleton";
 
 type UserData = {
     id?: number;
@@ -74,6 +75,8 @@ const defaultPagination = {
     totalPages: 0,
     totalElements: 0
 }
+
+const skeletonCount = Array.from({ length: 6 }, (_, index) => index);
 
 const OfferService = () => {
     const { authUser } = useSelector((state: RootState) => state.auth );
@@ -295,7 +298,9 @@ const OfferService = () => {
                     <div className="container mx-auto">
                         <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
                             { isServicesFetching ? (
-                                <span>Searching Services...</span>
+                                skeletonCount.map( id => 
+                                    <ServiceMatchCardSkeleton key={id}/>    
+                                )
                             ) : (
                                 services.map( service => 
                                     <ServiceRequestCard

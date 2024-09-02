@@ -40,21 +40,23 @@ public class CheckpointController {
         return this.checkpointService.delete(id);
     }
 
-    @Operation(summary = APIDocsHelper.CheckpointAPI.GET_ALL_CHECKPOINT)
-    @GetMapping("/all")
-    public List<CheckpointDTO> getAll() {
-        return this.checkpointService.getAll();
-    }
+
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.GET_CHECKPOINT)
     @GetMapping()
-    public CheckpointDTO getById(@RequestParam UUID checkPointId) {
-        return this.checkpointService.getById(checkPointId);
+    public CheckpointDTO getById(@RequestParam UUID id) {
+        return this.checkpointService.getById(id);
     }
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.GET_CHECKPOINT_BY_SERVICE_ID)
     @GetMapping("/serviceId")
     public List<Checkpoint> getByServiceId(@RequestParam UUID serviceId) {
         return this.checkpointService.getCheckPointByServiceId(serviceId);
+    }
+
+    @Operation(summary = APIDocsHelper.CheckpointAPI.GET_ALL_CHECKPOINT)
+    @GetMapping("/all")
+    public List<CheckpointDTO> getAll() {
+        return this.checkpointService.getAll();
     }
 }

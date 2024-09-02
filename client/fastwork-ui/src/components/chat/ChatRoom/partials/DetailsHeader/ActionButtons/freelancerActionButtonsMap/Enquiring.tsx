@@ -3,6 +3,7 @@ import Button from "@/components/Button";
 import { useChat } from "@/contexts/chat";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import ServiceOfferModal from "@/components/service_card/ServiceOfferModal";
+import Modal from "@/components/Modal";
 
 const applyMessage = 'I am interested in applying for your service offer. Could you share the details on how I can proceed? Here is my service offer card. Thanks!';
 
@@ -54,19 +55,14 @@ const Enquiring = () => {
                     onClick={handleOnClickApply} 
                 />
             </div>
-            { showServiceSelectionModal ? (
-                <div 
-                    className="flex z-50 items-center justify-center fixed top-0 right-0 left-0 bottom-0 bg-gray-700 bg-opacity-50"
-                    onClick={() => setShowServiceSelectionModal(false)}    
-                >
-                    <div className="bg-white rounded-xl px-10 pt-3 pb-10">
-                    <ServiceOfferModal
-                        onClick={handleOnClickService}
-                    />
-
-                    </div>
-                </div>
-            ) : ''}
+            <Modal
+                isOpen={showServiceSelectionModal}
+                onClose={() => setShowServiceSelectionModal(false)}
+            >
+                <ServiceOfferModal
+                    onClick={handleOnClickService}
+                />
+            </Modal>
         </>
     );
 };

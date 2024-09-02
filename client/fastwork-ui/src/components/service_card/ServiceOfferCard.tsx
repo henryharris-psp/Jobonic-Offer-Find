@@ -1,7 +1,8 @@
 // ServiceCard.tsx
 import Image from "next/image";
-import React from "react";
+import React, { useMemo } from "react";
 import StarRating from "../StarRating";
+import { TailwindSizes } from "@/types/general";
 
 interface ServiceCardProps {
     id: string
@@ -9,8 +10,38 @@ interface ServiceCardProps {
     description: string[];
     rating: number;
     image: string;
+    size?: TailwindSizes;
     onClick?: (serviceId: string) => void
 }
+
+interface ServiceOfferCardSizeProps {
+    image: number;
+    title: string;
+    star: TailwindSizes;
+    description: string;
+}
+
+const sizeMap: Record<string, ServiceOfferCardSizeProps> = {
+    sm: {
+        image: 50,
+        title: '',
+        star: 'sm',
+        description: 'xs'
+    },
+    md: {
+        image: 60,
+        title: 'lg',
+        star: '',
+        description: 'sm'
+    },
+    lg: {
+        image: 70,
+        title: 'xl',
+        star: 'lg',
+        description: ''
+    },
+};
+
 
 const ServiceOfferCard = ({
     id, 
@@ -18,12 +49,17 @@ const ServiceOfferCard = ({
     description, 
     rating, 
     image,
+    size = '',
     onClick
 }: ServiceCardProps) => {
 
     const handleOnClick = () => {
         onClick?.(id);
     }
+
+    const sizeConfig: ServiceOfferCardSizeProps = useMemo(() => {
+        return sizeMap[size] || sizeMap.md;
+    }, [size]);
 
     return (
         <div 
@@ -36,17 +72,20 @@ const ServiceOfferCard = ({
 
                 <div className="flex flex-row space-x-3">
                     <Image
-                        width={60}
-                        height={60}
+                        width={sizeConfig.image}
+                        height={sizeConfig.image}
                         src="/profile.png" 
                         alt={title}
-                        className="rounded-full w-14 h-14 mt-1"
+                        className="rounded-full w-14 h-14"
                     />
                     <div className="flex-1 flex flex-col">
-                        <span className="text-lg font-bold">
+                        <span className={`font-bold text-${sizeConfig.title}`}>
                             { title }
                         </span>
-                        <StarRating value={rating}/>
+                        <StarRating 
+                            value={rating}
+                            size={sizeConfig.star}
+                        />
                     </div>
                 </div>
 
@@ -55,7 +94,7 @@ const ServiceOfferCard = ({
                         description.map( (desc, index) => 
                             <div key={index} className="flex flex-row space-x-2">
                                 <span className="text-gray-500">•</span>
-                                <span className="mt-1 text-sm text-gray-500">
+                                <span className={`mt-1 text-gray-500 text-${sizeConfig.description}`}>
                                     { desc }
                                 </span>
                             </div>

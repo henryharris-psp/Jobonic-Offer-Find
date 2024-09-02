@@ -76,11 +76,13 @@ const CustomiseJobRequestForm: React.FC = () => {
   });
 
   const [categoryList, setCategoryList] = useState<Category[]>([]);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     // Fetch category list on component mount
     fetchCategory();
   }, []);
+
 
   const fetchCategory = async () => {
     try {
@@ -93,7 +95,13 @@ const CustomiseJobRequestForm: React.FC = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
-    setFormState(prevState => ({ ...prevState, [name]: value }));
+     // Validate budget field for negative value
+     if (name === 'budget' && parseFloat(value) < 0) {
+      setErrorMessage("Can't put a negative value for the budget.");
+    } else {
+      setErrorMessage('');
+      setFormState((prevState) => ({ ...prevState, [name]: value }));
+    }
   };
 
   const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -126,6 +134,12 @@ const CustomiseJobRequestForm: React.FC = () => {
       price: parseInt(formState.budget),
       priceUnit: formState.priceUnit
     };
+
+    //check negative value
+    if(serviceData.price === null || serviceData.price < 0) {
+      setErrorMessage("Please enter a valid value...");
+      return;
+    }
 
     console.log('Service Data:', JSON.stringify(serviceData, null, 2));
 
@@ -324,6 +338,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                   placeholder="$14"
               />
+              {errorMessage && <p className="text-red-500">{errorMessage}</p>}
             </div>
             <div>
               <label className="required block text-lg font-semibold mb-2" htmlFor="priceUnit">Price Unit</label>

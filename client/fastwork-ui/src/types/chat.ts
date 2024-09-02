@@ -11,6 +11,7 @@
 //     price?: string;
 //     sentByAuthUser: boolean;
 // }
+import { Contract } from "./general";
 import { Service } from "./service";
 import { Profile } from "./users";
 
@@ -96,12 +97,13 @@ export interface ChatRoom {
     id: number | string;
     freelancer_id: number; //profileId 
     employer_id: number; //profileId
-    service_id: number;
+    service_id: number | string;
     sender: Profile;
     receiver: Profile;
     service: Service;
     status: FreelancerChatStatus | EmployeerChatStatus
     created_at: string;
     messages: Message[],
-    isNew?: boolean
+    isNew?: boolean,
+    contract: Contract
 }

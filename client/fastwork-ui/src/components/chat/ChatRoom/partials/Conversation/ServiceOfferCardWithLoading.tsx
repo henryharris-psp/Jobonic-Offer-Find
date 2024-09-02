@@ -4,6 +4,7 @@ import { Service } from '@/types/service';
 import React, { useEffect, useState } from 'react'
 import Applied from '../DetailsHeader/ActionButtons/employerActionButtonsMap/Applied';
 import { useChat } from '@/contexts/chat';
+import MediaSkeleton from './MediaSkeleton';
 
 interface ServiceOfferCardWithLoadingProps {
     serviceId: string,
@@ -22,7 +23,7 @@ const ServiceOfferCardWithLoading = ({
         const signal = controller.signal;
         ( async () => {
             try{
-                const res = await httpClient.get(`service/get?serviceId=${serviceId}`, { signal })
+                const res = await httpClient.get(`/service/get?serviceId=${serviceId}`, { signal })
                 setService(res.data);
             } catch (error) {
                 console.log(error);
@@ -33,10 +34,11 @@ const ServiceOfferCardWithLoading = ({
 
     return (
         !service ? (
-            <div>Loading</div>
+            <MediaSkeleton/>
         ) : (
             <div className="flex flex-col mx-2 bg-[#CFEDF4] rounded-xl">
                 <ServiceOfferCard
+                    size="sm"
                     id={service.id}
                     title={service.title}
                     description={[
