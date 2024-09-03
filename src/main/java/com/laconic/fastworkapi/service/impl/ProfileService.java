@@ -12,6 +12,7 @@ import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
 import com.laconic.fastworkapi.entity.Profile;
 import com.laconic.fastworkapi.entity.UserRole;
 import com.laconic.fastworkapi.entity.UserSkill;
+import com.laconic.fastworkapi.exception.NotFoundException;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.helper.PaginationHelper;
 import com.laconic.fastworkapi.repo.*;
@@ -24,6 +25,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -140,8 +142,18 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public UserProfileDTO getUserProfileDto(Long id) {
-        var existingUser = this.userRepo.findByUserId(id);
+    public UserProfileDTO getUserProfileDto(Long id, String name) {
+        Profile existingUser = null;
+        if (name.equalsIgnoreCase("profile")) {
+            existingUser = userRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
+                    id.toString()));
+        }
+        if (name.equalsIgnoreCase("user")) {
+            existingUser = this.userRepo.findByUserId(id);
+        }
+        if (Objects.isNull(existingUser)) {
+            throw new NotFoundException("User Not found");
+        }
         UserProfileDTO dto = EntityMapper.mapToResponse(existingUser, UserProfileDTO.class);
         dto.setUsername(authenticationUtils.genericTokenValue("preferred_username"));
         dto.setFirstName(authenticationUtils.genericTokenValue("given_name"));

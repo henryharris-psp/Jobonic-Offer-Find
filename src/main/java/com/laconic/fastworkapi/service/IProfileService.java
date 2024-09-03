@@ -23,5 +23,5 @@ public interface IProfileService {
 
     ProfileDTO getByUserId(Long userId);
 
-    UserProfileDTO getUserProfileDto(Long id);
+    UserProfileDTO getUserProfileDto(Long id,String name);
 }
