@@ -3,44 +3,33 @@ import React, { ChangeEvent, UIEvent, useEffect, useMemo, useState } from 'react
 import { PencilIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/24/solid';
 import Button from '../Button';
 import MilestoneFormModal from './MilestoneFormModal';
-import { Milestone } from '@/types/general';
+import { Contract, Milestone } from '@/types/general';
 import { useChat } from '@/contexts/chat';
 import axios from 'axios';
+import SafeInput, { SafeInputChangeEvent } from '../SafeInput';
 
-const NewContractCard = () => {
-    const { activeChatRoom, sendMessage } = useChat();
+interface NewContractCardProps {
+    contract: Contract
+}
+
+const NewContractCard = ({
+    contract
+}: NewContractCardProps) => {
+    const isEdit = Boolean(contract);
+    const { activeChatRoom, sendMessage, updateChatRoom } = useChat();
     const [inputs, setInputs] = useState({
-        price: '',
-        deliverable: ''
+        price: isEdit ? contract.price : '',
+        deliverable: isEdit ? contract.deliverable : ''
     });
-    const [milestones, setMilestones] = useState<Milestone[]>([]);
+    const [milestones, setMilestones] = useState<Milestone[]>(isEdit ? contract.milestones : []);
 
-    const [isContractCreated, setIsContractCreated] = useState<boolean>(false);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [isEditing, setIsEditing] = useState<boolean>(!isEdit);
     const [showScrollShadow, setShowScrollShadow] = useState<boolean>(false);
 
     //for milestone modal
     const [showMilestoneFormModal, setShowMilestoneFormModal] = useState(false);
     const [targetMilestone, setTargetMilestone] = useState<Milestone | null>(null);
-
-    useEffect( () => {
-        if(activeChatRoom){
-            if(activeChatRoom?.contract){
-                setIsContractCreated(true);
-                const { price, deliverable, milestones } = activeChatRoom.contract;
-                setInputs({
-                    price: price.toString(),
-                    deliverable
-                })
-                setMilestones(milestones);
-            } else {
-                setIsContractCreated(false);
-                setIsEditing(true);
-                setInputs( prev => ({...prev, price: activeChatRoom.service.price.toString()}))
-            }
-        }
-    }, [activeChatRoom]);
 
     //error handlers
         const [errorCheckable, setErrorCheckable] = useState(false);
@@ -52,11 +41,15 @@ const NewContractCard = () => {
                 errors.push('price');
             }
 
+            if(!inputs.deliverable){
+                errors.push('deliverable');
+            }
+
             return errors;
         }, [inputs]);
 
     //methods
-        const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const handleInputChange = (e: SafeInputChangeEvent) => {
             const { name, value } = e.target;
             setInputs(prev => ({
                 ...prev,
@@ -89,10 +82,12 @@ const NewContractCard = () => {
                         deliverable: inputs.deliverable
                     });
         
+                    const contractId = contractRes.data.id;
+
                     if (milestones.length !== 0) {
                         for (const milestone of milestones) {
                             await axios.post('http://localhost:8000/api/milestones', {
-                                contractId: contractRes.data.id,
+                                contractId: contractId,
                                 name: milestone.name,
                                 price: milestone.price,
                                 dueDate: milestone.dueDate,
@@ -101,8 +96,14 @@ const NewContractCard = () => {
                         }
                     }
 
-                    await sendMessage('text', 'Contract is updated');
-                    await sendMessage('contract', activeChatRoom?.service_id);
+                    await sendMessage('contract', contractId);
+                    const newlySentMessage = await sendMessage('text', 'Contract is updated');
+
+                    if(newlySentMessage){
+                        await updateChatRoom(newlySentMessage.room_id, {
+                            status: 'waiting_for_payment'
+                        });
+                    }
 
                     setShowMilestoneFormModal(false);
         
@@ -113,7 +114,6 @@ const NewContractCard = () => {
                 }
             }
         };
-        
 
     //milestone modal handlers
         const handleOnClickMileStoneAdd = () => {
@@ -188,10 +188,19 @@ const NewContractCard = () => {
                                         />
                                         { errorCheckable && inputErrors.includes('price') ? (
                                             <span className="text-red-500 text-xs">
-                                                *Required
+                                                * Required
                                             </span>
                                         ) : ''}
                                     </div>
+
+                                    <SafeInput
+                                        type="number"
+                                        name="price"
+                                        placeholder="eg. 200"
+                                        value={inputs.price}
+                                        onChange={handleInputChange}
+                                        disabled={!isEditing}
+                                    />
                                 </div>
 
                                 <div className="flex flex-row items-center justify-end space-x-3">
@@ -222,7 +231,7 @@ const NewContractCard = () => {
                                         size="sm"
                                         title="Cancel"
                                         onClick={() => setIsEditing(false)}
-                                        disabled={!isContractCreated}
+                                        disabled={!isEdit}
                                     />
                                     <Button
                                         size="sm"

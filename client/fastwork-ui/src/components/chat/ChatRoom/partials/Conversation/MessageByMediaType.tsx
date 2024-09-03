@@ -4,8 +4,6 @@ import MessageBubble from "./MessageBubble";
 import ServiceOfferCardWithLoading from "./ServiceOfferCardWithLoading";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import ContractCard from "@/components/ContractCard";
-import NewContractCard from "@/components/NewContractCard";
 import ContractCardWithLoading from "./ContractCardWithLoading";
 
 const MessageByMediaType = (message: Message) => {
@@ -20,8 +18,9 @@ const MessageByMediaType = (message: Message) => {
                 isSentByAuthUser={isSentByAuthUser}
             />,
         image: null,
-        contract: 
+        contract:
             <ContractCardWithLoading
+                contractId={message.content}
                 isSentByAuthUser={isSentByAuthUser}
             />,
         service: 

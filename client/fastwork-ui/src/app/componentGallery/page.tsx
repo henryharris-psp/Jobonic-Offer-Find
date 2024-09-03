@@ -4,13 +4,19 @@ import ApplicationPopupCard from "@/components/ApplicationPopupCard";
 import AppliedCard from "@/components/AppliedCard";
 import CancelledServiceCard from "@/components/CancelledServiceCard";
 import CategoryCard from "@/components/CategoryCard";
-import CategorySuggestions from "@/components/CategorySuggestions";
-import DealCard from "@/components/DealCard";
+import SafeInput, { SafeInputChangeEvent } from "@/components/SafeInput";
 import StarRating from "@/components/StarRating";
 import React, { useState } from "react";
 
 //TODO: only for testing purpose
 const ComponentGallery = () => {
+
+    const [value, setValue] = useState('');
+
+    const handleOnInputChange = (e: SafeInputChangeEvent) => {
+        setValue(e.currentTarget.value);
+    }
+
     return (
         <div className="flex flex-col space-y-5 m-5">
             <ApplicantCard
@@ -59,6 +65,18 @@ const ComponentGallery = () => {
             />
 
             <StarRating/>
+
+            <SafeInput
+                type="decimal"
+                value={value}
+                onChange={handleOnInputChange}
+                placeholder="Custom Number Input"
+                disabled
+                warningMessages={[
+                    'fdfdf',
+                    'fxxxxx'
+                ]}
+            />
 
             {/* <DealCard
                 image="image"

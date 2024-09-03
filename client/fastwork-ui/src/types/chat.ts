@@ -66,6 +66,7 @@ export type CollaborationStatus =
     'enquiring' |
     'applied' |
     'invited' |
+    'waiting_for_payment' |
     'signing_contract' |
     'to_submit' | 
     'waiting_for_approval' |
@@ -105,5 +106,5 @@ export interface ChatRoom {
     created_at: string;
     messages: Message[],
     isNew?: boolean,
-    contract: Contract
+    contracts: Contract[]
 }

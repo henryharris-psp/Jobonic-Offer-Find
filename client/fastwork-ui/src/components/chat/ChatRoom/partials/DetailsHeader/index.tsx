@@ -39,7 +39,7 @@ const DetailsHeader = () => {
                         />
                         <div className="flex flex-col space-y-1">
                             <span className="text-3xl font-bold capitalize">
-                                {activeChatRoom?.receiver.firstName}
+                                {activeChatRoom?.receiver?.firstName}
                             </span>
                             <span className="text-xs text-gray-500 font-semibold">
                                 Last seen yesterday, 23:88
@@ -56,7 +56,7 @@ const DetailsHeader = () => {
                                     : "is offering service"}
                             </span>
                             <span className="text-xl font-bold">
-                                {activeChatRoom?.service.title}
+                                {activeChatRoom?.service?.title}
                             </span>
                         </div>
                         <div className="bg-[#82BDC5] px-3 py-2 rounded-lg text-sm text-white whitespace-nowrap text-start">
