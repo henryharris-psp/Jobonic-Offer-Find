@@ -7,7 +7,6 @@ import { RootState } from "@/store";
 import { getProfileByProfileId } from "@/functions/helperFunctions";
 import { Profile } from "@/types/users";
 import httpClient from "@/client/httpClient";
-import axios from "axios";
 import { Contract } from "@/types/general";
 
 export interface ChatState {

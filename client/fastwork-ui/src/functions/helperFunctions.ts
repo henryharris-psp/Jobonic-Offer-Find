@@ -21,7 +21,12 @@ export const getUserId = async () => {
 export const getProfile = async () => {
     try {
         const userId = await getUserId();
-        const response = await httpClient.post(`user/get-user-all-info/${userId}`);
+        const response = await httpClient.post(`user/get-user-info/`, {}, {
+            params: {
+                name: 'user',
+                id: userId
+            }
+        });
         return response.data;
     } catch (error: any) {
         console.error('Error fetching profile details:', error);
@@ -81,13 +86,13 @@ export const getCategoryName = async (categoryId: string) => {
 //new
     export const getAuthUserDetails = async (token?: string) => {
         const laconicAuthServerUrl =process.env.NEXT_PUBLIC_LACONIC_AUTH_SERVER_URL;
+        const headers = {
+            Authorization: `Bearer ${token}`
+        }
+        const apiCall = token 
+            ? axios.get(`${laconicAuthServerUrl}/user/init-data`, { headers })
+            : httpClient.get(`${laconicAuthServerUrl}/user/init-data`);
         try{
-            const headers = {
-                Authorization: `Bearer ${token}`
-            }
-            const apiCall = token 
-                ? axios.get(`${laconicAuthServerUrl}/user/init-data`, { headers })
-                : httpClient.get(`${laconicAuthServerUrl}/user/init-data`);
             const res = await apiCall;
             return res.data;
         } catch {
@@ -97,14 +102,26 @@ export const getCategoryName = async (categoryId: string) => {
 
     export const getProfileByUserId = async (userId: string | number, token?: string) => {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-        try{
-            const headers = {
-                Authorization: `Bearer ${token}`
-            }
+        const url = `${apiUrl}/user/get-user-info/`;
+        const headers = {
+            Authorization: `Bearer ${token}`
+        }
 
-            const apiCall = token 
-                ? axios.post(`${apiUrl}/user/get-user-all-info/${userId}`, {}, { headers })
-                : httpClient.post(`${apiUrl}/user/get-user-all-info/${userId}`);
+        const apiCall = token 
+            ? axios.post(url, {}, {
+                headers,
+                params: {
+                    name: 'user',
+                    id: userId
+                }
+            })
+            : httpClient.post(url, {}, { 
+                params: {
+                    name: 'user',
+                    id: userId
+                }
+            });
+        try{
             const res = await apiCall;
             return res.data;
         } catch {
@@ -125,13 +142,25 @@ export const getCategoryName = async (categoryId: string) => {
 
     export const getProfileByProfileId = async (profileId: string | number, token?: string) => {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        const url = `${apiUrl}/user/get-user-info/`;
+        const headers = {
+            Authorization: `Bearer ${token}`
+        }
+        const apiCall = token 
+            ? axios.post(url, {}, {
+                headers,
+                params: {
+                    name: 'profile',
+                    id: profileId
+                }
+            })
+            : httpClient.post(url, {}, {
+                params: {
+                    name: 'profile',
+                    id: profileId
+                }
+            });
         try{
-            const headers = {
-                Authorization: `Bearer ${token}`
-            }
-            const apiCall = token 
-                ? axios.get(`${apiUrl}/user?id=${profileId}`, { headers })
-                : httpClient.get(`${apiUrl}/user?id=${profileId}`);
             const res = await apiCall;
             return res.data;
         } catch {
