@@ -1,8 +1,10 @@
 package com.laconic.fastworkapi.service.impl;
 
+import com.laconic.fastworkapi.config.AuthenticationUtils;
 import com.laconic.fastworkapi.constants.AppMessage;
 import com.laconic.fastworkapi.dto.ProfileDTO;
 import com.laconic.fastworkapi.dto.SkillDTO;
+import com.laconic.fastworkapi.dto.UserProfileDTO;
 import com.laconic.fastworkapi.dto.UserRoleDTO;
 import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
@@ -33,14 +35,16 @@ public class ProfileService implements IProfileService {
     private final IUserRoleRepo userRoleRepo;
     private final IUserSkillRepo userSkillRepo;
     private final IRoleRepo roleRepo;
+    private final AuthenticationUtils authenticationUtils;
 
     @Autowired
-    public ProfileService(IUserRepo userRepo, ISkillRepo skillRepo, IUserRoleRepo userRoleRepo, IUserSkillRepo userSkillRepo, IRoleRepo roleRepo) {
+    public ProfileService(IUserRepo userRepo, ISkillRepo skillRepo, IUserRoleRepo userRoleRepo, IUserSkillRepo userSkillRepo, IRoleRepo roleRepo, AuthenticationUtils authenticationUtils) {
         this.userRepo = userRepo;
         this.skillRepo = skillRepo;
         this.userRoleRepo = userRoleRepo;
         this.userSkillRepo = userSkillRepo;
         this.roleRepo = roleRepo;
+        this.authenticationUtils = authenticationUtils;
     }
 
     @Override
@@ -133,5 +137,17 @@ public class ProfileService implements IProfileService {
     public ProfileDTO getByUserId(Long userId) {
         var existingUser = this.userRepo.findByUserId(userId);
         return EntityMapper.mapToResponse(existingUser, ProfileDTO.class);
+    }
+
+    @Override
+    public UserProfileDTO getUserProfileDto(Long id) {
+        var existingUser = this.userRepo.findByUserId(id);
+        UserProfileDTO dto = EntityMapper.mapToResponse(existingUser, UserProfileDTO.class);
+        dto.setUsername(authenticationUtils.genericTokenValue("preferred_username"));
+        dto.setFirstName(authenticationUtils.genericTokenValue("given_name"));
+        dto.setLastName(authenticationUtils.genericTokenValue("family_name"));
+        dto.setEmail(authenticationUtils.getEmail());
+        dto.setUserId(Long.parseLong(authenticationUtils.genericTokenValue("userid")));
+        return dto;
     }
 }

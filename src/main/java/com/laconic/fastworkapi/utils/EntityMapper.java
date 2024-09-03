@@ -31,7 +31,7 @@ public class EntityMapper {
         ServiceDTO serviceDTO = new ServiceDTO();
         serviceDTO.setId(serviceManagement.getId());
         if (serviceManagement.getServiceOffer() != null)
-            serviceDTO.setServiceOfferDTO(new ServiceOfferDTO(serviceManagement.getServiceOffer()));
+            serviceDTO.setServiceOfferDTO(new   ServiceOfferDTO(serviceManagement.getServiceOffer()));
         if (serviceManagement.getServiceRequest() != null)
             serviceDTO.setServiceRequestDTO(new ServiceRequestDTO(serviceManagement.getServiceRequest()));
         if (serviceManagement.getProfile() != null)
