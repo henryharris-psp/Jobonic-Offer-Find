@@ -117,7 +117,7 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             return Promise.all(chatRooms.map(async (chatRoom: ChatRoom) => { 
                 const receiverId = chatRoom.freelancer_id === authUser?.profile.id ? chatRoom.employer_id : chatRoom.freelancer_id;
                 const receiver: Profile = await getProfileByProfileId(receiverId);
-
+                
                 //fetching service
                 const serviceRes = await httpClient.get('/service/get', {
                     params: {

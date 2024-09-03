@@ -3,6 +3,11 @@ export interface Category {
     name: string;
 }
 
+export interface Skill {
+    id: string;
+    name: string;
+}
+
 export interface PageLink {
     id: string,
     path: string,

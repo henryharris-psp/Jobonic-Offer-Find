@@ -21,11 +21,7 @@ export const getUserId = async () => {
 export const getProfile = async () => {
     try {
         const userId = await getUserId();
-        const response = await httpClient.get(`user/profile`, {
-            params: {
-                id: userId
-            }
-        });
+        const response = await httpClient.post(`user/get-user-all-info/${userId}`);
         return response.data;
     } catch (error: any) {
         console.error('Error fetching profile details:', error);
@@ -105,9 +101,10 @@ export const getCategoryName = async (categoryId: string) => {
             const headers = {
                 Authorization: `Bearer ${token}`
             }
+
             const apiCall = token 
-                ? axios.get(`${apiUrl}/user/profile?id=${userId}`, { headers })
-                : httpClient.get(`${apiUrl}/user/profile?id=${userId}`);
+                ? axios.post(`${apiUrl}/user/get-user-all-info/${userId}`, {}, { headers })
+                : httpClient.post(`${apiUrl}/user/get-user-all-info/${userId}`);
             const res = await apiCall;
             return res.data;
         } catch {

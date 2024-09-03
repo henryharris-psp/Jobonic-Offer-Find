@@ -342,7 +342,7 @@ const MyProfile = () => {
 
         const fetchUserData = async () => {
             try {
-                const res = await httpClient.get(`user/profile?id=${authUser?.id}`, { signal });
+                const res = await httpClient.post(`user/get-user-all-info/${authUser?.id}`, {}, { signal });
                 const userData = res.data;
                 const jobonicId = userData.id;
 
