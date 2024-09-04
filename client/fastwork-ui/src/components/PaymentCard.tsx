@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import Button from "./Button";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 
@@ -8,7 +8,6 @@ const PaymentCard = () => {
         description: ''
     });
 
-    const [isEditing, setIsEditing] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const [isPaid, setIsPaid] = useState(false);
@@ -52,10 +51,11 @@ const PaymentCard = () => {
                         placeholder="Price"
                         name="amount"
                         value={inputs.amount}
-                        readOnly={!isEditing}
                         onChange={handleInputChange}
                         className="border border-gray-300 rounded-lg h-12 w-96 disabled:opacity-30"
+
                     />
+
                 </div>
 
                 <div className="flex flex-col">
@@ -66,7 +66,6 @@ const PaymentCard = () => {
                         placeholder="Write Description"
                         name="description"
                         value={inputs.description}
-                        readOnly={!isEditing}
                         onChange={handleInputChange}
                         className="border h-32 border-gray-300 p-2 rounded-lg w-96"
                     />

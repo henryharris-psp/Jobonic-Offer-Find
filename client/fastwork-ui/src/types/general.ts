@@ -3,6 +3,11 @@ export interface Category {
     name: string;
 }
 
+export interface Skill {
+    id: string;
+    name: string;
+}
+
 export interface PageLink {
     id: string,
     path: string,
@@ -28,7 +33,5 @@ export interface Contract {
     deliverable: string,
     milestones: Milestone[],
 }
-
-
 
 export type TailwindSizes = "xs" | "sm" | "" | "lg" | "xl" | "2xl" | "3xl" | "4xl";

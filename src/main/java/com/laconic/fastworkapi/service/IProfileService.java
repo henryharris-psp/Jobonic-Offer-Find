@@ -1,6 +1,7 @@
 package com.laconic.fastworkapi.service;
 
 import com.laconic.fastworkapi.dto.ProfileDTO;
+import com.laconic.fastworkapi.dto.UserProfileDTO;
 import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
@@ -21,4 +22,6 @@ public interface IProfileService {
     String removeUser(Long id);
 
     ProfileDTO getByUserId(Long userId);
+
+    UserProfileDTO getUserProfileDto(Long id,String name);
 }

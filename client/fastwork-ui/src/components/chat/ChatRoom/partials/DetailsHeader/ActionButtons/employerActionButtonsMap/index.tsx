@@ -7,14 +7,14 @@ import WaitingForReview from "./WaitingForReview";
 import Completed from "./Completed";
 import Cancelled from "./Cancelled";
 import SigningContract from "../shareButtonsMap/SigningContract";
-import Payment from "./Payment";
+import WaitingForPayment from "./WaitingForPayment";
 
 // mapped by collaboration status
 const employerActionButtonsMap = {
     enquiring: <Enquiring />,
     applied: <Applied />,
     invited: <Invited />,
-    payment: <Payment/>,
+    waiting_for_payment: <WaitingForPayment/>,
     signing_contract: <SigningContract/>,
     to_submit: <ToSubmit />,
     waiting_for_approval: <WaitingForApproval />,

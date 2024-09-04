@@ -1,6 +1,7 @@
 package com.laconic.fastworkapi.controller;
 
 import com.laconic.fastworkapi.dto.ProfileDTO;
+import com.laconic.fastworkapi.dto.UserProfileDTO;
 import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
@@ -62,6 +63,11 @@ public class UserController {
     @Operation(summary = APIDocsHelper.UserAPI.GET_PROFILE)
     public ProfileDTO getProfileByUser(@RequestParam Long id) {
         return this.userService.getByUserId(id);
+    }
+
+    @PostMapping("/get-user-info/")
+    public UserProfileDTO getUserProfileDto(@RequestParam Long id, @RequestParam String name) {
+        return userService.getUserProfileDto(id,name);
     }
 
 }

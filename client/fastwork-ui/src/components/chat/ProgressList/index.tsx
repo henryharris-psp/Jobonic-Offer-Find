@@ -34,6 +34,15 @@ const ProgressList: React.FC = () => {
         serviceId: '',
     });
 
+    const { activeChatRoom } = useChat();
+
+    useEffect( () => {
+        if(activeChatRoom && activeChatRoom.contract){
+            setMilestones(activeChatRoom?.contract?.milestones);
+        }
+    }, [activeChatRoom]);
+
+
     useEffect(() => {
         const fetchMilestones = async () => {
             try {
@@ -62,7 +71,7 @@ const ProgressList: React.FC = () => {
                     return numA - numB;
                 });
 
-                setMilestones(sortedMilestones);
+                //setMilestones(sortedMilestones);
             } catch (error) {
                 console.error('Error fetching milestones:', error);
             }
@@ -83,7 +92,7 @@ const ProgressList: React.FC = () => {
 
     const addMilestone = () => {
 
-        setMilestones([...milestones, milestone]);
+        //setMilestones([...milestones, milestone]);
         setIsModalOpen(false);
     };
     const handleFileUpload = () => {
@@ -178,7 +187,7 @@ const ProgressList: React.FC = () => {
                                 type="text"
                                 name="title"
                                 placeholder="Milestone Title"
-                                value={milestone.title}
+                                value={milestone.name}
                                 onChange={handleInputChange}
                                 className="border-green-200 rounded-xl bg-[#e8f3f3] focus:outline-0 hover:outline-0 w-full"
                             />
@@ -236,15 +245,17 @@ const ProgressList: React.FC = () => {
                                 className={`mr-2 text-black transition-transform duration-200 ${openMilestones.includes(milestone.id) ? 'rotate-90' : ''}`}>
                                 ▶
                             </span>
-                            <span className="font-semibold text-md">{milestone.title}</span>
+                            <span className="font-semibold text-md">{milestone.name}</span>
                         </div>
                         {openMilestones.includes(milestone.id) && (
                             <div className="ml-4 mt-2">
                                 <ul className="list-disc list-outside font-bold text-sm ml-6">
-                                    <li>{milestone.tasks.join(', ')}</li>
+                                    { milestone.tasks.map( task => 
+                                        <li key={task.id}>{ task.name }</li>    
+                                    )}
                                     <li>{`Amount to pay: ${milestone.price}`}</li>
                                 </ul>
-                                {milestone.title === 'Review' ? (
+                                {milestone.name === 'Review' ? (
                                     <button
                                         className="bg-[#E1824F] text-sm text-white rounded-lg px-4 py-1 mt-2 ml-4"
                                         onClick={handleGiveReview}
