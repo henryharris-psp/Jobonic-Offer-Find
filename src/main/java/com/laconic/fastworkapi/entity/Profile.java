@@ -45,6 +45,9 @@ public class Profile extends Auditable<UUID> {
 
     private PaymentType receivePaymentMethod;
 
+    @Lob
+    private String description;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile", orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<UserExperience> userExperienceList = new HashSet<>();
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile", orphanRemoval = true, fetch = FetchType.EAGER)

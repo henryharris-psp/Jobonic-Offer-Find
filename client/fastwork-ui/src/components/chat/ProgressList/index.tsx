@@ -37,8 +37,11 @@ const ProgressList: React.FC = () => {
     const { activeChatRoom } = useChat();
 
     useEffect( () => {
-        if(activeChatRoom && activeChatRoom.contract){
-            setMilestones(activeChatRoom?.contract?.milestones);
+        if(activeChatRoom && activeChatRoom.contracts && activeChatRoom.contracts.length !== 0){
+            const latestContract = activeChatRoom.contracts[activeChatRoom.contracts.length - 1];
+            if(latestContract){
+                setMilestones(latestContract?.milestones); 
+            }
         }
     }, [activeChatRoom]);
 

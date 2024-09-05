@@ -29,17 +29,15 @@ function ComponentSelectSkills() {
 
     // Dummy user data for experience display
     const user: User = {
-        name: "emm",
-        services: ["Service 1", "Service 2", "Service 3"],
-        description: "This is a dummy description.",
-        skills: ["UI/UX Design", "Photography", "Pottery", "Driving"],
+        name: "",
+        services: [],
+        description: "",
+        skills: [],
         experience: [
-            "UI/UX Designer in Google",
-            "Freelance Photographer for 5 years",
-            "Pottery Certificate",
+            
         ],
-        education: ["School 1", "School 2", "School 3"],
-        otherInformation: ["random", "languages", "certifications"],
+        education: [],
+        otherInformation: [],
     };
 
     // State variables to manage selected experience, skills, service data, and search term

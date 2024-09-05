@@ -42,6 +42,7 @@ public class ProfileDTO implements Serializable {
     private PaymentType paymentMethod;
 
     private PaymentType receivePaymentMethod;
+    private String description;
 
     public Profile updateUser(Profile profile) {
 //        profile.setUsername(this.username);
@@ -58,6 +59,7 @@ public class ProfileDTO implements Serializable {
         profile.setCryptoType(this.cryptoType);
         profile.setPaymentMethod(this.paymentMethod);
         profile.setReceivePaymentMethod(this.receivePaymentMethod);
+        profile.setDescription(this.description);
         return profile;
     }
 }
