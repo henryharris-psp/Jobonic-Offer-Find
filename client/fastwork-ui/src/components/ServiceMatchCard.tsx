@@ -129,10 +129,9 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
             className="relative max-w-96 overflow-hidden bg-white rounded-xl p-6 shadow-md cursor-pointer hover:shadow-lg transition-shadow border border-gray-200"
             onClick={() => onClick(service)}
         >
-            <span>Posted By - {service.profileDTO.email}</span>
             <div className="flex items-center mb-4">
-                <img
-                    src={profile.image}
+                <Image
+                    src={profile.image ?? ''}
                     alt={service.title}
                     width={50}
                     height={50}

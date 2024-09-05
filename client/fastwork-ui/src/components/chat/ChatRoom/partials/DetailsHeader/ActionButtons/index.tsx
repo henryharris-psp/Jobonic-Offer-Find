@@ -17,6 +17,7 @@ const ActionButtons = () => {
     const { activeChatRoom } = useChat();
     const { authUser } = useSelector((state: RootState) => state.auth);
 
+    //TODO: create as helper func for checking user type
     const authUserType: 'freelancer' | 'employer' = activeChatRoom?.freelancer_id === authUser?.profile.id ? 'freelancer' : 'employer';
     const currentStatus = activeChatRoom ? activeChatRoom.status : '';
     const ActionButtonComponent = actionButtonsMap[authUserType][currentStatus] || null;
