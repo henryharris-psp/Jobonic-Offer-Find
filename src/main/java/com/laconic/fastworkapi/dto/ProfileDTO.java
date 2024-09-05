@@ -2,6 +2,7 @@ package com.laconic.fastworkapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.laconic.fastworkapi.entity.Profile;
+import com.laconic.fastworkapi.enums.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,14 @@ public class ProfileDTO implements Serializable {
     private Long userId;
 //    private Set<UserRoleDTO> roles;
 
+    private String bankAccountNumber;
+
+    private String cryptoType;
+
+    private PaymentType paymentMethod;
+
+    private PaymentType receivePaymentMethod;
+
     public Profile updateUser(Profile profile) {
 //        profile.setUsername(this.username);
 //        profile.setEmail(this.email);
@@ -45,6 +54,10 @@ public class ProfileDTO implements Serializable {
         profile.setCardNumber(this.cardNumber);
         profile.setCardExpiryDate(this.cardExpiryDate);
         profile.setWalletAddress(this.walletAddress);
+        profile.setBankAccountNumber(this.bankAccountNumber);
+        profile.setCryptoType(this.cryptoType);
+        profile.setPaymentMethod(this.paymentMethod);
+        profile.setReceivePaymentMethod(this.receivePaymentMethod);
         return profile;
     }
 }

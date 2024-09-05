@@ -1,6 +1,7 @@
 package com.laconic.fastworkapi.entity;
 
 import com.laconic.fastworkapi.entity.audit.Auditable;
+import com.laconic.fastworkapi.enums.PaymentType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,6 +35,16 @@ public class Profile extends Auditable<UUID> {
     private boolean isActive = true;
     @Column(unique = true)
     private Long userId;
+
+    @Column(unique = true)
+    private String bankAccountNumber;
+
+    private String cryptoType;
+
+    private PaymentType paymentMethod;
+
+    private PaymentType receivePaymentMethod;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile", orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<UserExperience> userExperienceList = new HashSet<>();
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile", orphanRemoval = true, fetch = FetchType.EAGER)
