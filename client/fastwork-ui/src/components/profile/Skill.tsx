@@ -159,7 +159,7 @@ const Skills = () => {
                                     <button
                                         key={skill.id}
                                         className={`w-full text-left px-4 py-2 mb-1 rounded-lg ${selectedSkills.some((s) => s.id === skill.id)
-                                                ? "bg-[#0B2147] text-white"
+                                                ? "bg-white text-black"
                                                 : "bg-white text-gray-900"
                                             } hover:bg-gray-100`}
                                         onClick={() => handleSkillClick(skill)}

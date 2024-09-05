@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import httpClient from "@/client/httpClient";
 import { RootState } from "@/store";
 import { useSelector } from "react-redux";
-import { PencilIcon, PencilSquareIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
+import {PencilSquareIcon} from "@heroicons/react/24/outline";
 import Skills from "@/components/profile/Skill";
 import EducationComponent from "@/components/profile/Education";
 import ExperienceComponent from "@/components/profile/Experience";
