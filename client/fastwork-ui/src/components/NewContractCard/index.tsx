@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { UIEvent, useMemo, useState } from 'react'
+import React, { UIEvent, useEffect, useMemo, useState } from 'react'
 import { CheckIcon, PencilIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/24/solid';
 import Button from '../Button';
 import MilestoneFormModal from './MilestoneFormModal';
@@ -9,6 +9,7 @@ import axios from 'axios';
 import SafeInput, { SafeInputChangeEvent } from '../SafeInput';
 import { RootState } from '@/store';
 import { useSelector } from 'react-redux';
+import matchClient from '@/client/matchClient';
 
 interface NewContractCardProps {
     size?: TailwindSizes;
@@ -40,6 +41,17 @@ const NewContractCard = ({
     //for milestone modal
     const [showMilestoneFormModal, setShowMilestoneFormModal] = useState(false);
     const [targetMilestone, setTargetMilestone] = useState<Milestone | null>(null);
+
+    //watcher
+    useEffect( () => {
+        if(milestones.length !== 0){
+            const milestoneTotalPrice = milestones.reduce((total, current) => {
+                return total + Number(current.price);
+            }, 0);
+
+            setInputs( prev => ({...prev, price: milestoneTotalPrice}) );
+        }
+    }, [milestones]);
 
     //error handlers
         const [errorCheckable, setErrorCheckable] = useState(false);
@@ -81,7 +93,7 @@ const NewContractCard = ({
 
         const uploadMilestone = async (payload: Milestone) => {
             try {
-                const res = await axios.post('http://localhost:8000/api/milestones', payload);
+                const res = await matchClient.post('milestones', payload);
                 console.log(`Upload successful for object with id ${payload.id}:`, res.data);
             } catch (error) {
                 console.error(`Upload failed for object with id ${payload.id}:`, error);
@@ -97,7 +109,7 @@ const NewContractCard = ({
                 const authUserType: 'freelancer' | 'employer' = activeChatRoom?.freelancer_id === authUser?.profile.id ? 'freelancer' : 'employer';
 
                 try {
-                    const contractRes = await axios.post('http://localhost:8000/api/contracts', {
+                    const contractRes = await matchClient.post('contracts', {
                         matchId: activeChatRoom?.match_id,
                         price: inputs.price,
                         deliverable: inputs.deliverable,
@@ -107,6 +119,8 @@ const NewContractCard = ({
                     });
         
                     const contractId = contractRes.data.id;
+
+                    console.log(contractRes);
 
                     if (milestones.length !== 0) {
                         for (const milestone of milestones) {
@@ -171,7 +185,7 @@ const NewContractCard = ({
     return (
         <>
             <div className="flex flex-col max-h-screen bg-white rounded-2xl overflow-hidden">
-                <div className="flex-1 flex flex-row flex-wrap p-6 sm:p-10">
+                <div className="flex-1 flex flex-row flex-wrap p-6">
 
                     {/* form */}
                     <div className="flex-1 flex flex-col justify-between min-w-72 space-y-5 overflow-hidden">
@@ -180,7 +194,7 @@ const NewContractCard = ({
                                 <Image
                                     width={50}
                                     height={50}
-                                    src="/profile.png" 
+                                    src="/avatar.svg" 
                                     alt="avatar"
                                     className="rounded-full w-14 h-14"
                                 />

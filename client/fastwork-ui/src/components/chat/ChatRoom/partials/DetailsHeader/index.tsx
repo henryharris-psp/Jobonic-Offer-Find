@@ -26,10 +26,8 @@ const DetailsHeader = () => {
 
     return (
         <>
-            <div 
-                className="flex flex-col bg-white shadow-lg"
+            <div className="flex flex-col bg-white shadow-lg"
                 style={{
-                    zIndex: 2
                 }}
             >
                 <div className="flex flex-row flex-wrap gap-5 items-center border-b border-b-gray-200 py-4 px-6">
@@ -61,7 +59,7 @@ const DetailsHeader = () => {
                                     : "is offering service"}
                             </span>
                             <span className="text-xl font-bold">
-                                {activeChatRoom?.service?.title}
+                                App Designer
                             </span>
                         </div>
                         <div className="bg-[#82BDC5] px-3 py-2 rounded-lg text-sm text-white whitespace-nowrap text-start">
