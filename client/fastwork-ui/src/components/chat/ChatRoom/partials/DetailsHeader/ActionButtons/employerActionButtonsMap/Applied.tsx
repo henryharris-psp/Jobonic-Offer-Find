@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Button from "@/components/Button";
 import { useChat } from "@/contexts/chat";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { useSearchParams } from "next/navigation";
 
 const hireMessage = `
     Congratulation! Looking forward to working together! Could we discuss the contract details?
@@ -15,6 +16,7 @@ const declinedMessage = `
 
 const Applied = () => {
     const { sendMessage, updateChatRoom } = useChat();
+
     //methods
         const sendHireMessage = async () => {
             try {

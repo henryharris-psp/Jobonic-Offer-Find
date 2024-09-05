@@ -4,6 +4,7 @@ import { Milestone, Task } from "@/types/general";
 import Button from "../Button";
 import Modal from "../Modal";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import SafeInput, { SafeInputChangeEvent } from "../SafeInput";
 
 interface MilestoneFormModalProps {
     milestone: Milestone | null,
@@ -24,6 +25,7 @@ const MilestoneFormModal = ({
 
     const newTask: Task = {
         id: uuid(),
+        milestoneId: milestone?.id,
         name: '',
     }
 
@@ -58,7 +60,7 @@ const MilestoneFormModal = ({
         }, [inputs, tasks]);
 
     //methods
-        const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const handleInputChange = (e: SafeInputChangeEvent) => {
             const { name, value } = e.target;
             setInputs(prev => ({
                 ...prev,
@@ -66,7 +68,7 @@ const MilestoneFormModal = ({
             }));
         }
 
-        const handleTaskInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const handleTaskInputChange = (e: SafeInputChangeEvent) => {
             const taskId = e.target.id;
             const taskKey = e.target.name;
             const newValue = e.target.value;
@@ -109,7 +111,7 @@ const MilestoneFormModal = ({
             isOpen={isOpen}
             onClose={onClose}
         >
-            <div className="flex flex-col max-h-screen bg-white rounded-xl overflow-hidden px-5 py-3">
+            <div className="flex flex-col max-h-screen w-full min-w-80 bg-white rounded-xl overflow-hidden px-5 py-3">
                 <div className="flex border-b border-b-gray-300 pb-2">
                     <span className="font-bold text-lg">
                         Create / Edit Milestone
@@ -118,39 +120,35 @@ const MilestoneFormModal = ({
 
                 {/* content */}
                 <div className="flex flex-col flex-1 my-3 space-y-5 overflow-hidden">
-                    <div className="flex flex-col space-y-3">
-                        <div className="flex flex-col space-y-1">
-                            <input
-                                type="text"
-                                placeholder="Milestone name"
-                                name="name"
-                                value={inputs.name}
-                                onChange={handleInputChange}
-                                className="border border-gray-300 rounded-lg h-12 w-96"
-                            />
-                            { errorCheckable && inputErrors.includes('name') ? (
-                                <span className="text-xs text-red-500">
-                                    * Required
-                                </span>
-                            ) : ''}
-                        </div>
+                    <div className="flex flex-col space-y-3">                        
 
-                        <div className="flex flex-col space-y-1">
-                            <input
-                                type="number"
-                                step={2}
-                                placeholder="Price"
-                                name="price"
-                                value={inputs.price}
-                                onChange={handleInputChange}
-                                className="border border-gray-300 rounded-lg h-12 w-96"
-                            />
-                            { errorCheckable && inputErrors.includes('price') ? (
-                                <span className="text-xs text-red-500">
-                                    * Required
-                                </span>
-                            ) : ''}
-                        </div>
+                        <SafeInput
+                            type="text"
+                            placeholder="Milestone name"
+                            name="name"
+                            value={inputs.name}
+                            onChange={handleInputChange}
+                            errors={[
+                                {
+                                    show: errorCheckable && inputErrors.includes('name'),
+                                    msg: 'Required'
+                                }
+                            ]}
+                        />
+
+                        <SafeInput
+                            type="decimal"
+                            placeholder="Price"
+                            name="price"
+                            value={inputs.price}
+                            onChange={handleInputChange}
+                            errors={[
+                                {
+                                    show: errorCheckable && inputErrors.includes('price'),
+                                    msg: 'Required'
+                                }
+                            ]}
+                        />
 
                         <div className="flex flex-col space-y-1">
                             <input
@@ -158,7 +156,7 @@ const MilestoneFormModal = ({
                                 placeholder="Due Date"
                                 value={inputs.dueDate}
                                 onChange={handleInputChange}
-                                className="border border-gray-300 rounded-lg h-12 w-96"
+                                className="border border-gray-300 rounded-lg h-12 w-full"
                             />
                         </div>
                     </div>
@@ -179,14 +177,19 @@ const MilestoneFormModal = ({
                                         key={task.id}
                                         className="flex flex-row space-x-2"
                                     >
-                                        <input
+                                        <SafeInput
                                             id={task.id.toString()}
                                             type="text"
                                             name="name"
                                             placeholder="Write Task"
                                             value={task.name}
                                             onChange={handleTaskInputChange}
-                                            className="border border-gray-300 rounded-lg h-12 w-full"
+                                            errors={[
+                                                {
+                                                    show: errorCheckable && inputErrors.includes('name'),
+                                                    msg: 'Required'
+                                                }
+                                            ]}
                                         />
                                         { tasks.length > 1 ? (
                                             <button onClick={() => handleRemoveTask(task.id)}>

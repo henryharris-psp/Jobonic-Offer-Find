@@ -36,7 +36,7 @@ interface ChatContextProps extends ChatState {
 
     //server actions
     loadChatRoomData: (chatRoom: ChatRoom[]) => Promise<ChatRoom[]>;
-    createNewChatRoom: (serviceId: string, freelancerId: number, employerId: number) => Promise<ChatRoom>;
+    createNewChatRoom: (serviceId: string, matchId: string, freelancerId: number, employerId: number) => Promise<ChatRoom>;
     updateChatRoom: (chatRoomId: string | number, newValues: object) => Promise<void>;
     deleteChatRoom: (chatRoomId: string | number) => Promise<void>;
     sendMessage: (mediaType: MediaType, newMessage: string) => Promise<Message | null>;
@@ -125,8 +125,8 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 });
                 const service = serviceRes.data;
 
-                //fetching contract
-                const contractRes = await httpClient.get(`http://localhost:8000/api/contracts?serviceId=${chatRoom.service_id}`);
+                //fetching contracts
+                const contractRes = await httpClient.get(`http://localhost:8000/api/contracts?matchId=${chatRoom.match_id}`);
                 const contracts: Contract[] = contractRes?.data ?? [];
                 
                 return {
@@ -139,13 +139,14 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             }));       
         }
 
-        const createNewChatRoom = async (serviceId: string, freelancerId: number, employerId: number) => {
+        const createNewChatRoom = async (serviceId: string, matchId: string, freelancerId: number, employerId: number) => {
             const { data, error } = await supabase
                 .from("chat_rooms")
                 .insert([{
+                    service_id: serviceId,
+                    match_id: matchId,
                     employer_id: employerId,
                     freelancer_id: freelancerId,
-                    service_id: serviceId,
                     status: "enquiring"
                 }])
                 .select(`*, messages (*)`)
