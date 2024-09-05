@@ -16,7 +16,7 @@ interface SideDrawerProps {
     children: ReactNode;
     position?: 'left' | 'right';
     fullScreen?: boolean;
-    zStack?: number; //max 9997
+    zStack?: number;
     onClose: () => void;
     type?: DrawerType
   }

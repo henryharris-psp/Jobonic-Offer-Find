@@ -9,6 +9,8 @@ import NewContractCard from '@/components/NewContractCard';
 import Button from '@/components/Button';
 import { ArrowPathIcon, CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import axios from 'axios';
+import Modal from '@/components/Modal';
+import matchClient from '@/client/matchClient';
 
 interface ContractCardWithLoadingProps {
     contractId: string | number,
@@ -30,7 +32,7 @@ const ContractCardWithLoading = ({
     const fetchContract = async () => {
         setIsLoading(true);
         try{
-            const res = await axios.get(`http://localhost:8000/api/contracts/${contractId}`);
+            const res = await matchClient.get(`contracts/${contractId}`);
             setContract(res.data);
         } catch (error) {
             console.log('error fetching contract', error);
@@ -53,58 +55,82 @@ const ContractCardWithLoading = ({
         }
     }
 
+    //
+    const [showContractModal, setShowContractModal] = useState(false);
+
+    const handleOnClickEdit = () => {
+        setShowContractModal(true);
+    }
+
+    const handleOnCloseContract = () => {
+        setShowContractModal(false)
+    }
+
     return (
-        isLoading ? (
-            <MediaSkeleton/>
-        ) : (
-            !contract ? (
-                <div className="relative">
-                    <MediaSkeleton/>
-                    <div className="flex items-center justify-center absolute top-0 right-0 left-0 bottom-0">
-                        <button 
-                            className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-300"
-                            onClick={fetchContract}    
-                        >
-                            <span className="">
-                                <ArrowPathIcon className={`size-5 font-bold text-gray-600 ${isLoading ? 'animate-spin' : ''}`}/>
-                            </span>
-                        </button>
-                    </div>
-                </div>
+        <>
+            { isLoading ? (
+                <MediaSkeleton/>
             ) : (
-                <div className="flex flex-col mx-2 bg-white rounded-xl border border-gray-200 shadow">
-                    <NewContractCard
-                        contract={contract}
-                    />
-                    { !isSentByAuthUser && showActionButtons ? (
-                        <div className="flex flex-row justify-between mb-4 mx-5 gap-1">
-                            <Button
-                                title="Edit"
-                                size="sm"
-                                icon={<PencilSquareIcon className="size-4"/>}
-                                onClick={() => console.log('reject')}
-                            />
-                            <div className="flex justify-end gap-1">
-                                <Button
-                                    color="danger"
-                                    title="Reject"
-                                    size="sm"
-                                    icon={<XMarkIcon className="size-4"/>}
-                                    onClick={() => console.log('reject')}
-                                />
-                                <Button
-                                    color="success"
-                                    title="Accept"
-                                    size="sm"
-                                    icon={<CheckIcon className="size-4"/>}
-                                    onClick={handleOnClickAccept}
-                                />
-                            </div>
+                !contract ? (
+                    <div className="relative">
+                        <MediaSkeleton/>
+                        <div className="flex items-center justify-center absolute top-0 right-0 left-0 bottom-0">
+                            <button 
+                                className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-300"
+                                onClick={fetchContract}    
+                            >
+                                <span className="">
+                                    <ArrowPathIcon className={`size-5 font-bold text-gray-600 ${isLoading ? 'animate-spin' : ''}`}/>
+                                </span>
+                            </button>
                         </div>
-                    ) : ''}
-                </div>
-            )
-        )
+                    </div>
+                ) : (
+                    <div className="flex flex-col mx-2 bg-white rounded-xl border border-gray-200 shadow">
+                        <NewContractCard
+                            contract={contract}
+                        />
+                        { !isSentByAuthUser && showActionButtons ? (
+                            <div className="flex flex-row justify-between mb-4 mx-5 gap-1">
+                                <Button
+                                    title="Edit"
+                                    size="sm"
+                                    icon={<PencilSquareIcon className="size-4"/>}
+                                    onClick={handleOnClickEdit}
+                                />
+                                <div className="flex justify-end gap-1">
+                                    <Button
+                                        color="danger"
+                                        title="Reject"
+                                        size="sm"
+                                        icon={<XMarkIcon className="size-4"/>}
+                                        onClick={() => console.log('reject')}
+                                    />
+                                    <Button
+                                        color="success"
+                                        title="Accept"
+                                        size="sm"
+                                        icon={<CheckIcon className="size-4"/>}
+                                        onClick={handleOnClickAccept}
+                                    />
+                                </div>
+                            </div>
+                        ) : ''}
+                    </div>
+                )
+            )}
+
+            <Modal
+                isOpen={showContractModal}
+                onClose={handleOnCloseContract}
+            >
+                <NewContractCard
+                    contract={contract}
+                    isEditMode={true}
+                    onClose={handleOnCloseContract}
+                />
+            </Modal>
+        </>
     )
 }
 

@@ -17,14 +17,14 @@ const SigningContract = () => {
     const latestContract: Contract | null = useMemo( () => {
         const initialContact: Contract = {
             id: uuid(),
-            price: 123,
+            price: activeChatRoom?.service?.price.toString() ?? '',
             deliverable: '',
             milestones: [],
             isFreelancerConfirmed: activeChatRoom?.freelancer_id === authUser?.id,
             isEmployerConfirmed: activeChatRoom?.employer_id === authUser?.id,
         };
         if(!activeChatRoom || activeChatRoom.contracts.length === 0) return initialContact;
-        return activeChatRoom.contracts[activeChatRoom.contracts.length];
+        return activeChatRoom.contracts[activeChatRoom.contracts.length - 1];
     }, [activeChatRoom]);
 
     //methods

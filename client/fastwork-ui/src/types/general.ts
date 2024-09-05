@@ -31,7 +31,7 @@ export interface Milestone {
 
 export interface Contract {
     id: string | number,
-    price: number,
+    price: string,
     deliverable: string,
     isFreelancerConfirmed: boolean,
     isEmployerConfirmed: boolean,

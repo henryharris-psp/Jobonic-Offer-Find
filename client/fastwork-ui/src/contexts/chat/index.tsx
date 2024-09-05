@@ -8,6 +8,7 @@ import { getProfileByProfileId } from "@/functions/helperFunctions";
 import { Profile } from "@/types/users";
 import httpClient from "@/client/httpClient";
 import { Contract } from "@/types/general";
+import matchClient from "@/client/matchClient";
 
 export interface ChatState {
     showChatList: boolean;
@@ -126,7 +127,7 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 const service = serviceRes.data;
 
                 //fetching contracts
-                const contractRes = await httpClient.get(`http://localhost:8000/api/contracts?matchId=${chatRoom.match_id}`);
+                const contractRes = await matchClient.get(`contracts?matchId=${chatRoom.match_id}`);
                 const contracts: Contract[] = contractRes?.data ?? [];
                 
                 return {

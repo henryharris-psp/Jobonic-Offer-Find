@@ -9,7 +9,6 @@ const PaymentCard = () => {
     });
 
     const [isLoading, setIsLoading] = useState(false);
-
     const [isPaid, setIsPaid] = useState(false);
     
     //methods
@@ -41,33 +40,42 @@ const PaymentCard = () => {
                         {isPaid ? 'Payment Successful' : 'Please make a payment'}
                     </span>
                 </div>
-                <div className="flex flex-col space-y-1">
-                    <span>
-                        Amount to pay
+                <div className="flex flex-row items-center justify-between space-y-1">
+                    <span className="text-gray-600">
+                        Total Amount to pay
                     </span>
-                    <input
-                        type="number"
-                        step={2}
-                        placeholder="Price"
-                        name="amount"
-                        value={inputs.amount}
-                        onChange={handleInputChange}
-                        className="border border-gray-300 rounded-lg h-12 w-96 disabled:opacity-30"
-
-                    />
+                    <span className="font-bold text-gray-800 text-xl">
+                        $ 123
+                    </span>
 
                 </div>
 
-                <div className="flex flex-col">
-                    <span>
-                        Description
+                <div className="w-full">
+                    <label htmlFor="select" className="block text-sm font-medium text-gray-700">Select Payment Method</label>
+                    <select id="select" name="select" className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="option1">-- Select --</option>
+                        <option value="option2">Payni</option>
+                        <option value="option3">PromptPay QR</option>
+                        <option value="option3">Karsikorn Bank</option>
+                        <option value="option3">SCB</option>
+                        <option value="option3">Bangkok Bank</option>
+                    </select>
+
+                    <span className="text-xs text-gray-500">
+                        * Pay via Payni and get 3% discount
+                    </span>
+                </div>
+
+                <div className="flex flex-col space-y-1">
+                    <span className="text-gray-600">
+                        Write Note
                     </span>
                     <textarea
-                        placeholder="Write Description"
+                        placeholder="Type..."
                         name="description"
                         value={inputs.description}
                         onChange={handleInputChange}
-                        className="border h-32 border-gray-300 p-2 rounded-lg w-96"
+                        className="border h-32 text-sm border-gray-300 p-3 rounded-lg w-80"
                     />
                 </div>
 
