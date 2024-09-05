@@ -3,6 +3,11 @@ export interface Category {
     name: string;
 }
 
+export interface Skill {
+    id: string;
+    name: string;
+}
+
 export interface PageLink {
     id: string,
     path: string,
@@ -11,11 +16,13 @@ export interface PageLink {
 
 export interface Task {
     id: string | number,
+    milestoneId?: string | number,
     name: string
 }
 
 export interface Milestone {
     id: string | number,
+    contractId?: string | number,
     name: string,
     tasks: Task[],
     dueDate: string,
@@ -26,6 +33,8 @@ export interface Contract {
     id: string | number,
     price: number,
     deliverable: string,
+    isFreelancerConfirmed: boolean,
+    isEmployerConfirmed: boolean,
     milestones: Milestone[],
 }
 

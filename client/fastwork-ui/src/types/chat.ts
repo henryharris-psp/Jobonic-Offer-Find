@@ -66,8 +66,9 @@ export type CollaborationStatus =
     'enquiring' |
     'applied' |
     'invited' |
-    'waiting_for_payment' |
     'signing_contract' |
+    'waiting_for_contract_confirmation' |
+    'waiting_for_payment' |
     'to_submit' | 
     'waiting_for_approval' |
     'waiting_for_review' |
@@ -98,7 +99,8 @@ export interface ChatRoom {
     id: number | string;
     freelancer_id: number; //profileId 
     employer_id: number; //profileId
-    service_id: number | string;
+    match_id: number | string;
+    service_id: number | string; //TODO remove
     sender: Profile;
     receiver: Profile;
     service: Service;

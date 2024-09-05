@@ -154,11 +154,12 @@ const ServiceRequestCard = ({
                     className="job-card hover:cursor-pointer bg-[#CFEDF4] p-4 rounded-lg shadow-md"
                     onClick={handleServiceRequestClick}
                 >
-                    <span>Posted By - {service.profileDTO.email}</span>
                     {/* Profile Pic */}
                     <div className="flex items-center space-x-1">
                         <span>
-                            <img
+                            <Image
+                                width={50}
+                                height={50}
                                 src="/jobonic.svg"
                                 alt="Profile Pic"
                                 className="h-8 w-8 border rounded-full mr-1"
@@ -193,13 +194,13 @@ const ServiceRequestCard = ({
                             </p>
                         </div>
                     </div>
-                    <p className="job-description text-sm">
+                    <p className="job-description text-xs">
                         {serviceRequest?.description_1}
                     </p>
-                    <p className="job-description text-sm">
+                    <p className="job-description text-xs">
                         {serviceRequest?.description_2}
                     </p>
-                    <p className="job-description text-sm">
+                    <p className="job-description text-xs">
                         {serviceRequest?.description_3}
                     </p>
                     {/* chat and apply buttons */}

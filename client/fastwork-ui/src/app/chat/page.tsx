@@ -10,6 +10,8 @@ import { ChatProvider, useChat } from "@/contexts/chat";
 import { supabase } from "@/config/supabaseClient";
 import { useSearchParams } from "next/navigation";
 import ChatRoomComponent from "@/components/chat/ChatRoom";
+import httpClient from "@/client/httpClient";
+import axios from "axios";
 
 const ChatPage = () => {
     //catch url params
@@ -49,13 +51,13 @@ const ChatPage = () => {
                     return;
                 }
 
-                const chatRoomsWithUserData = await loadChatRoomData(chatRooms);
-                setChatRooms(chatRoomsWithUserData);
+                const chatRoomsWithData = await loadChatRoomData(chatRooms);
+                setChatRooms(chatRoomsWithData);
 
                 //new chatroom creation 
                 if(serviceParam){
                     const service = JSON.parse(serviceParam);
-                    const existedChatRoom = chatRoomsWithUserData.find( e => e.service_id === service.id );
+                    const existedChatRoom = chatRoomsWithData.find( e => e.service_id === service.id );
 
                     if(existedChatRoom){
                         changeChatRoom(existedChatRoom);
@@ -65,8 +67,17 @@ const ChatPage = () => {
                         const employerId = service.type === 'request' ? service.profileDTO.id : authUser?.profile.id;
                         const serviceId = service.id;
 
-                        const newChatRoom = await createNewChatRoom(serviceId, freelancerId, employerId);
-                        changeChatRoom(newChatRoom);       
+                        //create match on main db
+                        const matchRes = await axios.post('http://localhost:8000/api/matches', {
+                            service_id: serviceId,
+                            freelancer_id: freelancerId,
+                            employer_id: employerId,
+                            status: 'enquiring'
+                        });
+                        const { id: matchId } = matchRes.data;
+
+                        const newChatRoom = await createNewChatRoom(serviceId, matchId, freelancerId, employerId);
+                        changeChatRoom(newChatRoom);
                     }
                 }
             }
@@ -78,8 +89,8 @@ const ChatPage = () => {
 
         const handleOnChatRoomChange = async (chatRoom: ChatRoom) => {
             try{
-                const chatRoomsWithUserData = await loadChatRoomData([chatRoom]);
-                insertOrUpdateLocalChatRoom(chatRoomsWithUserData[0]);
+                const chatRoomsWithData = await loadChatRoomData([chatRoom]);
+                insertOrUpdateLocalChatRoom(chatRoomsWithData[0]);
             } catch {
                 console.log('error')
             }

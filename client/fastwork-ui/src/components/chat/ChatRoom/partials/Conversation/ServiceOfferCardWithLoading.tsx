@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import Applied from '../DetailsHeader/ActionButtons/employerActionButtonsMap/Applied';
 import { useChat } from '@/contexts/chat';
 import MediaSkeleton from './MediaSkeleton';
+import Invited from '../DetailsHeader/ActionButtons/freelancerActionButtonsMap/Invited';
 
 interface ServiceOfferCardWithLoadingProps {
     serviceId: string,
@@ -53,6 +54,12 @@ const ServiceOfferCardWithLoading = ({
                 { !isSentByAuthUser && activeChatRoom?.status === 'applied' ? (
                     <div className="flex justify-end mb-4 mx-5">
                         <Applied/>
+                    </div>
+                ) : ''}
+
+                { !isSentByAuthUser && activeChatRoom?.status === 'invited' ? (
+                    <div className="flex justify-end mb-4 mx-5">
+                        <Invited/>
                     </div>
                 ) : ''}
             </div>

@@ -10,7 +10,7 @@ const Conversation = () => {
 
     const messages = useMemo( () => {
         const results = activeChatRoom && activeChatRoom.messages ? activeChatRoom.messages : [];
-        return results.sort((a, b) => a.id - b.id); //TODO: add type
+        return results.sort((a: Message, b: Message) => a.id - b.id); //TODO: add type
     }, [activeChatRoom]);
 
     //scroll to bottom on append new message
@@ -23,7 +23,6 @@ const Conversation = () => {
         }
     }, [messages, isSending]);
 
-    console.log(messages);
     return (
         <div className="flex-1 overflow-auto">
             {messages.length !== 0 ? (

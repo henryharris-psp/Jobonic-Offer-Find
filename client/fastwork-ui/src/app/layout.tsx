@@ -9,6 +9,7 @@ import NavBar from "@/components/NavBar";
 import { useEffect } from "react";
 import { authenticate as reduxAuthenticate } from "@/store/reducers/authReducer";
 import { getAuthUserDetails, getProfileByUserId } from "@/functions/helperFunctions";
+import Button from "@/components/Button";
 // import initialiseCategories from "@/utils/initialiseCategories";
 // import initializeSkills from "@/utils/initialiseSkills";
 // import ChatBox from "../components/ChatBox";
@@ -88,6 +89,17 @@ const RootLayout = ({
                 defer
             ></script>
             <body className={inter.className}>
+
+                {/* TODO: temporary, just to load colors */}
+                <div className="hidden">DD4A4A
+                    <div className="bg-[#0B2147] hidden"/>
+                    <div className="bg-[#B0B0B0] hidden"/>
+                    <div className="bg-[#5A9E4A] hidden"/>
+                    <div className="bg-[#D0693B] hidden"/>
+                    <div className="bg-[#DD4A4A] hidden"/>
+                    <div className="bg-[#71BAC7] hidden"/>
+                </div>
+
                 <NavBar />
                 <main>{children}</main>
                 {/* {showFooter && <Footer />} */}

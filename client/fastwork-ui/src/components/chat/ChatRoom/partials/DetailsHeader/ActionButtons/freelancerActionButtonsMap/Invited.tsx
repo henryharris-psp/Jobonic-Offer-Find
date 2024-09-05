@@ -62,7 +62,7 @@ const Invited = () => {
                 onClick={handleOnClickDecline} 
             />
             <Button 
-                title="Accept" 
+                title="Accept Invitation" 
                 icon={<CheckIcon className="size-5 font-bold text-bold"/>}
                 iconPositon="start"
                 size="sm"
