@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Button from "@/components/Button";
-import { CreditCardIcon, DocumentTextIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
+import { CreditCardIcon } from "@heroicons/react/24/solid";
 import Modal from "@/components/Modal";
 import PaymentCard from "@/components/PaymentCard";
 

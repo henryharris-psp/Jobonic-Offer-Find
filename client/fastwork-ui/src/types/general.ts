@@ -31,11 +31,10 @@ export interface Milestone {
 
 export interface Contract {
     id: string | number,
-    price: string,
+    price: number,
     deliverable: string,
-    isFreelancerConfirmed: boolean,
-    isEmployerConfirmed: boolean,
+    accepted_by: string[] | number[],
     milestones: Milestone[],
 }
 
-export type TailwindSizes = "xs" | "sm" | "" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
+export type TailwindSizes = "xs" | "sm" | "" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl";
