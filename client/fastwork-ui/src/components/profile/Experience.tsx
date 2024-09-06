@@ -84,7 +84,7 @@ const ExperienceComponent = () => {
 
   return (
     <section className="flex flex-col w-[60%] justify-start ml-16 mt-4 pb-4">
-      <div className="flex flex-row space-x-4 items-center">
+      <div className="flex space-x-4 justify-start items-center">
         <h2 className="text-2xl font-bold text-gray-900">Experience</h2>
         <PlusCircleIcon
           className="w-6 h-6 cursor-pointer"

@@ -12,6 +12,7 @@ import { useSearchParams } from "next/navigation";
 import ChatRoomComponent from "@/components/chat/ChatRoom";
 import httpClient from "@/client/httpClient";
 import axios from "axios";
+import matchClient from "@/client/matchClient";
 
 const ChatPage = () => {
     //catch url params
@@ -68,7 +69,7 @@ const ChatPage = () => {
                         const serviceId = service.id;
 
                         //create match on main db
-                        const matchRes = await axios.post('http://localhost:8000/api/matches', {
+                        const matchRes = await matchClient.post('matches', {
                             service_id: serviceId,
                             freelancer_id: freelancerId,
                             employer_id: employerId,
