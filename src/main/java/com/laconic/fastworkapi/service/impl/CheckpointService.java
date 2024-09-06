@@ -129,7 +129,7 @@ public class CheckpointService implements ICheckpointService {
         return this.checkpointRepo.findCheckpointByServiceId(serviceId);
     }
 
-    private Checkpoint getCheckpoint(UUID id) {
+    public Checkpoint getCheckpoint(UUID id) {
         return this.checkpointRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.CHECKPOINT, "id",
                 id.toString()));
     }

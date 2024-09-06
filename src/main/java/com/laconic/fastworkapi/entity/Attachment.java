@@ -9,13 +9,14 @@ import org.hibernate.annotations.SQLRestriction;
 import java.util.UUID;
 
 @Entity
+@Table(name = "attachments")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @SQLRestriction("is_active = true")
-public class Attachment extends Auditable<UUID> {
+public class Attachment  extends Auditable<UUID>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

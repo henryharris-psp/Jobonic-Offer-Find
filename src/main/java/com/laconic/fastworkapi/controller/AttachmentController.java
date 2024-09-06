@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class AttachmentController {
     }
 
     @Operation(summary = APIDocsHelper.AttachmentAPI.SAVE_ATTACHMENT)
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public AttachmentDTO save(@ModelAttribute AttachmentDTO attachmentDTO) throws Exception {
         return this.attachmentService.save(attachmentDTO);
     }

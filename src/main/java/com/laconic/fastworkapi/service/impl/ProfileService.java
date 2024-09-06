@@ -138,6 +138,9 @@ public class ProfileService implements IProfileService {
     @Override
     public ProfileDTO getByUserId(Long userId) {
         var existingUser = this.userRepo.findByUserId(userId);
+        if (Objects.isNull(existingUser)) {
+            throw new NotFoundException("User dose not Found");
+        }
         return EntityMapper.mapToResponse(existingUser, ProfileDTO.class);
     }
 
