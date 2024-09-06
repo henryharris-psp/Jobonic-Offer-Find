@@ -40,7 +40,7 @@ public class AttachmentService implements IAttachmentService {
     }
 
     @Override
-    @Transactional
+//    @Transactional
     public AttachmentDTO save(AttachmentDTO attachmentDTO) throws Exception {
         DocumentUtil.validateDocumentSize(attachmentDTO.getFile());
         var extension = DocumentUtil.getFileExtension(attachmentDTO.getFile());
