@@ -19,4 +19,6 @@ public interface ICheckpointService {
     String delete(UUID id);
 
     List<Checkpoint> getCheckPointByServiceId(UUID serviceId);
+
+    Checkpoint getCheckpoint(UUID id);
 }

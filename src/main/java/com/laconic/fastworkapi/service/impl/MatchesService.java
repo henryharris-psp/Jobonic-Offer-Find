@@ -85,7 +85,8 @@ public class MatchesService implements IMatchesService {
         return String.format(AppMessage.DELETE_MESSAGE, AppMessage.MATCHES);
     }
 
-    private Matches getMatch(UUID id) {
+    @Override
+    public Matches getMatch(UUID id) {
         return this.matchesRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.MATCHES, "id",
                 id.toString()));
     }
