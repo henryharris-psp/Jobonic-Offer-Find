@@ -1,15 +1,33 @@
 import { MediaType, Message } from "@/types/chat";
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import MessageBubble from "./MessageBubble";
 import ServiceOfferCardWithLoading from "./ServiceOfferCardWithLoading";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import ContractCardWithLoading from "./ContractCardWithLoading";
+import { useChat } from "@/contexts/chat";
 
 const MessageByMediaType = (message: Message) => {
+    const { activeChatRoom } = useChat();
     const { authUser } = useSelector((state: RootState) => state.auth );
     const isSentByAuthUser = message.sender_id === authUser?.profile?.id;
 
+    const isLatestContract = useMemo( () => {
+        if(activeChatRoom && activeChatRoom?.messages.length !== 0){
+            const contractMessages = activeChatRoom.messages.filter(message => message.media_type === 'contract');
+            
+            if(contractMessages?.length !== 0){
+                const latestContractMessage = contractMessages.reduce((latest, message) => {
+                    return message.id > latest.id ? message : latest;
+                }, contractMessages[0]);
+
+                return message.id === latestContractMessage?.id;
+            }
+        } 
+
+        return false;
+    }, [activeChatRoom?.messages]);
+    
     const messageComponentMap: Record<MediaType, ReactNode> = {
         text: 
             <MessageBubble 
@@ -22,6 +40,7 @@ const MessageByMediaType = (message: Message) => {
             <ContractCardWithLoading
                 contractId={message.content}
                 isSentByAuthUser={isSentByAuthUser}
+                showActionButtons={isLatestContract}
             />,
         service: 
             <ServiceOfferCardWithLoading 

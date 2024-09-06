@@ -1,13 +1,13 @@
 import React from "react";
 
-const WaitingForPayment = () => {
+const WaitingForSubmission = () => {
     return (
         <div className="flex justify-center items-center text-center">
             <span className="font-bold text-orange-400">
-                Waiting For Payment
+                Waiting For Submission
             </span>
         </div>
     );
 };
 
-export default WaitingForPayment;
+export default WaitingForSubmission;

@@ -1,8 +1,19 @@
 import React, { ChangeEvent, useState } from "react";
 import Button from "./Button";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import { useChat } from "@/contexts/chat";
 
-const PaymentCard = () => {
+interface PaymentCardProps {
+    totalAmount: number
+}
+
+const paymentSuccessMessage = `Payment is successfully transfered to Jobonic. Jobonic will sent to freelancer for each successful milestone`;
+
+const PaymentCard = ({
+    totalAmount
+}: PaymentCardProps) => {
+    const numberFormater = new Intl.NumberFormat();
+    const { sendMessage, updateChatRoom } = useChat();
     const [inputs, setInputs] = useState({
         amount: '',
         description: ''
@@ -10,7 +21,7 @@ const PaymentCard = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
-    
+
     //methods
         const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
             const { name, value } = e.target;
@@ -20,14 +31,28 @@ const PaymentCard = () => {
             }));
         }
 
-        const submit = () => {
-            setIsLoading(true);
-            setTimeout(() => {
-                setIsLoading(false)
-                setIsPaid(true)
-            }, 2000);
+        const submit = async () => {
+            try {
+                setIsLoading(true);
+        
+                // Delay for 3 seconds (3000ms)
+                await new Promise(resolve => setTimeout(resolve, 3000));
+        
+                setIsLoading(false);
+                setIsPaid(true);
+        
+                const newlySentMessage = await sendMessage('text', paymentSuccessMessage);
+                
+                if (newlySentMessage) {
+                    await updateChatRoom(newlySentMessage.room_id, {
+                        status: 'waiting_for_submission'
+                    });
+                }
+            } catch (error) {
+                console.error('Error during submit process:', error);
+            }
         }
-
+        
     return (
         <div className="flex flex-col bg-white rounded-xl">
             <div className="flex flex-col p-5 space-y-3">
@@ -45,7 +70,7 @@ const PaymentCard = () => {
                         Total Amount to pay
                     </span>
                     <span className="font-bold text-gray-800 text-xl">
-                        $ 123
+                        $ { numberFormater.format(totalAmount) }
                     </span>
 
                 </div>

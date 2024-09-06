@@ -88,6 +88,8 @@ const ComponentGallery = () => {
                 onEditOffer={() => console.log('on edit offer')}
                 onDeclineAndSendMessage={() => console.log('onDeclineAndSendMessage')}
             /> */}
+
+            <span>Dev version - 1.0.0</span>
         </div>
     );
 };

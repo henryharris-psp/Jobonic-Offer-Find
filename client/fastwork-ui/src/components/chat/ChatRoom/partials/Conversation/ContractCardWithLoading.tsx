@@ -1,16 +1,13 @@
-import httpClient from '@/client/httpClient';
-import ServiceOfferCard from '@/components/service_card/ServiceOfferCard';
-import { Service } from '@/types/service';
 import React, { useEffect, useState } from 'react'
-import Applied from '../DetailsHeader/ActionButtons/employerActionButtonsMap/Applied';
 import { useChat } from '@/contexts/chat';
 import MediaSkeleton from './MediaSkeleton';
-import NewContractCard from '@/components/NewContractCard';
+import ContractCard from '@/components/contract/ContractCard';
 import Button from '@/components/Button';
-import { ArrowPathIcon, CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/24/solid';
-import axios from 'axios';
+import { ArrowPathIcon, CheckIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
 import Modal from '@/components/Modal';
 import matchClient from '@/client/matchClient';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 interface ContractCardWithLoadingProps {
     contractId: string | number,
@@ -25,10 +22,13 @@ const ContractCardWithLoading = ({
     isSentByAuthUser,
     showActionButtons = true
 }: ContractCardWithLoadingProps) => {
-    const { sendMessage, updateChatRoom } = useChat();
+    const { authUser } = useSelector((state: RootState) => state.auth );
+    const { sendMessage } = useChat();
     const [isLoading, setIsLoading] = useState(false);
     const [contract, setContract] = useState(null);
+    const [showContractModal, setShowContractModal] = useState(false);
 
+    //TODO: move to RTK client
     const fetchContract = async () => {
         setIsLoading(true);
         try{
@@ -46,25 +46,27 @@ const ContractCardWithLoading = ({
     }, []);
 
     //methods
-    const handleOnClickAccept = async () => {
-        const newlySentMessage = await sendMessage('text', acceptContractMsg);
-        if(newlySentMessage){
-            await updateChatRoom(newlySentMessage.room_id, {
-                status: 'waiting_for_payment'
-            });
+        //accept_contract
+        const handleOnClickAccept = async () => {
+            if(confirm("Are you sure to accept contract?")){
+                try{
+                    await matchClient.put(`contracts/${contractId}/accept`, {
+                        acceptedBy: authUser?.profile?.id
+                    });
+                    await sendMessage('text', acceptContractMsg);
+                } catch (error) {
+                    console.log('error', error);
+                }
+            }
         }
-    }
 
-    //
-    const [showContractModal, setShowContractModal] = useState(false);
+        const handleOnClickEdit = () => {
+            setShowContractModal(true);
+        }
 
-    const handleOnClickEdit = () => {
-        setShowContractModal(true);
-    }
-
-    const handleOnCloseContract = () => {
-        setShowContractModal(false)
-    }
+        const handleOnCloseContract = () => {
+            setShowContractModal(false)
+        }
 
     return (
         <>
@@ -87,7 +89,7 @@ const ContractCardWithLoading = ({
                     </div>
                 ) : (
                     <div className="flex flex-col mx-2 bg-white rounded-xl border border-gray-200 shadow">
-                        <NewContractCard
+                        <ContractCard
                             contract={contract}
                         />
                         { !isSentByAuthUser && showActionButtons ? (
@@ -98,22 +100,13 @@ const ContractCardWithLoading = ({
                                     icon={<PencilSquareIcon className="size-4"/>}
                                     onClick={handleOnClickEdit}
                                 />
-                                <div className="flex justify-end gap-1">
-                                    <Button
-                                        color="danger"
-                                        title="Reject"
-                                        size="sm"
-                                        icon={<XMarkIcon className="size-4"/>}
-                                        onClick={() => console.log('reject')}
-                                    />
-                                    <Button
-                                        color="success"
-                                        title="Accept"
-                                        size="sm"
-                                        icon={<CheckIcon className="size-4"/>}
-                                        onClick={handleOnClickAccept}
-                                    />
-                                </div>
+                                <Button
+                                    color="success"
+                                    title="Accept"
+                                    size="sm"
+                                    icon={<CheckIcon className="size-4"/>}
+                                    onClick={handleOnClickAccept}
+                                />
                             </div>
                         ) : ''}
                     </div>
@@ -124,7 +117,7 @@ const ContractCardWithLoading = ({
                 isOpen={showContractModal}
                 onClose={handleOnCloseContract}
             >
-                <NewContractCard
+                <ContractCard
                     contract={contract}
                     isEditMode={true}
                     onClose={handleOnCloseContract}

@@ -82,9 +82,9 @@ const Input = ({
 
             { type === 'textarea' ? (
                 <textarea 
-                    className={`text-sm pl-3 pt-3 rounded-lg placeholder:text-xs placeholder:text-dim-gray focus:outline-none w-full h-11 border 
-                        ${showError ? 'border-red' : 'border-dim-gray' }
-                        ${disabled ? 'border-none focus:outline-none' : ''}
+                    className={`text-sm pl-3 pt-3 rounded-lg placeholder:text-xs placeholder:text-dim-gray focus:outline-none w-full h-14 border 
+                        ${showError ? 'border-red-500' : 'border-gray-300' }
+                        ${disabled ? 'border-none outline-none' : 'focus:outline'}
                     `}
                     value={ value ? value.toString() : ''}
                     onChange={onChange}

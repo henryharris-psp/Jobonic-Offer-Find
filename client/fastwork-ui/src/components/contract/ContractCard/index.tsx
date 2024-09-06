@@ -1,31 +1,32 @@
 import Image from 'next/image';
 import React, { UIEvent, useEffect, useMemo, useState } from 'react'
-import { CheckIcon, PencilIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/24/solid';
-import Button from '../Button';
+import { PencilIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/24/solid';
+import Button from '../../Button';
 import MilestoneFormModal from './MilestoneFormModal';
 import { Contract, Milestone, TailwindSizes } from '@/types/general';
 import { useChat } from '@/contexts/chat';
-import axios from 'axios';
-import SafeInput, { SafeInputChangeEvent } from '../SafeInput';
+import SafeInput, { SafeInputChangeEvent } from '../../SafeInput';
 import { RootState } from '@/store';
 import { useSelector } from 'react-redux';
 import matchClient from '@/client/matchClient';
 
-interface NewContractCardProps {
+interface ContractCardProps {
     size?: TailwindSizes;
     isEditMode?: boolean;
     contract: Contract | null;
     onClose?: () => void;
+    onClickCancel?: () => void
 }
 
 const contractUpdateMessage = `I've just updated the contract. Could you please review it and let me know if you'd like to proceed with it? Thanks!`;
 
-const NewContractCard = ({
+const ContractCard = ({
     size = '',
     isEditMode = false,
     contract,
-    onClose
-}: NewContractCardProps) => {
+    onClose,
+    onClickCancel
+}: ContractCardProps) => {
     const { authUser } = useSelector((state: RootState) => state.auth );
     const { activeChatRoom, sendMessage, updateChatRoom } = useChat();
 
@@ -113,14 +114,10 @@ const NewContractCard = ({
                         matchId: activeChatRoom?.match_id,
                         price: inputs.price,
                         deliverable: inputs.deliverable,
-                        isFreelancerConfirmed: authUserType === 'freelancer',
-                        isEmployerConfirmed: authUserType === 'employer',
-                        createdBy: authUser?.id,
+                        createdBy: authUser?.profile?.id,
                     });
         
                     const contractId = contractRes.data.id;
-
-                    console.log(contractRes);
 
                     if (milestones.length !== 0) {
                         for (const milestone of milestones) {
@@ -132,15 +129,10 @@ const NewContractCard = ({
                     }
 
                     await sendMessage('contract', contractId.toString());
-                    const newlySentMessage = await sendMessage('text', contractUpdateMessage);
-
-                    if(newlySentMessage){
-                        await updateChatRoom(newlySentMessage.room_id, {
-                            status: 'waiting_for_contract_confirmation'
-                        });
-                    }
+                    await sendMessage('text', contractUpdateMessage);
 
                     setShowMilestoneFormModal(false);
+                    onClose?.();
         
                 } catch (error) {
                     console.log(error);
@@ -185,7 +177,7 @@ const NewContractCard = ({
     return (
         <>
             <div className="flex flex-col max-h-screen bg-white rounded-2xl overflow-hidden">
-                <div className="flex-1 flex flex-row flex-wrap p-6">
+                <div className="flex-1 flex flex-row space-x-2 flex-wrap p-6">
 
                     {/* form */}
                     <div className="flex-1 flex flex-col justify-between min-w-72 space-y-5 overflow-hidden">
@@ -204,7 +196,7 @@ const NewContractCard = ({
                             </div>
                             <div className="flex flex-col space-y-2 mx-1">
                                 <div className="flex flex-row items-center justify-end space-x-1">
-                                    <div className="flex justify- w-32">
+                                    <div className="flex w-32">
                                         <span className="text-sm text-gray-600">
                                             Price
                                         </span>
@@ -259,13 +251,13 @@ const NewContractCard = ({
 
                         { isEditMode ? (
                             <div className="flex flex-row justify-between space-x-1">
-                                <div className="flex items-center space-x-1">
-                                    { onClose ? (
+                                <div className="flex flex-row gap-1">
+                                    { onClickCancel ? (
                                         <Button
                                             size="sm"
                                             color="secondary"
                                             title="Cancel"
-                                            onClick={onClose}
+                                            onClick={onClickCancel}
                                         />
                                     ): ''}
                                     <Button
@@ -325,7 +317,7 @@ const NewContractCard = ({
                                                     key={task.id}
                                                     className="flex flex-row items-center space-x-2"
                                                 >
-                                                    <span className="text-gray-600">•</span>
+                                                    <span className="text-gray-400">•</span>
                                                     <span className={`mt-1 text-sm text-gray-600`}>
                                                         { task.name }
                                                     </span>
@@ -341,7 +333,7 @@ const NewContractCard = ({
                                             ) : ''}
                                         </div>
                                         <div className="flex justify-end min-w-12">
-                                            <span className="text-gray-600">
+                                            <span className="text-gray-600 text-sm">
                                                 { milestone.price }
                                             </span>
                                         </div>
@@ -366,4 +358,4 @@ const NewContractCard = ({
     );
 }
 
-export default NewContractCard
+export default ContractCard
