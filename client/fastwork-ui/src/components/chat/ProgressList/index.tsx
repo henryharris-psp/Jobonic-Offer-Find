@@ -4,6 +4,8 @@ import { TrashIcon, PlusIcon, ArrowDownTrayIcon } from "@heroicons/react/24/soli
 import httpClient from '@/client/httpClient';
 import { chatFilters } from '@/data/chat';
 import { useChat } from '@/contexts/chat';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 interface Milestone {
     id: string;
@@ -12,11 +14,13 @@ interface Milestone {
     tasks: string[];
     isOpen: boolean;
     serviceId: string;
+    uploadedFiles?: { name: string; size: number; url: string }[];
 }
 
 const ProgressList: React.FC = () => {
     const [openMilestones, setOpenMilestones] = useState<string[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { authUser } = useSelector((state: RootState) => state.auth);
     const [milestones, setMilestones] = useState<Milestone[]>([]);
     const [isReviewPopupOpen, setIsReviewPopupOpen] = useState(false);
     const [selectedRating, setSelectedRating] = useState(0);
@@ -25,7 +29,10 @@ const ProgressList: React.FC = () => {
     const [isEndContractPopupOpen, setIsEndContractPopupOpen] = useState(false);
     const [isCancellationPayoutPopupOpen, setIsCancellationPayoutPopupOpen] = useState(false);
     const chat = useChat();
-    const [milestone, setNewMilestone] = useState<Milestone>({
+    const [uploadedMilestones, setUploadedMilestones] = useState<Set<string>>(new Set());
+    const [uploadedFiles, setUploadedFiles] = useState<{ [key: string]: { name: string; size: number; url: string }[] }>({});
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [newMilestone, setNewMilestone] = useState<Milestone>({
         id: '',
         title: '',
         price: 0,
@@ -36,70 +43,143 @@ const ProgressList: React.FC = () => {
 
     const { activeChatRoom } = useChat();
 
-    useEffect( () => {
-        if(activeChatRoom && activeChatRoom.contracts && activeChatRoom.contracts.length !== 0){
+    useEffect(() => {
+        if (activeChatRoom && activeChatRoom.contracts && activeChatRoom.contracts.length !== 0) {
             const latestContract = activeChatRoom.contracts[activeChatRoom.contracts.length - 1];
-            if(latestContract){
-                setMilestones(latestContract?.milestones); 
+            if (latestContract) {
+                setMilestones(latestContract?.milestones);
             }
         }
     }, [activeChatRoom]);
 
+    const authUserType: 'freelancer' | 'employer' = activeChatRoom?.freelancer_id === authUser?.profile.id ? 'freelancer' : 'employer';
+
+    const fetchMilestones = async () => {
+        try {
+            const serviceId = chat.activeChatRoom?.service_id;
+
+            if (!serviceId) {
+                return;
+            }
+
+            // Fetch milestones
+            const milestonesResponse = await httpClient.get('/checkpoint/all');
+            const milestonesData: Milestone[] = milestonesResponse.data;
+
+            console.log('milestone ', milestonesResponse);
+            console.log('milestonesData: ', milestonesData);
+
+            // Filter milestones for the current service
+            const filteredMilestones = milestonesData.filter(milestone => milestone.serviceId === serviceId);
+
+            console.log('Filtered Milestones: ', filteredMilestones);
+
+            // Fetch attachments for the current service
+            const attachmentsResponse = await httpClient.get('/attachment/service', { params: { serviceId } });
+            const attachmentsData = attachmentsResponse.data;
+
+            console.log('Attachment Data: ', attachmentsData);
+
+            // Update milestones with attachments
+            const updatedMilestones = filteredMilestones.map(milestone => {
+                const milestoneAttachments = attachmentsData.find((att: { milestoneId: string; }) => att.milestoneId === milestone.id);
+                return {
+                    ...milestone,
+                    uploadedFiles: milestoneAttachments.flatMap((att: { files: any; }) =>  att.files)
+                };
+            });
+
+            console.log('Updated Milestone: ', updatedMilestones);
+
+            // Sort milestones
+            const sortedMilestones = updatedMilestones.sort((a, b) => {
+                const numA = parseInt(a.title.replace(/\D/g, ''), 10);
+                const numB = parseInt(b.title.replace(/\D/g, ''), 10);
+                return numA - numB;
+            });
+
+            //setMilestones(sortedMilestones);
+        } catch (error) {
+            console.error('Error fetching milestones:', error);
+        }
+    };
 
     useEffect(() => {
-        const fetchMilestones = async () => {
-            try {
-
-                const serviceId = chat.activeChatRoom?.service_id;
-                const response = await httpClient.get('/checkpoint/all');
-                const data = response.data;
-
-                data.forEach((milestone: Milestone) => {
-                    console.log(`Milestone ID: ${milestone.id}, CreatedBy: ${milestone.serviceId}, ServiceID: ${serviceId}`);
-                });
-
-                // Apply filtering logic
-                const filteredMilestones = data.filter((milestone: Milestone) => milestone.serviceId === serviceId);
-
-                // Correctly log the amountToPay for each filtered milestone
-                filteredMilestones.forEach((milestone: Milestone) => {
-                    console.log(`Amount to Pay for Milestone ID ${milestone.id}: ${milestone.price}`);
-                });
-
-                // Sort the filtered milestones in ascending order based on the numeric part of the 'title' field
-                const sortedMilestones = filteredMilestones.sort((a: Milestone, b: Milestone) => {
-                    // Extract the number from the title
-                    const numA = parseInt(a.title.replace(/\D/g, ''), 10);
-                    const numB = parseInt(b.title.replace(/\D/g, ''), 10);
-                    return numA - numB;
-                });
-
-                //setMilestones(sortedMilestones);
-            } catch (error) {
-                console.error('Error fetching milestones:', error);
-            }
-        };
         fetchMilestones();
     }, [chat.activeChatRoom?.service_id]);
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, milestoneId: string) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setSelectedFile(e.target.files[0]);
+        }
+    };
+
+    const uploadFile = async (milestoneId: string, file: File) => {
+        const serviceId = chat.activeChatRoom?.service_id;
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('documentType', 'SERVICE');
+            if (serviceId !== undefined) {
+                formData.append('serviceId', serviceId.toString());
+            }
+            formData.append('milestoneId', milestoneId);
+
+            const response = await httpClient.post('/attachment', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            if (response.status === 200) {
+                const updatedMilestones = milestones.map(milestone => {
+                    if (milestone.id === milestoneId) {
+                        return {
+                            ...milestone,
+                            uploadedFiles: [
+                                ...(milestone.uploadedFiles || []),
+                                {
+                                    name: file.name,
+                                    size: file.size,
+                                    url: response.data.fileUrl
+                                }
+                            ]
+                        };
+                    }
+                    return milestone;
+                });
+                setMilestones(updatedMilestones);
+                setSelectedFile(null); // Clear selected file
+                setUploadedMilestones(prev => new Set(prev.add(milestoneId)));
+                fetchMilestones(); // Fetch milestones again to ensure updates
+            }
+        } catch (error) {
+            console.error('Error uploading file:', error);
+        }
+    };
+
+    const handleSubmit = (milestoneId: string) => {
+        if (selectedFile) {
+            uploadFile(milestoneId, selectedFile);
+            console.log('File uploaded for milestone:', milestoneId);
+        }
+    };
+
     const toggleMilestone = (id: string) => {
-        setOpenMilestones((prev) =>
-            prev.includes(id) ? prev.filter((milestoneId) => milestoneId !== id) : [...prev, id]
+        setOpenMilestones(prev =>
+            prev.includes(id) ? prev.filter(milestoneId => milestoneId !== id) : [...prev, id]
         );
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setNewMilestone({ ...milestone, [name]: value });
+        setNewMilestone(prev => ({ ...prev, [name]: value }));
     };
 
     const addMilestone = () => {
-
-        //setMilestones([...milestones, milestone]);
+        // Logic to add milestone if needed
         setIsModalOpen(false);
-    };
-    const handleFileUpload = () => {
-        document.getElementById('file-input')?.click();
     };
 
     const handleGiveReview = () => {
@@ -122,7 +202,7 @@ const ProgressList: React.FC = () => {
     };
 
     const toggleContractSection = () => {
-        setIsContractOpen(!isContractOpen);
+        setIsContractOpen(prev => !prev);
     };
 
     const handleEndContract = () => {
@@ -141,6 +221,8 @@ const ProgressList: React.FC = () => {
     const handleCloseCancellationPayoutPopup = () => {
         setIsCancellationPayoutPopupOpen(false);
     };
+
+    console.log('File is : ', milestones.uploadedFiles);
 
     return (
         <div className="bg-[#E0F7FA] p-4 shadow-md w-[300px] pt-16 max-h-screen overflow-x-auto">
@@ -253,12 +335,53 @@ const ProgressList: React.FC = () => {
                         {openMilestones.includes(milestone.id) && (
                             <div className="ml-4 mt-2">
                                 <ul className="list-disc list-outside font-bold text-sm ml-6">
-                                    { milestone.tasks.map( task => 
-                                        <li key={task.id}>{ task.name }</li>    
+                                    {milestone.tasks.map(task =>
+                                        <li key={task.id}>{task.name}</li>
                                     )}
                                     <li>{`Amount to pay: ${milestone.price}`}</li>
                                 </ul>
-                                {milestone.name === 'Review' ? (
+                                {authUserType === 'freelancer' && milestone.name !== 'Review' && !uploadedMilestones.has(milestone.id) && (
+                                    <div className="flex flex-col">
+
+                                    <input type="file" onChange={(e) => handleFileChange(e, milestone.id)} disabled={uploadedMilestones.has(milestone.id)} />
+                                    <button
+                                        className="bg-[#E1824F] text-sm text-white rounded-lg px-4 py-1 mt-2 ml-4"
+
+                                        onClick={() => handleSubmit(milestone.id)}
+                                        disabled={uploadedMilestones.has(milestone.id)}
+                                    >
+                                        Submit work
+                                    </button>
+                                </div>
+                                )}
+                                {authUserType === 'employer' && (
+                                <div className="mt-4">
+                                    {milestone.uploadedFiles && milestone.uploadedFiles.length > 0 ?(
+                                        milestone.uploadedFiles.map((file, index) => (
+                                        <div key={index} className="flex items-center space-x-2 ml-4">
+                                            <a
+                                                href={file.url}
+                                                download
+                                                className="text-blue-500 underline text-xs cursor-pointer w-[40%]"
+                                            >
+                                                {file.name}
+                                            </a>
+                                            <span className="text-xs">{(file.size / 1024).toFixed(1)} KB</span>
+                                            <ArrowDownTrayIcon className="h-5 w-5 text-gray-500" />
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p>No files submitted yet.</p>
+                                ) 
+                                }<button
+                                    className="bg-green-500 text-sm text-white rounded-lg px-4 py-1"
+                                    //onClick={() => handleApprove(milestone.id)}
+                                >
+                                    Approve&Pay
+                                </button>
+                                </div>
+                                )}
+                                {/* {milestone.name === 'Review' ? (
                                     <button
                                         className="bg-[#E1824F] text-sm text-white rounded-lg px-4 py-1 mt-2 ml-4"
                                         onClick={handleGiveReview}
@@ -266,13 +389,27 @@ const ProgressList: React.FC = () => {
                                         Give Review
                                     </button>
                                 ) : (
-                                    <button
-                                        className="bg-[#E1824F] text-sm text-white rounded-lg px-4 py-1 mt-2 ml-4"
-                                        onClick={handleFileUpload}
-                                    >
-                                        Submit work
-                                    </button>
+                                    <>
+                                        {!uploadedMilestones.has(milestone.id) &&
+                                            
+                                        }
+                                    </>
+                                )} */}
+                                {/* Display Uploaded Files */}
+                                {milestone.uploadedFiles && milestone.uploadedFiles.length > 0 && (
+                                    <div className="mt-4">
+                                        {milestone.uploadedFiles.map((file, index) => (
+                                            <div key={index} className="flex items-center justify-between space-x-2 ml-4">
+                                                <a href={file.url} download className="text-blue-500 underline text-xs cursor-pointer w-[40%]">
+                                                    {file.name}
+                                                </a>
+                                                <span className="text-xs">{(file.size / 1024).toFixed(1)} KB</span>
+                                                <ArrowDownTrayIcon className="size-4 text-gray-500 cursor-pointer" />
+                                            </div>
+                                        ))}
+                                    </div>
                                 )}
+
                             </div>
                         )}
                     </li>

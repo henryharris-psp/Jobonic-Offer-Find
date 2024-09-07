@@ -67,10 +67,9 @@ export type CollaborationStatus =
     'applied' |
     'invited' |
     'signing_contract' |
-    'waiting_for_contract_confirmation' |
     'waiting_for_payment' |
     'to_submit' | 
-    'waiting_for_approval' |
+    'waiting_for_submission' |
     'waiting_for_review' |
     'completed' |
     'cancelled';
@@ -80,7 +79,7 @@ export type FreelancerChatStatus =
     'enquiring' |
     'applied' |
     'to_submit' | 
-    'waiting_for_approval' |
+    'waiting_for_submission' |
     'waiting_for_review' |
     'completed' |
     'cancelled';
@@ -107,6 +106,5 @@ export interface ChatRoom {
     status: FreelancerChatStatus | EmployeerChatStatus
     created_at: string;
     messages: Message[],
-    isNew?: boolean,
-    contracts: Contract[]
+    isNew?: boolean
 }

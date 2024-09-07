@@ -125,17 +125,12 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                     }
                 });
                 const service = serviceRes.data;
-
-                //fetching contracts
-                const contractRes = await matchClient.get(`contracts?matchId=${chatRoom.match_id}`);
-                const contracts: Contract[] = contractRes?.data ?? [];
                 
                 return {
                     ...chatRoom,
                     sender: authUser?.profile!,
                     receiver: receiver,
-                    service: service,
-                    contracts: contracts
+                    service: service
                 };
             }));       
         }

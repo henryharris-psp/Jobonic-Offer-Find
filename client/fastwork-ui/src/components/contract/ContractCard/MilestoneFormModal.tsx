@@ -1,10 +1,10 @@
 import { ChangeEvent, useMemo, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { Milestone, Task } from "@/types/general";
-import Button from "../Button";
-import Modal from "../Modal";
+import Button from "../../Button";
+import Modal from "../../Modal";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import SafeInput, { SafeInputChangeEvent } from "../SafeInput";
+import SafeInput, { SafeInputChangeEvent } from "../../SafeInput";
 
 interface MilestoneFormModalProps {
     milestone: Milestone | null,
