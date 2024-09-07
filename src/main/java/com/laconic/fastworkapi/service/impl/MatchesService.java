@@ -57,9 +57,12 @@ public class MatchesService implements IMatchesService {
         var service = this.serviceRepo.findById(matchesDTO.getServiceId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
                         matchesDTO.getServiceId().toString()));
-
+        var employee = this.userRepo.findById(matchesDTO.getEmployeeId())
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
+                        matchesDTO.getProfileId().toString()));
         existingMatch.setProfile(user);
         existingMatch.setService(service);
+        existingMatch.setEmployeeId(employee);
         existingMatch.setPaymentTotal(matchesDTO.getPaymentTotal());
         existingMatch.setNumberOfCheckpoints(matchesDTO.getNumberOfCheckpoints());
         existingMatch.setNumberOfCheckpointsLeft(matchesDTO.getNumberOfCheckpoints());
