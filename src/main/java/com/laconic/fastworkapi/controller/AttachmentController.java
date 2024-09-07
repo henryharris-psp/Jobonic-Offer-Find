@@ -64,7 +64,7 @@ public class AttachmentController {
     }
 
     @Operation(summary = APIDocsHelper.AttachmentAPI.SHOW_ATTACHMENT)
-    @GetMapping("/show")
+    @GetMapping(value = "/show",produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Resource> showFile(@RequestParam UUID id) throws IOException {
         return this.attachmentService.showFile(id);
     }
