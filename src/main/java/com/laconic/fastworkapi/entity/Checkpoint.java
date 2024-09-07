@@ -48,6 +48,12 @@ public class Checkpoint extends Auditable<UUID> {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
+
+    @ManyToOne
+    @JoinColumn(name = "contract_id")
+    private Contract contract;
+
+
     /**
      * @param tasks Array of tasks to be converted to JSON
      * @throws IOException if JSON conversion fails
