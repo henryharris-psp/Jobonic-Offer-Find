@@ -133,4 +133,9 @@ public class CheckpointService implements ICheckpointService {
         return this.checkpointRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.CHECKPOINT, "id",
                 id.toString()));
     }
+
+    @Override
+    public List<Checkpoint> getCheckPointByMatchesId(UUID matchesId) {
+        return checkpointRepo.findCheckpointByMatchesId(matchesId);
+    }
 }

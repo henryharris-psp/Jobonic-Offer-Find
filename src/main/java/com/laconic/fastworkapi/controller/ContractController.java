@@ -39,4 +39,9 @@ public class ContractController {
     public ResponseEntity<?> getContractByMatchId(@PathVariable UUID id) {
         return ResponseEntity.ok(contractService.getContractByMatchId(id));
     }
+
+    @GetMapping("/get-all-contract/}")
+    public ResponseEntity<?> getContractByMatchData(@RequestParam UUID matchId) {
+        return ResponseEntity.ok(contractService.listAll(matchId));
+    }
 }
