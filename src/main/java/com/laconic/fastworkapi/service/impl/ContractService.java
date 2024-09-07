@@ -8,14 +8,14 @@ import com.laconic.fastworkapi.entity.Contract;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.IContractRepo;
 import com.laconic.fastworkapi.repo.TaskRepo;
-import com.laconic.fastworkapi.service.*;
+import com.laconic.fastworkapi.service.ICheckpointService;
+import com.laconic.fastworkapi.service.IContractService;
+import com.laconic.fastworkapi.service.IMatchesService;
+import com.laconic.fastworkapi.service.IProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -52,9 +52,42 @@ public class ContractService implements IContractService {
     }
 
     @Override
-    public ContractDTO getById(UUID id) {
-        return new ContractDTO(getContract(id));
+    public ContractResponseDTO getById(UUID id) {
+        // Step 1: Get the contract by id and map it to DTO
+        ContractResponseDTO contractResponseDTO = new ContractResponseDTO(getContract(id));
+
+        // Step 2: Fetch checkpoints (milestones) by contractId and map them to DTOs
+        List<CheckResponseDTO> checkResponseDTOs = checkpointService.getCheckPointByContractIdIn(Collections.singletonList(contractResponseDTO.getId()))
+                .stream()
+                .map(CheckResponseDTO::new)
+                .toList();
+
+        // Step 3: Fetch tasks by checkpointIds and map them to DTOs
+        List<UUID> checkpointIds = checkResponseDTOs.stream()
+                .map(CheckResponseDTO::getId)
+                .toList();
+
+        List<TaskDTO> taskDTOs = taskRepo.findByCheckpointIdIn(checkpointIds)
+                .stream()
+                .map(TaskDTO::new)
+                .toList();
+
+        // Step 4: Combine tasks with respective checkpoints
+        Map<UUID, List<TaskDTO>> tasksGroupedByCheckpoint = taskDTOs.stream()
+                .collect(Collectors.groupingBy(TaskDTO::getCheckpointId));
+
+        for (CheckResponseDTO checkResponseDTO : checkResponseDTOs) {
+            List<TaskDTO> relatedTasks = tasksGroupedByCheckpoint.getOrDefault(checkResponseDTO.getId(), new ArrayList<>());
+            checkResponseDTO.setTasks(relatedTasks);
+        }
+
+        // Step 5: Set the milestones (checkpoints) in the contract response
+        contractResponseDTO.setMilestones(checkResponseDTOs);
+
+        // Step 6: Return the fully combined contract response
+        return contractResponseDTO;
     }
+
 
     @Override
     public List<ContractDTO> getAll() {

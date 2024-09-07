@@ -11,7 +11,7 @@ public interface IContractService {
 
     ContractDTO update(UUID id, ContractDTO contractDTO);
 
-    ContractDTO getById(UUID id);
+    ContractResponseDTO getById(UUID id);
 
     List<ContractDTO> getAll();
 
