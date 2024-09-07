@@ -34,10 +34,13 @@ public class MatchesService implements IMatchesService {
         var service = this.serviceRepo.findById(matchesDTO.getServiceId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
                         matchesDTO.getServiceId().toString()));
-
+        var employee = this.userRepo.findById(matchesDTO.getEmployeeId())
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
+                        matchesDTO.getProfileId().toString()));
         var match = EntityMapper.mapToEntity(matchesDTO, Matches.class);
         match.setProfile(user);
         match.setService(service);
+        match.setEmployeeId(employee);
 
         var savedMatch = this.matchesRepo.save(match);
         return EntityMapper.mapToEntity(savedMatch, MatchesDTO.class);
