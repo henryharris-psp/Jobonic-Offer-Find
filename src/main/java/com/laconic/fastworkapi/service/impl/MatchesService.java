@@ -61,8 +61,8 @@ public class MatchesService implements IMatchesService {
         existingMatch.setProfile(user);
         existingMatch.setService(service);
         existingMatch.setPaymentTotal(matchesDTO.getPaymentTotal());
-//        existingMatch.setNumberOfCheckpoints(matchesDTO.getNumberOfCheckpoints());
-//        existingMatch.setNumberOfCheckpointsLeft(matchesDTO.getNumberOfCheckpoints());
+        existingMatch.setNumberOfCheckpoints(matchesDTO.getNumberOfCheckpoints());
+        existingMatch.setNumberOfCheckpointsLeft(matchesDTO.getNumberOfCheckpoints());
         existingMatch.setPaymentMode(matchesDTO.getPaymentMode());
 
         var updatedMatch = this.matchesRepo.save(existingMatch);

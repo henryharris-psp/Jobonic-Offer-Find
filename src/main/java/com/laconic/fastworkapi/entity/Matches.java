@@ -46,10 +46,10 @@ public class Matches extends Auditable<UUID> {
     @Builder.Default
     private double paymentTotal = 0;
 
-    //    @Builder.Default
-//    private int numberOfCheckpoints = 0;
-//    @Builder.Default
-//    private int numberOfCheckpointsLeft = 0;
+    @Builder.Default
+    private int numberOfCheckpoints = 0;
+    @Builder.Default
+    private int numberOfCheckpointsLeft = 0;
     @Enumerated(EnumType.STRING)
     private PaymentMode paymentMode;
 

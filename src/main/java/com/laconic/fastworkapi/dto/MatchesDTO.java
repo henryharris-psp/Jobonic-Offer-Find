@@ -25,8 +25,8 @@ public class MatchesDTO implements Serializable {
     private Long employeeId;
     private String deliverable;
     private double paymentTotal = 0;
-    //    private int numberOfCheckpoints = 0;
-//    private int numberOfCheckpointsLeft = 0;
+        private int numberOfCheckpoints = 0;
+    private int numberOfCheckpointsLeft = 0;
     private PaymentMode paymentMode;
     private Status status;
 
@@ -36,8 +36,8 @@ public class MatchesDTO implements Serializable {
         this.serviceId = matches.getService().getId();
         this.deliverable = matches.getDeliverable();
         this.paymentTotal = matches.getPaymentTotal();
-//        this.numberOfCheckpoints = matches.getNumberOfCheckpoints();
-//        this.numberOfCheckpointsLeft = matches.getNumberOfCheckpointsLeft();
+        this.numberOfCheckpoints = matches.getNumberOfCheckpoints();
+        this.numberOfCheckpointsLeft = matches.getNumberOfCheckpointsLeft();
         this.paymentMode = matches.getPaymentMode();
         this.status = matches.getStatus();
         this.employeeId=matches.getEmployeeId().getId();
