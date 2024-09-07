@@ -18,12 +18,14 @@ public class CheckResponseDTO {
     private UUID id;
     private UUID serviceId;
     private String title;
+    private UUID contractId;
     private Double price;
     private String description;
     private List<TaskDTO> tasks;
 
     public CheckResponseDTO(Checkpoint checkpoint) {
         this.serviceId=checkpoint.getService().getId();
+        this.contractId=checkpoint.getContract().getId();
         this.id = checkpoint.getId();
         this.title = checkpoint.getTitle();
         this.price = checkpoint.getPrice();
