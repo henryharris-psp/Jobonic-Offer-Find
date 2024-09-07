@@ -13,4 +13,5 @@ public interface ICheckpointRepo extends JpaRepository<Checkpoint, UUID>, JpaSpe
 
     List<Checkpoint> findCheckpointByServiceId(UUID serviceId);
     List<Checkpoint> findCheckpointByMatchesId(UUID matchesId);
+    List<Checkpoint> findCheckpointByContractIdIn(List<UUID> contractId);
 }

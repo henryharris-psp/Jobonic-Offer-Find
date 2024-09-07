@@ -12,8 +12,11 @@ import com.laconic.fastworkapi.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -75,34 +78,51 @@ public class ContractService implements IContractService {
                 .map(ContractResponseDTO::new)
                 .toList();
 
-        // Step 2: Fetch checkpoints by matchId and map them to DTO
-        List<CheckResponseDTO> checkResponseDTOs = checkpointService.getCheckPointByServiceId(matchId)
+        // Step 2: Fetch checkpoints by contract IDs and map them to DTOs
+        List<UUID> contractIds = contractResponseDTOs.stream()
+                .map(ContractResponseDTO::getId)
+                .toList();
+
+        List<CheckResponseDTO> checkResponseDTOs = checkpointService.getCheckPointByContractIdIn(contractIds)
                 .stream()
                 .map(CheckResponseDTO::new)
                 .toList();
 
-        // Step 3: Fetch tasks by checkpointIds (assuming getTaskByCheckPointId can accept a list of checkpoints)
-        List<TaskDTO> taskDTOs = taskRepo.findByCheckpointIdIn(checkResponseDTOs.stream().map(CheckResponseDTO::getId).toList())
+        // Step 3: Fetch tasks by checkpoint IDs and map them to DTOs
+        List<UUID> checkpointIds = checkResponseDTOs.stream()
+                .map(CheckResponseDTO::getId)
+                .toList();
+
+        List<TaskDTO> taskDTOs = taskRepo.findByCheckpointIdIn(checkpointIds)
                 .stream()
                 .map(TaskDTO::new)
                 .toList();
 
-        // Step 4: Combine data - merge checkpoints and tasks into contractResponseDTOs
-        for (ContractResponseDTO contractResponse : contractResponseDTOs) {
-            // Add checkpoints to contract response
-            contractResponse.setMilestones(checkResponseDTOs);
+        // Step 4: Combine data
+        // Create a map of checkpointId -> list of TaskDTO for easy lookup
+        Map<UUID, List<TaskDTO>> tasksGroupedByCheckpoint = taskDTOs.stream()
+                .collect(Collectors.groupingBy(TaskDTO::getCheckpointId));
 
-            // Add tasks to each checkpoint (you need logic to associate tasks with the correct checkpoint)
-            for (CheckResponseDTO checkResponse : contractResponse.getMilestones()) {
-                List<TaskDTO> relatedTasks = taskDTOs.stream()
-                        .filter(task -> task.getCheckpointId().equals(checkResponse.getId()))
-                        .toList();
+        // Add checkpoints and tasks to the respective contracts
+        for (ContractResponseDTO contractResponse : contractResponseDTOs) {
+            // Get the checkpoints for this contract
+            List<CheckResponseDTO> relatedCheckpoints = checkResponseDTOs.stream()
+                    .filter(check -> check.getContractId().equals(contractResponse.getId()))
+                    .toList();
+
+            // Add tasks to each checkpoint
+            for (CheckResponseDTO checkResponse : relatedCheckpoints) {
+                List<TaskDTO> relatedTasks = tasksGroupedByCheckpoint.getOrDefault(checkResponse.getId(), new ArrayList<>());
                 checkResponse.setTasks(relatedTasks);
             }
+
+            // Set the milestones (checkpoints) for the contract
+            contractResponse.setMilestones(relatedCheckpoints);
         }
 
         // Return the combined result
         return contractResponseDTOs;
     }
+
 
 }

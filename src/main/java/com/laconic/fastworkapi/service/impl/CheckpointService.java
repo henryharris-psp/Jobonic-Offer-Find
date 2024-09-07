@@ -142,4 +142,9 @@ public class CheckpointService implements ICheckpointService {
     public List<Checkpoint> getCheckPointByMatchesId(UUID matchesId) {
         return checkpointRepo.findCheckpointByMatchesId(matchesId);
     }
+
+    @Override
+    public List<Checkpoint> getCheckPointByContractIdIn(List<UUID> contractId) {
+        return checkpointRepo.findCheckpointByContractIdIn(contractId);
+    }
 }
