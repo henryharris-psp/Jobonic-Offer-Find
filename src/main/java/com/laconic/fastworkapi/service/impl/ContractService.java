@@ -56,7 +56,7 @@ public class ContractService implements IContractService {
 
     @Override
     public List<ContractDTO> getContractByMatchId(UUID id) {
-        return contractRepo.findAllByMatches_Id(id).stream().map(ContractDTO::new).toList();
+        return contractRepo.findByMatches_Id(id).stream().map(ContractDTO::new).toList();
     }
 
     public Contract getContract(UUID uuid) {
