@@ -4,8 +4,10 @@ import com.laconic.fastworkapi.dto.ContractDTO;
 import com.laconic.fastworkapi.entity.Contract;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.IContractRepo;
+import com.laconic.fastworkapi.repo.IUserRepo;
 import com.laconic.fastworkapi.service.IContractService;
 import com.laconic.fastworkapi.service.IMatchesService;
+import com.laconic.fastworkapi.service.IProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +20,15 @@ public class ContractService implements IContractService {
 
     private final IContractRepo contractRepo;
     private final IMatchesService matchesService;
-
+    private final IProfileService profileService;
     private ContractDTO set(Contract contract, ContractDTO dto) {
+        dto.getAcceptBy().forEach(profileService::get);
         contract.setDeliverable(dto.getDeliverable());
         contract.setPrice(dto.getPrice());
         contract.setMatches(matchesService.getMatch(dto.getMatchesId()));
-        contract.setIsFreelancerConfirmed(dto.getIsFreelancerConfirmed());
-        contract.setIsEmployerConfirmed(dto.getIsEmployerConfirmed());
+        contract.setAcceptBy(dto.getAcceptBy());
+//        contract.setIsFreelancerConfirmed(dto.getIsFreelancerConfirmed());
+//        contract.setIsEmployerConfirmed(dto.getIsEmployerConfirmed());
         contract = contractRepo.save(contract);
         return new ContractDTO(contract);
     }

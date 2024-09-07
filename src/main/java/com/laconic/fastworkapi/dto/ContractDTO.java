@@ -5,6 +5,7 @@ import com.laconic.fastworkapi.entity.Contract;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -18,8 +19,8 @@ public class ContractDTO {
     private UUID matchesId;
     private Double price;
     private String deliverable;
-    private Boolean isFreelancerConfirmed;
-    private Boolean isEmployerConfirmed;
+
+    private List<Long> acceptBy;
     @JsonIgnore
     private UUID createdBy;
     @JsonIgnore
@@ -30,9 +31,10 @@ public class ContractDTO {
         this.matchesId = contract.getMatches().getId();
         this.price = contract.getPrice();
         this.deliverable = contract.getDeliverable();
-        this.isFreelancerConfirmed = contract.getIsFreelancerConfirmed();
-        this.isEmployerConfirmed = contract.getIsFreelancerConfirmed();
+//        this.isFreelancerConfirmed = contract.getIsFreelancerConfirmed();
+//        this.isEmployerConfirmed = contract.getIsFreelancerConfirmed();
         this.createdBy = contract.getCreatedBy();
         this.createdDate = contract.getCreatedDate();
+        this.acceptBy = contract.getAcceptBy();
     }
 }
