@@ -36,5 +36,9 @@ public class Contract extends Auditable<UUID> {
     @ElementCollection
     private List<Long> acceptBy;
 
+    @ManyToOne
+    @JoinColumn(name = "profile_id")
+    private Profile profile;
+
 }
 

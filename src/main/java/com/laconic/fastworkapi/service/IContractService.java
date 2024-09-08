@@ -18,4 +18,6 @@ public interface IContractService {
     List<ContractDTO> getContractByMatchId(UUID id);
 
     List<ContractResponseDTO> listAll(UUID matchId);
+
+    List<ContractResponseDTO>  getByProfile(Long profileId);
 }

@@ -28,6 +28,7 @@ public class ContractResponseDTO {
 
     private Instant createdDate;
     private List<CheckResponseDTO> milestones;
+    private Long profileId;
 
     public ContractResponseDTO(Contract contract) {
         this.id = contract.getId();
@@ -37,5 +38,6 @@ public class ContractResponseDTO {
         this.acceptBy = contract.getAcceptBy();
         this.createdBy = contract.getCreatedBy();
         this.createdDate = contract.getCreatedDate();
+        this.profileId=contract.getProfile().getId();
     }
 }

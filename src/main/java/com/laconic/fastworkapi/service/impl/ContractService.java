@@ -110,7 +110,12 @@ public class ContractService implements IContractService {
                 .stream()
                 .map(ContractResponseDTO::new)
                 .toList();
+        return getContractDto(contractResponseDTOs);
 
+
+    }
+
+    public List<ContractResponseDTO> getContractDto(List<ContractResponseDTO> contractResponseDTOs){
         // Step 2: Fetch checkpoints by contract IDs and map them to DTOs
         List<UUID> contractIds = contractResponseDTOs.stream()
                 .map(ContractResponseDTO::getId)
@@ -157,5 +162,12 @@ public class ContractService implements IContractService {
         return contractResponseDTOs;
     }
 
-
+    @Override
+    public List<ContractResponseDTO> getByProfile(Long profileId) {
+        List<ContractResponseDTO> contractResponseDTOs = contractRepo.findByProfile_Id(profileId)
+                .stream()
+                .map(ContractResponseDTO::new)
+                .toList();
+        return getContractDto(contractResponseDTOs);
+    }
 }

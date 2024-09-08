@@ -44,4 +44,9 @@ public class ContractController {
     public ResponseEntity<?> getContractByMatchData(@RequestParam UUID matchId) {
         return ResponseEntity.ok(contractService.listAll(matchId));
     }
+
+    @GetMapping("/get-by-pofile")
+    private ResponseEntity<?> getContractByProfile(@RequestParam Long profileId){
+        return ResponseEntity.ok(contractService.getByProfile(profileId));
+    }
 }
