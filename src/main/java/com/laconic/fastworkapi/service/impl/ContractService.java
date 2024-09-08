@@ -29,7 +29,7 @@ public class ContractService implements IContractService {
     private final ICheckpointService checkpointService;
 
     private ContractDTO set(Contract contract, ContractDTO dto) {
-        contract.getAcceptBy().forEach(profileService::get);
+        dto.getAcceptBy().forEach(profileService::get);
         contract.setProfile(profileService.getByRepo(dto.getProfileId()));
         contract.setDeliverable(dto.getDeliverable());
         contract.setPrice(dto.getPrice());
