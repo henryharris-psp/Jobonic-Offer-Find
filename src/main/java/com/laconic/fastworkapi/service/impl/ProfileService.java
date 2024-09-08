@@ -165,4 +165,10 @@ public class ProfileService implements IProfileService {
         dto.setUserId(Long.parseLong(authenticationUtils.genericTokenValue("userid")));
         return dto;
     }
+
+    @Override
+    public Profile getByRepo(Long id) {
+        return this.userRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
+                id.toString()));
+    }
 }
