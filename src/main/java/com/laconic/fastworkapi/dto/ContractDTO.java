@@ -21,7 +21,9 @@ public class ContractDTO {
     private String deliverable;
 
     private List<Long> acceptBy;
+    @JsonIgnore
     private UUID createdBy;
+    @JsonIgnore
     private Instant createdDate;
     private Long profileId;
 
