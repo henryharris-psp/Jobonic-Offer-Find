@@ -4,12 +4,12 @@ import { CheckCircleIcon, CheckIcon, CreditCardIcon, DocumentTextIcon, PencilIco
 import Modal from "@/components/Modal";
 import ContractCard from "@/components/contract/ContractCard";
 import { useChat } from "@/contexts/chat";
-import matchClient from "@/client/matchClient";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { Contract } from "@/types/general";
 import PaymentCard from "@/components/PaymentCard";
+import httpClient from "@/client/httpClient";
 
 const acceptContractMsg = `Contract is signed by both users. Let's get started`;
 
@@ -42,7 +42,8 @@ const SigningContract = () => {
     //methods
         const fetchContract = async (contractId: string | number) => {
             try{
-                const res = await matchClient.get(`contracts/${contractId}`);
+                //get_contract
+                const res = await httpClient.get(`contract/${contractId}`);
                 setLatestContract(res.data);
             } catch (error) {
                 console.log('cannot fetch contract data', error);
@@ -65,17 +66,23 @@ const SigningContract = () => {
 
         //accept_contract
         const handleOnClickAccept = async () => {
-            if(confirm("Are you sure to accept contract?")){
-                try{
-                    await matchClient.put(`contracts/${lastestContract.id}/accept`, {
-                        acceptedBy: authUser?.profile?.id
-                    });
-                    await sendMessage('text', acceptContractMsg);
-
-                    //refresh contract
-                    fetchContract(lastestContract.id);
-                } catch (error) {
-                    console.log('error', error);
+            if(lastestContract){
+                if(confirm("Are you sure to accept contract?")){
+                    try{
+                        //on_accept_contract
+                        await httpClient.put(`contract/${lastestContract.id}`, {
+                            matchesId: lastestContract.matchesId,
+                            price: lastestContract.price,
+                            deliverable: lastestContract.deliverable,
+                            profileId: lastestContract.profileId,
+                            acceptBy: [...lastestContract.acceptBy, authUser?.profile?.id],
+                        });
+                        await sendMessage('text', acceptContractMsg);
+                        //refresh contract
+                        fetchContract(lastestContract.id);
+                    } catch (error) {
+                        console.log('error', error);
+                    }
                 }
             }
         }
@@ -111,7 +118,7 @@ const SigningContract = () => {
                             size="sm"
                             onClick={handleOnClickViewContract} 
                         />
-                        { lastestContract?.accepted_by.length === 2 && authUser?.profile.id === activeChatRoom.employer_id ? (
+                        { lastestContract?.acceptBy.length === 2 && authUser?.profile.id === activeChatRoom.employer_id ? (
                             <Button 
                                 title="Pay Now" 
                                 icon={<CreditCardIcon className="size-5 font-bold text-bold"/>}
@@ -122,7 +129,7 @@ const SigningContract = () => {
                         ) : ''}
                         <div className="flex flex-col space-y-1">
                             {/* for auth user */}
-                            { lastestContract.accepted_by.includes(authUser?.profile?.id) ? (
+                            { lastestContract.acceptBy.includes(authUser?.profile?.id) ? (
                                 <div className="flex flex-row items-center space-x-1">
                                     <CheckCircleIcon className="size-4 text-green-500"/>
                                     <span className="text-xs text-gray-900">You have accepted the contract.</span>
@@ -137,7 +144,7 @@ const SigningContract = () => {
                             )}
                             
                              {/* for reciver */}
-                            { lastestContract.accepted_by.includes(activeChatRoom?.receiver.id) ? (
+                            { lastestContract.acceptBy.includes(activeChatRoom?.receiver.id) ? (
                                 <div className="flex flex-row items-center space-x-1">
                                     <CheckCircleIcon className="size-4 text-green-500"/>
                                     <span className="text-xs text-gray-900">
@@ -148,7 +155,7 @@ const SigningContract = () => {
                                 <div className="flex flex-row items-center space-x-1">
                                     <ClockIcon className="size-4 text-yellow-500"/>
                                     <span className="text-xs text-gray-500">
-                                        Waiting for another member's approval 
+                                        Waiting for another member approval 
                                     </span>
                                 </div>
                             )}
@@ -177,20 +184,29 @@ const SigningContract = () => {
                         onClickCancel={handleOnClickCancelEdit}
                     />
                     { !isEditMode ? (
-                        <div className="flex flex-row justify-between space-x-1 mx-6">
+                        <div className="flex flex-row items-center justify-between space-x-1 mx-6">
                             <Button
                                 title="Edit Contract"
                                 size="sm"
                                 icon={<PencilSquareIcon className="size-5"/>}
                                 onClick={handleOnClickEdit}
                             />
-                            <Button
-                                size="sm"
-                                color="success"
-                                title="Accept"
-                                icon={<CheckIcon className="size-5"/>}
-                                onClick={handleOnClickAccept}
-                            />
+                            { !lastestContract?.acceptBy.includes(authUser?.profile?.id) ? (
+                                <Button
+                                    size="sm"
+                                    color="success"
+                                    title="Accept"
+                                    icon={<CheckIcon className="size-5"/>}
+                                    onClick={handleOnClickAccept}
+                                />
+                            ) : (
+                                <div className="flex flex-row space-x-1">
+                                    <CheckCircleIcon className="size-5 text-green-500"/>
+                                    <span className="text-sm">
+                                        You have accepted this contract.
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     ) : ''}
                 </div>
@@ -201,7 +217,7 @@ const SigningContract = () => {
                 onClose={() => setShowPaymentCard(false)}
             >
                 <PaymentCard
-                    totalAmount={lastestContract?.price}
+                    totalAmount={lastestContract ? lastestContract.price : 0 }
                 />
             </Modal>
 

@@ -7,8 +7,6 @@ import { RootState } from "@/store";
 import { getProfileByProfileId } from "@/functions/helperFunctions";
 import { Profile } from "@/types/users";
 import httpClient from "@/client/httpClient";
-import { Contract } from "@/types/general";
-import matchClient from "@/client/matchClient";
 
 export interface ChatState {
     showChatList: boolean;

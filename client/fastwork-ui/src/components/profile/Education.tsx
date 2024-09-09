@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { PlusCircleIcon } from '@heroicons/react/24/outline';
+import { BookmarkSquareIcon, PencilIcon, PencilSquareIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/24/solid';
 import httpClient from '@/client/httpClient';
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 interface Education {
+    id?: string;
     institute: string;
     degree: string;
     startDate: string;
@@ -16,6 +17,8 @@ const EducationComponent = () => {
     const { authUser } = useSelector((state: RootState) => state.auth);
     const [educationList, setEducationList] = useState<Education[]>([]);
     const [showNewEntry, setShowNewEntry] = useState(false);
+    const [editIndex, setEditIndex] = useState<number | null>(null);
+    const [showConfirmDelete, setShowConfirmDelete] = useState<number | null>(null);
     const [formData, setFormData] = useState<Education>({
         institute: '',
         degree: '',
@@ -60,13 +63,32 @@ const EducationComponent = () => {
         };
 
         try {
-            // Send POST request to API
-            await httpClient.post('/user-education', newEducation);
-            setEducationList((prev) => [...prev, newEducation]);
-            setFeedbackMessage('Education saved successfully!');
+
+            if (editIndex !== null) {
+                // Update existing education entry
+                const updatedEducation = { ...educationList[editIndex], ...newEducation };
+
+                // Ensure the endpoint is correct and matches the backend route
+                const response = await httpClient.put(`/user-education?id=${updatedEducation.id}`, updatedEducation);
+
+                setEducationList((prev) => {
+                    const updatedList = [...prev];
+                    updatedList[editIndex] = response.data;
+                    return updatedList;
+                });
+                setFeedbackMessage('Education updated successfully!');
+            }
+
+            else {
+
+                await httpClient.post('/user-education', newEducation);
+                setEducationList((prev) => [...prev, newEducation]);
+                setFeedbackMessage('Education saved successfully!');
+            }
+
             setShowNewEntry(false);
             setFormData({ institute: '', degree: '', startDate: '', endDate: '' });
-
+            setEditIndex(null);
             fetchEducationData();
 
         } catch (error) {
@@ -75,21 +97,53 @@ const EducationComponent = () => {
         }
     };
 
+    const handleRemoveClick = (index: number) => {
+        setShowConfirmDelete(index); // Show confirmation popup
+    };
+
+    const handleConfirmDelete = async () => {
+        if (showConfirmDelete !== null) {
+            const educationToDelete = educationList[showConfirmDelete];
+
+            try {
+                await httpClient.delete(`/user-education?id=${educationToDelete.id}`);
+                setEducationList((prev) => prev.filter((_, i) => i !== showConfirmDelete));
+                setFeedbackMessage('Education deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting education:', error);
+                setFeedbackMessage('Failed to delete education.');
+            }
+        }
+
+        setShowConfirmDelete(null); // Hide confirmation popup
+    };
+
+    const handleCancelDelete = () => {
+        setShowConfirmDelete(null); // Hide confirmation popup
+    };
+
+    const handleEdit = (index: number) => {
+        setEditIndex(index);
+        setFormData(educationList[index]);
+        setShowNewEntry(true);
+    };
+
+
 
     return (
         <section className="flex flex-col w-[60%] justify-start ml-16 mt-4 pb-4 ">
-            <div className="flex flex-row space-x-4 items-center">
-                <h2 className="text-2xl font-bold text-gray-900">Education</h2>
+            <div className="flex flex-row space-x-3 items-center mb-6 animate-pulse">
+                <h2 className="text-2xl font-bold text-cyan-950">Education</h2>
                 <PlusCircleIcon
-                    className="w-6 h-6 cursor-pointer"
+                    className="w-6 h-6 cursor-pointer text-yellow-700"
                     onClick={() => setShowNewEntry((prev) => !prev)}
                 />
                 <h3 className="text-xs text-gray-400 items-center select-none">Add Education</h3>
             </div>
             {showNewEntry && (
-                <div className="space-y-3 rounded-lg p-4 bg-gray-100 mt-4">
+                <div className="space-y-3 rounded-lg p-6 bg-gray-100">
                     {['institute', 'degree', 'startDate', 'endDate'].map((field, index) => (
-                        <div key={index} className="grid grid-cols-3 items-center">
+                        <div key={index} className="grid grid-cols-3 items-center p-2">
                             <label htmlFor={`education.${field}`} className="flex flex-col font-bold capitalize">
                                 {field.replace('startDate', 'Start Date').replace('endDate', 'End Date')}
                             </label>
@@ -104,36 +158,68 @@ const EducationComponent = () => {
                             />
                         </div>
                     ))}
-                    <button
+                    <div
                         onClick={handleSave}
-                        className="bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 rounded-lg w-64 mt-4 mb-4"
+                        className="flex justify-center items-center mt-2 p-2 w-28 shadow-lg bg-[#0B2147] text-white font-bold rounded-md cursor-pointer"
                     >
-                        Save
-                    </button>
+                        <BookmarkSquareIcon className="w-6 h-6 mr-2" />
+                        <span>Save</span>
+                    </div>
                 </div>
             )}
-            {educationList.map((education, index) => (
-                <div key={index} className="space-y-3 rounded-lg p-4 bg-gray-100 mt-4">
-                    {Object.entries(education).map(([key, value]) => {
-                        // Hide the 'id' and 'profileId' fields
-                        if (key === 'id' || key === 'profileId') return null;
+            <ul className="flex justify-start flex-wrap">
+                {educationList.map((education, index) => (
+                    <li key={index} className="px-8 py-4 mt-4 mr-6 bg-gray-100 rounded-lg relative">
+                        <button
+                            onClick={() => handleRemoveClick(index)}
+                            className="absolute top-2 right-2 text-white p-1 rounded-full hover:bg-white transition duration-300"
+                        >
+                            <TrashIcon className="w-4 h-4 text-red-700" />
+                        </button>
+                        <button
+                            onClick={() => handleEdit(index)}
+                            className="absolute top-2 right-8 text-white p-1 rounded-full hover:bg-[#77E3C8] transition duration-300"
+                        >
+                            <PencilSquareIcon className="w-4 h-4 text-yellow-700" />
+                        </button>
+                        <ul className="space-y-2">
+                            {Object.entries(education).map(([key, value]) => {
+                                // Hide the 'id' and 'profileId' fields
+                                if (key === 'id' || key === 'profileId') return null;
 
-                        return (
-                            <div key={key} className="flex flex-col justify-start">
-                                <h3 className="font-bold mr-6 capitalize">
-                                    {key.replace('startDate', 'Start Date').replace('endDate', 'End Date')}:
-                                </h3>
-                                <input
-                                    type={key.includes('Date') ? 'date' : 'text'}
-                                    value={value}
-                                    className="text-black w-[60%] col-span-2 border-none rounded-lg"
-                                    disabled
-                                />
-                            </div>
-                        );
-                    })}
+                                return (
+                                    <li key={key} className="flex flex-col">
+                                        <strong className="capitalize">
+                                            {key.replace('startDate', 'Start Date').replace('endDate', 'End Date')}:
+                                        </strong>
+                                        <span className="text-black text-sm ml-2">
+                                            {value}
+                                        </span>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </li>
+                ))}
+            </ul>
+
+            {/* Confirmation Modal */}
+            {showConfirmDelete !== null && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-gray-100 py-8 px-6 rounded-lg shadow-lg">
+                        <p>Are you sure you want to remove this education?</p>
+                        <div className="flex justify-center space-x-4 mt-4">
+                            <button onClick={handleConfirmDelete} className="bg-red-500 text-white px-4 py-2 rounded">
+                                OK
+                            </button>
+                            <button onClick={handleCancelDelete} className="bg-gray-300 px-4 py-2 rounded">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            ))}
+            )}
+
             {feedbackMessage && (
                 <p className={`text-sm mt-2 p-2 border rounded ${feedbackMessage.includes('success') ? 'text-green-800 bg-green-100 border-green-400' : 'text-red-800 bg-red-100 border-red-400'}`}>
                     {feedbackMessage}
