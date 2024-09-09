@@ -33,4 +33,12 @@ public class CustomerReview extends Auditable<UUID> {
     @ManyToOne
     @JoinColumn(name = "matches_id")
     private Matches matches;
+
+    @Enumerated(EnumType.STRING)
+    private ReviewType reviewType;
+
+   public enum ReviewType {
+        EMPLOYEE,
+        FREELANCE
+    }
 }

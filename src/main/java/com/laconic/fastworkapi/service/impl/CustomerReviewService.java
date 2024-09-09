@@ -22,7 +22,7 @@ public class CustomerReviewService implements ICustomerReviewService {
 
     private final IUserRepo userRepo;
 
-    private final IMatchesRepo matchesRepository; // Repository for Matches entity
+    private final IMatchesRepo matchesRepository;
 
     public CustomerReviewService(ICustomerReviewRepo repository, IUserRepo userRepo, IMatchesRepo matchesRepository) {
         this.repository = repository;
@@ -46,6 +46,12 @@ public class CustomerReviewService implements ICustomerReviewService {
     @Override
     public List<CustomerReviewDTO> findAll() {
         return repository.findAll().stream()
+                .map(CustomerReviewDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    private List<CustomerReviewDTO> list(List<CustomerReview> customerReviews) {
+        return customerReviews.stream()
                 .map(CustomerReviewDTO::new)
                 .collect(Collectors.toList());
     }
@@ -77,11 +83,22 @@ public class CustomerReviewService implements ICustomerReviewService {
         customerReview.setProfile(userRepo.findById(dto.getProfileId()).get());
         customerReview.setActive(true);
         customerReview.setNoOfStar(dto.getNoOfStar());
+        customerReview.setReviewType(dto.getReviewType());
 
         if (Objects.nonNull(dto.getMatchId())) {
             customerReview.setMatches(matchesRepository.findById(dto.getMatchId()).get());
         }
         customerReview = repository.save(customerReview);
         return new CustomerReviewDTO(customerReview);
+    }
+
+    public List<CustomerReviewDTO> getReviewForFreelancer(UUID matchId) {
+        List<CustomerReview> reviews = repository.getCustomerReviewByMatchesId(matchId);
+        return list(reviews);
+    }
+
+    @Override
+    public List<CustomerReviewDTO> getReviewBasedOnType(CustomerReview.ReviewType type) {
+        return list(repository.getCustomerReviewByReviewType(type));
     }
 }

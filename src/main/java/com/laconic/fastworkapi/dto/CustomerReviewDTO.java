@@ -28,6 +28,8 @@ public class CustomerReviewDTO implements Serializable {
     private Long profileId;
     private UUID matchId;
 
+    private CustomerReview.ReviewType reviewType;
+
     public CustomerReviewDTO(CustomerReview customerReview) {
         this.id = customerReview.getId();
         this.noOfStar = customerReview.getNoOfStar();
@@ -35,5 +37,6 @@ public class CustomerReviewDTO implements Serializable {
         this.isActive = customerReview.isActive();
         this.profileId = customerReview.getProfile().getId();
         this.matchId = customerReview.getMatches().getId();
+        this.reviewType=customerReview.getReviewType();
     }
 }
