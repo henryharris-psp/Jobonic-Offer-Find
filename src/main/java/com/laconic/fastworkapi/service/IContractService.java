@@ -20,4 +20,6 @@ public interface IContractService {
     List<ContractResponseDTO> listAll(UUID matchId);
 
     List<ContractResponseDTO>  getByProfile(Long profileId);
+
+    Object deleteById(UUID id);
 }

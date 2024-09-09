@@ -46,7 +46,12 @@ public class ContractController {
     }
 
     @GetMapping("/get-by-pofile")
-    private ResponseEntity<?> getContractByProfile(@RequestParam Long profileId){
+    public ResponseEntity<?> getContractByProfile(@RequestParam Long profileId){
         return ResponseEntity.ok(contractService.getByProfile(profileId));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteContract(@PathVariable UUID id){
+        return ResponseEntity.ok(contractService.deleteById(id));
     }
 }

@@ -16,6 +16,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLRestriction("is_active=true")
 public class Contract extends Auditable<UUID> {
 
     @Id
@@ -40,5 +41,6 @@ public class Contract extends Auditable<UUID> {
     @JoinColumn(name = "profile_id")
     private Profile profile;
 
+    private boolean isActive = true;
 }
 
