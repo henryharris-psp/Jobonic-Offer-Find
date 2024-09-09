@@ -35,6 +35,7 @@ public class ContractService implements IContractService {
         contract.setPrice(dto.getPrice());
         contract.setMatches(matchesService.getMatch(dto.getMatchesId()));
         contract.setAcceptBy(dto.getAcceptBy());
+        contract.setActive(true);
 //        contract.setIsFreelancerConfirmed(dto.getIsFreelancerConfirmed());
 //        contract.setIsEmployerConfirmed(dto.getIsEmployerConfirmed());
         contract = contractRepo.save(contract);
