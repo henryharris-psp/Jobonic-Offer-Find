@@ -38,7 +38,7 @@ public class CustomerReview extends Auditable<UUID> {
     private ReviewType reviewType;
 
    public enum ReviewType {
-        EMPLOYEE,
-        FREELANCE
+        EMPLOYER,
+        FREELANCER
     }
 }
