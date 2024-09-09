@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface TaskRepo extends JpaRepository<Task, UUID> {
 
     List<Task> findAllByCheckpoint_Id(UUID id);
+
+    List<Task> findByCheckpointIdIn(List<UUID> uuids);
 }

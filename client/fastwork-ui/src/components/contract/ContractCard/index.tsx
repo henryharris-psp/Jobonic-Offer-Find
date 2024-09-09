@@ -3,12 +3,12 @@ import React, { UIEvent, useEffect, useMemo, useState } from 'react'
 import { PencilIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/24/solid';
 import Button from '../../Button';
 import MilestoneFormModal from './MilestoneFormModal';
-import { Contract, Milestone, TailwindSizes } from '@/types/general';
+import { Contract, Milestone, TailwindSizes, Task } from '@/types/general';
 import { useChat } from '@/contexts/chat';
 import SafeInput, { SafeInputChangeEvent } from '../../SafeInput';
 import { RootState } from '@/store';
 import { useSelector } from 'react-redux';
-import matchClient from '@/client/matchClient';
+import httpClient from '@/client/httpClient';
 
 interface ContractCardProps {
     size?: TailwindSizes;
@@ -94,12 +94,21 @@ const ContractCard = ({
 
         const uploadMilestone = async (payload: Milestone) => {
             try {
-                const res = await matchClient.post('milestones', payload);
-                console.log(`Upload successful for object with id ${payload.id}:`, res.data);
+                const res = await httpClient.post('checkpoint', payload);
+                return res.data;
             } catch (error) {
-                console.error(`Upload failed for object with id ${payload.id}:`, error);
+                console.error('error uploading new milestone', error);
             }
         };
+
+        const uploadTask = async (payload: Task) => {
+            try{
+                const res = await httpClient.post('task', payload);
+                console.log(`Upload successful for task id ${payload.id}:`, res.data);
+            } catch (error) {
+                console.log('error uploading new task', error);
+            }
+        }
 
         const handleOnCreateContract = async () => {
             setErrorCheckable(true);
@@ -107,24 +116,39 @@ const ContractCard = ({
             if (inputErrors.length === 0) {
                 setIsSubmitting(true);
         
-                const authUserType: 'freelancer' | 'employer' = activeChatRoom?.freelancer_id === authUser?.profile.id ? 'freelancer' : 'employer';
-
                 try {
-                    const contractRes = await matchClient.post('contracts', {
-                        matchId: activeChatRoom?.match_id,
+                    const contractRes = await httpClient.post('contract', {
+                        matchesId: activeChatRoom?.match_id,
                         price: inputs.price,
                         deliverable: inputs.deliverable,
-                        createdBy: authUser?.profile?.id,
+                        acceptBy: [
+                            authUser?.profile.id
+                        ],
+                        profileId: authUser?.profile.id
                     });
         
                     const contractId = contractRes.data.id;
 
                     if (milestones.length !== 0) {
+                         //sequential upload for milestones
                         for (const milestone of milestones) {
-                            await uploadMilestone({
+                            const newlyCreatedMilestone = await uploadMilestone({
                                 ...milestone,
-                                contractId
+                                contractId: contractId,
+                                tasks: [],
+                                dueDate: ''
                             });
+
+                            const milestoneId = newlyCreatedMilestone.id;
+
+                            //sequential upload for tasks
+                            for(const task of milestone.tasks){
+                                await uploadTask({
+                                    ...task,
+                                    checkpointId: milestoneId,
+                                    name: task.name
+                                });
+                            }
                         }
                     }
 
@@ -292,7 +316,7 @@ const ContractCard = ({
                                     >
                                         <div className="flex flex-col space-y-1">
                                             <span className="text-sm text-gray-600 font-bold">
-                                                { milestone.name }
+                                                { milestone.title }
                                             </span>
                                             { isEditMode ? (
                                                 <div className="flex flex-row items-center justify-center space-x-1">

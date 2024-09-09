@@ -15,7 +15,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLRestriction("is_active = true")
 public class Task extends Auditable<UUID> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

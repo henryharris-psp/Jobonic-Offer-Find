@@ -5,6 +5,7 @@ import Button from "../../Button";
 import Modal from "../../Modal";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import SafeInput, { SafeInputChangeEvent } from "../../SafeInput";
+import { useChat } from "@/contexts/chat";
 
 interface MilestoneFormModalProps {
     milestone: Milestone | null,
@@ -22,15 +23,16 @@ const MilestoneFormModal = ({
     onUpdated
 }: MilestoneFormModalProps) => {
     const isEdit = milestone !== null;
+    const { activeChatRoom } = useChat();
 
     const newTask: Task = {
         id: uuid(),
-        milestoneId: milestone?.id,
+        checkpointId: milestone?.id,
         name: '',
     }
 
     const [inputs, setInputs] = useState({
-        name: isEdit ? milestone.name : '',
+        title: isEdit ? milestone.title : '',
         price: isEdit ? milestone.price : '',
         dueDate: isEdit ? milestone.dueDate : ''
     });
@@ -43,8 +45,8 @@ const MilestoneFormModal = ({
         const inputErrors = useMemo( () => {
             const errors = [];
             
-            if(!inputs.name){
-                errors.push('name');
+            if(!inputs.title){
+                errors.push('title');
             }
 
             if(!inputs.price){
@@ -98,7 +100,13 @@ const MilestoneFormModal = ({
                     ...inputs,
                     id: isEdit ? milestone.id : uuid(),
                     price: Number(inputs.price),
-                    tasks
+                    tasks,
+
+                    //not_required
+                    serviceId: activeChatRoom?.service_id,
+                    matchId: activeChatRoom?.match_id,
+                    numberOfHoursCompleted: 0,
+                    description: "not_required",
                 }
 
                 isEdit ? onUpdated(submitData) : onAdded(submitData);
@@ -125,12 +133,12 @@ const MilestoneFormModal = ({
                         <SafeInput
                             type="text"
                             placeholder="Milestone name"
-                            name="name"
-                            value={inputs.name}
+                            name="title"
+                            value={inputs.title}
                             onChange={handleInputChange}
                             errors={[
                                 {
-                                    show: errorCheckable && inputErrors.includes('name'),
+                                    show: errorCheckable && inputErrors.includes('title'),
                                     msg: 'Required'
                                 }
                             ]}

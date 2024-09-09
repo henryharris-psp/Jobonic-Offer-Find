@@ -11,8 +11,6 @@ import { supabase } from "@/config/supabaseClient";
 import { useSearchParams } from "next/navigation";
 import ChatRoomComponent from "@/components/chat/ChatRoom";
 import httpClient from "@/client/httpClient";
-import axios from "axios";
-import matchClient from "@/client/matchClient";
 
 const ChatPage = () => {
     //catch url params
@@ -69,11 +67,17 @@ const ChatPage = () => {
                         const serviceId = service.id;
 
                         //create match on main db
-                        const matchRes = await matchClient.post('matches', {
-                            service_id: serviceId,
-                            freelancer_id: freelancerId,
-                            employer_id: employerId,
-                            status: 'enquiring'
+                        const matchRes = await httpClient.post('matches', {
+                            serviceId: serviceId,
+                            profileId: freelancerId,
+                            employeeId: employerId,
+                            status: "ENQUIRING",
+
+                            //not_required
+                            deliverable: "not_required",
+                            paymentTotal: 0,
+                            paymentMode: "MILESTONE",
+                            numberOfCheckPoint: 0
                         });
                         const { id: matchId } = matchRes.data;
 

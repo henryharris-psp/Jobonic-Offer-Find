@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef} from "react";
-import { PencilSquareIcon } from "@heroicons/react/24/outline";
+import { BookmarkSquareIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
 import { RootState } from "@/store";
 import httpClient from "@/client/httpClient";
 import { useSelector } from "react-redux";
@@ -113,10 +113,10 @@ const Skills = () => {
 
     return (
         <section className="flex flex-col w-[60%] justify-start ml-16 mt-4 pb-4">
-            <div className="flex space-x-3 justify-start items-center">
-                <h2 className="text-2xl font-bold text-gray-900">Skills</h2>
+            <div className="flex space-x-3 justify-start items-center mb-6 animate-pulse">
+                <h2 className="text-2xl font-bold text-cyan-950">Skills</h2>
                 <PencilSquareIcon
-                    className="w-6 h-6 cursor-pointer"
+                    className="w-6 h-6 cursor-pointer text-yellow-700"
                     onClick={() => setIsEditing(!isEditing)}
                 />
             </div>
@@ -127,13 +127,13 @@ const Skills = () => {
                         {selectedSkills.map((skill) => (
                             <div
                                 key={skill.id}
-                                className={`bg-gray-200 text-gray-800 px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-300 flex items-center space-x-2`}
+                                className={`bg-gray-100 text-cyan-950 px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-300 flex items-center space-x-2`}
                                 onClick={() => removeSkill(skill)}
                             >
-                                <span>{skill.name}</span>
+                                <span className="text-cyan-950 font-bold">{skill.name}</span>
                                 <button
                                     onClick={() => removeSkill(skill)}
-                                    className="text-red-500 hover:text-red-700"
+                                    className="text-red-500 hover:text-red-700 font-bold border-sm border-gray-500 rounded-full"
                                 >
                                     ×
                                 </button>
@@ -148,7 +148,7 @@ const Skills = () => {
                             onChange={(e) => setSearchTerm(e.target.value)}
                             onFocus={() => setShowDropdown(true)}
                             onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
-                            className="mb-4 border border-gray-300 rounded-lg w-full p-4"
+                            className="mb-2 rounded-lg border-none bg-gray-100 shadow-lg w-full p-4"
                         />
                         {showDropdown && filteredSkills.length > 0 && (
                             <div
@@ -170,21 +170,22 @@ const Skills = () => {
                             </div>
                         )}
                     </div>
-                    <button
+                    <div
                         onClick={handleSave}
-                        className="bg-[#0B2147] hover:bg-[#E1824F] text-white font-bold py-2 rounded-lg w-64 mt-4 mb-4"
+                        className="flex justify-center items-center mt-2 p-2 w-28 shadow-lg bg-[#0B2147] text-white font-bold rounded-md cursor-pointer"
                     >
-                        Save
-                    </button>
+                       <BookmarkSquareIcon className="w-6 h-6 mr-2" />
+                       <span>Save</span>
+                    </div>
                 </>
             ) : (
                 <div className="flex flex-wrap gap-2 mt-4 mb-4">
                     {selectedSkills.map((skill) => (
                         <div
                             key={skill.id}
-                            className="bg-gray-200 text-gray-800 px-3 py-1 rounded-lg flex items-center space-x-2"
+                            className="bg-gray-100 text-cyan-950 px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-300 flex items-center space-x-2"
                         >
-                            <span>{skill.name}</span> {/* Display skill name */}
+                            <span className="text-cyan-950 font-bold">{skill.name}</span> {/* Display skill name */}
                             <button
                                 onClick={() => removeSkill(skill)}
                                 className="text-red-500 hover:text-red-700"

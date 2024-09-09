@@ -5,6 +5,7 @@ import com.laconic.fastworkapi.dto.UserProfileDTO;
 import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
+import com.laconic.fastworkapi.entity.Profile;
 
 import java.util.List;
 
@@ -24,4 +25,6 @@ public interface IProfileService {
     ProfileDTO getByUserId(Long userId);
 
     UserProfileDTO getUserProfileDto(Long id,String name);
+
+    Profile getByRepo(Long id);
 }

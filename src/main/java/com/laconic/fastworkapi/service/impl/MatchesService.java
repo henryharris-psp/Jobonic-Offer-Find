@@ -34,10 +34,13 @@ public class MatchesService implements IMatchesService {
         var service = this.serviceRepo.findById(matchesDTO.getServiceId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
                         matchesDTO.getServiceId().toString()));
-
+        var employee = this.userRepo.findById(matchesDTO.getEmployeeId())
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
+                        matchesDTO.getProfileId().toString()));
         var match = EntityMapper.mapToEntity(matchesDTO, Matches.class);
         match.setProfile(user);
         match.setService(service);
+        match.setEmployeeId(employee);
 
         var savedMatch = this.matchesRepo.save(match);
         return EntityMapper.mapToEntity(savedMatch, MatchesDTO.class);
@@ -54,12 +57,15 @@ public class MatchesService implements IMatchesService {
         var service = this.serviceRepo.findById(matchesDTO.getServiceId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
                         matchesDTO.getServiceId().toString()));
-
+        var employee = this.userRepo.findById(matchesDTO.getEmployeeId())
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
+                        matchesDTO.getProfileId().toString()));
         existingMatch.setProfile(user);
         existingMatch.setService(service);
+        existingMatch.setEmployeeId(employee);
         existingMatch.setPaymentTotal(matchesDTO.getPaymentTotal());
-//        existingMatch.setNumberOfCheckpoints(matchesDTO.getNumberOfCheckpoints());
-//        existingMatch.setNumberOfCheckpointsLeft(matchesDTO.getNumberOfCheckpoints());
+        existingMatch.setNumberOfCheckpoints(matchesDTO.getNumberOfCheckpoints());
+        existingMatch.setNumberOfCheckpointsLeft(matchesDTO.getNumberOfCheckpoints());
         existingMatch.setPaymentMode(matchesDTO.getPaymentMode());
 
         var updatedMatch = this.matchesRepo.save(existingMatch);

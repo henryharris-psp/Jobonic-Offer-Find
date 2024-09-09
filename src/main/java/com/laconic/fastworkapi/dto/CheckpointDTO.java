@@ -23,6 +23,7 @@ public class CheckpointDTO implements Serializable {
     private UUID id;
     private UUID serviceId;
     private UUID matchId;
+    private UUID contractId;
     private double price;
     private String title;
     private int numberOfHoursCompleted;
@@ -43,6 +44,7 @@ public class CheckpointDTO implements Serializable {
         this.title = checkpoint.getTitle();
         this.numberOfHoursCompleted = checkpoint.getNumberOfHoursCompleted();
         this.description = checkpoint.getDescription();
+        this.contractId=checkpoint.getContract().getId();
         try {
             this.tasks = checkpoint.getTasks();
         } catch (IOException e) {

@@ -6,6 +6,7 @@ import com.laconic.fastworkapi.entity.Checkpoint;
 import com.laconic.fastworkapi.exception.NotFoundException;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.ICheckpointRepo;
+import com.laconic.fastworkapi.repo.IContractRepo;
 import com.laconic.fastworkapi.repo.IMatchesRepo;
 import com.laconic.fastworkapi.repo.IServiceRepo;
 import com.laconic.fastworkapi.service.ICheckpointService;
@@ -21,11 +22,13 @@ public class CheckpointService implements ICheckpointService {
     private final ICheckpointRepo checkpointRepo;
     private final IServiceRepo serviceRepo;
     private final IMatchesRepo matchesRepo;
+    private final IContractRepo contractRepo;
 
-    public CheckpointService(ICheckpointRepo checkpointRepo, IServiceRepo serviceRepo, IMatchesRepo matchesRepo) {
+    public CheckpointService(ICheckpointRepo checkpointRepo, IServiceRepo serviceRepo, IMatchesRepo matchesRepo, IContractRepo contractRepo) {
         this.checkpointRepo = checkpointRepo;
         this.serviceRepo = serviceRepo;
         this.matchesRepo = matchesRepo;
+        this.contractRepo = contractRepo;
     }
 
 //    @Override
@@ -72,6 +75,7 @@ public class CheckpointService implements ICheckpointService {
         checkpoint.setPrice(checkpointDTO.getPrice());
         checkpoint.setNumberOfHoursCompleted(checkpointDTO.getNumberOfHoursCompleted());
         checkpoint.setDescription(checkpointDTO.getDescription());
+        checkpoint.setContract(contractRepo.findById(checkpointDTO.getContractId()).get());
         try {
             checkpoint.setTasks(checkpointDTO.getTasks()); // Set tasks using JSON conversion
         } catch (IOException e) {
@@ -95,7 +99,7 @@ public class CheckpointService implements ICheckpointService {
         var service = this.serviceRepo.findById(checkpointDTO.getServiceId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
                         checkpointDTO.getServiceId().toString()));
-
+        existingCheckpoint.setContract(contractRepo.findById(checkpointDTO.getContractId()).get());
         existingCheckpoint.setService(service);
         existingCheckpoint.setPrice(checkpointDTO.getPrice());
         existingCheckpoint.setNumberOfHoursCompleted(checkpointDTO.getNumberOfHoursCompleted());
@@ -132,5 +136,15 @@ public class CheckpointService implements ICheckpointService {
     public Checkpoint getCheckpoint(UUID id) {
         return this.checkpointRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.CHECKPOINT, "id",
                 id.toString()));
+    }
+
+    @Override
+    public List<Checkpoint> getCheckPointByMatchesId(UUID matchesId) {
+        return checkpointRepo.findCheckpointByMatchesId(matchesId);
+    }
+
+    @Override
+    public List<Checkpoint> getCheckPointByContractIdIn(List<UUID> contractId) {
+        return checkpointRepo.findCheckpointByContractIdIn(contractId);
     }
 }

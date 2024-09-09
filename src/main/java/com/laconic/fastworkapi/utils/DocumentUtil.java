@@ -8,7 +8,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,19 +26,19 @@ public class DocumentUtil {
         }
     }
 
-    public static String getDocumentDestination(String filePath, String id, String documentType,
-                                                boolean isDeleted) {
-        Date date = new Date();
+    public static String getDocumentDestination(String filePath, String id, String documentType, boolean isDeleted) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1; // Months are zero-based
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        String fileDirectory = year + "\\" + month + "\\" + day + "\\";
-        if (isDeleted)
-            return String.format("/%s/%s/deleted/%s/%s/document/", filePath, fileDirectory, documentType, id);
-        return String.format("%s/%s/%s/%s/document/", filePath, fileDirectory, documentType, id);
+        String fileDirectory = year + "/" + month + "/" + day + "/";
+
+        if (isDeleted) {
+            return Paths.get(filePath, fileDirectory, "deleted", documentType, id, "document").toString();
+        }
+        return Paths.get(filePath, fileDirectory, documentType, id, "document").toString();
     }
+
 
     public static String getFileExtension(MultipartFile file) {
         String fileName = file.getOriginalFilename();
@@ -49,18 +51,29 @@ public class DocumentUtil {
         return null;
     }
 
+//    public static void createFile(String path, String fileName, MultipartFile multipartFile) throws Exception {
+//        File f = new File(path);
+//        if (!f.exists()) {
+//            f.mkdirs();
+//        }
+//        f = new File(path + fileName);
+//        try (FileOutputStream fileOutputStream = new FileOutputStream(f);) {
+//            fileOutputStream.write(multipartFile.getBytes());
+//        } catch (FileNotFoundException e) {
+//            throw new FileNotFoundException(AppMessage.DOCUMENT_NOT_FOUND);
+//        }
+//    }
+
     public static void createFile(String path, String fileName, MultipartFile multipartFile) throws Exception {
-        File f = new File(path);
-        if (!f.exists()) {
-            f.mkdirs();
-        }
-        f = new File(path + fileName);
-        try (FileOutputStream fileOutputStream = new FileOutputStream(f);) {
-            fileOutputStream.write(multipartFile.getBytes());
-        } catch (FileNotFoundException e) {
-            throw new FileNotFoundException(AppMessage.DOCUMENT_NOT_FOUND);
+        Path filePath = Paths.get(path, fileName);
+        try {
+            Files.createDirectories(filePath.getParent()); // Create parent directories if they don't exist
+            Files.write(filePath, multipartFile.getBytes()); // Write the file
+        } catch (IOException e) {
+            throw new IOException(AppMessage.DOCUMENT_NOT_FOUND, e);
         }
     }
+
 
     public static void moveFile(String source, String destination) throws Exception {
         // creating deleted folder to store all deleted files

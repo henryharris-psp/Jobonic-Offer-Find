@@ -16,24 +16,30 @@ export interface PageLink {
 
 export interface Task {
     id: string | number,
-    milestoneId?: string | number,
+    checkpointId?: string | number,
     name: string
 }
 
 export interface Milestone {
     id: string | number,
     contractId?: string | number,
-    name: string,
-    tasks: Task[],
+    title: string,
     dueDate: string,
-    price: number
+    price: number,
+    tasks: Task[],
+
+    //not_required
+    serviceId?: string | number,
+    matchId?: string | number,
+    numberOfHoursCompleted?: number,
+    description?: string,
 }
 
 export interface Contract {
     id: string | number,
     price: number,
     deliverable: string,
-    accepted_by: string[] | number[],
+    acceptBy: string[] | number[],
     milestones: Milestone[],
 }
 

@@ -5,9 +5,10 @@ import ContractCard from '@/components/contract/ContractCard';
 import Button from '@/components/Button';
 import { ArrowPathIcon, CheckIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
 import Modal from '@/components/Modal';
-import matchClient from '@/client/matchClient';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import httpClient from '@/client/httpClient';
+import { Contract } from '@/types/general';
 
 interface ContractCardWithLoadingProps {
     contractId: string | number,
@@ -25,14 +26,15 @@ const ContractCardWithLoading = ({
     const { authUser } = useSelector((state: RootState) => state.auth );
     const { sendMessage } = useChat();
     const [isLoading, setIsLoading] = useState(false);
-    const [contract, setContract] = useState(null);
+    const [contract, setContract] = useState<Contract | null>(null);
     const [showContractModal, setShowContractModal] = useState(false);
 
     //TODO: move to RTK client
     const fetchContract = async () => {
         setIsLoading(true);
         try{
-            const res = await matchClient.get(`contracts/${contractId}`);
+            //get_contract
+            const res = await httpClient.get(`contract/${contractId}`);
             setContract(res.data);
         } catch (error) {
             console.log('error fetching contract', error);
@@ -48,14 +50,21 @@ const ContractCardWithLoading = ({
     //methods
         //accept_contract
         const handleOnClickAccept = async () => {
-            if(confirm("Are you sure to accept contract?")){
-                try{
-                    await matchClient.put(`contracts/${contractId}/accept`, {
-                        acceptedBy: authUser?.profile?.id
-                    });
-                    await sendMessage('text', acceptContractMsg);
-                } catch (error) {
-                    console.log('error', error);
+            if(contract){
+                if(confirm("Are you sure to accept contract?")){
+                    try{
+                        //on_accept_contract
+                        await httpClient.put(`contract/${contractId}`, {
+                            matchesId: contract.matchesId,
+                            price: contract.price,
+                            deliverable: contract.deliverable,
+                            profileId: contract.profileId,
+                            acceptBy: [...contract.acceptBy, authUser?.profile?.id],
+                        });
+                        await sendMessage('text', acceptContractMsg);
+                    } catch (error) {
+                        console.log('error', error);
+                    }
                 }
             }
         }

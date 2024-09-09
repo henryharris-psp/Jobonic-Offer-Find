@@ -33,6 +33,10 @@ public class Matches extends Auditable<UUID> {
     @JoinColumn(name = "profile_id")
     private Profile profile;
 
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    private Profile employeeId;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matches", orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Checkpoint> checkpoints;
 
@@ -42,10 +46,10 @@ public class Matches extends Auditable<UUID> {
     @Builder.Default
     private double paymentTotal = 0;
 
-    //    @Builder.Default
-//    private int numberOfCheckpoints = 0;
-//    @Builder.Default
-//    private int numberOfCheckpointsLeft = 0;
+    @Builder.Default
+    private int numberOfCheckpoints = 0;
+    @Builder.Default
+    private int numberOfCheckpointsLeft = 0;
     @Enumerated(EnumType.STRING)
     private PaymentMode paymentMode;
 
