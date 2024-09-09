@@ -132,7 +132,7 @@ export default function CreateProfile(): React.ReactNode {
         };
 
         try {
-            const response = await httpClient.post(`user`, userData);
+            const response = await httpClient.post(`/user`, userData);
             console.log('User created successfully:', response.data);
         } catch (error) {
             if (axios.isAxiosError(error)) {
