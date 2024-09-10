@@ -51,7 +51,7 @@ public class AttachmentController {
         return this.attachmentService.getProposalAttachments(proposalId);
     }
 
-    @GetMapping("/proposal")
+    @GetMapping("/checkpoint")
     public List<AttachmentDTO> getCheckpointAttachments(@RequestParam UUID checkPointId) {
         return this.attachmentService.getCheckPointAttachments(checkPointId);
     }
