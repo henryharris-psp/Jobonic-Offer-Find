@@ -51,6 +51,11 @@ public class AttachmentController {
         return this.attachmentService.getProposalAttachments(proposalId);
     }
 
+    @GetMapping("/proposal")
+    public List<AttachmentDTO> getCheckpointAttachments(@RequestParam UUID checkPointId) {
+        return this.attachmentService.getCheckPointAttachments(checkPointId);
+    }
+
     @Operation(summary = APIDocsHelper.AttachmentAPI.REMOVE_ATTACHMENT)
     @DeleteMapping
     public String remove(@RequestParam UUID id) throws Exception {
@@ -67,6 +72,11 @@ public class AttachmentController {
     @GetMapping(value = "/show",produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Resource> showFile(@RequestParam UUID id) throws IOException {
         return this.attachmentService.showFile(id);
+    }
+
+    @PostMapping("/check-point/status")
+    public ResponseEntity<?> updateStatus(@RequestParam UUID checkPointId,@RequestParam Boolean status){
+        return ResponseEntity.ok(attachmentService.updateStatus(checkPointId,status));
     }
 
 }

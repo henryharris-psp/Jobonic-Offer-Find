@@ -32,4 +32,6 @@ public class Attachment  extends Auditable<UUID>{
     @Enumerated(EnumType.STRING)
     private DocumentType documentType;
     private boolean isActive = true;
+    private UUID checkPointId;
+    private Boolean status;
 }

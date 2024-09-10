@@ -14,4 +14,5 @@ public interface IAttachmentRepo extends JpaRepository<Attachment, UUID> {
     List<Attachment> findAllByUserId(Long userId);
 
     List<Attachment> findAllByProposalId(UUID proposalId);
+    List<Attachment> findAllByCheckPointId(UUID checkPointId);
 }

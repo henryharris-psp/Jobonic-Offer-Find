@@ -24,4 +24,8 @@ public interface IAttachmentService {
     ResponseEntity<Resource> download(UUID id) throws IOException;
 
     ResponseEntity<Resource> showFile(UUID id) throws IOException;
+
+    List<AttachmentDTO> getCheckPointAttachments(UUID checkPointId);
+
+    Object updateStatus(UUID checkPointId, Boolean status);
 }
