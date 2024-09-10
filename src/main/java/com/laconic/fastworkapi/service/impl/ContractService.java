@@ -35,6 +35,7 @@ public class ContractService implements IContractService {
         contract.setPrice(dto.getPrice());
         contract.setMatches(matchesService.getMatch(dto.getMatchesId()));
         contract.setAcceptBy(dto.getAcceptBy());
+        contract.setActive(true);
 //        contract.setIsFreelancerConfirmed(dto.getIsFreelancerConfirmed());
 //        contract.setIsEmployerConfirmed(dto.getIsEmployerConfirmed());
         contract = contractRepo.save(contract);
@@ -54,16 +55,13 @@ public class ContractService implements IContractService {
 
     @Override
     public ContractResponseDTO getById(UUID id) {
-        // Step 1: Get the contract by id and map it to DTO
         ContractResponseDTO contractResponseDTO = new ContractResponseDTO(getContract(id));
 
-        // Step 2: Fetch checkpoints (milestones) by contractId and map them to DTOs
         List<CheckResponseDTO> checkResponseDTOs = checkpointService.getCheckPointByContractIdIn(Collections.singletonList(contractResponseDTO.getId()))
                 .stream()
                 .map(CheckResponseDTO::new)
                 .toList();
 
-        // Step 3: Fetch tasks by checkpointIds and map them to DTOs
         List<UUID> checkpointIds = checkResponseDTOs.stream()
                 .map(CheckResponseDTO::getId)
                 .toList();
@@ -73,7 +71,6 @@ public class ContractService implements IContractService {
                 .map(TaskDTO::new)
                 .toList();
 
-        // Step 4: Combine tasks with respective checkpoints
         Map<UUID, List<TaskDTO>> tasksGroupedByCheckpoint = taskDTOs.stream()
                 .collect(Collectors.groupingBy(TaskDTO::getCheckpointId));
 
@@ -82,10 +79,8 @@ public class ContractService implements IContractService {
             checkResponseDTO.setTasks(relatedTasks);
         }
 
-        // Step 5: Set the milestones (checkpoints) in the contract response
         contractResponseDTO.setMilestones(checkResponseDTOs);
 
-        // Step 6: Return the fully combined contract response
         return contractResponseDTO;
     }
 
@@ -116,7 +111,7 @@ public class ContractService implements IContractService {
 
     }
 
-    public List<ContractResponseDTO> getContractDto(List<ContractResponseDTO> contractResponseDTOs){
+    public List<ContractResponseDTO> getContractDto(List<ContractResponseDTO> contractResponseDTOs) {
         // Step 2: Fetch checkpoints by contract IDs and map them to DTOs
         List<UUID> contractIds = contractResponseDTOs.stream()
                 .map(ContractResponseDTO::getId)
@@ -137,8 +132,6 @@ public class ContractService implements IContractService {
                 .map(TaskDTO::new)
                 .toList();
 
-        // Step 4: Combine data
-        // Create a map of checkpointId -> list of TaskDTO for easy lookup
         Map<UUID, List<TaskDTO>> tasksGroupedByCheckpoint = taskDTOs.stream()
                 .collect(Collectors.groupingBy(TaskDTO::getCheckpointId));
 
@@ -170,5 +163,13 @@ public class ContractService implements IContractService {
                 .map(ContractResponseDTO::new)
                 .toList();
         return getContractDto(contractResponseDTOs);
+    }
+
+    @Override
+    public Object deleteById(UUID id) {
+        var contract = getContract(id);
+        contract.setActive(false);
+        contractRepo.save(contract);
+        return "success";
     }
 }

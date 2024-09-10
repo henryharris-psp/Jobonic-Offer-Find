@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.dto;
 
+import com.laconic.fastworkapi.entity.CustomerReview;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,17 @@ public class CustomerReviewDTO implements Serializable {
     private boolean isActive = true;
 
     private Long profileId;
+    private UUID matchId;
 
-    private UUID matchesId;
+    private CustomerReview.ReviewType reviewType;
+
+    public CustomerReviewDTO(CustomerReview customerReview) {
+        this.id = customerReview.getId();
+        this.noOfStar = customerReview.getNoOfStar();
+        this.review = customerReview.getReview();
+        this.isActive = customerReview.isActive();
+        this.profileId = customerReview.getProfile().getId();
+        this.matchId = customerReview.getMatches().getId();
+        this.reviewType=customerReview.getReviewType();
+    }
 }

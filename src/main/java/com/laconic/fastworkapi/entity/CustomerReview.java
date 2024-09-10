@@ -30,8 +30,15 @@ public class CustomerReview extends Auditable<UUID> {
 
     private boolean isActive = true;
 
-    //add relation with matches(contract)
     @ManyToOne
     @JoinColumn(name = "matches_id")
     private Matches matches;
+
+    @Enumerated(EnumType.STRING)
+    private ReviewType reviewType;
+
+   public enum ReviewType {
+        EMPLOYER,
+        FREELANCER
+    }
 }
