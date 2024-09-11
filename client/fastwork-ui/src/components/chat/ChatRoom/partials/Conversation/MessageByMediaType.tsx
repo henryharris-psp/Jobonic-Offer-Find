@@ -1,4 +1,4 @@
-import { MediaType, Message } from "@/types/chat";
+import { MediaType, Message, SystemMessageType } from "@/types/chat";
 import { ReactNode } from "react";
 import MessageBubble from "./MessageBubble";
 import { useSelector } from "react-redux";
@@ -7,11 +7,29 @@ import InChatContractCard from "./InChatContractCard";
 import InChatServiceOfferCard from "./InChatServiceOfferCard";
 import Image from "next/image";
 import { useChat } from "@/contexts/chat";
+import InChatPaymentRequestCard from "./InChatPaymentRequestCard";
+import InChatSystemMessage from "./InChatSystemMessage";
 
 const MessageByMediaType = (message: Message) => {
     const { activeChatRoom } = useChat();
     const { authUser } = useSelector((state: RootState) => state.auth );
     const isSentByAuthUser = message.sender_id === authUser?.profile?.id;
+
+    const systemMessageMap: Record<SystemMessageType, ReactNode> = {
+        contract_accepted: 
+            <InChatSystemMessage
+                message="Greate! You both accepted the contract."
+            />,
+        payment_request: activeChatRoom?.authUserType === 'freelancer'
+            ? <InChatSystemMessage
+                message="Please wait for employer&apos;s payment"
+            />
+            : <InChatPaymentRequestCard/>,
+        payment_success: 
+            <InChatSystemMessage
+                message="Payment is successfully transfered to Jobonic. Jobonic will sent to freelancer for each successful milestone."
+            />,
+    }
     
     const messageComponentMap: Record<MediaType, ReactNode> = {
         text: 
@@ -31,6 +49,7 @@ const MessageByMediaType = (message: Message) => {
                 serviceId={message.content}
                 isSentByAuthUser={isSentByAuthUser}
             />,
+        system: systemMessageMap[message.content as SystemMessageType]
     };
 
     return (
@@ -39,7 +58,7 @@ const MessageByMediaType = (message: Message) => {
             className="flex flex-row w-full items-end"
         >
             <div className={`min-w-8 ${!isSentByAuthUser ? 'mx-2' : 'mx-1'}`}>
-                { !isSentByAuthUser ? (
+                { !isSentByAuthUser && message.media_type !== 'system' ? (
                     <Image
                         src="/avatar.svg"
                         alt="Profile Pic"
@@ -50,12 +69,13 @@ const MessageByMediaType = (message: Message) => {
                 ) : ''}
             </div>
             <div className={`flex flex-1 ${
+                message.media_type === "system" ? "justify-center" :
                 (isSentByAuthUser ? "justify-end" : "justify-start")
             }`}>
                 { messageComponentMap[message.media_type] || '' }
             </div>
             <div className={`min-w-8 ${isSentByAuthUser ? 'mx-2' : 'mx-1'}`}>
-                { isSentByAuthUser ? (
+                { isSentByAuthUser && message.media_type !== 'system' ? (
                     <Image
                         src="/avatar.svg"
                         alt="Profile Pic"

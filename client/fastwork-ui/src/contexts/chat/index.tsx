@@ -13,7 +13,7 @@ export interface ChatState {
     showProgressList: boolean;
     chatRooms: ChatRoom[];
     activeChatRoom: ChatRoom | null,
-    isSending: MediaType | null
+    isSending: boolean
 }
 
 const initialState: ChatState = {
@@ -21,7 +21,7 @@ const initialState: ChatState = {
     showProgressList: false,
     chatRooms: [],
     activeChatRoom: null,
-    isSending: null
+    isSending: false
 };
 
 interface ChatContextProps extends ChatState {
@@ -226,7 +226,7 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 return null;
             }
         
-            dispatch({ type: 'SET_SENDING_MEDIA', payload: mediaType });
+            dispatch({ type: 'SET_IS_SENDING', payload: true });
         
             try {
                 const { data, error } = await supabase
@@ -249,7 +249,7 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 console.error('Error sending new message:', error);
                 throw error;
             } finally {
-                dispatch({ type: 'SET_SENDING_MEDIA', payload: null });
+                dispatch({ type: 'SET_IS_SENDING', payload: false });
             }
         };             
         

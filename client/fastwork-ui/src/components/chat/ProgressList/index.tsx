@@ -222,8 +222,6 @@ const ProgressList: React.FC = () => {
         setIsCancellationPayoutPopupOpen(false);
     };
 
-    console.log('File is : ', milestones.uploadedFiles);
-
     return (
         <div className="bg-[#E0F7FA] p-4 shadow-md w-[300px] pt-16 max-h-screen overflow-x-auto">
             <h2 className="text-xl font-bold mb-4 text-center">Progress</h2>

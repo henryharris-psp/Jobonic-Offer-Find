@@ -48,12 +48,19 @@ export interface People {
 //     numSold: number;
 // }
 
+
 //new
 export type MediaType = 
     'text' | 
     'image' | 
     'contract' | 
-    'service';
+    'service' | 
+    'system';
+    
+export type SystemMessageType = 
+    'contract_accepted' | 
+    'payment_request' |
+    'payment_success';
 
 export interface Message {
     id: string | number;

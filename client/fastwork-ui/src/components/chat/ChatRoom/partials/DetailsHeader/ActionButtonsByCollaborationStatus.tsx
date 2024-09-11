@@ -22,12 +22,14 @@ const freelancerActionButtonsMap = {
     applied: <WaitingStatus status="Waiting For Confirmation"/>,
     invited: <AcceptInvitationButtons/>,
     signing_contract: <ContractAndPaymentButtons/>,
-    payment_verification: <ContractAndPaymentButtons/>
+    payment_verification: <ContractAndPaymentButtons/>,
+    to_review: <ReviewButtons/>  
 }
 
 const employerActionButtonsMap = {
     enquiring: <InviteButtons/>,
     applied: <PotentialHireButtons/>,
+    invited: <WaitingStatus status="Waiting For Confirmation"/>,
     signing_contract: <ContractAndPaymentButtons/>,
     payment_verification: <ContractAndPaymentButtons/>,
     to_review: <ReviewButtons/>  
@@ -45,7 +47,7 @@ const ActionButtonsByCollaborationStatus = () => {
     let ActionButtonComponent = null;
 
     if(activeChatRoom && activeChatRoom?.authUserType){
-        ActionButtonComponent = actionButtonsMap[activeChatRoom?.authUserType][currentStatus]
+        ActionButtonComponent = actionButtonsMap[activeChatRoom?.authUserType][currentStatus];
     }
 
     return <>{ActionButtonComponent}</>;

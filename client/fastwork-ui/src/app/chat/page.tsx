@@ -105,7 +105,7 @@ const ChatPage = () => {
         };
 
         const handleOnGetNewMessage = async (roomId: number, newMessage: Message) => {
-            addMessage(roomId, newMessage);
+            await addMessage(roomId, newMessage);
 
             //set latest contract
             if(newMessage.media_type === 'contract'){
