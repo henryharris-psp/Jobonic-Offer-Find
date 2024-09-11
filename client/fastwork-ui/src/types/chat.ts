@@ -48,10 +48,12 @@ export interface People {
 //     numSold: number;
 // }
 
-
 //new
-export type MediaType = 'text' | 'image' | 'contract' | 'service';
-
+export type MediaType = 
+    'text' | 
+    'image' | 
+    'contract' | 
+    'service';
 
 export interface Message {
     id: string | number;
@@ -67,9 +69,10 @@ export type CollaborationStatus =
     'applied' |
     'invited' |
     'signing_contract' |
-    'waiting_for_payment' |
-    'to_submit' | 
-    'waiting_for_submission' |
+    'payment_verification' |
+    'to_submit' |
+
+    'to_pay' | 
     'waiting_for_review' |
     'completed' |
     'cancelled';
@@ -99,12 +102,14 @@ export interface ChatRoom {
     freelancer_id: number; //profileId 
     employer_id: number; //profileId
     match_id: number | string;
-    service_id: number | string; //TODO remove
+    service_id: number | string; //TODO: remove
     sender: Profile;
     receiver: Profile;
     service: Service;
     status: FreelancerChatStatus | EmployeerChatStatus
     created_at: string;
     messages: Message[],
-    isNew?: boolean
+    isNew?: boolean,
+    latestContract: Contract,
+    authUserType: 'freelancer' | 'employer'
 }

@@ -10,6 +10,7 @@ export type SafeInputChangeEvent = ChangeEvent<HTMLInputElement> | ChangeEvent<H
 type InputProps = {
     id?: string | undefined;
     name?: string;
+    size?: 'xs' | 'sm';
     type?: 'text' | 'number' | 'password' | 'decimal' | 'textarea';
     title?: string;
     value: string | number;
@@ -25,6 +26,7 @@ type InputProps = {
 const Input = ({
     id,
     name,
+    size = 'xs',
     type = 'text',
     title,
     value,
@@ -82,10 +84,12 @@ const Input = ({
 
             { type === 'textarea' ? (
                 <textarea 
-                    className={`text-sm pl-3 pt-3 rounded-lg placeholder:text-xs placeholder:text-dim-gray focus:outline-none w-full h-14 border 
+                    className={`pl-3 pt-3 rounded-lg placeholder:text-xs placeholder:text-dim-gray focus:outline-none w-full h-14 border 
+                        text-${size}
                         ${showError ? 'border-red-500' : 'border-gray-300' }
                         ${disabled ? 'border-none outline-none' : 'focus:outline'}
                     `}
+                    placeholder={placeholder}
                     value={ value ? value.toString() : ''}
                     onChange={onChange}
                     readOnly={disabled}
@@ -96,7 +100,8 @@ const Input = ({
                         id={id}
                         name={name}
                         inputMode={inputMode}
-                        className={`text-sm w-full h-10 border-gray-300 min-w-0 pl-3 placeholder:text-xs rounded-lg border
+                        className={`w-full h-10 border-gray-300 min-w-0 pl-3 placeholder:text-xs rounded-lg border
+                            text-${size}
                             ${showError ? 'border-red-500' : 'border-gray-300' }
                             ${disabled ? 'border-none outline-none' : 'focus:outline focus:outline-blue-500'}
                         `}

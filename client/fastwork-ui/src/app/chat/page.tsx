@@ -2,7 +2,6 @@
 import React, { Suspense, useCallback, useEffect, useState } from "react";
 import SideDrawer from "@/components/SideDrawer";
 import ChatList from "@/components/chat/ChatList";
-import ProgressList from "@/components/chat/ProgressList";
 import { ChatRoom, Message } from "@/types/chat";
 import { RootState } from "@/store";
 import { useSelector } from "react-redux";
@@ -11,6 +10,8 @@ import { supabase } from "@/config/supabaseClient";
 import { useSearchParams } from "next/navigation";
 import ChatRoomComponent from "@/components/chat/ChatRoom";
 import httpClient from "@/client/httpClient";
+import { fetchContract } from "@/functions/helperFunctions";
+import ProgressList from "@/components/chat/ProgressList";
 
 const ChatPage = () => {
     //catch url params
@@ -18,6 +19,7 @@ const ChatPage = () => {
     const serviceParam = params.get('service');
     
     const { 
+        activeChatRoom,
         chatRooms, 
         setChatRooms, 
         addMessage, 
@@ -34,10 +36,22 @@ const ChatPage = () => {
         setShowChatList,
         setShowProgressList
     } = useChat();
+    const [isLoadingChatRooms, setIsLoadingChatRooms] = useState(false);
 
     //methods
+        const setLatestContract = async (contractId: string | number) => {
+            const latestContract = await fetchContract(contractId);
+            if(latestContract && activeChatRoom) {
+                insertOrUpdateLocalChatRoom({
+                    ...activeChatRoom,
+                    latestContract
+                });
+            }
+        }
+
         //fetch chatrooms from server and create new room if requested chat room is not existed
         const fetchChatRooms = async () => {
+            setIsLoadingChatRooms(true);
             if(authUser){
                 const { data: chatRooms, error } = await supabase
                     .from('chat_rooms')
@@ -52,7 +66,7 @@ const ChatPage = () => {
 
                 const chatRoomsWithData = await loadChatRoomData(chatRooms);
                 setChatRooms(chatRoomsWithData);
-
+                
                 //new chatroom creation 
                 if(serviceParam){
                     const service = JSON.parse(serviceParam);
@@ -85,19 +99,26 @@ const ChatPage = () => {
                         changeChatRoom(newChatRoom);
                     }
                 }
+
+                setIsLoadingChatRooms(false);
             }
         };
 
-        const handleOnGetNewMessage = (roomId: number, newMessage: Message) => {
+        const handleOnGetNewMessage = async (roomId: number, newMessage: Message) => {
             addMessage(roomId, newMessage);
+
+            //set latest contract
+            if(newMessage.media_type === 'contract'){
+                setLatestContract(newMessage.content);
+            }
         }
 
         const handleOnChatRoomChange = async (chatRoom: ChatRoom) => {
             try{
                 const chatRoomsWithData = await loadChatRoomData([chatRoom]);
                 insertOrUpdateLocalChatRoom(chatRoomsWithData[0]);
-            } catch {
-                console.log('error')
+            } catch (error) {
+                console.log('error', error);
             }
         }
 
@@ -109,7 +130,7 @@ const ChatPage = () => {
             }
         }, [authUser]);
 
-    //listen to new message
+    //on receive new message
     useEffect(() => {
         if (authUser && chatRooms.length !== 0) {
             const roomIds = chatRooms.map(e => e.id);
@@ -123,7 +144,7 @@ const ChatPage = () => {
                         event: "INSERT",
                         schema: "public",
                         table: "messages",
-                        // filter: `room_id=in.(${roomIds.join(',')})`, // Listen to only related chat rooms
+                        // filter: `room_id=in.(${roomIds.join(',')})`, //TODO: Listen to only related chat rooms
                     },
                     (payload: { new: Message }) => {
                         handleOnGetNewMessage(payload.new.room_id, payload.new);
@@ -222,7 +243,7 @@ const ChatPage = () => {
                         zStack={9}
                         type={isMobile ? 'front' : 'slide'}
                     >
-                        <ChatList />
+                        <ChatList isLoading={isLoadingChatRooms}/>
                     </SideDrawer>
 
                     {/* resizer */}
@@ -245,7 +266,7 @@ const ChatPage = () => {
                         zStack={9}
                         type={ isMobile || screenSize === 'lg' ? 'front' : 'slide'}
                     >
-                        <ProgressList />
+                        <ProgressList/>
                     </SideDrawer>
                 </>  
             )}

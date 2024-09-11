@@ -1,17 +1,18 @@
 import Image from 'next/image';
 import React, { UIEvent, useEffect, useMemo, useState } from 'react'
 import { PencilIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/24/solid';
-import Button from '../../Button';
 import MilestoneFormModal from './MilestoneFormModal';
 import { Contract, Milestone, TailwindSizes, Task } from '@/types/general';
 import { useChat } from '@/contexts/chat';
-import SafeInput, { SafeInputChangeEvent } from '../../SafeInput';
 import { RootState } from '@/store';
 import { useSelector } from 'react-redux';
 import httpClient from '@/client/httpClient';
+import SafeInput, { SafeInputChangeEvent } from '@/components/SafeInput';
+import Button from '@/components/Button';
 
 interface ContractCardProps {
-    size?: TailwindSizes;
+    title: string,
+    size?: 'xs' | 'sm';
     isEditMode?: boolean;
     contract: Contract | null;
     onClose?: () => void;
@@ -21,17 +22,19 @@ interface ContractCardProps {
 const contractUpdateMessage = `I've just updated the contract. Could you please review it and let me know if you'd like to proceed with it? Thanks!`;
 
 const ContractCard = ({
-    size = '',
+    title,
+    size = 'sm',
     isEditMode = false,
     contract,
     onClose,
     onClickCancel
 }: ContractCardProps) => {
     const { authUser } = useSelector((state: RootState) => state.auth );
-    const { activeChatRoom, sendMessage, updateChatRoom } = useChat();
+    const { activeChatRoom, sendMessage } = useChat();
+    const numberFormater = new Intl.NumberFormat();
 
     const [inputs, setInputs] = useState({
-        price: contract ? contract.price : '',
+        price: contract ? contract.price : activeChatRoom?.service?.price.toString(),
         deliverable: contract ? contract.deliverable : ''
     });
     const [milestones, setMilestones] = useState<Milestone[]>(contract ? contract.milestones : []);
@@ -94,7 +97,10 @@ const ContractCard = ({
 
         const uploadMilestone = async (payload: Milestone) => {
             try {
-                const res = await httpClient.post('checkpoint', payload);
+                const res = await httpClient.post('checkpoint', {
+                    ...payload,
+                    matchId: activeChatRoom?.match_id
+                });
                 return res.data;
             } catch (error) {
                 console.error('error uploading new milestone', error);
@@ -117,6 +123,7 @@ const ContractCard = ({
                 setIsSubmitting(true);
         
                 try {
+                    //create_contract
                     const contractRes = await httpClient.post('contract', {
                         matchesId: activeChatRoom?.match_id,
                         price: inputs.price,
@@ -134,6 +141,7 @@ const ContractCard = ({
                         for (const milestone of milestones) {
                             const newlyCreatedMilestone = await uploadMilestone({
                                 ...milestone,
+                                id: null!,
                                 contractId: contractId,
                                 tasks: [],
                                 dueDate: ''
@@ -145,8 +153,7 @@ const ContractCard = ({
                             for(const task of milestone.tasks){
                                 await uploadTask({
                                     ...task,
-                                    checkpointId: milestoneId,
-                                    name: task.name
+                                    checkpointId: milestoneId
                                 });
                             }
                         }
@@ -192,8 +199,8 @@ const ContractCard = ({
             setShowMilestoneFormModal(false);
         }
 
-        const handleOnMilestoneDelete = (milestoneId: string | number) => {
-            if(confirm('Are you sure want to delete?')){
+        const handleOnMilestoneDelete = (milestoneId: string | number | null) => {
+            if(milestoneId && confirm('Are you sure want to delete?')){
                 setMilestones( prev => prev.filter( milestone => milestone.id !== milestoneId ));
             }
         }
@@ -201,10 +208,10 @@ const ContractCard = ({
     return (
         <>
             <div className="flex flex-col max-h-screen bg-white rounded-2xl overflow-hidden">
-                <div className="flex-1 flex flex-row space-x-2 flex-wrap p-6">
+                <div className={`flex-1 flex flex-row space-x-2 flex-wrap ${size === 'xs' ? 'p-4' : 'p-6'}`}>
 
                     {/* form */}
-                    <div className="flex-1 flex flex-col justify-between min-w-72 space-y-5 overflow-hidden">
+                    <div className="flex-1 flex flex-col justify-between min-w-60 space-y-5 overflow-hidden">
                         <div className="space-y-5">
                             <div className="flex flex-row space-x-3 items-center">
                                 <Image
@@ -214,21 +221,21 @@ const ContractCard = ({
                                     alt="avatar"
                                     className="rounded-full w-14 h-14"
                                 />
-                                <span className="text-2xl font-bold">
-                                    Logo Designer
+                                <span className={`${ size === 'sm' ? 'text-xl' : 'text-lg'} font-bold`}>
+                                    {title}
                                 </span>
                             </div>
                             <div className="flex flex-col space-y-2 mx-1">
                                 <div className="flex flex-row items-center justify-end space-x-1">
                                     <div className="flex w-32">
-                                        <span className="text-sm text-gray-600">
-                                            Price
+                                        <span className={`text-${size} text-gray-600`}>
+                                            Total Price
                                         </span>
                                     </div>
 
                                     <div className="flex flex-row space-x-1 w-full">
                                         <div className="flex items-center justify-center px-3 rounded-lg bg-gray-100">
-                                            <span className="text-gray-600 text-sm">
+                                            <span className={`text-gray-600 text-${size}`}>
                                                 $
                                             </span>
                                         </div>
@@ -236,7 +243,7 @@ const ContractCard = ({
                                             type="decimal"
                                             name="price"
                                             placeholder="eg. 200"
-                                            value={inputs.price}
+                                            value={inputs.price ?? ''}
                                             onChange={handleInputChange}
                                             disabled={!isEditMode}
                                             errors={[
@@ -251,11 +258,12 @@ const ContractCard = ({
 
                                 <div className="flex flex-row items-center justify-end space-x-1">
                                     <div className="flex w-32">
-                                        <span className="text-sm text-gray-600">
+                                        <span className={`text-${size} text-gray-600`}>
                                             Deliverable
                                         </span>
                                     </div>
                                     <SafeInput
+                                        size={size}
                                         type="text"
                                         name="deliverable"
                                         placeholder="eg. 3 set of logo design"
@@ -278,21 +286,21 @@ const ContractCard = ({
                                 <div className="flex flex-row gap-1">
                                     { onClickCancel ? (
                                         <Button
-                                            size="sm"
+                                            size={size}
                                             color="secondary"
                                             title="Cancel"
                                             onClick={onClickCancel}
                                         />
                                     ): ''}
                                     <Button
-                                        size="sm"
+                                        size={size}
                                         title={isSubmitting ? 'Saving...' : 'Save'}
                                         onClick={handleOnCreateContract}
                                         disabled={isSubmitting}
                                     />
                                 </div>
                                 <Button
-                                    size="sm"
+                                    size={size}
                                     color="info"
                                     title="Add MileStone"
                                     icon={<PlusCircleIcon className="size-5"/>}
@@ -305,7 +313,7 @@ const ContractCard = ({
                     {/* milestone */}
                     { milestones.length !== 0 ? (
                         <div 
-                            className={`flex-1 min-w-80 max-h-80 mt-5 overflow-auto ${showScrollShadow ? 'mask-gradient' : ''}`} 
+                            className={`flex-1 min-w-60 max-h-80 mt-5 overflow-auto ${showScrollShadow ? 'mask-gradient' : ''}`} 
                             onScroll={toggleScrollShadow}
                         >
                             <div className="flex flex-1 flex-col space-y-7">
@@ -315,7 +323,7 @@ const ContractCard = ({
                                         className="flex flex-row items-center space-x-5"
                                     >
                                         <div className="flex flex-col space-y-1">
-                                            <span className="text-sm text-gray-600 font-bold">
+                                            <span className={`text-${size} text-gray-600 font-bold`}>
                                                 { milestone.title }
                                             </span>
                                             { isEditMode ? (
@@ -342,7 +350,7 @@ const ContractCard = ({
                                                     className="flex flex-row items-center space-x-2"
                                                 >
                                                     <span className="text-gray-400">•</span>
-                                                    <span className={`mt-1 text-sm text-gray-600`}>
+                                                    <span className={`mt-1 text-${size} text-gray-600`}>
                                                         { task.name }
                                                     </span>
                                                 </div>
@@ -350,15 +358,15 @@ const ContractCard = ({
                                             { milestone.dueDate ? (
                                                 <div className="flex flex-row items-center space-x-2">
                                                     <span className="text-gray-600">•</span>
-                                                    <span className={`mt-1 text-sm text-gray-600`}>
+                                                    <span className={`mt-1 text-${size} text-gray-600`}>
                                                         due by: { milestone.dueDate }
                                                     </span>
                                                 </div>
                                             ) : ''}
                                         </div>
                                         <div className="flex justify-end min-w-12">
-                                            <span className="text-gray-600 text-sm">
-                                                { milestone.price }
+                                            <span className={`text-gray-600 text-${size}`}>
+                                                $ { numberFormater.format(milestone.price) }
                                             </span>
                                         </div>
                                     </div>

@@ -1,21 +1,17 @@
 import React, { useState } from "react";
 import Button from "@/components/Button";
 import { useChat } from "@/contexts/chat";
-import { PaperAirplaneIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import Modal from "@/components/Modal";
+import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import ServiceOfferModal from "@/components/service_card/ServiceOfferModal";
+import Modal from "@/components/Modal";
 
-const inviteMessage = `
-    I have reviewed your work and am impressed with your skills. 
-    I'd like to discuss the possibility of collaborating on a project. 
-    Are you available for a quick chat to explore this further?
-`;
+const applyMessage = 'I am interested in applying for your service offer. Could you share the details on how I can proceed? Here is my service offer card. Thanks!';
 
-const Enquiring = () => {
+const ApplyButtons = () => {
     const { activeChatRoom, sendMessage, updateChatRoom, deleteChatRoom } = useChat();
     const [showServiceSelectionModal, setShowServiceSelectionModal] = useState(false);
 
-    const handleOnClickInvite = async () => {
+    const handleOnClickApply = async () => {
         setShowServiceSelectionModal(true);
     }
 
@@ -29,11 +25,11 @@ const Enquiring = () => {
 
     const handleOnClickService = async (selectedServiceId: string) => {
         try {
-            await sendMessage('text', inviteMessage);
+            await sendMessage('text', applyMessage);
             const newlySentMessage = await sendMessage('service', selectedServiceId);
             if(newlySentMessage){
                 await updateChatRoom(newlySentMessage.room_id, {
-                    status: 'invited'
+                    status: 'applied'
                 });
             }
         } catch (error) {
@@ -52,14 +48,13 @@ const Enquiring = () => {
                     onClick={handleOnClickDecline} 
                 />
                 <Button 
-                    title="Send Invitation" 
-                    icon={<PaperAirplaneIcon className="size-5 font-bold text-bold"/>}
+                    title="Apply Now" 
+                    icon={<CheckIcon className="size-5 font-bold text-bold"/>}
                     iconPositon="start"
                     size="sm"
-                    onClick={handleOnClickInvite} 
+                    onClick={handleOnClickApply} 
                 />
             </div>
-
             <Modal
                 isOpen={showServiceSelectionModal}
                 onClose={() => setShowServiceSelectionModal(false)}
@@ -72,4 +67,4 @@ const Enquiring = () => {
     );
 };
 
-export default Enquiring;
+export default ApplyButtons;

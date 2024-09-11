@@ -4,7 +4,7 @@ import { ChatRoom, MediaType, Message } from "@/types/chat";
 import { supabase } from "@/config/supabaseClient";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { getProfileByProfileId } from "@/functions/helperFunctions";
+import { fetchContract, getProfileByProfileId } from "@/functions/helperFunctions";
 import { Profile } from "@/types/users";
 import httpClient from "@/client/httpClient";
 
@@ -68,9 +68,27 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             }
             
             //to switch active chat room
-            const changeChatRoom = (chatRoom: ChatRoom ) => {
-                dispatch({ type: 'SET_ACTIVE_CHAT_ROOM', payload: chatRoom });
-            };
+            const changeChatRoom = async (chatRoom: ChatRoom) => {
+                const authUserType: 'freelancer' | 'employer' = chatRoom?.freelancer_id === authUser?.profile.id ? 'freelancer' : 'employer';
+                const newChatRoom = {
+                    ...chatRoom,
+                    authUserType
+                }
+
+                const contractMessages = chatRoom.messages.filter(message => message.media_type === 'contract');
+                
+                if (contractMessages.length) {
+                    const latestContractMessage = contractMessages.reduce((max, message) => message.id > max.id ? message : max, contractMessages[0]);
+                    const latestContract = await fetchContract(latestContractMessage.content);
+            
+                    dispatch({
+                        type: 'SET_ACTIVE_CHAT_ROOM',
+                        payload: latestContract ? { ...newChatRoom, latestContract } : newChatRoom
+                    });
+                } else {
+                    dispatch({ type: 'SET_ACTIVE_CHAT_ROOM', payload: chatRoom });
+                }
+            };            
             
             //to append new message in local chatroom
             const addMessage = async (chatRoomId: number, newMessage: Message) => {            

@@ -1,10 +1,11 @@
+import { TailwindSizes } from "@/types/general";
 import { ReactNode,MouseEventHandler } from "react";
 
 interface ButtonProps {
     title: string;
     color?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info';
     fullWidth?: boolean;
-    size?: "xs" | "sm" | "lg" | "xl" | "2xl" | "3xl";
+    size?: TailwindSizes | '2xs';
     icon?: ReactNode;
     iconPositon?: "start" | "end";
     disabled?: boolean,
@@ -44,9 +45,10 @@ const Button = ({
 }: ButtonProps) => {
     return (
         <button
-            className={`flex items-center justify-center space-x-1 whitespace-nowrap text-center shadow px-3 py-2 rounded-lg text-white 
+            className={`flex items-center justify-center space-x-1 whitespace-nowrap text-center shadow rounded-lg text-white 
                 ${size ? `text-${size}` : ''}
-                ${fullWidth ? "flex-1" : ''}    
+                ${size === '2xs' ? 'px-2 py-1' : 'px-3 py-2' }
+                ${fullWidth ? 'flex-1 w-full' : ''}    
                 ${disabled ? "opacity-60 active:opacity-60 cursor-not-allowed" : "hover:opacity-90 active:opacity-80"}
                 bg-[${colorMap[color].main}]
             `}

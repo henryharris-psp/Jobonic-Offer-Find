@@ -1,10 +1,10 @@
 import { useChat } from "@/contexts/chat";
 import { RootState } from "@/store";
 import Image from "next/image";
-import React, { useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
-import ActionButtons from "./ActionButtons";
 import StringParser from "@/functions/stringParsers";
+import ActionButtonsByCollaborationStatus from "./ActionButtonsByCollaborationStatus";
 
 const DetailsHeader = () => {
     const { authUser } = useSelector((state: RootState) => state.auth);
@@ -38,7 +38,7 @@ const DetailsHeader = () => {
                     <div className="flex flex-col space-y-2">
                         <span className="text-xs text-gray-500 font-semibold whitespace-nowrap text-start">
                             {authUser?.profile.id === activeChatRoom?.freelancer_id
-                                ? "is finding service"
+                                ? "is looking for"
                                 : "is offering service"}
                         </span>
                         <span className="text-xl font-bold">
@@ -54,7 +54,7 @@ const DetailsHeader = () => {
 
                 {/* action buttons */}
                 <div className="flex flex-1 justify-center items-center">
-                    <ActionButtons />
+                    <ActionButtonsByCollaborationStatus />
                 </div>
             </div>
             <div className="flex items-center justify-center p-3">

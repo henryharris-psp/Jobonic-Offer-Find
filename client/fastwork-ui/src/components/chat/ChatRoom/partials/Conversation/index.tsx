@@ -28,8 +28,8 @@ const Conversation = () => {
             {messages.length !== 0 ? (
                 <div
                     ref={messagesScreenRef}
-                    className="flex flex-col space-y-3 py-5 min-h-full"
-                >
+                    className="flex flex-col space-y-3 py-5 min-h-full justify-end"
+                >   
                     {messages.map((message: Message) => (
                         <MessageByMediaType
                             key={message.id}
