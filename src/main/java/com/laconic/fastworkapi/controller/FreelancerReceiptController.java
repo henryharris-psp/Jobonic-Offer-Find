@@ -20,7 +20,7 @@ public class FreelancerReceiptController {
         return ResponseEntity.ok(freelancerReceiptService.saveFreelancerReceiptPayment(receiptDTO));
     }
 
-    @GetMapping
+    @GetMapping("/get-by-check-point")
     public ResponseEntity<?> getFreelancerFromCheckPoint(@RequestParam UUID checkPointId){
         return ResponseEntity.ok(freelancerReceiptService.getFreelancerReceiptFromCheckPoint(checkPointId));
     }
