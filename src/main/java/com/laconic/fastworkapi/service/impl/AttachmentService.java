@@ -66,6 +66,7 @@ public class AttachmentService implements IAttachmentService {
                 .fileSize(size)
                 .documentType(attachmentDTO.getDocumentType())
                 .isActive(true)
+                .status(false)
                 .build();
         DocumentUtil.createFile(location, fileName, attachmentDTO.getFile());
         return new AttachmentDTO(this.attachmentRepo.save(attachment));
