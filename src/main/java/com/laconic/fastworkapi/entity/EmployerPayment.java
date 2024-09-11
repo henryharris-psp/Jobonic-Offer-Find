@@ -21,9 +21,9 @@ public class EmployerPayment  extends Auditable<UUID> {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private UUID serviceId;
-    @OneToOne
+    @ManyToOne
     private Profile client;
-    @OneToOne
+    @ManyToOne
     private Profile freelancer;
     private double amount = 0;
     private double remainingAmount = 0;
