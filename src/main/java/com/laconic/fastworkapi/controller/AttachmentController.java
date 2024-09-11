@@ -74,7 +74,7 @@ public class AttachmentController {
         return this.attachmentService.showFile(id);
     }
 
-    @PostMapping("/check-point/status")
+    @PutMapping("/check-point/status")
     public ResponseEntity<?> updateStatus(@RequestParam UUID checkPointId,@RequestParam Boolean status){
         return ResponseEntity.ok(attachmentService.updateStatus(checkPointId,status));
     }

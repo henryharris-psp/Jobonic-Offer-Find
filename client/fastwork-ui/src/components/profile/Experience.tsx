@@ -174,7 +174,7 @@ const ExperienceComponent = () => {
             </button>
             <button
               onClick={() => handleEdit(index)}
-              className="absolute top-2 right-10 text-white p-1  rounded-full hover:bg-[#77E3C8] transition duration-300"
+              className="absolute top-2 right-8 text-white p-1  rounded-full hover:bg-[#77E3C8] transition duration-300"
             >
               <PencilSquareIcon className="w-4 h-4 text-yellow-700" />
             </button>

@@ -8,12 +8,20 @@ module.exports = {
         "./node_modules/flowbite/**/*.js",
     ],
     theme: {
-        extend: {},
+        extend: {
+            keyframes: {
+                marquee: {
+                    '0%': { transform: 'translateX(100%)' },
+                    '100%': { transform: 'translateX(-100%)' },
+                },
+            },
+            animation: {
+                marquee: 'marquee 10s linear infinite',
+            },
+        },
     },
-    plugins: [flowbite],
     plugins: [
-        // require("daisyui"),
-        // require("flowbite/plugin"),
+        flowbite,
         ({ addUtilities }) => {
             const newUtilities = {
                 ".mask-gradient": {
