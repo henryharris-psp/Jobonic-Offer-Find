@@ -2,10 +2,7 @@ package com.laconic.fastworkapi.entity;
 
 import com.laconic.fastworkapi.entity.audit.Auditable;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -15,6 +12,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class FreelancerReceipt extends Auditable<UUID> {
 
     @Id
@@ -23,4 +21,8 @@ public class FreelancerReceipt extends Auditable<UUID> {
     private UUID paymentId;
     private LocalDate releaseDate;
     private double releaseAmount = 0;
+    private String toAccountNumber;
+    private UUID profileId;
+    private UUID serviceId;
+    private UUID checkPointId;
 }

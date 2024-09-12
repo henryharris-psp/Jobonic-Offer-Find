@@ -7,8 +7,18 @@ import { useChat } from "@/contexts/chat";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import StringParser from "@/functions/stringParsers";
+import Image from "next/image";
+import ChatListSkeleton from "./partials/ChatListSkeleton";
 
-const ChatList = () => {
+interface ChatListProps {
+    isLoading: boolean
+}
+
+const skeletonCount = Array.from({ length: 4 }, (_, index) => index);
+
+const ChatList = ({ 
+    isLoading 
+}: ChatListProps) => {
     const { authUser } = useSelector((state: RootState) => state.auth );
     const { activeChatRoom, changeChatRoom, chatRooms } = useChat();
     const [roleFilter, setRoleFilter] = useState('All');
@@ -84,45 +94,55 @@ const ChatList = () => {
                     </form>
                 </div>
 
-                { chatRooms.length === 0 ? (
-                    <div className="flex flex-col items-center space-y-3">
-                        <span className="text-gray-400 mt-5 text-sm">You have no chat</span>
+                { isLoading ? (
+                    <div className="flex flex-col space-y-2">
+                        { skeletonCount.map( id =>
+                            <ChatListSkeleton key={id}/>
+                        )}
                     </div>
                 ) : (
-                    <div className="flex flex-col space-y-2">
-                    { chatRooms.map((chatRoom) => (
-                        <div
-                            key={chatRoom.id}
-                            className={`flex p-2 hover:bg-sky-200 rounded-md justify-between cursor-pointer ${
-                                chatRoom.id === activeChatRoom?.id ? 'bg-sky-200' : ''
-                            }`}
-                            onClick={() => handleOnChatRoomChange(chatRoom)}
-                        >
-                            <div className="flex items-center space-x-2">
-                                <img
-                                    className="w-10 h-10 rounded-full mr-4"
-                                    src={chatRoom.receiver?.image ?? '/avatar.svg'}
-                                    alt="receiver_avatar"
-                                />
-                                <div className="flex flex-col space-y-1">
-                                    <span className="font-bold">{`${chatRoom.receiver?.firstName ?? 'No Profile' }`}</span>
-                                    <span className="text-xs text-gray-500">
-                                        {authUser?.profile.id === chatRoom?.freelancer_id ? 'is finding service' : 'is offering service'}
-                                    </span>
-                                </div>
-                            </div>
-                            { chatRoom.status ? (
-                                <div className="flex items-center">
-                                    <div className="bg-[#0B2147] text-center text-white px-2 py-1 text-xs rounded-md">
-                                        <span className="capitalize">
-                                            { stringParser.replaceUnderscoreWithSpace(chatRoom.status)}
+                    chatRooms.length === 0 ? (
+                        <div className="flex flex-col items-center space-y-3">
+                            <span className="text-gray-400 mt-5 text-sm">You have no chat</span>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col space-y-2">
+                        { chatRooms.map((chatRoom) => (
+                            <div
+                                key={chatRoom.id}
+                                className={`flex p-2 hover:bg-sky-200 rounded-md justify-between cursor-pointer ${
+                                    chatRoom.id === activeChatRoom?.id ? 'bg-sky-200' : ''
+                                }`}
+                                onClick={() => handleOnChatRoomChange(chatRoom)}
+                            >
+                                <div className="flex items-center space-x-2">
+                                    <Image
+                                        className="w-10 h-10 rounded-full mr-4"
+                                        src={chatRoom.receiver?.image ?? '/avatar.svg'}
+                                        alt="receiver_avatar"
+                                        width={100}
+                                        height={100}
+                                    />
+                                    <div className="flex flex-col space-y-1">
+                                        <span className="font-bold">{`${chatRoom.receiver?.firstName ?? 'No Profile' }`}</span>
+                                        <span className="text-xs text-gray-500">
+                                            {authUser?.profile.id === chatRoom?.freelancer_id ? 'is finding service' : 'is offering service'}
                                         </span>
                                     </div>
                                 </div>
-                            ) : ''}
+                                { chatRoom.status ? (
+                                    <div className="flex items-center">
+                                        <div className="bg-[#0B2147] text-center text-white px-2 py-1 text-xs rounded-md">
+                                            <span className="capitalize">
+                                                { stringParser.replaceUnderscoreWithSpace(chatRoom.status)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ) : ''}
+                            </div>
+                        ))}
                         </div>
-                    ))}
-                    </div>
+                    )
                 )}
             </div>
         </div>

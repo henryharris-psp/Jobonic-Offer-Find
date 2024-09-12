@@ -6,6 +6,7 @@ import CancelledServiceCard from "@/components/CancelledServiceCard";
 import CategoryCard from "@/components/CategoryCard";
 import SafeInput, { SafeInputChangeEvent } from "@/components/SafeInput";
 import StarRating from "@/components/StarRating";
+import ToReviewCard from "@/components/ToReviewCard";
 import React, { useState } from "react";
 
 //TODO: only for testing purpose
@@ -16,6 +17,9 @@ const ComponentGallery = () => {
     const handleOnInputChange = (e: SafeInputChangeEvent) => {
         setValue(e.currentTarget.value);
     }
+    
+    //start component
+    const [star, setStar] = useState(0);
 
     return (
         <div className="flex flex-col space-y-5 m-5">
@@ -64,7 +68,12 @@ const ComponentGallery = () => {
                 ]}
             />
 
-            <StarRating/>
+            <StarRating
+                size="6xl"
+                value={star}
+                totalStars={5}
+                onChange={(value) => setStar(value)}
+            />
 
             <SafeInput
                 type="decimal"
@@ -89,7 +98,19 @@ const ComponentGallery = () => {
                 onDeclineAndSendMessage={() => console.log('onDeclineAndSendMessage')}
             /> */}
 
-            <span>Dev version - 1.0.0</span>
+            <ToReviewCard
+                title="review"
+                earned="33"
+                description={[
+                    {
+                        avatar: 'logo.svg',
+                        username: 'lynn',
+                        review: 'Review  123'
+                    }
+                ]}
+            />
+
+            <span>Dev version - 1.0.2</span>
         </div>
     );
 };

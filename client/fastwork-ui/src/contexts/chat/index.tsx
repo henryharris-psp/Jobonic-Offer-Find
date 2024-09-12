@@ -1,10 +1,10 @@
-import React, { ReactNode, createContext, useContext, useReducer } from "react";
+import React, { ReactNode, createContext, useContext, useEffect, useMemo, useReducer, useState } from "react";
 import reducer from "./reducer";
 import { ChatRoom, MediaType, Message } from "@/types/chat";
 import { supabase } from "@/config/supabaseClient";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { getProfileByProfileId } from "@/functions/helperFunctions";
+import { fetchContract, getProfileByProfileId } from "@/functions/helperFunctions";
 import { Profile } from "@/types/users";
 import httpClient from "@/client/httpClient";
 
@@ -13,7 +13,7 @@ export interface ChatState {
     showProgressList: boolean;
     chatRooms: ChatRoom[];
     activeChatRoom: ChatRoom | null,
-    isSending: MediaType | null
+    isSending: boolean
 }
 
 const initialState: ChatState = {
@@ -21,7 +21,7 @@ const initialState: ChatState = {
     showProgressList: false,
     chatRooms: [],
     activeChatRoom: null,
-    isSending: null
+    isSending: false
 };
 
 interface ChatContextProps extends ChatState {
@@ -45,7 +45,34 @@ const ChatContext = createContext<ChatContextProps | undefined>(undefined);
 
 const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const { authUser } = useSelector((state: RootState) => state.auth ); 
+    const { authUser } = useSelector((state: RootState) => state.auth );
+
+    const [latestContract, setLatestContract] = useState(null);
+
+    useEffect( () => {
+        const gg = async (contractId: string) => {
+            const contract = await fetchContract(contractId);
+            setLatestContract(contract);
+        }
+
+        const { activeChatRoom } = state;
+        if (activeChatRoom && activeChatRoom.messages.length !== 0) {
+            const contractMessages = activeChatRoom.messages.filter(
+                (message) => message.media_type === 'contract'
+            );
+
+            if (contractMessages.length !== 0) {
+                const latestContractMessage = contractMessages.reduce((latest, message) => {
+                    return message.id > latest.id ? message : latest;
+                }, contractMessages[0]);
+
+                const latestContractId = latestContractMessage.content;
+                if (latestContractId) {
+                    gg(latestContractId);
+                }
+            }
+        }
+    }, [state.activeChatRoom]);
 
     //methods
         //local actions
@@ -68,9 +95,21 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             }
             
             //to switch active chat room
-            const changeChatRoom = (chatRoom: ChatRoom ) => {
-                dispatch({ type: 'SET_ACTIVE_CHAT_ROOM', payload: chatRoom });
-            };
+            const changeChatRoom = async (chatRoom: ChatRoom) => {
+                const contractMessages = chatRoom.messages.filter(message => message.media_type === 'contract');
+                
+                if (contractMessages.length) {
+                    const latestContractMessage = contractMessages.reduce((max, message) => message.id > max.id ? message : max, contractMessages[0]);
+                    const latestContract = await fetchContract(latestContractMessage.content);
+            
+                    dispatch({
+                        type: 'SET_ACTIVE_CHAT_ROOM',
+                        payload: latestContract ? { ...chatRoom, latestContract } : chatRoom
+                    });
+                } else {
+                    dispatch({ type: 'SET_ACTIVE_CHAT_ROOM', payload: chatRoom });
+                }
+            };            
             
             //to append new message in local chatroom
             const addMessage = async (chatRoomId: number, newMessage: Message) => {            
@@ -85,6 +124,8 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                     const newChatRooms = state.chatRooms.map(chatRoom =>
                         chatRoom.id === chatRoomId ? updatedChatRoom : chatRoom
                     );
+
+                    console.log('new message', newChatRooms);
             
                     // Update local state with newly new messsage
                     dispatch({ type: 'SET_CHAT_ROOMS', payload: newChatRooms });
@@ -208,7 +249,7 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 return null;
             }
         
-            dispatch({ type: 'SET_SENDING_MEDIA', payload: mediaType });
+            dispatch({ type: 'SET_IS_SENDING', payload: true });
         
             try {
                 const { data, error } = await supabase
@@ -231,7 +272,7 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 console.error('Error sending new message:', error);
                 throw error;
             } finally {
-                dispatch({ type: 'SET_SENDING_MEDIA', payload: null });
+                dispatch({ type: 'SET_IS_SENDING', payload: false });
             }
         };             
         
@@ -251,7 +292,9 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 createNewChatRoom,
                 updateChatRoom,
                 deleteChatRoom,
-                sendMessage
+                sendMessage,
+
+                latestContract
             }}
         >
             {children}

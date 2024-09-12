@@ -1,5 +1,5 @@
 import httpClient from '@/client/httpClient';
-import { Category } from '@/types/general';
+import { Category, Contract } from '@/types/general';
 import { Service, ServiceApiResponse, ServicePayload } from '@/types/service';
 import axios from 'axios';
 
@@ -209,7 +209,6 @@ export const getCategoryName = async (categoryId: string) => {
     ): Promise<Category[] | undefined>  => {
         try {
             const res = await httpClient.get('/category/all', { signal });
-            console.log('Category',res);
             return res.data;
         } catch (error: any) {
             if (error.name === 'AbortError') {
@@ -219,3 +218,22 @@ export const getCategoryName = async (categoryId: string) => {
             }
         }
     };
+
+    export const fetchContract = async (
+        contractId: string | number,
+        signal?: AbortSignal
+    ): Promise<Contract | undefined> => {
+        try {
+            //get_contract
+            const res = await httpClient.get(`contract/${contractId}`, { signal });
+            return res.data;
+        } catch (error: any) {
+            if (error.name === 'AbortError') {
+                console.log('Fetch contract aborted');
+            } else {
+                console.error('Fetch contract error:', error);
+            }
+        }
+    }
+
+

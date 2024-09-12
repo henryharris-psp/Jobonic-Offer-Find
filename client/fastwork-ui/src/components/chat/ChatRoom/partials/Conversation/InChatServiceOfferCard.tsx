@@ -2,20 +2,20 @@ import httpClient from '@/client/httpClient';
 import ServiceOfferCard from '@/components/service_card/ServiceOfferCard';
 import { Service } from '@/types/service';
 import React, { useEffect, useState } from 'react'
-import Applied from '../DetailsHeader/ActionButtons/employerActionButtonsMap/Applied';
 import { useChat } from '@/contexts/chat';
 import MediaSkeleton from './MediaSkeleton';
-import Invited from '../DetailsHeader/ActionButtons/freelancerActionButtonsMap/Invited';
+import PotentialHireButtons from '../action_buttons/PotentialHireButtons';
+import AcceptInvitationButtons from '../action_buttons/AcceptInvitationButtons';
 
-interface ServiceOfferCardWithLoadingProps {
+interface InChatServiceOfferCardProps {
     serviceId: string,
     isSentByAuthUser: boolean
 }
 
-const ServiceOfferCardWithLoading = ({
+const InChatServiceOfferCard = ({
     serviceId,
     isSentByAuthUser
-}: ServiceOfferCardWithLoadingProps) => {
+}: InChatServiceOfferCardProps) => {
     const { activeChatRoom } = useChat();
     const [service, setService] = useState<Service | null>(null);
 
@@ -37,7 +37,7 @@ const ServiceOfferCardWithLoading = ({
         !service ? (
             <MediaSkeleton/>
         ) : (
-            <div className="flex flex-col mx-2 bg-[#CFEDF4] rounded-xl">
+            <div className="flex flex-col bg-[#CFEDF4] rounded-xl">
                 <ServiceOfferCard
                     size="sm"
                     id={service.id}
@@ -53,13 +53,13 @@ const ServiceOfferCardWithLoading = ({
                 />
                 { !isSentByAuthUser && activeChatRoom?.status === 'applied' ? (
                     <div className="flex justify-end mb-4 mx-5">
-                        <Applied/>
+                        <PotentialHireButtons/>
                     </div>
                 ) : ''}
 
                 { !isSentByAuthUser && activeChatRoom?.status === 'invited' ? (
                     <div className="flex justify-end mb-4 mx-5">
-                        <Invited/>
+                        <AcceptInvitationButtons/>
                     </div>
                 ) : ''}
             </div>
@@ -67,4 +67,4 @@ const ServiceOfferCardWithLoading = ({
     )
 }
 
-export default ServiceOfferCardWithLoading
+export default InChatServiceOfferCard

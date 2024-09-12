@@ -1,5 +1,5 @@
 import { ChatRoom } from "@/types/chat";
-import { ChatState, MediaType } from ".";
+import { ChatState } from ".";
 
 type ChatAction =
     | { type: 'TOGGLE_CHAT_LIST'; payload: boolean }
@@ -7,7 +7,7 @@ type ChatAction =
     | { type: 'SET_CHAT_ROOMS'; payload: ChatRoom[] }
     | { type: 'SET_ACTIVE_CHAT_ROOM'; payload: ChatRoom | null }
     | { type: 'ADD_NEW_CHAT_ROOM'; payload: ChatRoom }
-    | { type: 'SET_SENDING_MEDIA'; payload: MediaType | null }
+    | { type: 'SET_IS_SENDING'; payload: boolean }
 
 const reducer = (state: ChatState, action: ChatAction): ChatState => {
     switch (action.type) {
@@ -26,7 +26,7 @@ const reducer = (state: ChatState, action: ChatAction): ChatState => {
         case 'ADD_NEW_CHAT_ROOM': {
             return { ...state, chatRooms: [action.payload, ...state.chatRooms] };
         }
-        case 'SET_SENDING_MEDIA': {
+        case 'SET_IS_SENDING': {
             return { ...state, isSending: action.payload };
         }
         default:

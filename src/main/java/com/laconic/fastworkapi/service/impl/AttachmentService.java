@@ -8,13 +8,10 @@ import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.IAttachmentRepo;
 import com.laconic.fastworkapi.service.IAttachmentService;
 import com.laconic.fastworkapi.utils.DocumentUtil;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +48,7 @@ public class AttachmentService implements IAttachmentService {
             case SERVICE -> attachmentDTO.getServiceId();
             case PROPOSAL -> attachmentDTO.getProposalId();
             case RESUME -> attachmentDTO.getUserId();
+            case CHECKPOINT -> attachmentDTO.getCheckPointId();
         };
         var location = DocumentUtil.getDocumentDestination(filePath, id.toString(),
                 attachmentDTO.getDocumentType().name(), false);
@@ -61,12 +59,14 @@ public class AttachmentService implements IAttachmentService {
                 .serviceId(attachmentDTO.getServiceId() != null ? attachmentDTO.getServiceId() : null)
                 .userId(attachmentDTO.getUserId() != null ? attachmentDTO.getUserId() : null)
                 .proposalId(attachmentDTO.getProposalId() != null ? attachmentDTO.getProposalId() : null)
+                .checkPointId(attachmentDTO.getCheckPointId() != null ? attachmentDTO.getCheckPointId() : null)
                 .contentType(attachmentDTO.getFile().getContentType())
                 .location(location)
                 .extension(extension)
                 .fileSize(size)
                 .documentType(attachmentDTO.getDocumentType())
                 .isActive(true)
+                .status(false)
                 .build();
         DocumentUtil.createFile(location, fileName, attachmentDTO.getFile());
         return new AttachmentDTO(this.attachmentRepo.save(attachment));
@@ -153,4 +153,16 @@ public class AttachmentService implements IAttachmentService {
 
     }
 
+    @Override
+    public List<AttachmentDTO> getCheckPointAttachments(UUID checkPointId) {
+        return this.attachmentRepo.findAllByCheckPointId(checkPointId).stream().map(AttachmentDTO::new).toList();
+    }
+
+    @Override
+    public Object updateStatus(UUID checkPointId, Boolean status) {
+        List<Attachment> a = attachmentRepo.findAllByCheckPointId(checkPointId);
+        a.forEach(b -> b.setStatus(status));
+        attachmentRepo.saveAll(a);
+        return "success";
+    }
 }

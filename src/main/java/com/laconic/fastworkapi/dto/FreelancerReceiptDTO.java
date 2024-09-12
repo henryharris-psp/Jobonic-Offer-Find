@@ -22,6 +22,11 @@ public class FreelancerReceiptDTO implements Serializable {
     private UUID paymentId;
     private LocalDate releaseDate;
     private double releaseAmount = 0;
+    private String toAccountNumber;
+    private UUID profileId;
+    private UUID serviceId;
+    private UUID checkPointId;
+
 
     public FreelancerReceiptDTO(FreelancerReceipt freelancerReceipt) {
         this.id = freelancerReceipt.getId();

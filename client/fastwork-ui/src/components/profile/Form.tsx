@@ -35,9 +35,19 @@ const FinancialForm = () => {
   const [showConfirmDelete, setShowConfirmDelete] = useState<number | null>(null);
   const [showNewEntry, setShowNewEntry] = useState(false);
 
-  useEffect(() => {
-    fetchFinancialData();
-  }, [authUser?.profile.id]);
+  const resetForm = () => {
+    setFormData({
+      cardNumber: '',
+      cardExpiryDate: '',
+      bankAccountNumber: '',
+      walletAddress: '',
+      cryptoType: '',
+      paymentMethod: 'CREDIT_CARD',
+      receivePaymentMethod: 'CREDIT_CARD',
+    });
+    setFeedbackMessage('');
+  };
+  
 
   const fetchFinancialData = async () => {
     const profileId = authUser?.profile?.id;
@@ -47,7 +57,7 @@ const FinancialForm = () => {
     }
 
     try {
-      const response = await httpClient.get(`/user-financials?id=${profileId}`);
+      const response = await httpClient.get(`/user?id=${profileId}`);
       setFinancialList(response.data);
     } catch (error) {
       console.error('Failed to fetch financial data:', error);
@@ -61,6 +71,16 @@ const FinancialForm = () => {
       [id as FinancialFormFields]: value,
     }));
   };
+
+  useEffect(() => {
+    if (authUser?.profile.id) {
+      fetchFinancialData();
+    }
+  }, [authUser?.profile.id]);
+
+  useEffect(() => {
+    console.log('Updated otherInfo List : ', financialList);
+  }, [financialList]);
 
   const handleSave = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -88,29 +108,18 @@ const FinancialForm = () => {
       } else {
         // Add new financial entry
         const response = await httpClient.put(`/user?id=${authUser?.profile.id}`, newFinancialData);
-        setFinancialList((prev) => [...prev, response.data]); // Directly add new data to the state
+        setFinancialList((prev) => Array.isArray(prev) ? [...prev, response.data] : [response.data]); // Directly add new data to the state
         setFeedbackMessage('Other information saved successfully!');
       }
 
       setShowNewEntry(false);
-      resetForm();
       setEditIndex(null);
+      resetForm();
+
     } catch (error) {
       console.error('Error saving financial data:', error);
       setFeedbackMessage('Failed to save financial information.');
     }
-  };
-
-  const resetForm = () => {
-    setFormData({
-      cardNumber: '',
-      cardExpiryDate: '',
-      bankAccountNumber: '',
-      walletAddress: '',
-      cryptoType: '',
-      paymentMethod: 'CREDIT_CARD',
-      receivePaymentMethod: 'CREDIT_CARD',
-    });
   };
 
   const handleRemoveClick = (index: number) => {
@@ -198,29 +207,43 @@ const FinancialForm = () => {
         </form>
       ) : (
         <div className="p-4 border rounded-lg bg-gray-100 shadow-sm">
-          <ul className="list-disc pl-5">
-            {financialList.map((data, index) => (
-              <li key={index} className="mb-2 flex justify-between items-center">
-                <div>
-                  {Object.entries(data).map(([key, value]) => (
-                    <div key={key}>
-                      <strong>{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</strong>
-                      <span className="ml-2">{String(value)}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex space-x-2">
-                  <PencilSquareIcon
-                    className="w-5 h-5 cursor-pointer text-yellow-700"
-                    onClick={() => handleEdit(index)}
-                  />
-                  <TrashIcon
-                    className="w-5 h-5 cursor-pointer text-red-700"
-                    onClick={() => handleRemoveClick(index)}
-                  />
-                </div>
-              </li>
-            ))}
+          <ul className="list-disc pl-5 relative">
+            {Array.isArray(financialList) && financialList.length > 0 ? (
+              financialList.map((data, index) => (
+                <li key={index} className="mb-2 flex justify-between items-center">
+                  <div>
+                    {/* Log each data item */}
+                    {Object.entries(data)
+                      .filter(([key]) =>
+                        ['cardNumber', 'cardExpiryDate', 'bankAccountNumber', 'walletAddress', 'cryptoType', 'paymentMethod', 'receivePaymentMethod']
+                          .includes(key))
+                      .map(([key, value]) => (
+                        <div key={key}>
+                          <strong>{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</strong>
+                          <span className="ml-2">{String(value)}</span>
+                        </div>
+                      ))}
+                  </div>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleRemoveClick(index)}
+                      className="absolute top-2 right-2 text-white p-1 rounded-full hover:bg-white transition duration-300"
+                    >
+                      <TrashIcon className="w-5 h-5 cursor-pointer text-red-700" />
+                    </button>
+                    <button
+                      onClick={() => handleEdit(index)}
+                      className="absolute top-2 right-10 text-white p-1 rounded-full hover:bg-[#77E3C8] transition duration-300"
+                    >
+                      <PencilSquareIcon className="w-5 h-5 cursor-pointer text-yellow-700" />
+                    </button>
+                  </div>
+                </li>
+              ))
+            ) : (
+              <p>No other information data available.</p> // Provide a message if financialList is empty
+            )}
+
           </ul>
         </div>
       )}
