@@ -33,6 +33,7 @@ const ProgressList: React.FC = () => {
 
     const { authUser } = useSelector((state: RootState) => state.auth);
     const { activeChatRoom } = useChat();
+    const numberFormater = new Intl.NumberFormat();
     const authUserType: 'freelancer' | 'employer' = activeChatRoom?.freelancer_id === authUser?.profile.id ? 'freelancer' : 'employer';
 
     useEffect(() => {
@@ -169,12 +170,18 @@ const ProgressList: React.FC = () => {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, milestoneId: string) => {
         if (e.target.files && e.target.files.length > 0) {
             setSelectedFile(e.target.files[0]);
-
-            // Update state to reflect that a file is selected for this milestone
-            setSubmittedMilestones((prev) => new Set(prev).add(milestoneId));
+    
+            // Ensure the milestone ID is correctly added to the set
+            setSubmittedMilestones((prev) => {
+                const newSet = new Set(prev);
+                newSet.add(milestoneId);
+                console.log('Added milestone ID to submittedMilestones:', milestoneId);
+                console.log('Current submittedMilestones Set:', newSet);
+                return newSet;
+            });
         }
     };
-
+    
     const handleSubmit = async (milestoneId: string) => {
         if (selectedFile) {
             try {
@@ -211,7 +218,7 @@ const ProgressList: React.FC = () => {
             const allAttachmentsSubmitted = attachments.every((attachment: { status: boolean }) => attachment.status);
 
             console.log('Attachment Status : ', allAttachmentsSubmitted);
-            
+
             if (!allAttachmentsSubmitted) {
                 await httpClient.put('/attachment/check-point/status', null, {
                     params: {
@@ -235,22 +242,40 @@ const ProgressList: React.FC = () => {
     };
 
     const handlePayAll = () => {
-        // Calculate total amount to be paid
-        const total = milestones
-            .filter((milestone) => isSubmitted.includes(milestone.id))
-            .reduce((acc, milestone) => acc + milestone.price, 0);
 
-        // Set total amount and open PaymentCard modal
+        console.log('isSubmitted array : ', isSubmitted);
+        const submittedMilestonesSet = new Set(isSubmitted);
+        const filteredMilestones = milestones.filter((milestone) =>
+            isSubmitted.includes(milestone.id)
+        );
+
+        console.log('Filtered Milestones for Pay All:', filteredMilestones);
+
+        const total = filteredMilestones.reduce((acc, milestone) => {
+            console.log('Adding Price for Milestone:', milestone.title, milestone.price);
+            return acc + (milestone.price || 0);
+        }, 0);
+
+        console.log('Total Amount for Pay All:', total);
         setTotalAmount(total);
         setIsPaymentCardOpen(true);
     };
 
     const handlePaySelected = () => {
-        // Calculate total amount for selected milestones
-        const total = milestones
-            .filter((milestone) => submittedMilestones.has(milestone.id))
-            .reduce((acc, milestone) => acc + milestone.price, 0);
-        // Set total amount and open PaymentCard modal
+        
+        const submittedMilestonesSet = new Set(isSubmitted);
+        const filteredMilestones = milestones.filter((milestone) =>
+            submittedMilestonesSet.has(milestone.id)
+        );
+
+        console.log('Filtered Milestones for Pay Selected:', filteredMilestones);
+
+        const total = filteredMilestones.reduce((acc, milestone) => {
+            console.log('Adding Price for Milestone:', milestone.title, milestone.price);
+            return acc + (milestone.price || 0);
+        }, 0);
+
+        console.log('Total Amount for Pay Selected:', total);
         setTotalAmount(total);
         setIsPaymentCardOpen(true);
     };
@@ -345,7 +370,7 @@ const ProgressList: React.FC = () => {
                                                 <div key={index} className="flex items-center space-x-2 ml-4 mb-4">
                                                     <a
                                                         download
-                                                        className="text-blue-500 underline text-xs cursor-pointer w-[50%]"
+                                                        className="text-blue-500 underline text-xs cursor-pointer w-32"
                                                     >
                                                         {file.name}
                                                     </a>
@@ -373,7 +398,7 @@ const ProgressList: React.FC = () => {
                                                 <a
 
                                                     download
-                                                    className="text-blue-500 underline text-xs cursor-pointer w-[50%]"
+                                                    className="text-blue-500 underline text-xs cursor-pointer w-36"
                                                 >
                                                     {file.name}
                                                 </a>
@@ -401,8 +426,6 @@ const ProgressList: React.FC = () => {
                     onPaySelected={handlePaySelected}
                 />
             )}
-
-
             <Modal
                 isOpen={isPaymentCardOpen}
                 onClose={() => setIsPaymentCardOpen(false)}
