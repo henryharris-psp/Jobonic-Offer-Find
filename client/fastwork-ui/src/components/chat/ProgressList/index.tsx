@@ -261,22 +261,11 @@ const ProgressList: React.FC = () => {
         setIsPaymentCardOpen(true);
     };
 
-    const handlePaySelected = () => {
-        
-        const submittedMilestonesSet = new Set(isSubmitted);
-        const filteredMilestones = milestones.filter((milestone) =>
-            submittedMilestonesSet.has(milestone.id)
-        );
-
-        console.log('Filtered Milestones for Pay Selected:', filteredMilestones);
-
-        const total = filteredMilestones.reduce((acc, milestone) => {
-            console.log('Adding Price for Milestone:', milestone.title, milestone.price);
-            return acc + (milestone.price || 0);
-        }, 0);
-
-        console.log('Total Amount for Pay Selected:', total);
-        setTotalAmount(total);
+    const handlePaySelected = (selectedMilestones: Milestone[], totalAmount: number) => {
+        console.log('Selected Milestones for Pay:', selectedMilestones);
+        console.log('Total Amount for Pay Selected:', totalAmount);
+    
+        setTotalAmount(totalAmount);
         setIsPaymentCardOpen(true);
     };
     const toggleMilestone = (id: string) => {
