@@ -11,6 +11,7 @@ import httpClient from '@/client/httpClient';
 import { Contract } from '@/types/general';
 import { fetchContract } from '@/functions/helperFunctions';
 import ContractCard from '@/components/contract/ContractCard';
+import DateParser from '@/functions/dateParser';
 
 interface InChatContractCardProps {
     contractId: string | number;
@@ -25,6 +26,7 @@ const InChatContractCard = ({
     isSentByAuthUser,
     updatedAt
 }: InChatContractCardProps) => {
+    const dateParser = new DateParser();
     const { authUser } = useSelector((state: RootState) => state.auth );
     const { activeChatRoom, sendMessage, updateChatRoom, latestContract } = useChat();
     const [isLoading, setIsLoading] = useState(false);
@@ -130,7 +132,7 @@ const InChatContractCard = ({
                                 <div className="flex flex-row items-center space-x-1 italic min-w-16">
                                     <ClockIcon className="size-3 text-gray-400"/>
                                     <span className="text-xs text-gray-400">
-                                        { updatedAt }
+                                        { dateParser.getTime(updatedAt) }
                                     </span>
                                 </div>
                             </div>  
