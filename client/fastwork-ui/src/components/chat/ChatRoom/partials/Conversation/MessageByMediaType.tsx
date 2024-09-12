@@ -11,10 +11,9 @@ import InChatPaymentRequestCard from "./InChatPaymentRequestCard";
 import InChatSystemMessage from "./InChatSystemMessage";
 
 const MessageByMediaType = (message: Message) => {
-    const { activeChatRoom } = useChat();
+    const { authUserType } = useChat();
     const { authUser } = useSelector((state: RootState) => state.auth );
     const isSentByAuthUser = message.sender_id === authUser?.profile?.id;
-    const authUserType: 'freelancer' | 'employer' = activeChatRoom?.freelancer_id === authUser?.profile.id ? 'freelancer' : 'employer';
 
     const systemMessageMap: Record<SystemMessageType, ReactNode> = {
         contract_accepted: 
@@ -28,7 +27,7 @@ const MessageByMediaType = (message: Message) => {
             : <InChatPaymentRequestCard/>,
         payment_success: 
             <InChatSystemMessage
-                message="Payment is successfully transfered to Jobonic. Jobonic will sent to freelancer for each successful milestone."
+                message="Payment is successfully transfered to Jobonic. Jobonic will send to freelancer for each successful milestone."
             />,
     }
     
@@ -44,6 +43,7 @@ const MessageByMediaType = (message: Message) => {
             <InChatContractCard
                 contractId={message.content}
                 isSentByAuthUser={isSentByAuthUser}
+                updatedAt={message.created_at}
             />,
         service: 
             <InChatServiceOfferCard 

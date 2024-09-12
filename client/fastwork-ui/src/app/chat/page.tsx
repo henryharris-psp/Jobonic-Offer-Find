@@ -12,6 +12,7 @@ import ChatRoomComponent from "@/components/chat/ChatRoom";
 import httpClient from "@/client/httpClient";
 import { fetchContract } from "@/functions/helperFunctions";
 import ProgressList from "@/components/chat/ProgressList";
+import { toast } from "react-toastify";
 
 const ChatPage = () => {
     //catch url params
@@ -39,16 +40,6 @@ const ChatPage = () => {
     const [isLoadingChatRooms, setIsLoadingChatRooms] = useState(false);
 
     //methods
-        const setLatestContract = async (contractId: string | number) => {
-            const latestContract = await fetchContract(contractId);
-            if(latestContract && activeChatRoom) {
-                insertOrUpdateLocalChatRoom({
-                    ...activeChatRoom,
-                    latestContract
-                });
-            }
-        }
-
         //fetch chatrooms from server and create new room if requested chat room is not existed
         const fetchChatRooms = async () => {
             setIsLoadingChatRooms(true);
@@ -105,12 +96,8 @@ const ChatPage = () => {
         };
 
         const handleOnGetNewMessage = async (roomId: number, newMessage: Message) => {
-            await addMessage(roomId, newMessage);
-
-            //set latest contract
-            if(newMessage.media_type === 'contract'){
-                setLatestContract(newMessage.content);
-            }
+            addMessage(roomId, newMessage);
+            toast(newMessage.content.toString());
         }
 
         const handleOnChatRoomChange = async (chatRoom: ChatRoom) => {

@@ -2,7 +2,7 @@ import Image from 'next/image';
 import React, { UIEvent, useEffect, useMemo, useState } from 'react'
 import { PencilIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/24/solid';
 import MilestoneFormModal from './MilestoneFormModal';
-import { Contract, Milestone, TailwindSizes, Task } from '@/types/general';
+import { Contract, Milestone, Task } from '@/types/general';
 import { useChat } from '@/contexts/chat';
 import { RootState } from '@/store';
 import { useSelector } from 'react-redux';
@@ -16,10 +16,9 @@ interface ContractCardProps {
     isEditMode?: boolean;
     contract: Contract | null;
     onClose?: () => void;
-    onClickCancel?: () => void
+    onClickCancel?: () => void;
+    isAccepted?: boolean;
 }
-
-const contractUpdateMessage = `I've just updated the contract. Could you please review it and let me know if you'd like to proceed with it? Thanks!`;
 
 const ContractCard = ({
     title,
@@ -27,7 +26,8 @@ const ContractCard = ({
     isEditMode = false,
     contract,
     onClose,
-    onClickCancel
+    onClickCancel,
+    isAccepted = false
 }: ContractCardProps) => {
     const { authUser } = useSelector((state: RootState) => state.auth );
     const { activeChatRoom, sendMessage } = useChat();
@@ -160,7 +160,6 @@ const ContractCard = ({
                     }
 
                     await sendMessage('contract', contractId.toString());
-                    await sendMessage('text', contractUpdateMessage); 
 
                     setShowMilestoneFormModal(false);
                     onClose?.();
@@ -207,11 +206,13 @@ const ContractCard = ({
 
     return (
         <>
-            <div className="flex flex-col max-h-screen bg-white rounded-2xl overflow-hidden">
+            <div className={`flex flex-col max-h-screen rounded-2xl overflow-hidden ${
+                isAccepted ? 'bg-green-100' : 'bg-white'
+            }`}>
                 <div className={`flex-1 flex flex-row space-x-2 flex-wrap ${size === 'xs' ? 'p-4' : 'p-6'}`}>
 
                     {/* form */}
-                    <div className="flex-1 flex flex-col justify-between min-w-60 space-y-5 overflow-hidden">
+                    <div className="flex-1 flex flex-col justify-between min-w-72 space-y-5 overflow-hidden">
                         <div className="space-y-5">
                             <div className="flex flex-row space-x-3 items-center">
                                 <Image

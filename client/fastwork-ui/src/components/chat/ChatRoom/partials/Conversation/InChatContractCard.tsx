@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useChat } from '@/contexts/chat';
 import MediaSkeleton from './MediaSkeleton';
 import Button from '@/components/Button';
-import { ArrowPathIcon, CheckIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
+import { ArrowPathIcon, CheckCircleIcon, CheckIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
+import { ClockIcon } from '@heroicons/react/24/outline';
 import Modal from '@/components/Modal';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
@@ -14,21 +15,24 @@ import ContractCard from '@/components/contract/ContractCard';
 interface InChatContractCardProps {
     contractId: string | number;
     isSentByAuthUser: boolean;
+    updatedAt: string;
 }
 
 const acceptContractMsg = `I satisfied with your updated contract and have signed.`;
 
 const InChatContractCard = ({
     contractId,
-    isSentByAuthUser
+    isSentByAuthUser,
+    updatedAt
 }: InChatContractCardProps) => {
     const { authUser } = useSelector((state: RootState) => state.auth );
-    const { activeChatRoom, sendMessage, updateChatRoom } = useChat();
+    const { activeChatRoom, sendMessage, updateChatRoom, latestContract } = useChat();
     const [isLoading, setIsLoading] = useState(false);
     const [contract, setContract] = useState<Contract | null>(null);
     const [showContractModal, setShowContractModal] = useState(false);
 
-    const isLatestContract: boolean = contractId === activeChatRoom?.latestContract?.id;
+    const isLatestContract: boolean = contractId === latestContract?.id;
+    const isAccepted = isLatestContract && latestContract?.acceptBy.length === 2;
 
     //on mounted
     useEffect(() => {
@@ -87,7 +91,7 @@ const InChatContractCard = ({
         const handleOnCloseContract = () => {
             setShowContractModal(false)
         }
-
+        
     return (
         <>
             { isLoading ? (
@@ -108,10 +112,33 @@ const InChatContractCard = ({
                         </div>
                     </div>
                 ) : (
-                    <div className="flex flex-col bg-white rounded-xl border border-gray-200 shadow-md">
+                    <div className={`flex flex-col rounded-xl border border-gray-200 shadow-md ${
+                        isLatestContract && latestContract?.acceptBy.length === 2 ? 'bg-green-100' : 'bg-white'
+                    }`}>
+                        { isAccepted ? (
+                            <div className="flex flex-row justify-between items-center px-2 pt-2">
+                                <span className="text-green-400 font-semibold ml-1">
+                                    Confirmed Contract
+                                </span>
+                                <CheckCircleIcon className="size-8 text-green-500"/>
+                            </div>
+                        ) : (
+                            <div className="flex flex-row justify-between items-center px-4 pt-3 pb-1">
+                                <span className="text-yellow-400 font-semibold">
+                                    { isSentByAuthUser ? 'You' : activeChatRoom?.sender.firstName } just updated the contract
+                                </span>
+                                <div className="flex flex-row items-center space-x-1 italic min-w-16">
+                                    <ClockIcon className="size-3 text-gray-400"/>
+                                    <span className="text-xs text-gray-400">
+                                        { updatedAt }
+                                    </span>
+                                </div>
+                            </div>  
+                        )}
                         <ContractCard
                             title={activeChatRoom?.service.title ?? ''}
                             contract={contract}
+                            isAccepted={isAccepted}
                             size="xs"
                         />
                         { !isSentByAuthUser && isLatestContract && contract.acceptBy.length !== 2 ? (

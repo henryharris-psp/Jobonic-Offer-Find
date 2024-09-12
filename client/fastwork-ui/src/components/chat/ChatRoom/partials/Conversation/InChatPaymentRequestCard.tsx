@@ -7,14 +7,9 @@ import React, { useMemo, useState } from "react";
 
 const InChatPaymentRequestCard = () => {
     const numberFormater = new Intl.NumberFormat();
-    const { activeChatRoom } = useChat();
+    const { latestContract } = useChat();
     const [showPaymentRequestCardModal, setShowPaymentRequestCardModal] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
-
-    const totalAmount = useMemo( () => {
-        if(!activeChatRoom || !activeChatRoom.latestContract) return 0;
-        return activeChatRoom?.latestContract?.price;
-    }, [activeChatRoom?.latestContract]);
 
     const handleOnClickPayNow = () => {
         setShowPaymentRequestCardModal(true);
@@ -42,7 +37,7 @@ const InChatPaymentRequestCard = () => {
                 <div className="flex items-center justify-between mt-2">
                     <div className="text-gray-600 text-sm">Total Amount:</div>
                     <div className="text-lg font-bold text-green-600">
-                        ${numberFormater.format(totalAmount)}
+                        ${numberFormater.format(latestContract ? latestContract?.price : 0)}
                     </div>
                 </div>
                 <div className="mt-4 w-full">
