@@ -14,13 +14,14 @@ const MessageByMediaType = (message: Message) => {
     const { activeChatRoom } = useChat();
     const { authUser } = useSelector((state: RootState) => state.auth );
     const isSentByAuthUser = message.sender_id === authUser?.profile?.id;
+    const authUserType: 'freelancer' | 'employer' = activeChatRoom?.freelancer_id === authUser?.profile.id ? 'freelancer' : 'employer';
 
     const systemMessageMap: Record<SystemMessageType, ReactNode> = {
         contract_accepted: 
             <InChatSystemMessage
                 message="Greate! You both accepted the contract."
             />,
-        payment_request: activeChatRoom?.authUserType === 'freelancer'
+        payment_request: authUserType === 'freelancer'
             ? <InChatSystemMessage
                 message="Please wait for employer&apos;s payment"
             />

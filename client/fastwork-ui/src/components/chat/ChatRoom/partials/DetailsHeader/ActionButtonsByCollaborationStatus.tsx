@@ -12,6 +12,8 @@ import ReviewButtons from "../action_buttons/ReviewButtons";
 
 //shared
 import ContractAndPaymentButtons from "../action_buttons/ContractAndPaymentButtons";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 type ActionButtonMap = {
     [key: string]: JSX.Element | null;
@@ -43,11 +45,13 @@ const actionButtonsMap: Record<'freelancer' | 'employer', ActionButtonMap> = {
 const ActionButtonsByCollaborationStatus = () => {
     const { activeChatRoom } = useChat();
     const currentStatus = activeChatRoom ? activeChatRoom.status : '';
+    const { authUser } = useSelector((state: RootState) => state.auth);
+    const authUserType: 'freelancer' | 'employer' = activeChatRoom?.freelancer_id === authUser?.profile.id ? 'freelancer' : 'employer';
 
     let ActionButtonComponent = null;
 
-    if(activeChatRoom && activeChatRoom?.authUserType){
-        ActionButtonComponent = actionButtonsMap[activeChatRoom?.authUserType][currentStatus];
+    if(activeChatRoom && authUserType){
+        ActionButtonComponent = actionButtonsMap[authUserType][currentStatus];
     }
 
     return <>{ActionButtonComponent}</>;

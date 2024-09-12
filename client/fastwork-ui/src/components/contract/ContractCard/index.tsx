@@ -160,7 +160,7 @@ const ContractCard = ({
                     }
 
                     await sendMessage('contract', contractId.toString());
-                    await sendMessage('text', contractUpdateMessage);
+                    await sendMessage('text', contractUpdateMessage); 
 
                     setShowMilestoneFormModal(false);
                     onClose?.();

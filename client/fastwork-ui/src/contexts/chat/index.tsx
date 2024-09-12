@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useContext, useReducer } from "react";
+import React, { ReactNode, createContext, useContext, useMemo, useReducer } from "react";
 import reducer from "./reducer";
 import { ChatRoom, MediaType, Message } from "@/types/chat";
 import { supabase } from "@/config/supabaseClient";
@@ -69,12 +69,6 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             
             //to switch active chat room
             const changeChatRoom = async (chatRoom: ChatRoom) => {
-                const authUserType: 'freelancer' | 'employer' = chatRoom?.freelancer_id === authUser?.profile.id ? 'freelancer' : 'employer';
-                const newChatRoom = {
-                    ...chatRoom,
-                    authUserType
-                }
-
                 const contractMessages = chatRoom.messages.filter(message => message.media_type === 'contract');
                 
                 if (contractMessages.length) {
@@ -83,7 +77,7 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             
                     dispatch({
                         type: 'SET_ACTIVE_CHAT_ROOM',
-                        payload: latestContract ? { ...newChatRoom, latestContract } : newChatRoom
+                        payload: latestContract ? { ...chatRoom, latestContract } : chatRoom
                     });
                 } else {
                     dispatch({ type: 'SET_ACTIVE_CHAT_ROOM', payload: chatRoom });
@@ -103,6 +97,8 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                     const newChatRooms = state.chatRooms.map(chatRoom =>
                         chatRoom.id === chatRoomId ? updatedChatRoom : chatRoom
                     );
+
+                    console.log('new message', newChatRooms);
             
                     // Update local state with newly new messsage
                     dispatch({ type: 'SET_CHAT_ROOMS', payload: newChatRooms });
