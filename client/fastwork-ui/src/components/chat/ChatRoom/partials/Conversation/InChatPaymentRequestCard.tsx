@@ -9,6 +9,7 @@ const InChatPaymentRequestCard = () => {
     const numberFormater = new Intl.NumberFormat();
     const { activeChatRoom } = useChat();
     const [showPaymentRequestCardModal, setShowPaymentRequestCardModal] = useState(false);
+    const [isPaid, setIsPaid] = useState(false);
 
     const totalAmount = useMemo( () => {
         if(!activeChatRoom || !activeChatRoom.latestContract) return 0;
@@ -17,6 +18,11 @@ const InChatPaymentRequestCard = () => {
 
     const handleOnClickPayNow = () => {
         setShowPaymentRequestCardModal(true);
+    }
+
+    const handleOnPaid = () => {
+        setShowPaymentRequestCardModal(false);
+        setIsPaid(true);
     }
 
     return (
@@ -43,9 +49,11 @@ const InChatPaymentRequestCard = () => {
                     <Button
                         fullWidth
                         size="sm"
-                        title="Pay Now"
+                        color={ isPaid ? 'success' : 'warning'}
+                        title={ isPaid ? 'Successfully Paid' : 'Pay Now'}
                         icon={<CreditCardIcon className="size-5 text-white"/>}
                         onClick={handleOnClickPayNow}
+                        disabled={isPaid}
                     />
                 </div>
             </div>
@@ -55,7 +63,7 @@ const InChatPaymentRequestCard = () => {
                 onClose={() => setShowPaymentRequestCardModal(false)}
             >
                 <PaymentRequestCard
-                    onPaid={() => setShowPaymentRequestCardModal(false)}
+                    onPaid={handleOnPaid}
                 />
             </Modal>
         </>

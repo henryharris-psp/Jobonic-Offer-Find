@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useContext, useMemo, useReducer } from "react";
+import React, { ReactNode, createContext, useContext, useEffect, useMemo, useReducer, useState } from "react";
 import reducer from "./reducer";
 import { ChatRoom, MediaType, Message } from "@/types/chat";
 import { supabase } from "@/config/supabaseClient";
@@ -45,7 +45,34 @@ const ChatContext = createContext<ChatContextProps | undefined>(undefined);
 
 const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const { authUser } = useSelector((state: RootState) => state.auth ); 
+    const { authUser } = useSelector((state: RootState) => state.auth );
+
+    const [latestContract, setLatestContract] = useState(null);
+
+    useEffect( () => {
+        const gg = async (contractId: string) => {
+            const contract = await fetchContract(contractId);
+            setLatestContract(contract);
+        }
+
+        const { activeChatRoom } = state;
+        if (activeChatRoom && activeChatRoom.messages.length !== 0) {
+            const contractMessages = activeChatRoom.messages.filter(
+                (message) => message.media_type === 'contract'
+            );
+
+            if (contractMessages.length !== 0) {
+                const latestContractMessage = contractMessages.reduce((latest, message) => {
+                    return message.id > latest.id ? message : latest;
+                }, contractMessages[0]);
+
+                const latestContractId = latestContractMessage.content;
+                if (latestContractId) {
+                    gg(latestContractId);
+                }
+            }
+        }
+    }, [state.activeChatRoom]);
 
     //methods
         //local actions
@@ -265,7 +292,9 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 createNewChatRoom,
                 updateChatRoom,
                 deleteChatRoom,
-                sendMessage
+                sendMessage,
+
+                latestContract
             }}
         >
             {children}

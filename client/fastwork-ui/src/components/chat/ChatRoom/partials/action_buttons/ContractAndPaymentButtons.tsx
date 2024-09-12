@@ -14,8 +14,9 @@ const acceptContractMsg = `I satisfied with your updated contract and have signe
 
 const ContractAndPaymentButtons = () => {
     const { authUser } = useSelector((state: RootState) => state.auth );
-    const { activeChatRoom, sendMessage, updateChatRoom } = useChat();
+    const { activeChatRoom, sendMessage, updateChatRoom, latestContract } = useChat();
 
+    console.log(latestContract);
     const [showContractModal, setShowContractModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
 
@@ -35,17 +36,17 @@ const ContractAndPaymentButtons = () => {
 
         //accept_contract
         const handleOnClickAccept = async () => {
-            if(activeChatRoom?.latestContract){
+            if(latestContract){
                 if(confirm("Are you sure to accept contract?")){
                     try{
-                        await httpClient.put(`contract/${activeChatRoom.latestContract.id}`, {
-                            matchesId: activeChatRoom.latestContract.matchesId,
-                            price: activeChatRoom.latestContract.price,
-                            deliverable: activeChatRoom.latestContract.deliverable,
-                            profileId: activeChatRoom.latestContract.profileId,
-                            acceptBy: [...activeChatRoom.latestContract.acceptBy, authUser?.profile?.id],
+                        await httpClient.put(`contract/${latestContract.id}`, {
+                            matchesId: latestContract.matchesId,
+                            price: latestContract.price,
+                            deliverable: latestContract.deliverable,
+                            profileId: latestContract.profileId,
+                            acceptBy: [...latestContract.acceptBy, authUser?.profile?.id],
                         });
-                        await sendMessage('contract', activeChatRoom.latestContract.id.toString());
+                        await sendMessage('contract', latestContract.id.toString());
                         await sendMessage('text', acceptContractMsg);
                         const newlySentMessage = await sendMessage('system', 'payment_request');
                         if(newlySentMessage){
@@ -82,7 +83,7 @@ const ContractAndPaymentButtons = () => {
     return (
         <>
             <div className="flex flex-row items-center gap-1">
-                { activeChatRoom && activeChatRoom?.latestContract && authUser ? (
+                { activeChatRoom && latestContract && authUser ? (
                     <div className="flex flex-row gap-1 items-center flex-wrap">
                         <Button 
                             title="View Contract" 
@@ -91,7 +92,7 @@ const ContractAndPaymentButtons = () => {
                             size="sm"
                             onClick={handleOnClickViewContract} 
                         />
-                        { activeChatRoom.latestContract?.acceptBy.length === 2 && authUser?.profile.id === activeChatRoom.employer_id ? (
+                        { latestContract?.acceptBy.length === 2 && authUser?.profile.id === activeChatRoom.employer_id ? (
                             <Button 
                                 title="Pay Now" 
                                 icon={<CreditCardIcon className="size-5 font-bold text-bold"/>}
@@ -101,8 +102,8 @@ const ContractAndPaymentButtons = () => {
                             />
                         ) : ''}
                         <ContractAcceptStatus
-                            isSenderAccepted={activeChatRoom.latestContract.acceptBy.includes(authUser?.profile?.id)}
-                            isReceiverAccepted={activeChatRoom.latestContract.acceptBy.includes(activeChatRoom?.receiver?.id)}
+                            isSenderAccepted={latestContract.acceptBy.includes(authUser?.profile?.id)}
+                            isReceiverAccepted={latestContract.acceptBy.includes(activeChatRoom?.receiver?.id)}
                         />
                     </div>
                 ) : (
@@ -125,7 +126,7 @@ const ContractAndPaymentButtons = () => {
                         <div className="bg-white rounded-2xl pb-5"> 
                             <ContractCard
                                 title={activeChatRoom.service.title}
-                                contract={activeChatRoom.latestContract}
+                                contract={latestContract}
                                 isEditMode={isEditMode}
                                 onClose={handleOnCloseContract}
                                 onClickCancel={handleOnClickCancelEdit}
@@ -133,7 +134,7 @@ const ContractAndPaymentButtons = () => {
                             { !isEditMode ? (
                                 <div className="flex flex-row items-center justify-between space-x-2 mx-6">
                                     <div>
-                                        { activeChatRoom.latestContract?.acceptBy.length !== 2 ? ( 
+                                        { latestContract?.acceptBy.length !== 2 ? ( 
                                             <Button
                                                 title="Edit Contract"
                                                 size="sm"
@@ -143,7 +144,7 @@ const ContractAndPaymentButtons = () => {
                                         ) : ''}
                                     </div>
 
-                                    { !activeChatRoom.latestContract?.acceptBy.includes(authUser?.profile?.id) ? (
+                                    { !latestContract?.acceptBy.includes(authUser?.profile?.id) ? (
                                         <Button
                                             size="sm"
                                             color="success"

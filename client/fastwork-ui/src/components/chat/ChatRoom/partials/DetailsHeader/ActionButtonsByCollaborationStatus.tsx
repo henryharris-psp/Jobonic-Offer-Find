@@ -14,17 +14,18 @@ import ReviewButtons from "../action_buttons/ReviewButtons";
 import ContractAndPaymentButtons from "../action_buttons/ContractAndPaymentButtons";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import ApproveButton from "../action_buttons/ApproveButton";
 
 type ActionButtonMap = {
     [key: string]: JSX.Element | null;
 };
-
 const freelancerActionButtonsMap = {
     enquiring: <ApplyButtons/>,
     applied: <WaitingStatus status="Waiting For Confirmation"/>,
     invited: <AcceptInvitationButtons/>,
     signing_contract: <ContractAndPaymentButtons/>,
     payment_verification: <ContractAndPaymentButtons/>,
+    to_submit: <ApproveButton/>,
     to_review: <ReviewButtons/>  
 }
 
@@ -34,6 +35,7 @@ const employerActionButtonsMap = {
     invited: <WaitingStatus status="Waiting For Confirmation"/>,
     signing_contract: <ContractAndPaymentButtons/>,
     payment_verification: <ContractAndPaymentButtons/>,
+    to_submit: <ApproveButton/>,
     to_review: <ReviewButtons/>  
 };
 
