@@ -73,7 +73,7 @@ const InChatContractCard = ({
                         });
                         await sendMessage('contract', contractId.toString());
                         await sendMessage('text', acceptContractMsg);
-                        const newlySentMessage = await sendMessage('system', 'payment_request');
+                        const newlySentMessage = await sendMessage('payment_request', activeChatRoom?.match_id.toString(), 'system');
                         if(newlySentMessage){
                             await updateChatRoom(newlySentMessage.room_id, {
                                 status: 'payment_verification'
@@ -122,14 +122,14 @@ const InChatContractCard = ({
                                 <span className="text-green-400 font-semibold ml-1">
                                     Confirmed Contract
                                 </span>
-                                <CheckCircleIcon className="size-8 text-green-500"/>
+                                <CheckCircleIcon className="size-8 text-green-400"/>
                             </div>
                         ) : (
-                            <div className="flex flex-row justify-between items-center px-4 pt-3 pb-1">
+                            <div className="flex flex-row justify-between items-center px-3 pt-3 pb-1">
                                 <span className="text-yellow-400 font-semibold">
                                     { isSentByAuthUser ? 'You' : activeChatRoom?.sender.firstName } just updated the contract
                                 </span>
-                                <div className="flex flex-row items-center space-x-1 italic min-w-16">
+                                <div className="flex flex-row items-center space-x-1 min-w-16">
                                     <ClockIcon className="size-3 text-gray-400"/>
                                     <span className="text-xs text-gray-400">
                                         { dateParser.getTime(updatedAt) }

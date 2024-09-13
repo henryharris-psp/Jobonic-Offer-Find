@@ -3,7 +3,7 @@ import Modal from "@/components/Modal";
 import PaymentRequestCard from "@/components/payment/PaymentRequestCard";
 import { useChat } from "@/contexts/chat";
 import { CreditCardIcon } from "@heroicons/react/24/solid";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 
 const InChatPaymentRequestCard = () => {
     const numberFormater = new Intl.NumberFormat();
@@ -30,7 +30,7 @@ const InChatPaymentRequestCard = () => {
                 </div>
                 
                 <div className="flex items-center justify-between space-x-3">
-                    <div className="text font-semibold text-gray-800">Payment Request</div>
+                    <div className="font-semibold text-gray-800">Payment Request</div>
                     <div className="text-xs text-gray-500">Due: 12 Sep 2024</div>
                 </div>
                 <hr className="my-2 border-gray-300"/>

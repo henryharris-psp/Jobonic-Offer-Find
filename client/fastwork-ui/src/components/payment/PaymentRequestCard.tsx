@@ -52,7 +52,7 @@ const PaymentRequestCard = ({
                     </div>
 
                     <div className="flex flex-row space-x-20">
-                        <div className="flex-1 flex flex-col space-y-4 font-semibold">
+                        <div className="flex-1 flex flex-col space-y-4">
                             { milestones.map( milestone => 
                                 <div 
                                     key={milestone.id}
@@ -61,7 +61,7 @@ const PaymentRequestCard = ({
                                     {milestone.title}
                                 </div>
                             )}
-                            <span className="text-gray-500 text-sm whitespace-nowrap">
+                            <span className="text-gray-500 text-sm whitespace-nowrap font-bold pt-2">
                                 Total
                             </span>
                         </div>
@@ -74,7 +74,7 @@ const PaymentRequestCard = ({
                                     ${numberFormater.format(milestone.price)}
                                 </span>
                             )}
-                            <span className="text-gray-500 text-sm whitespace-nowrap">
+                            <span className="text-gray-500 text-sm whitespace-nowrap font-bold pt-2">
                                 ${numberFormater.format(totalAmount)}
                             </span>
                         </div>

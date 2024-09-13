@@ -97,7 +97,11 @@ const ChatPage = () => {
 
         const handleOnGetNewMessage = async (roomId: number, newMessage: Message) => {
             addMessage(roomId, newMessage);
-            toast(newMessage.content.toString());
+
+            //notify only incoming text messages
+            if(newMessage.media_type === 'text' && newMessage.sender_id != authUser?.profile.id){
+                toast(newMessage.content.toString());
+            }
         }
 
         const handleOnChatRoomChange = async (chatRoom: ChatRoom) => {

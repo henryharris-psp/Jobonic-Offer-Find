@@ -12,7 +12,7 @@ const DetailsHeader = () => {
     const stringParser = new StringParser();
 
     return (
-        <div className="flex flex-col bg-white shadow-lg">
+        <div className="flex flex-col bg-white">
             <div className="flex flex-row flex-wrap gap-5 items-center border-b border-b-gray-200 py-4 px-6">
                 {/* receiver details */}
                 <div className="flex flex-1 flex-row mb-1 min-w-48 space-x-3 overflow-hidden">
@@ -42,7 +42,7 @@ const DetailsHeader = () => {
                                 : "is offering service"}
                         </span>
                         <span className="text-xl font-bold">
-                            App Designer
+                            { activeChatRoom?.service.title }
                         </span>
                     </div>
                     <div className="bg-[#82BDC5] px-3 py-2 rounded-lg text-sm text-white whitespace-nowrap text-start">
@@ -57,8 +57,12 @@ const DetailsHeader = () => {
                     <ActionButtonsByCollaborationStatus />
                 </div>
             </div>
-            <div className="flex items-center justify-center p-3">
-                <span className="text-xs text-red-500 text-center ">
+            <div className="flex items-center justify-center px-3 py-2 shadow-lg"
+                style={{
+                    zIndex: 2
+                }}
+            >
+                <span className="text-2xs text-red-500 text-center">
                     Freelancer Aems have requested for another cancellation
                     payout amount. Do you agree or wish to appeal payout
                     terms?

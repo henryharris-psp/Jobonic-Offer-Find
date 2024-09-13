@@ -1,7 +1,6 @@
 "use client";
 import { Inter } from "next/font/google";
 import "./globals.css";
-// import Footer from "../components/footer";
 import store from "@/store";
 import { Provider, useDispatch } from "react-redux";
 import useWindowResize from "@/hooks/useWindowResize";
@@ -9,13 +8,12 @@ import NavBar from "@/components/NavBar";
 import { useEffect } from "react";
 import { authenticate as reduxAuthenticate } from "@/store/reducers/authReducer";
 import { getAuthUserDetails, getProfileByUserId } from "@/functions/helperFunctions";
-import Button from "@/components/Button";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+// import ChatBox from "../components/ChatBox";
+// import Footer from "../components/footer";
 // import initialiseCategories from "@/utils/initialiseCategories";
 // import initializeSkills from "@/utils/initialiseSkills";
-// import ChatBox from "../components/ChatBox";
-
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -109,9 +107,9 @@ const RootLayout = ({
                     autoClose={4000}
                     hideProgressBar={false}
                     newestOnTop={false}
-                    closeOnClick
                     rtl={false}
                     draggable
+                    closeOnClick
                     pauseOnHover
                     theme="dark"
                 />
