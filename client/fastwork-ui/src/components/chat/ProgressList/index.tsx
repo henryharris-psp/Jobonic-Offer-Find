@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { TrashIcon, PlusIcon, ArrowDownTrayIcon, DocumentArrowUpIcon, BookmarkSquareIcon } from "@heroicons/react/24/solid";
+import { ArrowDownTrayIcon, DocumentArrowUpIcon, BookmarkSquareIcon } from "@heroicons/react/24/solid";
 import httpClient from '@/client/httpClient';
 import { useChat } from '@/contexts/chat';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
 import ApproveAndPayModal from '@/components/ApproveAndPay';
 import Button from '@/components/Button';
 import Marquee from './Marquee/Marquee';
@@ -21,6 +19,7 @@ interface Milestone {
 }
 
 const ProgressList: React.FC = () => {
+    const { activeChatRoom, authUserType, latestContract } = useChat();
     const [openMilestones, setOpenMilestones] = useState<string[]>([]);
     const [milestones, setMilestones] = useState<Milestone[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,28 +30,11 @@ const ProgressList: React.FC = () => {
     const [isPaymentCardOpen, setIsPaymentCardOpen] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
 
-    const { authUser } = useSelector((state: RootState) => state.auth);
-    const { activeChatRoom } = useChat();
-    const authUserType: 'freelancer' | 'employer' = activeChatRoom?.freelancer_id === authUser?.profile.id ? 'freelancer' : 'employer';
-
     useEffect(() => {
-        if (activeChatRoom && activeChatRoom.messages.length !== 0) {
-            const contractMessages = activeChatRoom.messages.filter(
-                (message) => message.media_type === 'contract'
-            );
-
-            if (contractMessages.length !== 0) {
-                const latestContractMessage = contractMessages.reduce((latest, message) => {
-                    return message.id > latest.id ? message : latest;
-                }, contractMessages[0]);
-
-                const latestContractId = latestContractMessage.content;
-                if (latestContractId) {
-                    fetchMilestonesPerContract(latestContractId);
-                }
-            }
+        if (latestContract) {
+            fetchMilestonesPerContract(latestContract.id);
         }
-    }, [activeChatRoom?.messages]);
+    }, [latestContract]);
 
     const fetchMilestonesPerContract = async (contractId: string | number) => {
         try {

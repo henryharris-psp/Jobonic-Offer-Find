@@ -12,22 +12,22 @@ const PaymentRequestCard = ({
     onPaid
 }: PaymentRequestCardProps) => {
     const numberFormater = new Intl.NumberFormat();
-    const { activeChatRoom } = useChat();
+    const { latestContract } = useChat();
     const [showPaymentCardModal, setShowPaymentCardModal] = useState(false);
 
-    const latestContract = useMemo( () => {
-        if(!activeChatRoom || !activeChatRoom.latestContract){
+    const { totalAmount, milestones } = useMemo( () => {
+        if(!latestContract){
             return {
                 totalAmount: 0,
                 milestones: []
             }
         }
-        const { price, milestones } = activeChatRoom.latestContract;
+        const { price, milestones } = latestContract;
         return {
             totalAmount: price,
             milestones: milestones
         };
-    }, [activeChatRoom]);
+    }, [latestContract]);
 
     //methods
         const handleOnClickProceed = () => {
@@ -45,13 +45,15 @@ const PaymentRequestCard = ({
                 <div className="flex flex-col space-y-5 p-5">
 
                     {/* title */}
-                    <span className="font-bold text-xl">
-                        Total Amount to Pay
-                    </span>
+                    <div className="flex justify-center">
+                        <span className="font-bold text-xl">
+                            Total Amount to Pay
+                        </span>
+                    </div>
 
                     <div className="flex flex-row space-x-20">
-                        <div className="flex-1 flex flex-col space-y-4">
-                            { latestContract.milestones.map( milestone => 
+                        <div className="flex-1 flex flex-col space-y-4 font-semibold">
+                            { milestones.map( milestone => 
                                 <div 
                                     key={milestone.id}
                                     className="text-gray-500 text-sm whitespace-nowrap"
@@ -64,7 +66,7 @@ const PaymentRequestCard = ({
                             </span>
                         </div>
                         <div className="flex-1 flex flex-col space-y-4">
-                            { latestContract.milestones.map( milestone => 
+                            { milestones.map( milestone => 
                                 <span 
                                     key={milestone.id}
                                     className="text-gray-500 text-sm whitespace-nowrap"
@@ -73,7 +75,7 @@ const PaymentRequestCard = ({
                                 </span>
                             )}
                             <span className="text-gray-500 text-sm whitespace-nowrap">
-                                ${numberFormater.format(latestContract.totalAmount)}
+                                ${numberFormater.format(totalAmount)}
                             </span>
                         </div>
                     </div>
@@ -91,7 +93,7 @@ const PaymentRequestCard = ({
                 onClose={() => setShowPaymentCardModal(false)}
             >
                 <PaymentCard
-                    totalAmount={latestContract.totalAmount}
+                    totalAmount={totalAmount}
                     onPaid={handleOnPaid}
                 />
             </Modal>

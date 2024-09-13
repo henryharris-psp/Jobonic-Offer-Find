@@ -16,7 +16,6 @@ const ContractAndPaymentButtons = () => {
     const { authUser } = useSelector((state: RootState) => state.auth );
     const { activeChatRoom, sendMessage, updateChatRoom, latestContract } = useChat();
 
-    console.log(latestContract);
     const [showContractModal, setShowContractModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
 
@@ -155,7 +154,7 @@ const ContractAndPaymentButtons = () => {
                                     ) : (
                                         <div className="flex flex-row items-center space-x-1 pt-2">
                                             <CheckCircleIcon className="size-5 text-green-400"/>
-                                            <span className="text-xs text-gray-400">
+                                            <span className="text-xs">
                                                 You have accepted this contract.
                                             </span>
                                         </div>

@@ -1,8 +1,6 @@
 import { useChat } from "@/contexts/chat";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { ClockIcon } from "@heroicons/react/24/outline";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
 
 interface ContractAcceptStatusProps {
     isSenderAccepted: boolean,
@@ -15,9 +13,7 @@ const ContractAcceptStatus = ({
     isReceiverAccepted,
     size = 'xs'
 }: ContractAcceptStatusProps) => {
-    const { activeChatRoom } = useChat();
-    const { authUser } = useSelector((state: RootState) => state.auth);
-    const authUserType: 'freelancer' | 'employer' = activeChatRoom?.freelancer_id === authUser?.profile.id ? 'freelancer' : 'employer';
+    const { activeChatRoom, latestContract, authUserType } = useChat();
 
     return (
         <div className="flex flex-col space-y-1 m-1">
@@ -80,7 +76,7 @@ const ContractAcceptStatus = ({
                             size === 'sm' ? 'size-5' : 'size-4'
                         }`} />
                         <span className={`text-${size} text-gray-500`}>
-                            Waiting for your payment. Total ${ activeChatRoom?.latestContract?.price }
+                            Waiting for your payment. Total ${ latestContract ? latestContract.price : 0 }
                         </span>
                     </div>
                 )

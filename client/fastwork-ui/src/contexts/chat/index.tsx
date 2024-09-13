@@ -7,6 +7,7 @@ import { RootState } from "@/store";
 import { fetchContract, getProfileByProfileId } from "@/functions/helperFunctions";
 import { Profile } from "@/types/users";
 import httpClient from "@/client/httpClient";
+import { Contract } from "@/types/general";
 
 export interface ChatState {
     showChatList: boolean;
@@ -39,6 +40,9 @@ interface ChatContextProps extends ChatState {
     updateChatRoom: (chatRoomId: string | number, newValues: object) => Promise<void>;
     deleteChatRoom: (chatRoomId: string | number) => Promise<void>;
     sendMessage: (mediaType: MediaType, newMessage: string) => Promise<Message | null>;
+
+    latestContract: Contract | null;
+    authUserType: 'freelancer' | 'employer';
 }
 
 const ChatContext = createContext<ChatContextProps | undefined>(undefined);
@@ -46,32 +50,44 @@ const ChatContext = createContext<ChatContextProps | undefined>(undefined);
 const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const { authUser } = useSelector((state: RootState) => state.auth );
+    const [latestContract, setLatestContract] = useState<Contract | null>(null);
 
-    const [latestContract, setLatestContract] = useState(null);
-
-    useEffect( () => {
-        const gg = async (contractId: string) => {
-            const contract = await fetchContract(contractId);
-            setLatestContract(contract);
-        }
-
-        const { activeChatRoom } = state;
-        if (activeChatRoom && activeChatRoom.messages.length !== 0) {
-            const contractMessages = activeChatRoom.messages.filter(
-                (message) => message.media_type === 'contract'
-            );
-
-            if (contractMessages.length !== 0) {
-                const latestContractMessage = contractMessages.reduce((latest, message) => {
-                    return message.id > latest.id ? message : latest;
-                }, contractMessages[0]);
-
-                const latestContractId = latestContractMessage.content;
+    useEffect(() => {
+        const controller = new AbortController();
+        const { signal } = controller;
+    
+        ( async () => {
+            try {
+                const { activeChatRoom } = state;
+    
+                if (!activeChatRoom || activeChatRoom.messages.length === 0) return;
+    
+                const contractMessages = activeChatRoom.messages.filter(
+                    (message) => message.media_type === 'contract'
+                );
+    
+                if (contractMessages.length === 0) return;
+    
+                const latestContractMessage = contractMessages.reduce((latest, message) => 
+                    message.id > latest.id ? message : latest
+                , contractMessages[0]);
+    
+                const latestContractId = latestContractMessage?.content;
+    
                 if (latestContractId) {
-                    gg(latestContractId);
+                    const contract = await fetchContract(latestContractId, signal);
+                    if (contract) setLatestContract(contract);
                 }
+            } catch (error) {
+                console.error('Error fetching latest contract:', error);
             }
-        }
+        })();
+    
+        return () => controller.abort();
+    }, [state.activeChatRoom?.messages]);
+
+    const authUserType = useMemo( () => {
+        return state.activeChatRoom?.freelancer_id === authUser?.profile.id ? 'freelancer' : 'employer';
     }, [state.activeChatRoom]);
 
     //methods
@@ -294,7 +310,9 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 deleteChatRoom,
                 sendMessage,
 
-                latestContract
+                //extended or calculated props
+                latestContract,
+                authUserType
             }}
         >
             {children}

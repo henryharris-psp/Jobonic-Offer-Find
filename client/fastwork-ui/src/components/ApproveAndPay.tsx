@@ -8,7 +8,7 @@ interface ModalProps {
   onClose: () => void;
   milestoneArr: Milestone[];
   onPayAll: () => void;
-  onPaySelected: (selectedMilestones: Milestone[]) => void;
+  onPaySelected: (selectedMilestones: Milestone[], totalAmount: number) => void;
 }
 
 const ApproveAndPayModal: React.FC<ModalProps> = ({
@@ -19,22 +19,30 @@ const ApproveAndPayModal: React.FC<ModalProps> = ({
   onPaySelected
 }) => {
   const [selectedMilestones, setSelectedMilestones] = useState<Set<string>>(new Set());
+  const [totalPrice, setTotalPrice] = useState<number>(0);
 
   useEffect(() => {
-    // Clear selected milestones when modal is closed
+    // Clear selected milestones and total price when modal is closed
     if (!isOpen) {
       setSelectedMilestones(new Set());
+      setTotalPrice(0);
     }
   }, [isOpen]);
 
-  const toggleMilestoneSelection = (milestoneId: string) => {
+  const toggleMilestoneSelection = (milestone: Milestone) => {
     setSelectedMilestones(prevState => {
       const updatedSelection = new Set(prevState);
-      if (updatedSelection.has(milestoneId)) {
-        updatedSelection.delete(milestoneId);
+      let newTotalPrice = totalPrice;
+
+      if (updatedSelection.has(milestone.id)) {
+        updatedSelection.delete(milestone.id);
+        newTotalPrice -= milestone.price || 0;
       } else {
-        updatedSelection.add(milestoneId);
+        updatedSelection.add(milestone.id);
+        newTotalPrice += milestone.price || 0;
       }
+
+      setTotalPrice(newTotalPrice);
       return updatedSelection;
     });
   };
@@ -43,7 +51,7 @@ const ApproveAndPayModal: React.FC<ModalProps> = ({
     const selectedMilestonesList = milestoneArr.filter(milestone =>
       selectedMilestones.has(milestone.id)
     );
-    onPaySelected(selectedMilestonesList);
+    onPaySelected(selectedMilestonesList, totalPrice);
     onClose(); // Close modal after selection
   };
 
@@ -59,16 +67,22 @@ const ApproveAndPayModal: React.FC<ModalProps> = ({
         
         <div className="mb-4 space-y-4">
           {milestoneArr.map(milestone => (
-            <div key={milestone.id} className="flex items-center font-bold justify-around ">
+            <div key={milestone.id} className="flex items-center font-bold justify-around">
               <span>{milestone.title}</span>
+              <span>${milestone.price?.toFixed(2)}</span> {/* Display the price */}
               <input
                 type="checkbox"
                 checked={selectedMilestones.has(milestone.id)}
-                onChange={() => toggleMilestoneSelection(milestone.id)}
+                onChange={() => toggleMilestoneSelection(milestone)}
               />
             </div>
           ))}
         </div>
+        
+        <div className="mb-4 font-bold text-center">
+          Total Price: ${totalPrice.toFixed(2)} {/* Display the total price */}
+        </div>
+
         <div className="flex justify-around space-x-4 font-bold">
           <button
             className="bg-[#E1824F] text-white rounded-lg p-2 w-full"

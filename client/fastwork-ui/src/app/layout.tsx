@@ -10,9 +10,12 @@ import { useEffect } from "react";
 import { authenticate as reduxAuthenticate } from "@/store/reducers/authReducer";
 import { getAuthUserDetails, getProfileByUserId } from "@/functions/helperFunctions";
 import Button from "@/components/Button";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // import initialiseCategories from "@/utils/initialiseCategories";
 // import initializeSkills from "@/utils/initialiseSkills";
 // import ChatBox from "../components/ChatBox";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -101,6 +104,17 @@ const RootLayout = ({
                 </div>
 
                 <NavBar />
+                <ToastContainer 
+                    position="top-right"
+                    autoClose={4000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    draggable
+                    pauseOnHover
+                    theme="dark"
+                />
                 <main>{children}</main>
                 {/* {showFooter && <Footer />} */}
                 {/* <ChatBox /> */}

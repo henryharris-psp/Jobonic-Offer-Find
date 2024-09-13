@@ -6,7 +6,7 @@ import { ChatRoom } from "@/types/chat";
 import { useChat } from "@/contexts/chat";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import StringParser from "@/functions/stringParsers";
+import StringParser from "@/functions/stringParser";
 import Image from "next/image";
 import ChatListSkeleton from "./partials/ChatListSkeleton";
 

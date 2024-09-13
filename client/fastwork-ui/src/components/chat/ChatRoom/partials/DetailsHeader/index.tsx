@@ -3,7 +3,7 @@ import { RootState } from "@/store";
 import Image from "next/image";
 import React from "react";
 import { useSelector } from "react-redux";
-import StringParser from "@/functions/stringParsers";
+import StringParser from "@/functions/stringParser";
 import ActionButtonsByCollaborationStatus from "./ActionButtonsByCollaborationStatus";
 
 const DetailsHeader = () => {
