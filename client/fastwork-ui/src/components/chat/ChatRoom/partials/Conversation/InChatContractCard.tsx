@@ -1,53 +1,63 @@
 import React, { useEffect, useState } from 'react'
 import { useChat } from '@/contexts/chat';
 import MediaSkeleton from './MediaSkeleton';
-import ContractCard from '@/components/contract/ContractCard';
 import Button from '@/components/Button';
-import { ArrowPathIcon, CheckIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
+import { ArrowPathIcon, CheckCircleIcon, CheckIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
+import { ClockIcon } from '@heroicons/react/24/outline';
 import Modal from '@/components/Modal';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import httpClient from '@/client/httpClient';
 import { Contract } from '@/types/general';
+import { fetchContract } from '@/functions/helperFunctions';
+import ContractCard from '@/components/contract/ContractCard';
+import DateParser from '@/functions/dateParser';
 
-interface ContractCardWithLoadingProps {
-    contractId: string | number,
-    isSentByAuthUser: boolean,
-    showActionButtons?: boolean
+interface InChatContractCardProps {
+    contractId: string | number;
+    isSentByAuthUser: boolean;
+    updatedAt: string;
 }
 
-const acceptContractMsg = `Contract is signed by both users. Let's get started`;
+const acceptContractMsg = `I satisfied with your updated contract and have signed.`;
 
-const ContractCardWithLoading = ({
+const InChatContractCard = ({
     contractId,
     isSentByAuthUser,
-    showActionButtons = true
-}: ContractCardWithLoadingProps) => {
+    updatedAt
+}: InChatContractCardProps) => {
+    const dateParser = new DateParser();
     const { authUser } = useSelector((state: RootState) => state.auth );
-    const { sendMessage } = useChat();
+    const { activeChatRoom, sendMessage, updateChatRoom, latestContract } = useChat();
     const [isLoading, setIsLoading] = useState(false);
     const [contract, setContract] = useState<Contract | null>(null);
     const [showContractModal, setShowContractModal] = useState(false);
 
-    //TODO: move to RTK client
-    const fetchContract = async () => {
-        setIsLoading(true);
-        try{
-            //get_contract
-            const res = await httpClient.get(`contract/${contractId}`);
-            setContract(res.data);
-        } catch (error) {
-            console.log('error fetching contract', error);
-        } finally {
-            setIsLoading(false);
-        }
-    }
+    const isLatestContract: boolean = contractId === latestContract?.id;
+    const isAccepted = isLatestContract && latestContract?.acceptBy.length === 2;
 
+    //on mounted
     useEffect(() => {
-        fetchContract();
+        getContract();
     }, []);
 
     //methods
+        const getContract = async () => {
+            const controller = new AbortController();
+            const signal = controller.signal;
+
+            setIsLoading(true);
+            try{
+                //get_contract
+                const contractRes = await fetchContract(contractId, signal);
+                if(contractRes) setContract(contractRes);
+            } catch (error) {
+                console.log('error fetching contract', error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
         //accept_contract
         const handleOnClickAccept = async () => {
             if(contract){
@@ -61,7 +71,14 @@ const ContractCardWithLoading = ({
                             profileId: contract.profileId,
                             acceptBy: [...contract.acceptBy, authUser?.profile?.id],
                         });
+                        await sendMessage('contract', contractId.toString());
                         await sendMessage('text', acceptContractMsg);
+                        const newlySentMessage = await sendMessage('system', 'payment_request');
+                        if(newlySentMessage){
+                            await updateChatRoom(newlySentMessage.room_id, {
+                                status: 'payment_verification'
+                            });
+                        }
                     } catch (error) {
                         console.log('error', error);
                     }
@@ -76,7 +93,7 @@ const ContractCardWithLoading = ({
         const handleOnCloseContract = () => {
             setShowContractModal(false)
         }
-
+        
     return (
         <>
             { isLoading ? (
@@ -88,7 +105,7 @@ const ContractCardWithLoading = ({
                         <div className="flex items-center justify-center absolute top-0 right-0 left-0 bottom-0">
                             <button 
                                 className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-300"
-                                onClick={fetchContract}    
+                                onClick={getContract}    
                             >
                                 <span className="">
                                     <ArrowPathIcon className={`size-5 font-bold text-gray-600 ${isLoading ? 'animate-spin' : ''}`}/>
@@ -97,11 +114,36 @@ const ContractCardWithLoading = ({
                         </div>
                     </div>
                 ) : (
-                    <div className="flex flex-col mx-2 bg-white rounded-xl border border-gray-200 shadow">
+                    <div className={`flex flex-col rounded-xl border border-gray-200 shadow-md ${
+                        isLatestContract && latestContract?.acceptBy.length === 2 ? 'bg-green-100' : 'bg-white'
+                    }`}>
+                        { isAccepted ? (
+                            <div className="flex flex-row justify-between items-center px-2 pt-2">
+                                <span className="text-green-400 font-semibold ml-1">
+                                    Confirmed Contract
+                                </span>
+                                <CheckCircleIcon className="size-8 text-green-500"/>
+                            </div>
+                        ) : (
+                            <div className="flex flex-row justify-between items-center px-4 pt-3 pb-1">
+                                <span className="text-yellow-400 font-semibold">
+                                    { isSentByAuthUser ? 'You' : activeChatRoom?.sender.firstName } just updated the contract
+                                </span>
+                                <div className="flex flex-row items-center space-x-1 italic min-w-16">
+                                    <ClockIcon className="size-3 text-gray-400"/>
+                                    <span className="text-xs text-gray-400">
+                                        { dateParser.getTime(updatedAt) }
+                                    </span>
+                                </div>
+                            </div>  
+                        )}
                         <ContractCard
+                            title={activeChatRoom?.service.title ?? ''}
                             contract={contract}
+                            isAccepted={isAccepted}
+                            size="xs"
                         />
-                        { !isSentByAuthUser && showActionButtons ? (
+                        { !isSentByAuthUser && isLatestContract && contract.acceptBy.length !== 2 ? (
                             <div className="flex flex-row justify-between mb-4 mx-5 gap-1">
                                 <Button
                                     title="Edit"
@@ -127,6 +169,7 @@ const ContractCardWithLoading = ({
                 onClose={handleOnCloseContract}
             >
                 <ContractCard
+                    title={activeChatRoom?.service.title ?? ''}
                     contract={contract}
                     isEditMode={true}
                     onClose={handleOnCloseContract}
@@ -136,4 +179,4 @@ const ContractCardWithLoading = ({
     )
 }
 
-export default ContractCardWithLoading
+export default InChatContractCard

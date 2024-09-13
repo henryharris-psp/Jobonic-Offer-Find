@@ -2,25 +2,21 @@ import React, { useState } from "react";
 import Button from "@/components/Button";
 import { useChat } from "@/contexts/chat";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { useSearchParams } from "next/navigation";
 
-const hireMessage = `
-    Congratulation! Looking forward to working together! Could we discuss the contract details?
+const acceptMessage = `
+    Thank you for your invitation. I am ready to work with you.
 `;
 
 const declinedMessage = `
-    Thank you for your interest in the project. 
-    After careful consideration, we've decided to move forward with another candidate. 
-    We appreciate your time and wish you the best in your future projects!
+    Thank you for your opportunity. But I am not available now. I am so sorry for that!
 `;
 
-const Applied = () => {
+const AcceptInvitationButtons = () => {
     const { sendMessage, updateChatRoom } = useChat();
-
     //methods
-        const sendHireMessage = async () => {
+        const sendAcceptMessage = async () => {
             try {
-                const newlySentMessage = await sendMessage('text', hireMessage);
+                const newlySentMessage = await sendMessage('text', acceptMessage);
                 if(newlySentMessage){
                     await updateChatRoom(newlySentMessage.room_id, {
                         status: 'signing_contract'
@@ -44,9 +40,9 @@ const Applied = () => {
             }
         }
 
-        const handleOnClickHire = async () => {
-            if(confirm('Are you sure to hire?')){
-                sendHireMessage();
+        const handleOnClickAccept = async () => {
+            if(confirm('Are you sure to accept invitation?')){
+                sendAcceptMessage();
             }
         }
 
@@ -66,14 +62,14 @@ const Applied = () => {
                 onClick={handleOnClickDecline} 
             />
             <Button 
-                title="Potential Hire" 
+                title="Accept Invitation" 
                 icon={<CheckIcon className="size-5 font-bold text-bold"/>}
                 iconPositon="start"
                 size="sm"
-                onClick={handleOnClickHire} 
+                onClick={handleOnClickAccept} 
             />
         </div>
     );
 };
 
-export default Applied;
+export default AcceptInvitationButtons;

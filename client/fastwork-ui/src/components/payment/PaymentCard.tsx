@@ -1,61 +1,65 @@
-import React, { ChangeEvent, useState } from "react";
-import Button from "./Button";
+import React, { useState } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { useChat } from "@/contexts/chat";
+import SafeInput, { SafeInputChangeEvent } from "../SafeInput";
+import Button from "../Button";
 
 interface PaymentCardProps {
-    totalAmount: number
+    totalAmount: number;
+    onPaid: () => void;
 }
 
-const paymentSuccessMessage = `Payment is successfully transfered to Jobonic. Jobonic will sent to freelancer for each successful milestone`;
-
 const PaymentCard = ({
-    totalAmount
+    totalAmount,
+    onPaid
 }: PaymentCardProps) => {
     const numberFormater = new Intl.NumberFormat();
     const { sendMessage, updateChatRoom } = useChat();
-    const [inputs, setInputs] = useState({
-        amount: '',
-        description: ''
-    });
+    const [note, setNote] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
 
     //methods
-        const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-            const { name, value } = e.target;
-            setInputs(prev => ({
-                ...prev,
-                [name]: value
-            }));
+        const handleInputChange = (e: SafeInputChangeEvent) => {
+            const { value } = e.target;
+            console.log(value);
+            setNote(value);
+        }
+
+        const processPayment = async () => {
+            return new Promise(resolve => setTimeout(resolve, 3000));
+        }
+
+        const timerToClose = async () => {
+            return new Promise(resolve => setTimeout(resolve, 1000));
         }
 
         const submit = async () => {
+            setIsLoading(true);
+
             try {
-                setIsLoading(true);
-        
-                // Delay for 3 seconds (3000ms)
-                await new Promise(resolve => setTimeout(resolve, 3000));
-        
-                setIsLoading(false);
+                await processPayment();
                 setIsPaid(true);
-        
-                const newlySentMessage = await sendMessage('text', paymentSuccessMessage);
-                
+                const newlySentMessage = await sendMessage('system', 'payment_success');
                 if (newlySentMessage) {
                     await updateChatRoom(newlySentMessage.room_id, {
-                        status: 'waiting_for_submission'
+                        status: 'to_submit'
                     });
                 }
+
+                await timerToClose();
+                onPaid();
             } catch (error) {
                 console.error('Error during submit process:', error);
+            } finally {
+                setIsLoading(false);
             }
         }
         
     return (
-        <div className="flex flex-col bg-white rounded-xl">
-            <div className="flex flex-col p-5 space-y-3">
+        <div className="flex flex-col bg-white rounded-xl min-w-80">
+            <div className="flex flex-col p-5 space-y-5">
 
                 <div className="flex justify-center items-center space-x-2">
                     { isPaid ? (
@@ -69,14 +73,15 @@ const PaymentCard = ({
                     <span className="text-gray-600">
                         Total Amount to pay
                     </span>
-                    <span className="font-bold text-gray-800 text-xl">
-                        $ { numberFormater.format(totalAmount) }
+                    <span className="font-bold text-green-600 text-xl">
+                        ${numberFormater.format(totalAmount)}
                     </span>
 
                 </div>
 
+                {/* payment selection */}
                 <div className="w-full">
-                    <label htmlFor="select" className="block text-sm font-medium text-gray-700">Select Payment Method</label>
+                    <label htmlFor="select" className="block text-sm font-medium text-gray-600">Select Payment Method</label>
                     <select id="select" name="select" className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         <option value="option1">-- Select --</option>
                         <option value="option2">Payni</option>
@@ -92,18 +97,16 @@ const PaymentCard = ({
                 </div>
 
                 <div className="flex flex-col space-y-1">
-                    <span className="text-gray-600">
+                    <span className="text-sm font-medium text-gray-600">
                         Write Note
                     </span>
-                    <textarea
-                        placeholder="Type..."
-                        name="description"
-                        value={inputs.description}
+                    <SafeInput
+                        type="textarea"
+                        placeholder="type something..."
+                        value={note}
                         onChange={handleInputChange}
-                        className="border h-32 text-sm border-gray-300 p-3 rounded-lg w-80"
                     />
                 </div>
-
                     <Button
                         title={ isLoading ? 'Payment Processing...' : 'Pay Now'}
                         onClick={submit}

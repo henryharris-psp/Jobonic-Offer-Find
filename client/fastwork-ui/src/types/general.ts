@@ -36,11 +36,13 @@ export interface Milestone {
 }
 
 export interface Contract {
-    id: string | number,
-    price: number,
-    deliverable: string,
-    acceptBy: string[] | number[],
-    milestones: Milestone[],
+    id: string | number;
+    price: number
+    deliverable: string;
+    acceptBy: string[] | number[];
+    milestones: Milestone[];
+    profileId: string | number;
+    matchesId: string | number;
 }
 
 export type TailwindSizes = "xs" | "sm" | "" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl";

@@ -1,13 +1,17 @@
 import React from "react";
 
-const Applied = () => {
+interface WaitingStatusProps{
+    status: string;
+}
+
+const WaitingStatus = ({ status }: WaitingStatusProps) => {
     return (
         <div className="flex justify-center items-center text-center">
             <span className="font-bold text-orange-400">
-                Waiting For Confirmation
+                { status }
             </span>
         </div>
     );
 };
 
-export default Applied;
+export default WaitingStatus;

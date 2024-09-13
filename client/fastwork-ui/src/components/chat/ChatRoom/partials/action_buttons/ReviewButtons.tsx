@@ -5,9 +5,9 @@ import SafeInput, { SafeInputChangeEvent } from "@/components/SafeInput";
 import StarRating from "@/components/StarRating";
 import { useChat } from "@/contexts/chat";
 import { ChatBubbleBottomCenterTextIcon } from "@heroicons/react/24/solid";
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 
-const WaitingForReview = () => {
+const ReviewButtons = () => {
     const { activeChatRoom } = useChat();
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [inputs, setInputs] = useState({
@@ -60,7 +60,7 @@ const WaitingForReview = () => {
             >
                 <div className="flex flex-col items-center space-y-8 bg-white p-8 rounded-xl">
                     <span className="font-bold text-2xl">
-                        Write a review to your work partner
+                        Write a review to your service provider 
                     </span>
                     <StarRating
                         size="5xl"
@@ -92,4 +92,4 @@ const WaitingForReview = () => {
     );
 };
 
-export default WaitingForReview;
+export default ReviewButtons;

@@ -1,11 +1,11 @@
-import { ChangeEvent, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { v4 as uuid } from "uuid";
-import { Milestone, Task } from "@/types/general";
-import Button from "../../Button";
-import Modal from "../../Modal";
+import { Milestone } from "@/types/general";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import SafeInput, { SafeInputChangeEvent } from "../../SafeInput";
 import { useChat } from "@/contexts/chat";
+import SafeInput, { SafeInputChangeEvent } from "@/components/SafeInput";
+import Modal from "@/components/Modal";
+import Button from "@/components/Button";
 
 interface MilestoneFormModalProps {
     milestone: Milestone | null,
@@ -25,9 +25,8 @@ const MilestoneFormModal = ({
     const isEdit = milestone !== null;
     const { activeChatRoom } = useChat();
 
-    const newTask: Task = {
+    const newTask = {
         id: uuid(),
-        checkpointId: milestone?.id,
         name: '',
     }
 

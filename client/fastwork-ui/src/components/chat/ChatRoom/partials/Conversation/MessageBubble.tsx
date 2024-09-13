@@ -14,7 +14,7 @@ const MessageBubble = ({
 
     return (
         <div
-            className={`flex items-center justify-center p-3 mx-2 rounded-xl break-words max-w-sm ${
+            className={`flex items-center justify-center p-3 rounded-xl break-words max-w-sm ${
                 isSentByAuthUser 
                 ? "bg-[#0C2348] text-white" 
                 : "bg-gray-200 text-black"
