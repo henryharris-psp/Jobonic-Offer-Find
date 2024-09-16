@@ -72,7 +72,7 @@ const InChatPaymentReceiptCard = ({
                         </div>
                     </div>
                 ) : (
-                    <div className="max-w-md mx-auto my-4 p-4 bg-gray-50 shadow-md rounded-lg border border-gray-200">
+                    <div className="max-w-md mx-auto p-4 bg-gray-50 shadow-md rounded-lg border border-gray-200">
                         <div className="flex flex-row mb-2">
                             <span className="italic text-gray-400 text-2xs">
                                 System Message
@@ -121,6 +121,7 @@ const InChatPaymentReceiptCard = ({
                             </p>
                             <Button
                                 fullWidth
+                                color="info"
                                 size="sm"
                                 title="Contact Support"
                                 onClick={() => console.log('gg')}

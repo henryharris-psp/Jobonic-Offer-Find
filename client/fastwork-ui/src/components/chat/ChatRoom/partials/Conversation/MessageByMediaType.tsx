@@ -15,6 +15,13 @@ const MessageByMediaType = (message: Message) => {
     const { authUserType } = useChat();
     const { authUser } = useSelector((state: RootState) => state.auth );
     const isSentByAuthUser = message.sender_id == authUser?.profile?.id;
+
+    //TODO: temporary, remove later
+    const generateRandomTransitionId = () => {
+        const randomNum = Math.floor(100000000 + Math.random() * 900000000);
+        return `#TRX${randomNum}`;
+    }
+    const transitionId = generateRandomTransitionId();
     
     const messageComponentMap: Record<MediaType, ReactNode> = {
         text:
@@ -63,7 +70,7 @@ const MessageByMediaType = (message: Message) => {
                 />
                 <div className="flex justify-center">
                     <InChatPaymentReceiptCard
-                        transactionId={message.content}
+                        transactionId={transitionId}
                     />
                 </div>
             </div>,

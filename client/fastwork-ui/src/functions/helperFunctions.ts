@@ -8,8 +8,6 @@ export const getUserId = async () => {
     try {
         const laconicAuthServerUrl = process.env.NEXT_PUBLIC_LACONIC_AUTH_SERVER_URL;
         const response = await httpClient.get(`${laconicAuthServerUrl}/user/init-data`);
-
-        console.log('auth user - ', response.data);
         return response.data.id;
     } catch (error: any) {
         console.error('Error fetching user ID:', error);
@@ -38,7 +36,6 @@ export const getProfile = async () => {
 export const getProfileId = async () => {
     try {
         const profile = await getProfile();
-        console.log(profile.id);
         return profile.id;
     } catch (error: any) {
         console.error('Error fetching profile ID:', error);
@@ -56,7 +53,6 @@ export const checkProfile = async (profileId: number) => {
         });
 
         if (response.data.phoneNumber && response.data.address) {
-            console.log(response.data.email); // Assuming the response contains the profile ID
             return true;
         }
     } catch (error: any) {
@@ -178,12 +174,14 @@ export const getCategoryName = async (categoryId: string) => {
             const res = await httpClient.post<ServiceApiResponse>(`service/offer/all`, payload, { signal });
 
             //TODO: temporary filter
+            //don't show service posted by login user
             const services = res.data.content.filter( e => e.profileDTO.id !== authUser?.profile?.id ).map((service: Service) => ({
                 ...service,
                 type: type
             }))
 
             //TODO: temporary filter
+            // to seperate service requests and service offers
             let gg = [];
 
             if(type === 'offer'){

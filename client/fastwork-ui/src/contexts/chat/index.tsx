@@ -172,23 +172,44 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 const receiver: Profile = await getProfileByProfileId(receiverId);
                 
                 //fetching service
-                const serviceRes = await httpClient.get('/service/get', {
-                    params: {
-                        serviceId: chatRoom.service_id
-                    }
-                });
-                const service = serviceRes.data;
+                let service = null;
+                if(chatRoom.service_id){
+                    const serviceRes = await httpClient.get('/service/get', {
+                        params: {
+                            serviceId: chatRoom.service_id
+                        }
+                    });
+                    service = serviceRes.data;
+                }
+
+                //fetching match
+                let match = null;
+                if(chatRoom.match_id){
+                    const matchRes = await httpClient.get('matches', {
+                        params: {
+                            id: chatRoom.match_id
+                        }
+                    });
+
+                    match = matchRes.data;
+                }
                 
                 return {
                     ...chatRoom,
                     sender: authUser?.profile!,
                     receiver: receiver,
-                    service: service
+                    service: service,
+                    match: match
                 };
             }));       
         }
 
-        const createNewChatRoom = async (serviceId: string, matchId: string, freelancerId: number, employerId: number) => {
+        const createNewChatRoom = async (
+            serviceId: string, 
+            matchId: string, 
+            freelancerId: number, 
+            employerId: number
+        ) => {
             const { data, error } = await supabase
                 .from("chat_rooms")
                 .insert([{

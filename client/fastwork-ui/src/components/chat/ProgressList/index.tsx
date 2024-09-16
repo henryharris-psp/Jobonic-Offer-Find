@@ -131,7 +131,6 @@ const ProgressList: React.FC = () => {
         }
     };
 
-
     // Determine submitted milestones based on file status
     const determineSubmittedMilestones = () => {
         const submittedMilestones = milestones
@@ -145,8 +144,6 @@ const ProgressList: React.FC = () => {
     useEffect(() => {
         determineSubmittedMilestones();
     }, [milestones]);
-
-
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, milestoneId: string) => {
         if (e.target.files && e.target.files.length > 0) {

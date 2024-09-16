@@ -47,7 +47,6 @@ const ActionButtonsByCollaborationStatus = () => {
     const currentStatus = activeChatRoom ? activeChatRoom.status : '';
 
     let ActionButtonComponent = null;
-
     if(activeChatRoom && authUserType){
         ActionButtonComponent = actionButtonsMap[authUserType][currentStatus];
     }

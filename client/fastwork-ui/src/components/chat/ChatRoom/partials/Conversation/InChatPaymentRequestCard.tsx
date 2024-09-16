@@ -18,8 +18,15 @@ const InChatPaymentRequestCard = () => {
     const handleOnPaid = () => {
         setShowPaymentRequestCardModal(false);
         setIsPaid(true);
+        //refresh current chat room with updated data
+        // if(activeChatRoom) insertOrUpdateLocalChatRoom(activeChatRoom);
     }
 
+    // const isPaid = useMemo(() => {
+    //     const match = activeChatRoom?.match;
+    //     return !!match?.payment;
+    // }, [activeChatRoom]);
+      
     return (
         <>
             <div className="min-w-72 pt-3 px-4 pb-4 bg-white shadow-md rounded-lg border border-gray-200">

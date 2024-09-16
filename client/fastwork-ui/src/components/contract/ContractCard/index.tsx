@@ -246,7 +246,7 @@ const ContractCard = ({
                                             placeholder="eg. 200"
                                             value={inputs.price ?? ''}
                                             onChange={handleInputChange}
-                                            disabled={!isEditMode}
+                                            disabled={!isEditMode || milestones.length > 0}
                                             errors={[
                                                 {
                                                     show: errorCheckable && inputErrors.includes('price'),

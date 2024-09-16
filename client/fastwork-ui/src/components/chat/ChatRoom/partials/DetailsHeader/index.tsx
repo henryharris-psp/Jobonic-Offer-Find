@@ -1,8 +1,8 @@
+import React from "react";
 import { useChat } from "@/contexts/chat";
 import { RootState } from "@/store";
-import Image from "next/image";
-import React from "react";
 import { useSelector } from "react-redux";
+import Image from "next/image";
 import StringParser from "@/functions/stringParser";
 import ActionButtonsByCollaborationStatus from "./ActionButtonsByCollaborationStatus";
 
@@ -57,7 +57,8 @@ const DetailsHeader = () => {
                     <ActionButtonsByCollaborationStatus />
                 </div>
             </div>
-            <div className="flex items-center justify-center px-3 py-2 shadow-lg"
+            <div
+                className="flex items-center justify-center px-3 py-2 shadow-lg"
                 style={{
                     zIndex: 2
                 }}
