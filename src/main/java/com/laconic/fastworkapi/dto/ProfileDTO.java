@@ -36,6 +36,7 @@ public class ProfileDTO implements Serializable {
 //    private Set<UserRoleDTO> roles;
 
     private String bankAccountNumber;
+    private String position;
 
     private String cryptoType;
 

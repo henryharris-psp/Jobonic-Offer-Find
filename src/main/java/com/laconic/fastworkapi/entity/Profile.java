@@ -36,6 +36,8 @@ public class Profile extends Auditable<UUID> {
     @Column(unique = true)
     private Long userId;
 
+    private String position;
+
     @Column(unique = true)
     private String bankAccountNumber;
 
