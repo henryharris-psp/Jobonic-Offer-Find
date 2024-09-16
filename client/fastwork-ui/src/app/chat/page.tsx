@@ -10,7 +10,6 @@ import { supabase } from "@/config/supabaseClient";
 import { useSearchParams } from "next/navigation";
 import ChatRoomComponent from "@/components/chat/ChatRoom";
 import httpClient from "@/client/httpClient";
-import { fetchContract } from "@/functions/helperFunctions";
 import ProgressList from "@/components/chat/ProgressList";
 import { toast } from "react-toastify";
 
@@ -20,23 +19,20 @@ const ChatPage = () => {
     const serviceParam = params.get('service');
     
     const { 
-        activeChatRoom,
-        chatRooms, 
-        setChatRooms, 
+        chatRooms,
+        showChatList, 
+        showProgressList, 
+        setShowChatList,
+        setShowProgressList,
+        setChatRooms,
         addMessage, 
         createNewChatRoom, 
         changeChatRoom, 
         loadChatRoomData,
-        insertOrUpdateLocalChatRoom
+        insertOrUpdateLocalChatRoom,
     } = useChat();
     const { isMobile, screenSize } = useSelector((state: RootState) => state.ui);
     const { authUser } = useSelector((state: RootState) => state.auth );
-    const { 
-        showChatList, 
-        showProgressList,
-        setShowChatList,
-        setShowProgressList
-    } = useChat();
     const [isLoadingChatRooms, setIsLoadingChatRooms] = useState(false);
 
     //methods
@@ -69,6 +65,7 @@ const ChatPage = () => {
                         //if authUser click on service request, authUser will become freelancer.
                         const freelancerId = service.type === 'request' ? authUser?.profile.id : service.profileDTO.id;
                         const employerId = service.type === 'request' ? service.profileDTO.id : authUser?.profile.id;
+
                         const serviceId = service.id;
 
                         //create match on main db
@@ -106,6 +103,7 @@ const ChatPage = () => {
 
         const handleOnChatRoomChange = async (chatRoom: ChatRoom) => {
             try{
+                console.log('chat room data changed', chatRoom);
                 const chatRoomsWithData = await loadChatRoomData([chatRoom]);
                 insertOrUpdateLocalChatRoom(chatRoomsWithData[0]);
             } catch (error) {

@@ -11,7 +11,7 @@
 //     price?: string;
 //     sentByAuthUser: boolean;
 // }
-import { Contract } from "./general";
+import { Contract, Payment } from "./general";
 import { Service } from "./service";
 import { Profile } from "./users";
 
@@ -50,6 +50,22 @@ export interface People {
 
 
 //new
+export interface Match {
+    id: string;
+    serviceId: string;
+    profileId: string | null;
+    employeeId: string | null;
+    status: string;
+    payment: Payment | null;
+
+    //not_required
+    deliverable: string;
+    paymentTotal: number;
+    paymentMode: string;
+    numberOfCheckPoint: number;
+    numberOfCheckpointsLeft: 0,
+}
+
 export type MediaType = 
     'text' | 
     'image' | 
@@ -57,11 +73,6 @@ export type MediaType =
     'service' |
     'payment_request' |
     'payment_receipt';
-    
-export type SystemMessageType = 
-    'contract_accepted' | 
-    'payment_request' |
-    'payment_success';
 
 export interface Message {
     id: string | number;
@@ -110,10 +121,11 @@ export interface ChatRoom {
     freelancer_id: number; //profileId 
     employer_id: number; //profileId
     match_id: number | string;
+    match: Match | null;
     service_id: number | string; //TODO: remove
+    service: Service | null;
     sender: Profile;
     receiver: Profile;
-    service: Service;
     status: FreelancerChatStatus | EmployeerChatStatus
     created_at: string;
     messages: Message[],

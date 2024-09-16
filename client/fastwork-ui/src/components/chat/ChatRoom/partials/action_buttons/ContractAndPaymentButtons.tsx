@@ -38,6 +38,7 @@ const ContractAndPaymentButtons = () => {
             if(latestContract){
                 if(confirm("Are you sure to accept contract?")){
                     try{
+                        //update contract
                         await httpClient.put(`contract/${latestContract.id}`, {
                             matchesId: latestContract.matchesId,
                             price: latestContract.price,
@@ -45,7 +46,6 @@ const ContractAndPaymentButtons = () => {
                             profileId: latestContract.profileId,
                             acceptBy: [...latestContract.acceptBy, authUser?.profile?.id],
                         });
-                        await sendMessage('contract', latestContract.id.toString());
                         await sendMessage('text', acceptContractMsg);
                         const newlySentMessage = await sendMessage('payment_request', activeChatRoom?.match_id.toString(), 'system');
                         if(newlySentMessage){
@@ -124,7 +124,7 @@ const ContractAndPaymentButtons = () => {
                     >
                         <div className="bg-white rounded-2xl pb-5"> 
                             <ContractCard
-                                title={activeChatRoom.service.title}
+                                title={activeChatRoom?.service?.title || ''}
                                 contract={latestContract}
                                 isEditMode={isEditMode}
                                 onClose={handleOnCloseContract}

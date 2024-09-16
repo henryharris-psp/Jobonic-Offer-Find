@@ -3,6 +3,9 @@ import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { useChat } from "@/contexts/chat";
 import SafeInput, { SafeInputChangeEvent } from "../SafeInput";
 import Button from "../Button";
+import httpClient from "@/client/httpClient";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 interface PaymentCardProps {
     totalAmount: number;
@@ -14,7 +17,8 @@ const PaymentCard = ({
     onPaid
 }: PaymentCardProps) => {
     const numberFormater = new Intl.NumberFormat();
-    const { sendMessage, updateChatRoom } = useChat();
+    const { activeChatRoom, sendMessage, updateChatRoom } = useChat();
+    const { authUser } = useSelector((state: RootState) => state.auth );
     const [note, setNote] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
@@ -23,11 +27,19 @@ const PaymentCard = ({
     //methods
         const handleInputChange = (e: SafeInputChangeEvent) => {
             const { value } = e.target;
-            console.log(value);
             setNote(value);
         }
 
         const processPayment = async () => {
+            // const res = await httpClient.post('payments', {
+            //     amount: 123,
+            //     paymentMethodId: 1,
+            //     payableId: activeChatRoom?.match_id,
+            //     payableType: 'match', // match & milestone
+            //     senderId: authUser?.id,
+            //     receiverId: 1, //id 1 will always be Jobonic
+            //     note: 'some dummy note'
+            // });
             return new Promise(resolve => setTimeout(resolve, 3000));
         }
 
@@ -51,6 +63,7 @@ const PaymentCard = ({
                 await timerToClose();
                 onPaid();
             } catch (error) {
+                //TODO: handle payment fail errors such as unsufficient balance or payment rejected
                 console.error('Error during submit process:', error);
             } finally {
                 setIsLoading(false);

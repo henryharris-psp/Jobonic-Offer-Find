@@ -238,13 +238,21 @@ const ServiceList = () => {
                                 )
                             ) : (
                                 services.map( service => 
-                                    <ServiceMatchCard
+                                    <div 
                                         key={service.id}
-                                        service={service}
-                                        profile={service.profileDTO}
-                                        onClick={() => console.log('fdf')}
-                                        onChatClick={() => console.log('fdf')}
-                                    />
+                                        className="flex flex-col"
+                                    >
+                                        <span>
+                                            Posted By - { service.profileDTO.id }
+                                        </span>
+                                        <ServiceMatchCard
+                                            key={service.id}
+                                            service={service}
+                                            profile={service.profileDTO}
+                                            onClick={() => console.log('fdf')}
+                                            onChatClick={() => console.log('fdf')}
+                                        />
+                                    </div>
                                 )
                             )}
                         </div>

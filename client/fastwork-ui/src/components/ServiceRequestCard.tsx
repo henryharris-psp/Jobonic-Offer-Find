@@ -194,15 +194,17 @@ const ServiceRequestCard = ({
                             </p>
                         </div>
                     </div>
-                    <p className="job-description text-xs">
-                        {serviceRequest?.description_1}
-                    </p>
-                    <p className="job-description text-xs">
-                        {serviceRequest?.description_2}
-                    </p>
-                    <p className="job-description text-xs">
-                        {serviceRequest?.description_3}
-                    </p>
+                    <div className="overflow-auto max-h-60 my-2">
+                        <p className="job-description text-xs">
+                            {serviceRequest?.description_1}
+                        </p>
+                        <p className="job-description text-xs">
+                            {serviceRequest?.description_2}
+                        </p>
+                        <p className="job-description text-xs">
+                            {serviceRequest?.description_3}
+                        </p>
+                    </div>
                     {/* chat and apply buttons */}
                     {applyDisplay && (
                         <div className="flex items-center justify-center mt-2 space-x-2">

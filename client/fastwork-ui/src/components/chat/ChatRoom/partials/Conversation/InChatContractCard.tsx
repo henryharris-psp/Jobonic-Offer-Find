@@ -71,7 +71,6 @@ const InChatContractCard = ({
                             profileId: contract.profileId,
                             acceptBy: [...contract.acceptBy, authUser?.profile?.id],
                         });
-                        await sendMessage('contract', contractId.toString());
                         await sendMessage('text', acceptContractMsg);
                         const newlySentMessage = await sendMessage('payment_request', activeChatRoom?.match_id.toString(), 'system');
                         if(newlySentMessage){
@@ -115,7 +114,7 @@ const InChatContractCard = ({
                     </div>
                 ) : (
                     <div className={`flex flex-col rounded-xl border border-gray-200 shadow-md ${
-                        isLatestContract && latestContract?.acceptBy.length === 2 ? 'bg-green-100' : 'bg-white'
+                        isAccepted ? 'bg-green-100' : 'bg-white'
                     }`}>
                         { isAccepted ? (
                             <div className="flex flex-row justify-between items-center px-2 pt-2">
@@ -126,7 +125,7 @@ const InChatContractCard = ({
                             </div>
                         ) : (
                             <div className="flex flex-row justify-between items-center px-3 pt-3 pb-1">
-                                <span className="text-yellow-400 font-semibold">
+                                <span className="text-yellow-400 text-sm font-semibold">
                                     { isSentByAuthUser ? 'You' : activeChatRoom?.sender.firstName } just updated the contract
                                 </span>
                                 <div className="flex flex-row items-center space-x-1 min-w-16">
@@ -143,7 +142,7 @@ const InChatContractCard = ({
                             isAccepted={isAccepted}
                             size="xs"
                         />
-                        { !isSentByAuthUser && isLatestContract && contract.acceptBy.length !== 2 ? (
+                        { !isSentByAuthUser && isLatestContract && !isAccepted ? (
                             <div className="flex flex-row justify-between mb-4 mx-5 gap-1">
                                 <Button
                                     title="Edit"

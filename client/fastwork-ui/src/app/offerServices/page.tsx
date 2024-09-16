@@ -303,29 +303,36 @@ const OfferService = () => {
                                 )
                             ) : (
                                 services.map( service => 
-                                    <ServiceRequestCard
-                                        service={service}//TODO: remove
+                                    <div
                                         key={service.id}
-                                        serviceRequest={{
-                                            title: service.title, // Correctly pass the title from the service object
-                                            work_category: 'gg',
-                                            //company: map profileId to username or firstName + lastName in User table
-                                            company: service.profileDTO.firstName,
-                                            location: service.location ?? 'a',
-                                            employment_type: service.employmentType ?? 'a',
-                                            description_1: service.description1 ?? '',
-                                            description_2: service.description2 ?? '',
-                                            description_3: service.description3 ?? '',
-                                            examples_of_work: service.serviceRequestDTO?.workExample ?? 'a',
-                                            submission_deadline: service.serviceRequestDTO?.submissionDeadline ?? '11/08',
-                                            budget: service.price.toString() ?? '0',
-                                            //add priceUnit here and in ServiceRequestCard component
-                                            language: service.languageSpoken ?? 'English',
-                                            days_left: '', // This would need calculation based on the current date and submission_deadline
-                                        }} 
-                                        hasProfile={true} 
-                                        profilePic={'/jobonic.svg'} 
-                                    />
+                                        className="bg-white border border-gray-100 shadow-lg"    
+                                    >
+                                        <span className="text-xs">
+                                            Posted By Profile ID- { service.profileDTO.id } 
+                                        </span>
+                                        <ServiceRequestCard
+                                            service={service}//TODO: remove
+                                            serviceRequest={{
+                                                title: service.title, // Correctly pass the title from the service object
+                                                work_category: 'gg',
+                                                //company: map profileId to username or firstName + lastName in User table
+                                                company: service.profileDTO.firstName,
+                                                location: service.location ?? 'a',
+                                                employment_type: service.employmentType ?? 'a',
+                                                description_1: service.description1 ?? '',
+                                                description_2: service.description2 ?? '',
+                                                description_3: service.description3 ?? '',
+                                                examples_of_work: service.serviceRequestDTO?.workExample ?? 'a',
+                                                submission_deadline: service.serviceRequestDTO?.submissionDeadline ?? '11/08',
+                                                budget: service.price.toString() ?? '0',
+                                                //add priceUnit here and in ServiceRequestCard component
+                                                language: service.languageSpoken ?? 'English',
+                                                days_left: '', // This would need calculation based on the current date and submission_deadline
+                                            }} 
+                                            hasProfile={true} 
+                                            profilePic={'/jobonic.svg'} 
+                                        />
+                                    </div>
                                 )
                             )}
                         </div>
