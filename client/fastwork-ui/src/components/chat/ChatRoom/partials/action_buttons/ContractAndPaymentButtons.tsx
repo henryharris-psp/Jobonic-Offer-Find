@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CheckCircleIcon, CheckIcon, CreditCardIcon, DocumentTextIcon, PencilIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
+import { CheckBadgeIcon, CheckCircleIcon, CheckIcon, ClipboardDocumentCheckIcon, CreditCardIcon, DocumentTextIcon, PencilIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
 import Modal from "@/components/Modal";
 import { useChat } from "@/contexts/chat";
 import { useSelector } from "react-redux";
@@ -47,7 +47,7 @@ const ContractAndPaymentButtons = () => {
                         });
                         await sendMessage('contract', latestContract.id.toString());
                         await sendMessage('text', acceptContractMsg);
-                        const newlySentMessage = await sendMessage('system', 'payment_request');
+                        const newlySentMessage = await sendMessage('payment_request', activeChatRoom?.match_id.toString(), 'system');
                         if(newlySentMessage){
                             await updateChatRoom(newlySentMessage.room_id, {
                                 status: 'payment_verification'
@@ -143,7 +143,12 @@ const ContractAndPaymentButtons = () => {
                                         ) : ''}
                                     </div>
 
-                                    { !latestContract?.acceptBy.includes(authUser?.profile?.id) ? (
+                                    { latestContract?.acceptBy.includes(authUser?.profile?.id) ? (
+                                        <ContractAcceptStatus
+                                            isSenderAccepted={latestContract.acceptBy.includes(authUser?.profile?.id)}
+                                            isReceiverAccepted={latestContract.acceptBy.includes(activeChatRoom?.receiver?.id)}
+                                        />
+                                    ) : (
                                         <Button
                                             size="sm"
                                             color="success"
@@ -151,13 +156,6 @@ const ContractAndPaymentButtons = () => {
                                             icon={<CheckIcon className="size-5"/>}
                                             onClick={handleOnClickAccept}
                                         />
-                                    ) : (
-                                        <div className="flex flex-row items-center space-x-1 pt-2">
-                                            <CheckCircleIcon className="size-5 text-green-400"/>
-                                            <span className="text-xs">
-                                                You have accepted this contract.
-                                            </span>
-                                        </div>
                                     )}
                                 </div>
                             ) : ''}

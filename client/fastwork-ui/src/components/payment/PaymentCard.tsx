@@ -41,7 +41,7 @@ const PaymentCard = ({
             try {
                 await processPayment();
                 setIsPaid(true);
-                const newlySentMessage = await sendMessage('system', 'payment_success');
+                const newlySentMessage = await sendMessage('payment_receipt', 'transaction_id', 'system');
                 if (newlySentMessage) {
                     await updateChatRoom(newlySentMessage.room_id, {
                         status: 'to_submit'
@@ -82,7 +82,11 @@ const PaymentCard = ({
                 {/* payment selection */}
                 <div className="w-full">
                     <label htmlFor="select" className="block text-sm font-medium text-gray-600">Select Payment Method</label>
-                    <select id="select" name="select" className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <select 
+                        id="select" 
+                        name="select" 
+                        className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    >
                         <option value="option1">-- Select --</option>
                         <option value="option2">Payni</option>
                         <option value="option3">PromptPay QR</option>

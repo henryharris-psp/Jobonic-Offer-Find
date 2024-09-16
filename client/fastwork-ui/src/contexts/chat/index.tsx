@@ -39,7 +39,7 @@ interface ChatContextProps extends ChatState {
     createNewChatRoom: (serviceId: string, matchId: string, freelancerId: number, employerId: number) => Promise<ChatRoom>;
     updateChatRoom: (chatRoomId: string | number, newValues: object) => Promise<void>;
     deleteChatRoom: (chatRoomId: string | number) => Promise<void>;
-    sendMessage: (mediaType: MediaType, newMessage: string) => Promise<Message | null>;
+    sendMessage: (mediaType: MediaType, newMessage: string | null | undefined, senderId?: string | number ) => Promise<Message | null>;
 
     latestContract: Contract | null;
     authUserType: 'freelancer' | 'employer';
@@ -140,9 +140,7 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                     const newChatRooms = state.chatRooms.map(chatRoom =>
                         chatRoom.id === chatRoomId ? updatedChatRoom : chatRoom
                     );
-
-                    console.log('new message', newChatRooms);
-            
+2            
                     // Update local state with newly new messsage
                     dispatch({ type: 'SET_CHAT_ROOMS', payload: newChatRooms });
                     dispatch({ type: 'SET_ACTIVE_CHAT_ROOM', payload: updatedChatRoom });
@@ -258,12 +256,10 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             }
         }
     
-        const sendMessage = async (mediaType: MediaType, content: string): Promise<Message | null> => {
+        const sendMessage = async (mediaType: MediaType, content: string | null | undefined, senderId?: string | number ): Promise<Message | null> => {
             const { activeChatRoom } = state;
         
-            if (!authUser?.profile?.id || !activeChatRoom?.id || !content.trim()) {
-                return null;
-            }
+            if (!authUser?.profile?.id || !activeChatRoom?.id || !content) return null;
         
             dispatch({ type: 'SET_IS_SENDING', payload: true });
         
@@ -274,7 +270,7 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                         room_id: activeChatRoom.id,
                         media_type: mediaType,
                         content,
-                        sender_id: authUser.profile.id,
+                        sender_id: senderId ?? authUser.profile.id,
                     })
                     .select();
         
