@@ -3,11 +3,11 @@ import Modal from "@/components/Modal";
 import PaymentRequestCard from "@/components/payment/PaymentRequestCard";
 import { useChat } from "@/contexts/chat";
 import { CreditCardIcon } from "@heroicons/react/24/solid";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 
 const InChatPaymentRequestCard = () => {
     const numberFormater = new Intl.NumberFormat();
-    const { activeChatRoom, latestContract, insertOrUpdateLocalChatRoom } = useChat();
+    const { latestContract } = useChat();
     const [showPaymentRequestCardModal, setShowPaymentRequestCardModal] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
 
