@@ -54,8 +54,9 @@ export type MediaType =
     'text' | 
     'image' | 
     'contract' | 
-    'service' | 
-    'system';
+    'service' |
+    'payment_request' |
+    'payment_receipt';
     
 export type SystemMessageType = 
     'contract_accepted' | 
@@ -65,10 +66,10 @@ export type SystemMessageType =
 export interface Message {
     id: string | number;
     room_id: number;
-    sender_id: number;
+    sender_id: number | string; //string is for system
     media_type: MediaType 
     content: string;
-    created_at: string
+    created_at: string;
 };
 
 export type CollaborationStatus = 

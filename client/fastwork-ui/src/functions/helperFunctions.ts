@@ -236,4 +236,20 @@ export const getCategoryName = async (categoryId: string) => {
         }
     }
 
+    export const fetchPayment = async (
+        transactionId: string | number,
+        signal?: AbortSignal
+    ): Promise<Contract | undefined> => {
+        try {
+            //get_payment
+            const res = await httpClient.get(`payment/${transactionId}`, { signal });
+            return res.data;
+        } catch (error: any) {
+            if (error.name === 'AbortError') {
+                console.log('Fetch contract aborted');
+            } else {
+                console.error('Fetch contract error:', error);
+            }
+        }
+    }
 

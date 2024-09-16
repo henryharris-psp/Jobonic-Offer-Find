@@ -7,6 +7,7 @@ import CategoryCard from "@/components/CategoryCard";
 import SafeInput, { SafeInputChangeEvent } from "@/components/SafeInput";
 import StarRating from "@/components/StarRating";
 import ToReviewCard from "@/components/ToReviewCard";
+import InChatPaymentReceiptCard from "@/components/chat/ChatRoom/partials/Conversation/InChatPaymentReceiptCard";
 import React, { useState } from "react";
 
 //TODO: only for testing purpose
@@ -20,6 +21,12 @@ const ComponentGallery = () => {
     
     //start component
     const [star, setStar] = useState(0);
+
+    const generateRandomTransitionId = () => {
+        const randomNum = Math.floor(100000000 + Math.random() * 900000000);
+        return `#TRX${randomNum}`;
+    }
+    const transitionId = generateRandomTransitionId();
 
     return (
         <div className="flex flex-col space-y-5 m-5">
@@ -85,6 +92,14 @@ const ComponentGallery = () => {
                     'fdfdf',
                     'fxxxxx'
                 ]}
+            />
+
+            <InChatPaymentReceiptCard
+                paidAmount={2333.33}
+                paidDate="12/01/2024"
+                transitionId={transitionId}
+                billedTo="Jobonic"
+                paymentMethod="Payni"
             />
 
             {/* <DealCard

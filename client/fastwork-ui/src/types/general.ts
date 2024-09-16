@@ -45,4 +45,12 @@ export interface Contract {
     matchesId: string | number;
 }
 
+export interface Payment {
+    transactionId: string;
+    amount: number;
+    billedTo: string;
+    date: string;
+    paymentMethod: string;
+}
+
 export type TailwindSizes = "xs" | "sm" | "" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl";

@@ -7,12 +7,12 @@ const ApproveButton = () => {
     const { sendMessage, updateChatRoom } = useChat();
 
     const handleApprove = async () => {
-        const newlySentMessage = await sendMessage('system', 'All milestones are completed');
-                if (newlySentMessage) {
-                    await updateChatRoom(newlySentMessage.room_id, {
-                        status: 'to_review'
-                    });
-                }
+        const newlySentMessage = await sendMessage('text', 'All milestones are completed and approved.', 'system');
+            if (newlySentMessage) {
+                await updateChatRoom(newlySentMessage.room_id, {
+                    status: 'to_review'
+                });
+            }
     };
     return (
         <Button 
