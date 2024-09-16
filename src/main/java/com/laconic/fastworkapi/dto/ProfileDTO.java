@@ -36,6 +36,7 @@ public class ProfileDTO implements Serializable {
 //    private Set<UserRoleDTO> roles;
 
     private String bankAccountNumber;
+    private String position;
 
     private String cryptoType;
 
@@ -60,6 +61,7 @@ public class ProfileDTO implements Serializable {
         profile.setPaymentMethod(this.paymentMethod);
         profile.setReceivePaymentMethod(this.receivePaymentMethod);
         profile.setDescription(this.description);
+        profile.setPosition(this.position);
         return profile;
     }
 }

@@ -31,8 +31,6 @@ public class Contract extends Auditable<UUID> {
 
     @Lob
     private String deliverable;
-//    private Boolean isFreelancerConfirmed;
-//    private Boolean isEmployerConfirmed;
 
     @ElementCollection
     private List<Long> acceptBy;
