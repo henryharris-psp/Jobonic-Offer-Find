@@ -381,7 +381,6 @@ const ProgressList: React.FC = () => {
                 />
             )}
 
-
             <Modal
                 isOpen={isPaymentCardOpen}
                 onClose={() => setIsPaymentCardOpen(false)}

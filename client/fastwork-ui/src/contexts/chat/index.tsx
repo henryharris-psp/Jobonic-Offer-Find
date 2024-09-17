@@ -193,6 +193,9 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
                     match = matchRes.data;
                 }
+
+                // console.log('receiverId', receiverId, receiver.lastName);
+                // console.log('senderId', authUser?.profile.id, authUser?.profile.lastName);
                 
                 return {
                     ...chatRoom,
