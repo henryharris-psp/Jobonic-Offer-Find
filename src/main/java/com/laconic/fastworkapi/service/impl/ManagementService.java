@@ -190,6 +190,7 @@ public class ManagementService implements IManagementService {
         }
     }
 
+    // get employer offer services
     @Override
     public PaginationDTO<ServiceDTO.WithProfile> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
@@ -276,21 +277,42 @@ public class ManagementService implements IManagementService {
      * @Note : Get All request services and related of theirs with pagination and filter
      */
     @Override
-    public PaginationDTO<ExtendedServiceRequestDTO> getAllExtendedRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+    public PaginationDTO<ExtendedServiceRequestDTO.WithProfile> getAllExtendedRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
-        Specification<ServiceRequest> specs = GenericSpecification.hasKeyword(keyword, Set.of("title"));
+        Specification<ServiceManagement> specs =
+                GenericSpecification.hasKeyword(keyword, Set.of("title"));
 
-        Page<ServiceRequest> servicePage = (keyword != null) ?
-                serviceRequestRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
-                : serviceRequestRepo.findAll(pageAndFilterDTO.getPageRequest());
+        Page<ServiceManagement> servicePage = (keyword != null) ?
+                this.serviceRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
+                : this.serviceRepo.findAll(pageAndFilterDTO.getPageRequest());
 
         // Map the entities to DTOs
-        List<ExtendedServiceRequestDTO> extendedServiceRequestDTOS = servicePage.stream()
-                .map(this::mapToExtendedServiceRequestDTO)
+        List<ExtendedServiceRequestDTO.WithProfile> extendedServiceWithProfile = servicePage.stream()
+                .map(service -> getAllExtendedRequestWithProfile(service, service.getProfile()))
                 .collect(Collectors.toList());
 
         // Return the paginated response with the mapped DTOs
-        return PaginationHelper.getResponse(servicePage, extendedServiceRequestDTOS);
+        return PaginationHelper.getResponse(servicePage, extendedServiceWithProfile);
+    }
+
+    private static ExtendedServiceRequestDTO.WithProfile getAllExtendedRequestWithProfile(ServiceManagement service, Profile user) {
+        return new ExtendedServiceRequestDTO.WithProfile(
+                service.getId(),
+                EntityMapper.mapToResponse(service.getServiceOffer(), ServiceOfferDTO.class),
+                EntityMapper.mapToResponse(service.getServiceRequest(), ServiceRequestDTO.class),
+                EntityMapper.mapToResponse(user, ProfileDTO.class),
+                service.getTitle(),
+                service.getEmploymentType(),
+                service.getDescription(),
+                service.getDescription1(),
+                service.getDescription2(),
+                service.getDescription3(),
+                service.getLanguageSpoken(),
+                service.getLocation(),
+                EntityMapper.mapToResponse(service.getCategory(), CategoryDTO.class),
+                service.getPrice(),
+                service.getPriceUnit()
+        );
     }
 
     // Internal method to map ServiceRequest to ExtendedServiceRequestDTO

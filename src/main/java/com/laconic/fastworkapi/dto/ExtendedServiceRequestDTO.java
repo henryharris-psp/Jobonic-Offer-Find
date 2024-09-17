@@ -2,6 +2,7 @@ package com.laconic.fastworkapi.dto;
 
 import com.laconic.fastworkapi.enums.EmploymentType;
 import com.laconic.fastworkapi.enums.PriceUnit;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,9 +18,10 @@ import java.util.UUID;
  * @Note : This is an extended DTO for Service Requests with additional details.
  */
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-public class ExtendedServiceRequestDTO extends ServiceRequestDTO implements Serializable {
+public class ExtendedServiceRequestDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 6529685098267757690L;
 
@@ -47,35 +49,20 @@ public class ExtendedServiceRequestDTO extends ServiceRequestDTO implements Seri
     private Long userId;
     private String walletAddress;
 
-    public ExtendedServiceRequestDTO(
-            UUID id, LocalDate submissionDeadline, String workExample, Long profileId,
-            String description, String description1, String description2, String description3,
-            EmploymentType employmentType, String languageSpoken, String location, Double price,
-            PriceUnit priceUnit, String title, UUID categoryId, LocalDate cardExpiryDate,
-            String cardNumber, String companyName, String image, String phoneNumber, Double review,
-            Long userId, String walletAddress) {
-        this.id = id;
-        this.submissionDeadline = submissionDeadline;
-        this.workExample = workExample;
-        this.profileId = profileId;
-        this.description = description;
-        this.description1 = description1;
-        this.description2 = description2;
-        this.description3 = description3;
-        this.employmentType = employmentType;
-        this.languageSpoken = languageSpoken;
-        this.location = location;
-        this.price = price;
-        this.priceUnit = priceUnit;
-        this.title = title;
-        this.categoryId = categoryId;
-        this.cardExpiryDate = cardExpiryDate;
-        this.cardNumber = cardNumber;
-        this.companyName = companyName;
-        this.image = image;
-        this.phoneNumber = phoneNumber;
-        this.review = review;
-        this.userId = userId;
-        this.walletAddress = walletAddress;
+//    public record WithProfile(
+//            UUID id, LocalDate submissionDeadline, String workExample, Long profileId,
+//            String description, String description1, String description2, String description3,
+//            EmploymentType employmentType, String languageSpoken, String location, Double price,
+//            PriceUnit priceUnit, String title, UUID categoryId, LocalDate cardExpiryDate,
+//            String cardNumber, String companyName, String image, String phoneNumber, Double review,
+//            Long userId, String walletAddress) implements Serializable {
+//
+//    }
+
+    public record WithProfile(UUID id, ServiceOfferDTO serviceOfferDTO, ServiceRequestDTO serviceRequestDTO,
+                              ProfileDTO profileDTO, String title, EmploymentType employmentType, String description,
+                              String description1, String description2, String description3, String languageSpoken,
+                              String location, CategoryDTO categoryDTO, double price,
+                              PriceUnit priceUnit) implements Serializable {
     }
 }
