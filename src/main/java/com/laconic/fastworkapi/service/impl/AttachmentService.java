@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -113,8 +114,8 @@ public class AttachmentService implements IAttachmentService {
 
                 if (resource.exists() || resource.isReadable()) {
                     return ResponseEntity.ok()
-                            .contentType(MediaType.valueOf(MediaType.APPLICATION_OCTET_STREAM_VALUE))
-                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + document.getName() + "\"")
+                            .contentType(MediaType.APPLICATION_OCTET_STREAM) // Correct content type
+                            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + document.getName() + "\"") // Change inline to attachment
                             .body(resource);
                 } else {
                     throw new FileNotFoundException("Could not read file: " + filePath.toString());
@@ -126,6 +127,8 @@ public class AttachmentService implements IAttachmentService {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+
 
     @Override
     public ResponseEntity<Resource> showFile(UUID id) throws IOException {

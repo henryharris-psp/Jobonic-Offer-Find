@@ -7,6 +7,15 @@ import Button from '@/components/Button';
 import Marquee from './Marquee/Marquee';
 import Modal from '@/components/Modal';
 import PaymentCard from '@/components/payment/PaymentCard';
+import FileSizeAlertModal from './AlertMessage/FileAlertMessage';
+import { token } from '@/baseURL';
+
+type UploadedFile = {
+    id: string; // Ensure 'id' is part of the file object
+    name: string;
+    size: number;
+    status: boolean;
+};
 
 interface Milestone {
     id: string;
@@ -15,7 +24,7 @@ interface Milestone {
     tasks: string[];
     isOpen: boolean;
     serviceId: string;
-    uploadedFiles?: { name: string; size: number; status: boolean }[];
+    uploadedFiles?: UploadedFile[];
 }
 
 const ProgressList: React.FC = () => {
@@ -26,7 +35,7 @@ const ProgressList: React.FC = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [submittedMilestones, setSubmittedMilestones] = useState<Set<string>>(new Set());
     const [isSubmitted, setIsSubmitted] = useState<string[]>([]);
-
+    const [isAlertModalOpen, setIsAlertModalOpen] = useState<boolean>(false);
     const [isPaymentCardOpen, setIsPaymentCardOpen] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
 
@@ -51,11 +60,13 @@ const ProgressList: React.FC = () => {
                         const attachmentsResponse = await httpClient.get('/attachment/checkpoint', {
                             params: { checkPointId: milestone.id },
                         });
+                        console.log('Attachments Response:', attachmentsResponse.data);
                         const milestoneAttachments = attachmentsResponse.data;
 
-                        const files = milestoneAttachments.map((attachment: { name: string; fileSize: string; file: string; status: boolean }) => ({
+                        const files = milestoneAttachments.map((attachment: { id: string; name: string; fileSize: string; file: string; status: boolean;}) => ({
+                            id: attachment.id,
                             name: attachment.name,
-                            size: parseFloat(attachment.fileSize),
+                            size: attachment.fileSize,
                             file: attachment.file,
                             status: attachment.status
                         }));
@@ -76,20 +87,59 @@ const ProgressList: React.FC = () => {
         }
     };
 
+    const downloadFile = async (fileId: string, fileName: string) => {
+        try {
+            // Make a GET request to the endpoint with file ID
+            const response = await httpClient.get(`/attachment/download`, {
+                params: { id: fileId },
+                responseType: 'blob', // Set response type to 'blob' for binary data
+            });
+    
+            // Check if the request was successful
+            if (response.status === 200) {
+                // Convert response to Blob
+                const blob = new Blob([response.data], { type: response.headers['content-type'] });
+                // Create a URL for the Blob
+                const url = window.URL.createObjectURL(blob);
+                // Create a link element
+                const link = document.createElement('a');
+                // Set the link's href to the Blob URL
+                link.href = url;
+                // Set the download attribute with the file name
+                link.download = fileName;
+                // Append the link to the document body
+                document.body.appendChild(link);
+                // Trigger the download
+                link.click();
+                // Clean up by removing the link
+                document.body.removeChild(link);
+                // Revoke the Blob URL
+                window.URL.revokeObjectURL(url);
+            } else {
+                console.error('File download failed:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error downloading file:', error);
+        }
+    };
+    
     const uploadFile = async (milestoneId: string, file: File) => {
         try {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('documentType', 'CHECKPOINT');
             formData.append('checkPointId', milestoneId);
-
+            
             const response = await httpClient.post('/attachment', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-
+    
             if (response.status === 200) {
+                // Assuming the backend response includes the file ID
+                const fileId = response.data.fileId; // Adjust based on actual response
+    
                 // Update milestones with new file
                 setMilestones((prevMilestones) =>
                     prevMilestones.map((milestone) => {
@@ -99,6 +149,7 @@ const ProgressList: React.FC = () => {
                                 uploadedFiles: [
                                     ...(milestone.uploadedFiles || []),
                                     {
+                                        id: fileId,
                                         name: file.name,
                                         size: file.size,
                                         status: true,
@@ -109,10 +160,10 @@ const ProgressList: React.FC = () => {
                         return milestone;
                     })
                 );
-
+    
                 // Save the milestone submission status
                 saveUploadedMilestone(milestoneId);
-
+    
                 // Hide the submit button
                 setMilestones((prevMilestones) =>
                     prevMilestones.map((milestone) => {
@@ -130,7 +181,7 @@ const ProgressList: React.FC = () => {
             console.error('Error uploading file:', error);
         }
     };
-
+    
     // Determine submitted milestones based on file status
     const determineSubmittedMilestones = () => {
         const submittedMilestones = milestones
@@ -138,35 +189,41 @@ const ProgressList: React.FC = () => {
                 milestone.uploadedFiles?.some(file => file.status === true)
             )
             .map(milestone => milestone.id);
-
         setIsSubmitted(submittedMilestones);
     };
     useEffect(() => {
         determineSubmittedMilestones();
     }, [milestones]);
-
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, milestoneId: string) => {
         if (e.target.files && e.target.files.length > 0) {
             setSelectedFile(e.target.files[0]);
+            // Ensure the milestone ID is correctly added to the set
+            setSubmittedMilestones((prev) => {
+                const newSet = new Set(prev);
+                newSet.add(milestoneId);
+                console.log('Added milestone ID to submittedMilestones:', milestoneId);
+                console.log('Current submittedMilestones Set:', newSet);
+                return newSet;
+            });
+            const file = e.target.files[0];
+            const fileSizeInMB = file.size / (1024 * 1024);
 
-            // Update state to reflect that a file is selected for this milestone
-            setSubmittedMilestones((prev) => new Set(prev).add(milestoneId));
+            if (fileSizeInMB > 10) {
+                setIsAlertModalOpen(true);
+                setSelectedFile(null);
+                e.target.value = '';
+            } else {
+                setSelectedFile(file);
+                setSubmittedMilestones((prev) => new Set(prev).add(milestoneId));
+            }
         }
     };
-
     const handleSubmit = async (milestoneId: string) => {
         if (selectedFile) {
             try {
-                // Upload the file associated with the specific milestone
                 await uploadFile(milestoneId, selectedFile);
-
-                // Clear the selected file after a successful upload
                 setSelectedFile(null);
-
-                // Call determineSubmittedMilestones to refresh the submitted state
                 determineSubmittedMilestones();
-
-                // Automatically open the next milestone if it exists
                 const currentIndex = milestones.findIndex((milestone) => milestone.id === milestoneId);
                 if (currentIndex >= 0 && currentIndex < milestones.length - 1) {
                     const nextMilestoneId = milestones[currentIndex + 1].id;
@@ -177,7 +234,6 @@ const ProgressList: React.FC = () => {
             }
         }
     };
-
     const saveUploadedMilestone = async (checkPointId: string) => {
         try {
             // Fetch all attachments for the checkpoint
@@ -185,12 +241,9 @@ const ProgressList: React.FC = () => {
                 params: { checkPointId },
             });
             const attachments = attachmentsResponse.data;
-
             //status to be set for attachments
             const allAttachmentsSubmitted = attachments.every((attachment: { status: boolean }) => attachment.status);
-
             console.log('Attachment Status : ', allAttachmentsSubmitted);
-            
             if (!allAttachmentsSubmitted) {
                 await httpClient.put('/attachment/check-point/status', null, {
                     params: {
@@ -204,15 +257,12 @@ const ProgressList: React.FC = () => {
             console.error(`Failed to save status for attachments of checkpoint ${checkPointId}:`, error);
         }
     };
-
     const handleApproveClick = () => {
         setIsModalOpen(true);
     };
-
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
-
     const handlePayAll = () => {
         // Calculate total amount to be paid
         const total = milestones
@@ -223,14 +273,10 @@ const ProgressList: React.FC = () => {
         setTotalAmount(total);
         setIsPaymentCardOpen(true);
     };
-
-    const handlePaySelected = () => {
-        // Calculate total amount for selected milestones
-        const total = milestones
-            .filter((milestone) => submittedMilestones.has(milestone.id))
-            .reduce((acc, milestone) => acc + milestone.price, 0);
-        // Set total amount and open PaymentCard modal
-        setTotalAmount(total);
+    const handlePaySelected = (selectedMilestones: Milestone[], totalAmount: number) => {
+        console.log('Selected Milestones for Pay:', selectedMilestones);
+        console.log('Total Amount for Pay Selected:', totalAmount);
+        setTotalAmount(totalAmount);
         setIsPaymentCardOpen(true);
     };
     const toggleMilestone = (id: string) => {
@@ -242,11 +288,6 @@ const ProgressList: React.FC = () => {
         const units: string[] = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
         let size: number = sizeInBytes;
         let unitIndex: number = 0;
-
-        while (size >= 1024 && unitIndex < units.length - 1) {
-            size /= 1024;
-            unitIndex++;
-        }
         return `${size.toFixed(2)} ${units[unitIndex]}`;
     }
     //index of the current milestone
@@ -256,11 +297,12 @@ const ProgressList: React.FC = () => {
     // Function to check if a milestone is the current one
     const isCurrentMilestone = (index: number) =>
         currentMilestoneIndex === -1 ? index === milestones.length - 1 : index === currentMilestoneIndex;
-
     const closePaymentCard = () => {
         setIsPaymentCardOpen(false);
     };
-
+    const handleCloseAlertModal = () => {
+        setIsAlertModalOpen(false);
+    };
     return (
         <div className="bg-[#E0F7FA] p-4 shadow-md w-[300px] pt-16 max-h-screen overflow-x-auto">
             <h2 className="text-xl font-bold mb-4 text-center text-cyan-950">Progress List</h2>
@@ -269,7 +311,7 @@ const ProgressList: React.FC = () => {
                 {milestones.length > 0 ? milestones.map((milestone, index) => (
                     <li key={milestone.id}>
                         <div
-                            className={`flex items-center cursor-pointer ${isCurrentMilestone(index) ? 'bg-yellow-50' : 'bg-gray-100'
+                            className={`flex items-center cursor-pointer ${isCurrentMilestone(index) ? 'bg-sky-200' : 'bg-gray-100'
                                 } p-4 rounded-lg`}
                             onClick={() => toggleMilestone(milestone.id)}
                         >
@@ -278,22 +320,23 @@ const ProgressList: React.FC = () => {
                             >
                                 ▶
                             </span>
-                            <span className={`font-semibold text-sm ${isCurrentMilestone(index) ? 'text-yellow-800' : 'text-gray-500'
+                            <span className={`font-semibold text-sm ${isCurrentMilestone(index) ? 'text-yellow-500' : 'text-gray-500'
                                 } text-cyan-950`}>
                                 {milestone.title}
                             </span>
                         </div>
                         {openMilestones.includes(milestone.id) && (
                             <div className="ml-4 mt-2">
-                                <ul className="list-disc list-outside font-bold text-sm ml-6">
+                                <ul className={`list-disc list-outside font-bold text-sm ml-6 ${isCurrentMilestone(index) ? 'text-yellow-500' : 'text-gray-500'
+                                    }`}>
                                     {milestone.tasks.map(task =>
                                         <li key={task}>{task.name}</li>
                                     )}
                                     <li>{`Amount to pay: ${milestone.price}`}</li>
                                 </ul>
-                                {authUserType === 'freelancer' && milestone.title !== 'Review' && !isSubmitted.includes(milestone.id) && (
+                                {authUserType === 'freelancer' && milestone.title !== 'Review' ? (
                                     <div className="mt-2 flex justify-around items-center">
-                                        <label className="text-white bg-yellow-700 font-bold py-2 px-2 text-xs rounded-lg inline-flex items-center mr-2 cursor-pointer w-52 overflow-hidden">
+                                        <label className="text-white bg-yellow-500 font-bold py-2 px-2 text-xs rounded-lg inline-flex items-center mr-2 cursor-pointer w-52 overflow-hidden">
                                             <DocumentArrowUpIcon className="h-4 w-4 mr-1 flex-shrink-0" />
 
                                             {selectedFile ? (
@@ -307,6 +350,10 @@ const ProgressList: React.FC = () => {
                                                 onChange={(e) => handleFileChange(e, milestone.id)}
                                             />
                                         </label>
+                                        <FileSizeAlertModal
+                                            isOpen={isAlertModalOpen}
+                                            onClose={handleCloseAlertModal}
+                                        />
                                         <Button
                                             title='Submit Work'
                                             icon={<BookmarkSquareIcon className="h-4 w-4" />}
@@ -315,7 +362,7 @@ const ProgressList: React.FC = () => {
                                             onClick={() => handleSubmit(milestone.id)}
                                         />
                                     </div>
-                                )}
+                                ) : ''}
                                 {authUserType === 'employer' && (
                                     <div className="mt-2 justify-center border border-yellow-500 rounded-lg p-4">
                                         {milestone.uploadedFiles && milestone.uploadedFiles.length > 0 ? (
@@ -325,11 +372,20 @@ const ProgressList: React.FC = () => {
                                                     <a
                                                         download
                                                         className="text-blue-500 underline text-xs cursor-pointer w-[50%]"
+                                                        onClick={(e) => {
+                                                            e.preventDefault(); // Prevent default link behavior
+                                                            downloadFile(file.id, file.name);
+                                                        }}
                                                     >
                                                         {file.name}
                                                     </a>
-                                                    <span className="text-xs">{formatFileSize(file.size)}</span>
-                                                    <ArrowDownTrayIcon className="h-5 w-5 text-gray-500" />
+                                                    <span className="text-xs">{file.size}</span>
+                                                    {milestone.uploadedFiles?.map((file) => (
+                                                        <div key={file.name} className="flex">
+                                                            <ArrowDownTrayIcon onClick={() => downloadFile(file.id, file.name)} className="w-4 h-4 cursor-pointer"/>
+                                                        </div>
+                                                    ))}
+                                                    
                                                 </div>
                                             ))
                                         ) : (
@@ -356,8 +412,7 @@ const ProgressList: React.FC = () => {
                                                 >
                                                     {file.name}
                                                 </a>
-                                                <span className="text-xs">{formatFileSize(file.size)}</span>
-                                                <ArrowDownTrayIcon className="h-5 w-5 text-gray-500 cursor-pointer" />
+                                                <span className="text-xs">{file.size}</span>
                                             </div>
                                         ))}
                                     </div>
