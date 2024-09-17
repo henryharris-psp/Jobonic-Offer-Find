@@ -137,7 +137,7 @@ const InChatContractCard = ({
                             </div>  
                         )}
                         <ContractCard
-                            title={activeChatRoom?.service.title ?? ''}
+                            title={activeChatRoom?.service?.title ?? ''}
                             contract={contract}
                             isAccepted={isAccepted}
                             size="xs"
@@ -168,7 +168,7 @@ const InChatContractCard = ({
                 onClose={handleOnCloseContract}
             >
                 <ContractCard
-                    title={activeChatRoom?.service.title ?? ''}
+                    title={activeChatRoom?.service?.title ?? ''}
                     contract={contract}
                     isEditMode={true}
                     onClose={handleOnCloseContract}

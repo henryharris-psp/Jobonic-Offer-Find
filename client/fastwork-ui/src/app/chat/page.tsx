@@ -12,6 +12,7 @@ import ChatRoomComponent from "@/components/chat/ChatRoom";
 import httpClient from "@/client/httpClient";
 import ProgressList from "@/components/chat/ProgressList";
 import { toast } from "react-toastify";
+import NewProgressList from "@/components/chat/NewProgressList";
 
 const ChatPage = () => {
     //catch url params
@@ -248,6 +249,7 @@ const ChatPage = () => {
                     <ChatRoomComponent />
 
                     <SideDrawer
+                        width={300}
                         show={showProgressList} 
                         onClose={() => setShowProgressList(false)}
                         animate
@@ -255,7 +257,8 @@ const ChatPage = () => {
                         zStack={9}
                         type={ isMobile || screenSize === 'lg' ? 'front' : 'slide'}
                     >
-                        <ProgressList/>
+                        {/* <ProgressList/> */}
+                        <NewProgressList/>
                     </SideDrawer>
                 </>  
             )}

@@ -324,9 +324,11 @@ const ContractCard = ({
                                         className="flex flex-row items-center space-x-5"
                                     >
                                         <div className="flex flex-col space-y-1">
-                                            <span className={`text-${size} text-gray-600 font-bold`}>
-                                                { milestone.title }
-                                            </span>
+                                            <div className="max-w-24 text-center w-full">
+                                                <span className={`text-${size} text-gray-600 font-bold`}>
+                                                    { milestone.title }
+                                                </span>
+                                            </div>
                                             { isEditMode ? (
                                                 <div className="flex flex-row items-center justify-center space-x-1">
                                                     <button

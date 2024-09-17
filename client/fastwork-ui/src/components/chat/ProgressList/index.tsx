@@ -302,7 +302,7 @@ const ProgressList: React.FC = () => {
     return (
         <div className="bg-[#E0F7FA] p-4 shadow-md w-[300px] pt-16 max-h-screen overflow-x-auto">
             <h2 className="text-xl font-bold mb-4 text-center text-cyan-950">Progress List</h2>
-            <div className="w-full h-[2px] bg-[#E2EEEE] mb-4 mt-4"></div>
+            <div className="w-full h-[2px] bg-gray-300 mb-4 mt-4"></div>
             <ul className="space-y-4">
                 {milestones.length > 0 ? milestones.map((milestone, index) => (
                     <li key={milestone.id}>
