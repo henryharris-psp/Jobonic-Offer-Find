@@ -21,12 +21,15 @@ import com.laconic.fastworkapi.utils.EntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -195,13 +198,14 @@ public class ManagementService implements IManagementService {
     public PaginationDTO<ServiceDTO.WithProfile> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
         Specification<ServiceManagement> specs =
-                GenericSpecification.hasKeyword(keyword, Set.of("title"));
+                GenericSpecification.hasKeyword((String) keyword, Set.of("title"));
 
         Page<ServiceManagement> servicePage = keyword != null ?
                 this.serviceRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
                 : this.serviceRepo.findAll(pageAndFilterDTO.getPageRequest());
 
         List<ServiceDTO.WithProfile> servicesWithProfile = servicePage.stream()
+                .filter(service -> !service.getProfile().getId().equals(pageAndFilterDTO.getAuthId()))
                 .map(service -> getServiceWithProfile(service, service.getProfile()))
                 .collect(Collectors.toList());
 
