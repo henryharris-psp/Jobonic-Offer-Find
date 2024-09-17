@@ -137,10 +137,8 @@ const ProgressList: React.FC = () => {
             });
     
             if (response.status === 200) {
-                // Assuming the backend response includes the file ID
-                const fileId = response.data.fileId; // Adjust based on actual response
-    
-                // Update milestones with new file
+                const fileId = response.data.fileId; 
+
                 setMilestones((prevMilestones) =>
                     prevMilestones.map((milestone) => {
                         if (milestone.id === milestoneId) {
@@ -181,8 +179,6 @@ const ProgressList: React.FC = () => {
             console.error('Error uploading file:', error);
         }
     };
-    
-    // Determine submitted milestones based on file status
     const determineSubmittedMilestones = () => {
         const submittedMilestones = milestones
             .filter(milestone =>
@@ -404,7 +400,7 @@ const ProgressList: React.FC = () => {
                                 {authUserType === 'freelancer' && milestone.uploadedFiles && milestone.uploadedFiles.length > 0 && (
                                     <div className="mt-4">
                                         {milestone.uploadedFiles.map((file, index) => (
-                                            <div key={index} className="flex items-center justify-between space-x-2 ml-4">
+                                            <div key={index} className="flex items-center justify-around space-x-2 ml-4">
                                                 <a
 
                                                     download
