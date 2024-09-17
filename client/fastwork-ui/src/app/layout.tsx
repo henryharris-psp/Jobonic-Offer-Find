@@ -92,13 +92,13 @@ const RootLayout = ({
             <body className={inter.className}>
 
                 {/* TODO: temporary, just to load colors */}
-                <div className="hidden">DD4A4A
-                    <div className="bg-[#0B2147] hidden"/>
-                    <div className="bg-[#B0B0B0] hidden"/>
-                    <div className="bg-[#5A9E4A] hidden"/>
-                    <div className="bg-[#D0693B] hidden"/>
-                    <div className="bg-[#DD4A4A] hidden"/>
-                    <div className="bg-[#71BAC7] hidden"/>
+                <div className="hidden">
+                    <div className="text-[#0B2147] bg-[#0B2147] hidden"/>
+                    <div className="text-[#B0B0B0] bg-[#B0B0B0] hidden"/>
+                    <div className="text-[#5A9E4A] bg-[#5A9E4A] hidden"/>
+                    <div className="text-[#D0693B] bg-[#D0693B] hidden"/>
+                    <div className="text-[#DD4A4A] bg-[#DD4A4A] hidden"/>
+                    <div className="text-[#71BAC7] bg-[#71BAC7] hidden"/>
                 </div>
 
                 <NavBar />

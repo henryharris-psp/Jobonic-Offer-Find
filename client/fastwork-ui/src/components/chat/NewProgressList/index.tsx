@@ -3,13 +3,7 @@ import { useChat } from "@/contexts/chat";
 import MilestoneProgressSection from "./MilestoneProgressSection";
 import ContractProgressSection from "./ContractProgressSection";
 
-interface NewProgressListProps {
-    
-}
-
-const NewProgressList = ({
-
-}: NewProgressListProps) => {
+const NewProgressList = () => {
     const { activeChatRoom } = useChat();
 
     const milestones = useMemo(() => {
@@ -23,26 +17,35 @@ const NewProgressList = ({
                     <span className="font-bold text-xl">Progress List</span>
                 </div>
 
-                <ContractProgressSection/>
+                <div className="flex-1 overflow-auto">
+                    <div className="flex flex-col space-y-4 my-3">
+                        <ContractProgressSection/>
 
-                {/* milestone section */}
-                { milestones.length !== 0 ? (
-                    <div className="flex flex-col space-y-3">
-                        { milestones.map( milestone => 
-                            <MilestoneProgressSection
-                                key={milestone.id}    
-                                {...milestone}
-                            />
+                        {/* milestone section */}
+                        { milestones.length !== 0 ? (
+                            milestones.map( milestone => 
+                                <MilestoneProgressSection
+                                    key={milestone.id}    
+                                    {...milestone}
+                                />
+                            )
+                        ) : (
+                            <div className="flex justify-center">
+                                <span className="text-gray-400 text-sm mt-5">
+                                    No Milestones
+                                </span>
+                            </div>
                         )}
                     </div>
-                ) : (
-                    <div className="flex justify-center">
-                        <span className="text-gray-400 text-sm">
-                            No Milestones
+                </div>
+                
+                <div className="flex items-center justify-center h-20">
+                    <button className="flex items-center justify-center w-full border border-gray-100 py-2 bg-white shadow-bold rounded-lg">
+                        <span className="text-[#71BAC7] ">
+                            Request for admin help
                         </span>
-                    </div>
-                )}
-
+                    </button>
+                </div>
             </div>
         </div>
     );

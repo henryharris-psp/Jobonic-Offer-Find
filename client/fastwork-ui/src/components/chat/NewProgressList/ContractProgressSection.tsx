@@ -4,11 +4,13 @@ import { DocumentIcon } from "@heroicons/react/24/outline";
 import { ArrowDownTrayIcon, EyeIcon, StopIcon } from "@heroicons/react/24/solid";
 import LatestContractModal from "@/components/contract/LatestContractModal";
 import { useState } from "react";
+import EndContractConfirmationDialog from "@/components/contract/EndContractConfirmationDialog";
 
 const ContractProgressSection = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [showLatestContractModal, setShowLatestContractModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
 
     const handleOnToggle = () => {
         setIsOpen((prev) => !prev);
@@ -26,12 +28,12 @@ const ContractProgressSection = () => {
     }
     
     const handleOnClickEndContract = () => {
-        console.log('end contract');
+        setShowConfirmationDialog(true);
     } 
 
     return (
         <>
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col">
                 <div
                     className="flex flex-row items-center space-x-4 cursor-pointer"
                     onClick={handleOnToggle}
@@ -51,7 +53,7 @@ const ContractProgressSection = () => {
                         isOpen={isOpen} 
                         maxHeight="50vh"
                     >
-                        <div className="flex flex-row space-x-6">
+                        <div className="flex flex-row space-x-6 mt-2">
                             {/* bar */}
                             <div
                                 className="bg-cyan-900"
@@ -103,6 +105,11 @@ const ContractProgressSection = () => {
                 isOpen={showLatestContractModal}
                 defaultEditMode={isEditMode}
                 onClose={handleOnCloseContract}
+            />
+
+            <EndContractConfirmationDialog
+                isOpen={showConfirmationDialog}
+                onClose={() => setShowConfirmationDialog(false)}
             />
         </>
     );
