@@ -124,7 +124,7 @@ const ChatList = ({
                                         height={100}
                                     />
                                     <div className="flex flex-col space-y-1">
-                                        <span className="font-bold">{`${chatRoom.receiver?.firstName ?? 'No Profile' }`}</span>
+                                        <span className="font-bold">{`${chatRoom.receiver?.lastName ?? 'No Profile' }`}</span>
                                         <span className="text-xs text-gray-500">
                                             {authUser?.profile.id === chatRoom?.freelancer_id ? 'is finding service' : 'is offering service'}
                                         </span>

@@ -8,23 +8,24 @@ import { ChatBubbleBottomCenterTextIcon } from "@heroicons/react/24/solid";
 import React, { useState } from "react";
 
 const ReviewButtons = () => {
-    const { activeChatRoom } = useChat();
+    const { activeChatRoom, authUserType } = useChat();
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [inputs, setInputs] = useState({
         starCount: 0,
         comment: ''
-    })
+    });
     const [isLoading, setIsLoading] = useState(false);
 
     const submit = async () => {
         setIsLoading(true);
         try{
             const res = await httpClient.post('customer-review', {
-                    noOfStar: inputs.starCount,
-                    review: inputs.comment,
-                    profileId: activeChatRoom?.receiver.id,
-                    matchesId: activeChatRoom?.match_id,
-                    active: true
+                noOfStar: inputs.starCount,
+                review: inputs.comment,
+                profileId: activeChatRoom?.receiver.id,// TODO: fix
+                matchesId: activeChatRoom?.match_id,
+                reviewType: "EMPLOYER",
+                active: true
             });
             console.log(res.data);
         } catch (error) {
@@ -59,21 +60,24 @@ const ReviewButtons = () => {
                 onClose={() => setShowReviewModal(false)}
             >
                 <div className="flex flex-col items-center space-y-8 bg-white p-8 rounded-xl">
-                    <span className="font-bold text-2xl">
-                        Write a review to your service provider 
+                    <span className="font-bold text-xl">
+                        What do you think of working with your { authUserType === 'freelancer' ? 'employer' : 'freelancer' }?
                     </span>
                     <StarRating
-                        size="5xl"
+                        size="6xl"
                         totalStars={5}
                         value={inputs.starCount}
                         onChange={handleStarChange}
                     />
 
+                    <span className="text-xs text-gray-500 mx-5">
+                        This review will be sent to { authUserType === 'freelancer' ? 'employer' : 'freelancer' } and can be viewed by publically.
+                    </span>
                     <div className="flex flex-col space-y-2 w-full">
                         <span className="text-gray-700">Comment</span>
                         <SafeInput
                             type="textarea"
-                            placeholder="type something..."
+                            placeholder="write your review..."
                             value={inputs.comment}
                             onChange={handleOnInputChange}
                         />

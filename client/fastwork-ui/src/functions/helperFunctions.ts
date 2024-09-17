@@ -138,24 +138,13 @@ export const getCategoryName = async (categoryId: string) => {
 
     export const getProfileByProfileId = async (profileId: string | number, token?: string) => {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-        const url = `${apiUrl}/user/get-user-info/`;
+        const url = `${apiUrl}/user/get-user-info/?name=profile&id=${profileId}`;
         const headers = {
             Authorization: `Bearer ${token}`
         }
         const apiCall = token 
-            ? axios.post(url, {}, {
-                headers,
-                params: {
-                    name: 'profile',
-                    id: profileId
-                }
-            })
-            : httpClient.post(url, {}, {
-                params: {
-                    name: 'profile',
-                    id: profileId
-                }
-            });
+            ? axios.post(url, {}, { headers })
+            : httpClient.post(url);
         try{
             const res = await apiCall;
             return res.data;
