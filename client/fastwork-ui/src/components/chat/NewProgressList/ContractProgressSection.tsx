@@ -5,12 +5,14 @@ import { ArrowDownTrayIcon, EyeIcon, StopIcon } from "@heroicons/react/24/solid"
 import LatestContractModal from "@/components/contract/LatestContractModal";
 import { useState } from "react";
 import EndContractConfirmationDialog from "@/components/contract/dialogs/EndContractConfirmationDialog";
+import PayoutConfirmationDialog from "@/components/contract/dialogs/PayoutConfirmationDialog";
 
 const ContractProgressSection = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [showLatestContractModal, setShowLatestContractModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
+    const [showPayoutConfirmationDialog, setPayoutConfirmationDialog] = useState(false);
 
     const handleOnToggle = () => {
         setIsOpen((prev) => !prev);
@@ -29,7 +31,12 @@ const ContractProgressSection = () => {
     
     const handleOnClickEndContract = () => {
         setShowConfirmationDialog(true);
-    } 
+    }
+
+    const closeConfirmationDialog = () => {
+        setShowConfirmationDialog(false);
+        setPayoutConfirmationDialog(true);
+    }
 
     return (
         <>
@@ -110,6 +117,13 @@ const ContractProgressSection = () => {
             <EndContractConfirmationDialog
                 isOpen={showConfirmationDialog}
                 onClose={() => setShowConfirmationDialog(false)}
+                onConfirm={closeConfirmationDialog}
+                onCancel={() => setShowConfirmationDialog(false)}
+            />
+
+            <PayoutConfirmationDialog
+                isOpen={showPayoutConfirmationDialog}
+                onClose={() => setPayoutConfirmationDialog(false)}
             />
         </>
     );

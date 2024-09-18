@@ -206,7 +206,7 @@ export const RegisterForm: React.FC = () => {
                         <button
                             type="button"
                             onClick={() => setRegisterForm('authRegister')}
-                            className="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 ml-2"
+                            className="btn-primary justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 ml-2"
                         >
                             Back to Register
                         </button>
@@ -249,7 +249,7 @@ export const RegisterForm: React.FC = () => {
                         <button
                             type="button"
                             onClick={() => setRegisterForm('authRegister')}
-                            className="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2"
+                            className="btn-primary justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2"
                         >
                             Back to Register
                         </button>

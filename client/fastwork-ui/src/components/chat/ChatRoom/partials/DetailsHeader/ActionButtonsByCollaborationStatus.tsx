@@ -13,6 +13,7 @@ import ReviewButtons from "../action_buttons/ReviewButtons";
 //shared
 import ContractAndPaymentButtons from "../action_buttons/ContractAndPaymentButtons";
 import ApproveButton from "../action_buttons/ApproveButton";
+import TerminationContractButton from "../action_buttons/TerminationContractButton";
 
 type ActionButtonMap = {
     [key: string]: JSX.Element | null;
@@ -25,7 +26,7 @@ const freelancerActionButtonsMap = {
     payment_verification: <ContractAndPaymentButtons/>,
     to_submit: <ApproveButton/>,
     to_review: <ReviewButtons/>,
-    contract_termination: <div>Freelance side</div>
+    contract_termination: <TerminationContractButton role="freelancer"/>,
 }
 
 const employerActionButtonsMap = {
@@ -36,7 +37,7 @@ const employerActionButtonsMap = {
     payment_verification: <ContractAndPaymentButtons/>,
     to_submit: <ApproveButton/>,
     to_review: <ReviewButtons/>,
-    contract_termination: <div>employer side</div>
+    contract_termination: <TerminationContractButton role="employer"/>
 };
 
 const actionButtonsMap: Record<'freelancer' | 'employer', ActionButtonMap> = {
@@ -48,7 +49,10 @@ const ActionButtonsByCollaborationStatus = () => {
     const { activeChatRoom, authUserType } = useChat();
     const currentStatus = activeChatRoom ? activeChatRoom.status : '';
 
+    console.log('authUserType : ', authUserType);
+
     let ActionButtonComponent = null;
+
     if(activeChatRoom && authUserType){
         ActionButtonComponent = actionButtonsMap[authUserType][currentStatus];
     }
