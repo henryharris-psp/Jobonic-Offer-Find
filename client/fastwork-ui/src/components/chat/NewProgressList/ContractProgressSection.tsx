@@ -4,7 +4,7 @@ import { DocumentIcon } from "@heroicons/react/24/outline";
 import { ArrowDownTrayIcon, EyeIcon, StopIcon } from "@heroicons/react/24/solid";
 import LatestContractModal from "@/components/contract/LatestContractModal";
 import { useState } from "react";
-import EndContractConfirmationDialog from "@/components/contract/EndContractConfirmationDialog";
+import EndContractConfirmationDialog from "@/components/contract/dialogs/EndContractConfirmationDialog";
 
 const ContractProgressSection = () => {
     const [isOpen, setIsOpen] = useState(false);

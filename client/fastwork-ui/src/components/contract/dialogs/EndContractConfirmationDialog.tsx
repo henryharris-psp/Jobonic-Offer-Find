@@ -1,16 +1,36 @@
 import React from "react";
-import Modal from "../Modal";
-import Button from "../Button";
+import Modal from "../../Modal";
+import Button from "../../Button";
+import { useChat } from "@/contexts/chat";
 
 interface EndContractConfirmationDialogProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
+const endContractMessage = 'I want to terminate contract.';
+
 const EndContractConfirmationDialog = ({
     isOpen,
     onClose,
 }: EndContractConfirmationDialogProps) => {
+
+    const { sendMessage, updateChatRoom } = useChat();
+
+    //methods
+        const handleOnClickConfrim = async () => {
+            const newlySentMessage = await sendMessage('text', endContractMessage);
+            if(newlySentMessage){
+                await updateChatRoom(newlySentMessage.room_id, {
+                    status: 'contract_termination'
+                });
+            }
+        }
+
+        const handleOnClickCancel = () => {
+            onClose();
+        }
+
     return (
         <Modal 
             isOpen={isOpen} 
@@ -34,14 +54,14 @@ const EndContractConfirmationDialog = ({
                         fullWidth
                         size="sm"
                         title="Yes, end collaboration"
-                        onClick={() => console.log('yes')}
+                        onClick={handleOnClickConfrim}
                     />
                     <Button
                         fullWidth
                         variant="outlined"
                         size="sm"
                         title="No, continue collaboration"
-                        onClick={() => console.log('no')}
+                        onClick={handleOnClickCancel}
                     />
                 </div>
             </div>

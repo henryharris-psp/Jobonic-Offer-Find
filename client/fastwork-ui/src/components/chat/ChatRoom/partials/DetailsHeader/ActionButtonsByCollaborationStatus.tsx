@@ -24,7 +24,8 @@ const freelancerActionButtonsMap = {
     signing_contract: <ContractAndPaymentButtons/>,
     payment_verification: <ContractAndPaymentButtons/>,
     to_submit: <ApproveButton/>,
-    to_review: <ReviewButtons/>  
+    to_review: <ReviewButtons/>,
+    contract_termination: <div>Freelance side</div>
 }
 
 const employerActionButtonsMap = {
@@ -34,7 +35,8 @@ const employerActionButtonsMap = {
     signing_contract: <ContractAndPaymentButtons/>,
     payment_verification: <ContractAndPaymentButtons/>,
     to_submit: <ApproveButton/>,
-    to_review: <ReviewButtons/>  
+    to_review: <ReviewButtons/>,
+    contract_termination: <div>employer side</div>
 };
 
 const actionButtonsMap: Record<'freelancer' | 'employer', ActionButtonMap> = {
