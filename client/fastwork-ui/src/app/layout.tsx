@@ -9,7 +9,10 @@ import { useEffect } from "react";
 import { authenticate as reduxAuthenticate } from "@/store/reducers/authReducer";
 import { getAuthUserDetails, getProfileByUserId } from "@/functions/helperFunctions";
 import { ToastContainer } from 'react-toastify';
+import { usePathname } from "next/navigation";
+import AdminRoot from "@/components/admin/AdminRoot";
 import 'react-toastify/dist/ReactToastify.css';
+
 // import ChatBox from "../components/ChatBox";
 // import Footer from "../components/footer";
 // import initialiseCategories from "@/utils/initialiseCategories";
@@ -48,6 +51,8 @@ const RootLayout = ({
 
     useWindowResize();
     const dispatch = useDispatch();
+    const pathname = usePathname();
+    const isAdminRoute = pathname.includes('admin');
 
     //boot method
     useEffect(() => {
@@ -113,7 +118,15 @@ const RootLayout = ({
                     pauseOnHover
                     theme="dark"
                 />
-                <main>{children}</main>
+                <main>
+                    { isAdminRoute ? (
+                        <AdminRoot>
+                            { children }
+                        </AdminRoot>
+                    ) : (
+                        children
+                    )}
+                </main>
                 {/* {showFooter && <Footer />} */}
                 {/* <ChatBox /> */}
             </body>
@@ -127,7 +140,9 @@ const RootLayoutWithRedux = ({
 }: Readonly<RootLayoutProps>) => {
     return (
         <Provider store={store}>
-            <RootLayout showFooter={showFooter}>{children}</RootLayout>
+            <RootLayout showFooter={showFooter}>
+                {children}
+            </RootLayout>
         </Provider>
     );
 };

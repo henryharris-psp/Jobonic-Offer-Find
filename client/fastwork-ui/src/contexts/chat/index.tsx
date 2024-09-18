@@ -1,5 +1,4 @@
 import React, { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useReducer, useState } from "react";
-import reducer from "./reducer";
 import { ChatRoom, MediaType, Message } from "@/types/chat";
 import { supabase } from "@/config/supabaseClient";
 import { useSelector } from "react-redux";
@@ -8,6 +7,7 @@ import { fetchContract, getProfileByProfileId } from "@/functions/helperFunction
 import { Profile } from "@/types/users";
 import httpClient from "@/client/httpClient";
 import { Contract } from "@/types/general";
+import reducer from "./reducer";
 
 export interface ChatState {
     showChatList: boolean;
@@ -35,8 +35,8 @@ interface ChatContextProps extends ChatState {
     insertOrUpdateLocalChatRoom: ( newChatRoom: ChatRoom ) => void; 
 
     //server actions
-    loadChatRoomData: (chatRoom: ChatRoom[]) => Promise<ChatRoom[]>;
-    createNewChatRoom: (serviceId: string, matchId: string, freelancerId: number, employerId: number) => Promise<ChatRoom>;
+    loadChatRoomData: (chatRooms: ChatRoom[]) => Promise<ChatRoom[]>;
+    createNewChatRoom: (serviceId: string | number, matchId: string | number, freelancerId: number, employerId: number) => Promise<ChatRoom>;
     updateChatRoom: (chatRoomId: string | number, newValues: object) => Promise<void>;
     deleteChatRoom: (chatRoomId: string | number) => Promise<void>;
     sendMessage: (mediaType: MediaType, newMessage: string | null | undefined, senderId?: string | number ) => Promise<Message | null>;
@@ -198,8 +198,8 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
         //supabase db actions
             const createNewChatRoom = async (
-                serviceId: string, 
-                matchId: string, 
+                serviceId: string | number, 
+                matchId: string | number, 
                 freelancerId: number, 
                 employerId: number
             ) => {
