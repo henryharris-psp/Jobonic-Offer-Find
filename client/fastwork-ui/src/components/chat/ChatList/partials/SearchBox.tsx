@@ -7,7 +7,7 @@ const SearchBox = () => {
                 type="search"
                 id="search-dropdown"
                 className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:border-blue-500"
-                placeholder="Search for Orders"
+                placeholder="Search"
                 style={{ paddingRight: "2.5rem" }}
             />
             <div className="flex items-center justify-center absolute top-0 bottom-0 right-0">

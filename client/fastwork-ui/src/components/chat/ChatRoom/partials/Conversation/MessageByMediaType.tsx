@@ -10,6 +10,7 @@ import { useChat } from "@/contexts/chat";
 import InChatPaymentRequestCard from "./InChatPaymentRequestCard";
 import InChatSystemMessage from "./InChatSystemMessage";
 import InChatPaymentReceiptCard from "./InChatPaymentReceiptCard";
+import InChatShareChatRoomCard from "@/components/admin/chat/AdminChatRoom/partials/Conversation/InChatShareChatRoomCard";
 
 const MessageByMediaType = (message: Message) => {
     const { authUserType } = useChat();
@@ -47,6 +48,10 @@ const MessageByMediaType = (message: Message) => {
             <InChatServiceOfferCard 
                 serviceId={message.content}
                 isSentByAuthUser={isSentByAuthUser}
+            />,
+        chatRoom:
+            <InChatShareChatRoomCard
+                chatRoomId={message.content}
             />,
         payment_request: authUserType === 'freelancer'
             ? <InChatSystemMessage

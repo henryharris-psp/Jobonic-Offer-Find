@@ -17,14 +17,10 @@ const AdminRoot = ({
             }}
         >
             <div className="flex-1 flex flex-row">
-
-                {/* nav bar */}
                 <AdminNavDrawer/>
-
                 <div className="flex-1">
                     {children}
                 </div>
-
             </div>
         </div>
   )

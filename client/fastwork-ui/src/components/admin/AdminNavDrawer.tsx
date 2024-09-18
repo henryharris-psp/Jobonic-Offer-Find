@@ -1,5 +1,5 @@
 import React from "react";
-import { ChatBubbleLeftRightIcon, PresentationChartLineIcon, RectangleGroupIcon, SparklesIcon } from '@heroicons/react/24/solid';
+import { ChatBubbleLeftRightIcon, PresentationChartLineIcon, PuzzlePieceIcon, RectangleGroupIcon, SparklesIcon } from '@heroicons/react/24/solid';
 import Link from "next/link";
 import { v4 as uuid } from "uuid";
 import { usePathname } from "next/navigation";
@@ -21,7 +21,7 @@ const adminRoutes = [
         id: uuid(),
         path: "/admin/skill",
         name: "Skill Management",
-        icon: <SparklesIcon className="size-5" />
+        icon: <PuzzlePieceIcon className="size-5" />
     },
     {
         id: uuid(),

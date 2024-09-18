@@ -71,6 +71,7 @@ export type MediaType =
     'image' | 
     'contract' | 
     'service' |
+    'chatRoom' |
     'payment_request' |
     'payment_receipt';
 

@@ -38,7 +38,7 @@ const NewProgressList = () => {
             }
 
             if(chatRooms.length !== 0){
-                const existedChatRooms = await loadChatRoomData(chatRooms[0]);
+                const existedChatRooms = await loadChatRoomData(chatRooms);
                 if(existedChatRooms.length !== 0) changeChatRoom(existedChatRooms[0]);
             } else {
                 const newChatRoom = await createNewChatRoom(
