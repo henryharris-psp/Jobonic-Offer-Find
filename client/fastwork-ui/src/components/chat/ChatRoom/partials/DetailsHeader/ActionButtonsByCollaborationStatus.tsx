@@ -13,6 +13,7 @@ import ReviewButtons from "../action_buttons/ReviewButtons";
 //shared
 import ContractAndPaymentButtons from "../action_buttons/ContractAndPaymentButtons";
 import SubmitWorkButton from "../action_buttons/SubmitWorkButton";
+import HireAgainButton from "../action_buttons/HireAgainButton";
 
 type ActionButtonMap = {
     [key: string]: JSX.Element | null;
@@ -25,8 +26,8 @@ const freelancerActionButtonsMap = {
     payment_verification: <ContractAndPaymentButtons/>,
     to_submit: <SubmitWorkButton/>,
     to_review: <ReviewButtons/>,
-    contract_termination: <div>Freelance side</div>,
-    completed: <div>Hire Again</div>
+    contract_termination: <div>Contract termination Freelance side</div>,
+    completed: <div>Completed Freelancer side</div>
 }
 
 const employerActionButtonsMap = {
@@ -37,8 +38,8 @@ const employerActionButtonsMap = {
     payment_verification: <ContractAndPaymentButtons/>,
     to_submit: <WaitingStatus status="Waiting For Milestone 1 submission"/>, //TODO: render current milestone name
     to_review: <ReviewButtons/>,
-    contract_termination: <div>employer side</div>,
-    completed: <div>Hire Again</div>
+    contract_termination: <div>Contract termination employer side</div>,
+    completed: <HireAgainButton/>
 };
 
 const actionButtonsMap: Record<'freelancer' | 'employer', ActionButtonMap> = {

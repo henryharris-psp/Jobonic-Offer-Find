@@ -33,7 +33,7 @@ const ContractAcceptStatus = ({
                         size === 'sm' ? 'size-5' : 'size-4'
                     }`} />
                     <span className={`text-${size} text-gray-500`}>
-                        {activeChatRoom?.receiver.firstName} is waiting for your approval
+                        {activeChatRoom?.receiver?.firstName} is waiting for your approval
                     </span>
                 </div>
             )}
