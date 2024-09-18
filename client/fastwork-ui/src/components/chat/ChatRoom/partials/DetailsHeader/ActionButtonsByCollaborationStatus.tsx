@@ -12,6 +12,8 @@ import ReviewButtons from "../action_buttons/ReviewButtons";
 
 //shared
 import ContractAndPaymentButtons from "../action_buttons/ContractAndPaymentButtons";
+import ApproveButton from "../action_buttons/ApproveButton";
+import TerminationContractButton from "../action_buttons/TerminationContractButton";
 import SubmitWorkButton from "../action_buttons/SubmitWorkButton";
 import HireAgainButton from "../action_buttons/HireAgainButton";
 
@@ -26,7 +28,7 @@ const freelancerActionButtonsMap = {
     payment_verification: <ContractAndPaymentButtons/>,
     to_submit: <SubmitWorkButton/>,
     to_review: <ReviewButtons/>,
-    contract_termination: <div>Contract termination Freelance side</div>,
+    contract_termination: <TerminationContractButton role="freelancer"/>,
     completed: <div>Completed Freelancer side</div>
 }
 
@@ -38,8 +40,9 @@ const employerActionButtonsMap = {
     payment_verification: <ContractAndPaymentButtons/>,
     to_submit: <WaitingStatus status="Waiting For Milestone 1 submission"/>, //TODO: render current milestone name
     to_review: <ReviewButtons/>,
-    contract_termination: <div>Contract termination employer side</div>,
+    contract_termination: <TerminationContractButton role="employer"/>,
     completed: <HireAgainButton/>
+    
 };
 
 const actionButtonsMap: Record<'freelancer' | 'employer', ActionButtonMap> = {
@@ -51,7 +54,10 @@ const ActionButtonsByCollaborationStatus = () => {
     const { activeChatRoom, authUserType } = useChat();
     const currentStatus = activeChatRoom ? activeChatRoom.status : '';
 
+    console.log('authUserType : ', authUserType);
+
     let ActionButtonComponent = null;
+
     if(activeChatRoom && authUserType){
         ActionButtonComponent = actionButtonsMap[authUserType][currentStatus];
     }
