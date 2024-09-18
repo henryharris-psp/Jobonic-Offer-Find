@@ -1,10 +1,10 @@
 'use client'
-import NewMessage from "./partials/NewMessage";
 import { useChat } from "@/contexts/chat";
 import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/solid";
 import DetailsHeader from "./partials/DetailHeader";
 import TogglesHeader from "@/components/chat/ChatRoom/partials/TogglesHeader";
 import Conversation from "./partials/Conversation";
+import NewMessage from "./partials/NewMessage";
 
 const AdminChatPage = () => {
     const { showChatList, activeChatRoom } = useChat();

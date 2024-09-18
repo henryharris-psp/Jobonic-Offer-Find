@@ -1,9 +1,9 @@
 import TogglesHeader from "./partials/TogglesHeader";
-import NewMessage from "./partials/NewMessage";
 import { useChat } from "@/contexts/chat";
 import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/solid";
 import DetailsHeader from "./partials/DetailsHeader";
 import Conversation from "./partials/Conversation";
+import NewMessage from "./partials/DetailsHeader/NewMessage";
 
 const ChatRoom = () => {
     const { showChatList, showProgressList, activeChatRoom } = useChat();

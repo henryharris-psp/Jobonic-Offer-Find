@@ -49,7 +49,7 @@ const MessageByMediaType = (message: Message) => {
                 serviceId={message.content}
                 isSentByAuthUser={isSentByAuthUser}
             />,
-        chatRoom:
+        chat_room:
             <InChatShareChatRoomCard
                 chatRoomId={message.content}
             />,
