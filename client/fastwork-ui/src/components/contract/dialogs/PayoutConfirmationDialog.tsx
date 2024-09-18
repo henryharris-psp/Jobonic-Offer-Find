@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "../../Modal";
 import Button from "../../Button";
 import SafeInput from "@/components/SafeInput";
-
+import { useChat } from "@/contexts/chat";
 interface PayoutConfirmationDialogProps {
     isOpen: boolean;
     onClose: () => void;
@@ -13,8 +13,22 @@ const PayoutConfirmationDialog = ({
     onClose,
 }: PayoutConfirmationDialogProps) => {
 
+    const { sendMessage, updateChatRoom } = useChat();
+
     const handleOnClickConfrim = async () => {
-        onClose();
+        try {
+            const newlySentMessage = await sendMessage('text', "I don't want to work for you anymore and I want to terminate the contract");
+
+            if(newlySentMessage){
+                await updateChatRoom(newlySentMessage.room_id, {
+                    status: 'contract_termination'
+                });
+            }
+        } catch (error) {
+            console.log('error on Terminateing contract', error);
+        } finally {
+            onClose();
+        }
     }
 
     return (

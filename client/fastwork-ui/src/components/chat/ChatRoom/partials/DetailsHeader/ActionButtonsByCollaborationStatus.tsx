@@ -12,7 +12,6 @@ import ReviewButtons from "../action_buttons/ReviewButtons";
 
 //shared
 import ContractAndPaymentButtons from "../action_buttons/ContractAndPaymentButtons";
-import ApproveButton from "../action_buttons/ApproveButton";
 import TerminationContractButton from "../action_buttons/TerminationContractButton";
 import SubmitWorkButton from "../action_buttons/SubmitWorkButton";
 import HireAgainButton from "../action_buttons/HireAgainButton";
