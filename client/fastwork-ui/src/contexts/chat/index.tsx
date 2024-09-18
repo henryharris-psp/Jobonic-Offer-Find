@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useContext, useEffect, useMemo, useReducer, useState } from "react";
+import React, { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useReducer, useState } from "react";
 import reducer from "./reducer";
 import { ChatRoom, MediaType, Message } from "@/types/chat";
 import { supabase } from "@/config/supabaseClient";
@@ -52,54 +52,86 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { authUser } = useSelector((state: RootState) => state.auth );
     const [latestContract, setLatestContract] = useState<Contract | null>(null);
 
-    useEffect(() => {
-        const controller = new AbortController();
-        const { signal } = controller;
-    
-        ( async () => {
-            try {
-                const { activeChatRoom } = state;
-    
-                if (!activeChatRoom || activeChatRoom.messages.length === 0) return;
-    
-                const contractMessages = activeChatRoom.messages.filter(
-                    (message) => message.media_type === 'contract'
-                );
-    
-                if (contractMessages.length === 0) return;
-    
-                const latestContractMessage = contractMessages.reduce((latest, message) => 
-                    message.id > latest.id ? message : latest
-                , contractMessages[0]);
-    
-                const latestContractId = latestContractMessage?.content;
-    
-                if (latestContractId) {
-                    const contract = await fetchContract(latestContractId, signal);
-                    if (contract) setLatestContract(contract);
-                }
-            } catch (error) {
-                console.error('Error fetching latest contract:', error);
-            }
-        })();
-    
-        return () => controller.abort();
-    }, [state.activeChatRoom?.messages]);
-
-    const authUserType = useMemo( () => {
-        return state.activeChatRoom?.freelancer_id === authUser?.profile.id ? 'freelancer' : 'employer';
-    }, [state.activeChatRoom]);
-
     //methods
+        //fetch from jobonic db
+            const fetchLatestContract = useCallback(async (messages: Message[], signal: AbortSignal) => {
+                const contractMessages = messages.filter((message) => message.media_type === 'contract');
+
+                if (contractMessages.length === 0) {
+                    setLatestContract(null);
+                    return;
+                }
+
+                const latestContractMessage = contractMessages.reduce(
+                    (latest, message) => (message.id > latest.id ? message : latest),
+                    contractMessages[0]
+                );
+
+                const latestContractId = latestContractMessage?.content;
+
+                if (latestContractId) {
+                    try {
+                        const contract = await fetchContract(latestContractId, signal);
+                        if(contract) setLatestContract(contract);
+                    } catch (error) {
+                        console.error('Error fetching latest contract:', error);
+                    }
+                } else {
+                    setLatestContract(null);
+                }
+            }, []);
+
+            //TODO: add promise rejection handler
+            const loadChatRoomData = async (chatRooms: ChatRoom[]) => {
+                return Promise.all(chatRooms.map(async (chatRoom: ChatRoom) => { 
+                    const receiverId = chatRoom.freelancer_id === authUser?.profile.id ? chatRoom.employer_id : chatRoom.freelancer_id;
+                    const receiver: Profile = await getProfileByProfileId(receiverId);
+                    
+                    //fetching service
+                    let service = null;
+                    if(chatRoom.service_id){
+                        const serviceRes = await httpClient.get('/service/get', {
+                            params: {
+                                serviceId: chatRoom.service_id
+                            }
+                        });
+                        service = serviceRes.data;
+                    }
+
+                    //fetching match
+                    let match = null;
+                    if(chatRoom.match_id){
+                        const matchRes = await httpClient.get('matches', {
+                            params: {
+                                id: chatRoom.match_id
+                            }
+                        });
+
+                        match = matchRes.data;
+                    }
+
+                    // console.log('receiverId', receiverId, receiver.lastName);
+                    // console.log('senderId', authUser?.profile.id, authUser?.profile.lastName);
+                    
+                    return {
+                        ...chatRoom,
+                        sender: authUser?.profile!,
+                        receiver: receiver,
+                        service: service,
+                        match: match
+                    };
+                }));       
+            }
+
         //local actions
             //to toggle side drawers
-                const setShowChatList = (show: boolean) => {
-                    dispatch({ type: 'TOGGLE_CHAT_LIST', payload: show });
-                };
+            const setShowChatList = (show: boolean) => {
+                dispatch({ type: 'TOGGLE_CHAT_LIST', payload: show });
+            };
 
-                const setShowProgressList = (show: boolean) => {
-                    dispatch({ type: 'TOGGLE_PROGRESS_LIST', payload: show });
-                };
+            const setShowProgressList = (show: boolean) => {
+                dispatch({ type: 'TOGGLE_PROGRESS_LIST', payload: show });
+            };
 
             //to replace all local chatrooms and also update activeChatroom
             const setChatRooms = (chatRooms: ChatRoom[]) => {
@@ -164,153 +196,133 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 dispatch({ type: 'SET_ACTIVE_CHAT_ROOM', payload: updatedChatRoomWithData });
             }
 
-        //fetch from jobonic db
-        //TODO: add promise rejection handler
-        const loadChatRoomData = async (chatRooms: ChatRoom[]) => {
-            return Promise.all(chatRooms.map(async (chatRoom: ChatRoom) => { 
-                const receiverId = chatRoom.freelancer_id === authUser?.profile.id ? chatRoom.employer_id : chatRoom.freelancer_id;
-                const receiver: Profile = await getProfileByProfileId(receiverId);
-                
-                //fetching service
-                let service = null;
-                if(chatRoom.service_id){
-                    const serviceRes = await httpClient.get('/service/get', {
-                        params: {
-                            serviceId: chatRoom.service_id
-                        }
-                    });
-                    service = serviceRes.data;
-                }
-
-                //fetching match
-                let match = null;
-                if(chatRoom.match_id){
-                    const matchRes = await httpClient.get('matches', {
-                        params: {
-                            id: chatRoom.match_id
-                        }
-                    });
-
-                    match = matchRes.data;
-                }
-
-                // console.log('receiverId', receiverId, receiver.lastName);
-                // console.log('senderId', authUser?.profile.id, authUser?.profile.lastName);
-                
-                return {
-                    ...chatRoom,
-                    sender: authUser?.profile!,
-                    receiver: receiver,
-                    service: service,
-                    match: match
-                };
-            }));       
-        }
-
-        const createNewChatRoom = async (
-            serviceId: string, 
-            matchId: string, 
-            freelancerId: number, 
-            employerId: number
-        ) => {
-            const { data, error } = await supabase
-                .from("chat_rooms")
-                .insert([{
-                    service_id: serviceId,
-                    match_id: matchId,
-                    employer_id: employerId,
-                    freelancer_id: freelancerId,
-                    status: "enquiring"
-                }])
-                .select(`*, messages (*)`)
-        
-            if (error) {
-                throw new Error('Error creating new chat room');
-            }
-
-            const newChatRoom = data[0];
-            const newChatRoomsWithData = await loadChatRoomData([newChatRoom]);
-            const newChatRoomWithData = newChatRoomsWithData[0];
-
-            //also add in local state
-            dispatch({ type: 'ADD_NEW_CHAT_ROOM', payload: newChatRoomWithData });
-            return Promise.resolve(newChatRoomWithData);
-        }
-
-        const updateChatRoom = async (chatRoomId: string | number, newValues: object) => {
-            const { data, error } = await supabase
-                .from("chat_rooms")
-                .update(newValues)
-                .eq("id", chatRoomId)
-                .select(`*, messages (*)`)
-
-            if (error) {
-                console.error('Error updating chatroom', error);
-                throw error;
-            }
-
-            const updatedChatRoom = data[0];
-            const updatedChatRoomsWithData = await loadChatRoomData([updatedChatRoom]);
-            const updatedChatRoomWithData = updatedChatRoomsWithData[0];
+        //supabase db actions
+            const createNewChatRoom = async (
+                serviceId: string, 
+                matchId: string, 
+                freelancerId: number, 
+                employerId: number
+            ) => {
+                const { data, error } = await supabase
+                    .from("chat_rooms")
+                    .insert([{
+                        service_id: serviceId,
+                        match_id: matchId,
+                        employer_id: employerId,
+                        freelancer_id: freelancerId,
+                        status: "enquiring"
+                    }])
+                    .select(`*, messages (*)`)
             
-            const newChatRooms = state.chatRooms.map(chatRoom => 
-                chatRoomId === chatRoom.id ? updatedChatRoomWithData : chatRoom
-            );
-    
-            // Update local state with newly updated chatroom
-            dispatch({ type: 'SET_CHAT_ROOMS', payload: newChatRooms });
-            dispatch({ type: 'SET_ACTIVE_CHAT_ROOM', payload: updatedChatRoomWithData });
-            return Promise.resolve();
-        }
+                if (error) {
+                    throw new Error('Error creating new chat room');
+                }
 
-        const deleteChatRoom = async (chatRoomId: string | number) => {
-            const { error } = await supabase
-                .from('chat_rooms')
-                .delete()
-                .eq('id', chatRoomId);
+                const newChatRoom = data[0];
+                const newChatRoomsWithData = await loadChatRoomData([newChatRoom]);
+                const newChatRoomWithData = newChatRoomsWithData[0];
 
-            if (error) {
-                console.error('Error updating chatroom', error);
-                throw error;
-            } else {
-                const newChatRooms = state.chatRooms.filter( e => e.id !== chatRoomId );
+                //also add in local state
+                dispatch({ type: 'ADD_NEW_CHAT_ROOM', payload: newChatRoomWithData });
+                return Promise.resolve(newChatRoomWithData);
+            }
+
+            const updateChatRoom = async (chatRoomId: string | number, newValues: object) => {
+                const { data, error } = await supabase
+                    .from("chat_rooms")
+                    .update(newValues)
+                    .eq("id", chatRoomId)
+                    .select(`*, messages (*)`)
+
+                if (error) {
+                    console.error('Error updating chatroom', error);
+                    throw error;
+                }
+
+                const updatedChatRoom = data[0];
+                const updatedChatRoomsWithData = await loadChatRoomData([updatedChatRoom]);
+                const updatedChatRoomWithData = updatedChatRoomsWithData[0];
+                
+                const newChatRooms = state.chatRooms.map(chatRoom => 
+                    chatRoomId === chatRoom.id ? updatedChatRoomWithData : chatRoom
+                );
+        
+                // Update local state with newly updated chatroom
                 dispatch({ type: 'SET_CHAT_ROOMS', payload: newChatRooms });
-                dispatch({ type: 'SET_ACTIVE_CHAT_ROOM', payload: null });
+                dispatch({ type: 'SET_ACTIVE_CHAT_ROOM', payload: updatedChatRoomWithData });
                 return Promise.resolve();
             }
-        }
-    
-        const sendMessage = async (mediaType: MediaType, content: string | null | undefined, senderId?: string | number ): Promise<Message | null> => {
-            const { activeChatRoom } = state;
-        
-            if (!authUser?.profile?.id || !activeChatRoom?.id || !content) return null;
-        
-            dispatch({ type: 'SET_IS_SENDING', payload: true });
-        
-            try {
-                const { data, error } = await supabase
-                    .from("messages")
-                    .insert({
-                        room_id: activeChatRoom.id,
-                        media_type: mediaType,
-                        content,
-                        sender_id: senderId ?? authUser.profile.id,
-                    })
-                    .select();
-        
+
+            const deleteChatRoom = async (chatRoomId: string | number) => {
+                const { error } = await supabase
+                    .from('chat_rooms')
+                    .delete()
+                    .eq('id', chatRoomId);
+
                 if (error) {
-                    console.error('Error sending new message:', error);
-                    throw new Error(`Error inserting message: ${error.message}`);
+                    console.error('Error updating chatroom', error);
+                    throw error;
+                } else {
+                    const newChatRooms = state.chatRooms.filter( e => e.id !== chatRoomId );
+                    dispatch({ type: 'SET_CHAT_ROOMS', payload: newChatRooms });
+                    dispatch({ type: 'SET_ACTIVE_CHAT_ROOM', payload: null });
+                    return Promise.resolve();
                 }
-        
-                return data ? data[0] : null;
-            } catch (error) {
-                console.error('Error sending new message:', error);
-                throw error;
-            } finally {
-                dispatch({ type: 'SET_IS_SENDING', payload: false });
             }
-        };             
+        
+            const sendMessage = async (mediaType: MediaType, content: string | null | undefined, senderId?: string | number ): Promise<Message | null> => {
+                const { activeChatRoom } = state;
+            
+                if (!authUser?.profile?.id || !activeChatRoom?.id || !content) return null;
+            
+                dispatch({ type: 'SET_IS_SENDING', payload: true });
+            
+                try {
+                    const { data, error } = await supabase
+                        .from("messages")
+                        .insert({
+                            room_id: activeChatRoom.id,
+                            media_type: mediaType,
+                            content,
+                            sender_id: senderId ?? authUser.profile.id,
+                        })
+                        .select();
+            
+                    if (error) {
+                        console.error('Error sending new message:', error);
+                        throw new Error(`Error inserting message: ${error.message}`);
+                    }
+            
+                    return data ? data[0] : null;
+                } catch (error) {
+                    console.error('Error sending new message:', error);
+                    throw error;
+                } finally {
+                    dispatch({ type: 'SET_IS_SENDING', payload: false });
+                }
+            };
+
+    //watcher and computed
+        useEffect(() => {
+            const controller = new AbortController();
+            const { signal } = controller;
+    
+            const { activeChatRoom } = state;
+            const messages = activeChatRoom?.messages || [];
+    
+            if (!activeChatRoom || messages.length === 0) {
+                setLatestContract(null);
+                return;
+            }
+    
+            fetchLatestContract(messages, signal);
+    
+            return () => controller.abort();
+        }, [state.activeChatRoom?.messages, fetchLatestContract]);
+    
+        const authUserType = useMemo( () => {
+            return state.activeChatRoom?.freelancer_id === authUser?.profile.id ? 'freelancer' : 'employer';
+        }, [state.activeChatRoom]);
         
     return (
         <ChatContext.Provider

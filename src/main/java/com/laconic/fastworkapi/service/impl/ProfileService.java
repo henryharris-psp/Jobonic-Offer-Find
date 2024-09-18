@@ -147,22 +147,27 @@ public class ProfileService implements IProfileService {
     @Override
     public UserProfileDTO getUserProfileDto(Long id, String name) {
         Profile existingUser = null;
+
         if (name.equalsIgnoreCase("profile")) {
-            existingUser = userRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
-                    id.toString()));
+            existingUser = userRepo.findByUserId(id);
         }
+
         if (name.equalsIgnoreCase("user")) {
             existingUser = this.userRepo.findByUserId(id);
         }
+
         if (Objects.isNull(existingUser)) {
             throw new NotFoundException("User Not found");
         }
+
         UserProfileDTO dto = EntityMapper.mapToResponse(existingUser, UserProfileDTO.class);
+
         dto.setUsername(authenticationUtils.genericTokenValue("preferred_username"));
         dto.setFirstName(authenticationUtils.genericTokenValue("given_name"));
         dto.setLastName(authenticationUtils.genericTokenValue("family_name"));
         dto.setEmail(authenticationUtils.getEmail());
         dto.setUserId(Long.parseLong(authenticationUtils.genericTokenValue("userid")));
+
         return dto;
     }
 

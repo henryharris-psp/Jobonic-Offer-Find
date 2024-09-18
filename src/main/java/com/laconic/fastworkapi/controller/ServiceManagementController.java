@@ -47,6 +47,7 @@ public class ServiceManagementController {
         return this.managementService.remove(id);
     }
 
+    // get employer offer services
     @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL)
     @PostMapping("/offer/all")
     public PaginationDTO<ServiceDTO.WithProfile> getAllServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
@@ -103,9 +104,10 @@ public class ServiceManagementController {
         return managementService.getFilterByPriceAndDate(serviceFilterDTO);
     }
 
+    // get freelancer request services
     @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL_REQUEST_SERVICE)
     @PostMapping("/request/all")
-    public PaginationDTO<ExtendedServiceRequestDTO> getAllRequestServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+    public PaginationDTO<ExtendedServiceRequestDTO.WithProfile> getAllRequestServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         return this.managementService.getAllExtendedRequestService(pageAndFilterDTO);
     }
 

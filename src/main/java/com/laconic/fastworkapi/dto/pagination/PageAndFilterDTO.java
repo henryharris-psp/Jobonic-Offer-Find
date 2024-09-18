@@ -19,17 +19,24 @@ import java.io.Serializable;
 public class PageAndFilterDTO<T extends SearchAndFilterDTO> implements Serializable {
     @Serial
     private static final long serialVersionUID = 8861011440988964830L;
+
     @Schema(example = "1")
     @Builder.Default
     private int pageNumber = 1;
+
     @Schema(example = "100")
     @Builder.Default
     private int pageSize = 100;
+
     @Schema(example = "columnToSort")
     private String sortBy;
+
     @Schema(example = "DESC")
     private SortOrder sortOrder;
+
     private T filter;
+
+    private int authId;
 
     @Hidden
     public PageRequest getPageRequest() {
@@ -38,5 +45,13 @@ public class PageAndFilterDTO<T extends SearchAndFilterDTO> implements Serializa
                     Sort.Direction.DESC, sortBy);
         }
         return PageRequest.of(pageNumber - 1, pageSize);
+    }
+
+    public int getAuthId() {
+        return authId;
+    }
+
+    public void setAuthId(int authId) {
+        this.authId = authId;
     }
 }

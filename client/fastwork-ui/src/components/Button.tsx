@@ -45,7 +45,7 @@ const Button = ({
 }: ButtonProps) => {
     return (
         <button
-            className={`flex items-center justify-center space-x-1 whitespace-nowrap text-center shadow rounded-lg text-white 
+            className={`flex items-center justify-center space-x-1 whitespace-nowrap text-center shadow rounded-lg font-bold text-white 
                 ${size ? `text-${size}` : ''}
                 ${size === '2xs' ? 'px-2 py-1' : 'px-3 py-2' }
                 ${fullWidth ? 'flex-1 w-full' : ''}    

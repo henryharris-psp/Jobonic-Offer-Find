@@ -63,6 +63,7 @@ public class AttachmentController {
     }
 
     @Operation(summary = APIDocsHelper.AttachmentAPI.DOWNLOAD_ATTACHMENT)
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/download")
     public ResponseEntity<Resource> download(@RequestParam UUID id) throws IOException {
         return this.attachmentService.download(id);
