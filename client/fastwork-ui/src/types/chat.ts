@@ -90,11 +90,11 @@ export type CollaborationStatus =
     'signing_contract' |
     'payment_verification' |
     'to_submit' |
+    'to_review' |
     'contract_termination' |
+    'completed' |
 
     'to_pay' |
-    'waiting_for_review' |
-    'completed' |
     'cancelled';
 ;
 
