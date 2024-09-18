@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Button from "../../Button";
 import Collapsible from "../../Collapsible";
-import { DocumentPlusIcon } from "@heroicons/react/24/solid";
+import { CheckIcon, DocumentPlusIcon } from "@heroicons/react/24/solid";
 import { Milestone } from "@/types/general";
 
 interface MilestoneProgressSectionProps extends Milestone {
@@ -41,7 +41,6 @@ const MilestoneProgressSection = ({
             <div>
                 <Collapsible
                     isOpen={isOpen}
-                    maxHeight="50vh"
                 >
                     <div className="flex flex-row space-x-6 mt-1">
                         {/* bar */}
@@ -67,14 +66,13 @@ const MilestoneProgressSection = ({
                                 <Button
                                     size="2xs"
                                     title="Submit Work"
-                                    icon={
-                                        <DocumentPlusIcon className="size-4 text-white" />
-                                    }
+                                    icon={<DocumentPlusIcon className="size-4 text-white" />}
                                     onClick={() => console.log("submit")}
                                 />
                                 <Button
                                     size="2xs"
                                     title="Complete"
+                                    icon={<CheckIcon className="size-4 text-white" />}
                                     onClick={() => console.log("submit")}
                                 />
                             </div>

@@ -1,8 +1,8 @@
 import Button from "@/components/Button";
 import Collapsible from "@/components/Collapsible";
+import LatestContractModal from "@/components/contract/LatestContractModal";
 import { DocumentIcon } from "@heroicons/react/24/outline";
 import { ArrowDownTrayIcon, EyeIcon, StopIcon } from "@heroicons/react/24/solid";
-import LatestContractModal from "@/components/contract/LatestContractModal";
 import { useState } from "react";
 import EndContractConfirmationDialog from "@/components/contract/dialogs/EndContractConfirmationDialog";
 import PayoutConfirmationDialog from "@/components/contract/dialogs/PayoutConfirmationDialog";
@@ -58,7 +58,6 @@ const ContractProgressSection = () => {
                 <div>
                     <Collapsible 
                         isOpen={isOpen} 
-                        maxHeight="50vh"
                     >
                         <div className="flex flex-row space-x-6 mt-2">
                             {/* bar */}

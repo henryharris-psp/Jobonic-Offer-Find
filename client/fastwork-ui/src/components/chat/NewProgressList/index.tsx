@@ -2,6 +2,8 @@ import React, { useMemo } from "react";
 import { useChat } from "@/contexts/chat";
 import MilestoneProgressSection from "./MilestoneProgressSection";
 import ContractProgressSection from "./ContractProgressSection";
+import ReviewProgressSection from "./ReviewProgressSection";
+import CompleteWorkSection from "./CompleteWorkSection";
 
 const NewProgressList = () => {
     const { activeChatRoom } = useChat();
@@ -31,11 +33,14 @@ const NewProgressList = () => {
                             )
                         ) : (
                             <div className="flex justify-center">
-                                <span className="text-gray-400 text-sm mt-5">
+                                <span className="text-gray-400 text-sm">
                                     No Milestones
                                 </span>
                             </div>
                         )}
+                        
+                        <ReviewProgressSection/>
+                        <CompleteWorkSection/>
                     </div>
                 </div>
                 
