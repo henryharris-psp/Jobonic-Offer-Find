@@ -82,10 +82,7 @@ const ServiceOfferCard = ({
                         <span className={`font-bold text-${sizeConfig.title}`}>
                             { title }
                         </span>
-                        <StarRating 
-                            value={rating}
-                            size={sizeConfig.star}
-                        />
+                        
                     </div>
                 </div>
 

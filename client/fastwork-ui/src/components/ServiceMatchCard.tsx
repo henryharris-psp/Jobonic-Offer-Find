@@ -8,6 +8,7 @@ import { Service } from "@/types/service";
 import { Profile } from "@/types/users";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import StarRating from "./StarRating";
 
 interface ServiceMatchCardProps {
     service: Service;
@@ -49,89 +50,14 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
         }, 3000);
     };
 
-    // Render star ratings based on the service rating
-    const renderStars = (rating: number) => {
-        const fullStars = Math.floor(rating);
-        const partialStarWidth = (rating % 1) * 100;
-        const totalStars = 5;
-
-        return (
-            <div className="flex items-center space-x-1">
-                {Array.from({ length: fullStars }, (_, index) => (
-                    <svg
-                        key={index}
-                        className="w-4 h-4 text-yellow-500"
-                        fill="currentColor"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                    >
-                        <path d="M9.049.293a1 1 0 011.902 0l2.018 6.195h6.518a1 1 0 01.592 1.81l-5.23 3.776 2.018 6.195a1 1 0 01-1.54 1.15l-5.23-3.776-5.23 3.776a1 1 0 01-1.54-1.15l2.018-6.195-5.23-3.776a1 1 0 01.592-1.81h6.518L9.05.293z" />
-                    </svg>
-                ))}
-                {partialStarWidth > 0 && (
-                    <div className="relative">
-                        <svg
-                            className="w-4 h-4 text-gray-300"
-                            fill="currentColor"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                        >
-                            <path d="M9.049.293a1 1 0 011.902 0l2.018 6.195h6.518a1 1 0 01.592 1.81l-5.23 3.776 2.018 6.195a1 1 0 01-1.54 1.15l-5.23-3.776-5.23 3.776a1 1 0 01-1.54-1.15l2.018-6.195-5.23-3.776a1 1 0 01.592-1.81h6.518L9.05.293z" />
-                        </svg>
-                        <svg
-                            className="w-4 h-4 text-yellow-500 absolute top-0 left-0"
-                            fill="currentColor"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                        >
-                            <defs>
-                                <clipPath id="partialStarClip">
-                                    <rect
-                                        x="0"
-                                        y="0"
-                                        width={`${partialStarWidth}%`}
-                                        height="100%"
-                                    />
-                                </clipPath>
-                            </defs>
-                            <path
-                                d="M9.049.293a1 1 0 011.902 0l2.018 6.195h6.518a1 1 0 01.592 1.81l-5.23 3.776 2.018 6.195a1 1 0 01-1.54 1.15l-5.23-3.776-5.23 3.776a1 1 0 01-1.54-1.15l2.018-6.195-5.23-3.776a1 1 0 01.592-1.81h6.518L9.05.293z"
-                                clipPath="url(#partialStarClip)"
-                            />
-                        </svg>
-                    </div>
-                )}
-                {Array.from(
-                    {
-                        length:
-                            totalStars -
-                            fullStars -
-                            (partialStarWidth > 0 ? 1 : 0),
-                    },
-                    (_, index) => (
-                        <svg
-                            key={index}
-                            className="w-4 h-4 text-gray-300"
-                            fill="currentColor"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                        >
-                            <path d="M9.049.293a1 1 0 011.902 0l2.018 6.195h6.518a1 1 0 01.592 1.81l-5.23 3.776 2.018 6.195a1 1 0 01-1.54 1.15l-5.23-3.776-5.23 3.776a1 1 0 01-1.54-1.15l2.018-6.195-5.23-3.776a1 1 0 01.592-1.81h6.518L9.05.293z" />
-                        </svg>
-                    )
-                )}
-            </div>
-        );
-    };
-
     return (
         <div
-            className="relative max-w-96 overflow-hidden bg-white rounded-xl p-6 shadow-md cursor-pointer hover:shadow-lg transition-shadow border border-gray-200"
+            className="relative max-w-l overflow-hidden bg-white rounded-xl p-6 shadow-md cursor-pointer hover:shadow-lg transition-shadow border border-gray-200 w-full"
             onClick={() => onClick(service)}
         >
             <div className="flex items-center mb-4">
                 <Image
-                    src={profile.image ?? ''}
+                    src="/avatar.svg"
                     alt={service.title}
                     width={50}
                     height={50}
@@ -145,14 +71,15 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
                         }}
                         legacyBehavior
                     >
-                        <a className="text-xl font-bold hover:text-blue-500 hover:underline">
+                        <a className="text-xl font-bold hover:text-blue-500 hover:underline w-40 h-10 overflow-auto block truncate max-w-full">
                             {service.title}
                         </a>
                     </Link>
                     <div className="flex flex-col">
                         <div className="flex flex-row space-x-2">
-                            <span className="text-gray-500">{profile.rating || 0}</span>
-                            {renderStars(profile.rating || 0)}
+                            <StarRating
+                                value={3}
+                            />
                         </div>
                         <span className="text-gray-500">
                             {profile.numReviews} reviews | {profile.numSold ?? 0} sold
@@ -160,15 +87,17 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
                     </div>
                 </div>
             </div>
-            <p className="text-gray-700 text-left mb-4">
-                • {service.description1}
-            </p>
-            <p className="text-gray-700 text-left mb-4">
-                • {service.description2}
-            </p>
-            <p className="text-gray-700 text-left mb-4">
-                • {service.description3}
-            </p>
+            <div className="min-h-52 max-h-52 h-52 overflow-auto">
+                <p className="text-gray-700 text-left mb-4">
+                    • {service.description1}
+                </p>
+                <p className="text-gray-700 text-left mb-4">
+                    • {service.description2}
+                </p>
+                <p className="text-gray-700 text-left mb-4">
+                    • {service.description3}
+                </p>
+            </div>
             <div className="flex justify-between items-center mb-4">
                 <div className="flex space-x-2 items-center justify-center">
                     <span className="text-sm font-bold">
