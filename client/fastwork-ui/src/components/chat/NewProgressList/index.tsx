@@ -1,54 +1,79 @@
-import React, { useMemo } from "react";
-import { useChat } from "@/contexts/chat"; // Custom hook to get the active chat room
+import React, { useMemo, useState } from "react";
+import { useChat } from "@/contexts/chat";
 import MilestoneProgressSection from "./MilestoneProgressSection";
 import ContractProgressSection from "./ContractProgressSection";
 import ReviewProgressSection from "./ReviewProgressSection";
 import CompleteWorkSection from "./CompleteWorkSection";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import { supabase } from "@/config/supabaseClient";
 
 const NewProgressList = () => {
-    const { activeChatRoom } = useChat(); // Retrieve the current chat room data
+    const { authUser } = useSelector((state: RootState) => state.auth );
+    const { activeChatRoom, createNewChatRoom, changeChatRoom, loadChatRoomData } = useChat();
+    const [isLoading, setIsLoading] = useState(false);
 
     const milestones = useMemo(() => {
-        const allMilestones = activeChatRoom?.latestContract?.milestones || [];
-        // Filter to remove duplicate milestones based on 'id' or 'title'
-        const filteredMilestones = allMilestones.filter((milestone, index, self) =>
-            index === self.findIndex((m) => m.id === milestone.id)
-        );
-        
-        // Log the filtered milestones to check for duplicates
-        console.log("Filtered Milestones:", filteredMilestones);
-        return filteredMilestones;
+        return activeChatRoom?.latestContract?.milestones || [];
     }, [activeChatRoom]);
-    
-    
+
+    //methods
+    const handleOnClickHelp = async () => {
+        if(activeChatRoom && authUser){
+            setIsLoading(true);
+
+            const freelancerId = authUser.profile.id;
+            const employerId = 1; //admin profileId
+
+            const { data: chatRooms, error } = await supabase
+                .from('chat_rooms')
+                .select(`*, messages (*)`)
+                .eq('freelancer_id', freelancerId)
+                .eq('employer_id', employerId)
+                .order('id', { ascending: false });
+
+            if (error) {
+                console.log('Supabase fetching error', error);
+                return;
+            }
+
+            if(chatRooms.length !== 0){
+                const existedChatRooms = await loadChatRoomData(chatRooms);
+                if(existedChatRooms.length !== 0) changeChatRoom(existedChatRooms[0]);
+            } else {
+                const newChatRoom = await createNewChatRoom(
+                    activeChatRoom.service_id,
+                    activeChatRoom.match_id,
+                    freelancerId,
+                    employerId
+                );
+                changeChatRoom(newChatRoom);
+            }
+
+            setIsLoading(false);
+        }
+    }
     
     return (
-        <div className="flex-1 flex bg-[#E0F7FA]"> {/* Main container with flex and background color */}
+        <div className="flex-1 flex bg-[#E0F7FA]">
             <div className="flex-1 flex flex-col space-y-5 mt-14 mx-5">
-                
-                {/* Header for the progress list */}
                 <div className="flex justify-center">
-                    <span className="font-bold text-xl">Progress List</span> {/* Title */}
+                    <span className="font-bold text-xl">Progress List</span>
                 </div>
 
-                {/* Content section for milestones, progress, review, etc. */}
-                <div className="flex-1 overflow-auto"> {/* Makes this section scrollable */}
+                <div className="flex-1 overflow-auto">
                     <div className="flex flex-col space-y-4 my-3">
+                        <ContractProgressSection/>
 
-                        {/* Render the Contract Progress Section */}
-                        <ContractProgressSection />
-
-                        {/* Milestone section with conditional rendering */}
-                        {milestones.length !== 0 ? (
-                            // Map through milestones and render each MilestoneProgressSection
-                            milestones.map(milestone => (
+                        {/* milestone section */}
+                        { milestones.length !== 0 ? (
+                            milestones.map( milestone => 
                                 <MilestoneProgressSection
-                                    key={milestone.id} // Ensure each milestone has a unique key
-                                    {...milestone} // Spread milestone data as props
+                                    key={milestone.id}    
+                                    {...milestone}
                                 />
-                            ))
+                            )
                         ) : (
-                            // If there are no milestones, display a message
                             <div className="flex justify-center">
                                 <span className="text-gray-400 text-sm">
                                     No Milestones
@@ -56,20 +81,24 @@ const NewProgressList = () => {
                             </div>
                         )}
                         
-                        {/* Render the Review and Complete Work sections */}
-                        <ReviewProgressSection />
-                        <CompleteWorkSection />
+                        <ReviewProgressSection/>
+                        <CompleteWorkSection/>
                     </div>
                 </div>
                 
-                {/* Footer button for requesting admin help */}
-                <div className="flex items-center justify-center h-20">
-                    <button className="flex items-center justify-center w-full border border-gray-100 py-2 bg-white shadow-bold rounded-lg">
-                        <span className="text-[#71BAC7]">
-                            Request for admin help
-                        </span>
-                    </button>
-                </div>
+                { activeChatRoom ? (
+                    <div className="flex items-center justify-center h-20">
+                        <button 
+                            className="flex items-center justify-center w-full border border-gray-100 py-2 bg-white shadow-bold rounded-lg active:shadow disabled:opacity-50"
+                            onClick={handleOnClickHelp}
+                            disabled={isLoading}
+                        >
+                            <span className="text-[#71BAC7] ">
+                                { isLoading ? 'Connecting...' : 'Request for admin help' }
+                            </span>
+                        </button>
+                    </div>
+                ) : ''}
             </div>
         </div>
     );
