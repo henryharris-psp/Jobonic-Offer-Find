@@ -2,9 +2,6 @@
 import React, { useState } from "react";
 import { ChatRoom } from "@/types/chat";
 import { useChat } from "@/contexts/chat";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
-import StringParser from "@/functions/stringParser";
 import Image from "next/image";
 import SearchBox from "@/components/chat/ChatList/partials/SearchBox";
 import ChatListSkeleton from "@/components/chat/ChatList/partials/ChatListSkeleton";
@@ -20,7 +17,6 @@ const AdminChatList = ({
 }: AdminChatListProps) => {
     const { activeChatRoom, changeChatRoom, chatRooms } = useChat();
     const [roleFilter, setRoleFilter] = useState('All');
-    const stringParser = new StringParser();
 
     //methods
         const handleOnChatRoomChange = (chatRoom: ChatRoom) => {
@@ -35,7 +31,7 @@ const AdminChatList = ({
                 <div className="flex flex-col space-y-3">
                     <div className="flex items-center justify-center h-10 border-b-2 border-gray-300">
                         <span className="text-lg font-semibold">
-                            Chats
+                            Customer Support
                         </span>
                     </div>
 

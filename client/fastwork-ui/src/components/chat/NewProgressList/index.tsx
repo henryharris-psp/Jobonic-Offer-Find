@@ -18,6 +18,7 @@ const NewProgressList = () => {
     }, [activeChatRoom]);
 
     //methods
+    //TODO: this function may use for multiple times export from context
     const handleOnClickHelp = async () => {
         if(activeChatRoom && authUser){
             setIsLoading(true);

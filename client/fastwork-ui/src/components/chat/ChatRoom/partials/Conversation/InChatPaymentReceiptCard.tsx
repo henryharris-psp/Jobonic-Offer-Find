@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useChat } from '@/contexts/chat';
 import MediaSkeleton from './MediaSkeleton';
 import Button from '@/components/Button';
 import { ArrowPathIcon } from '@heroicons/react/24/solid';
 import { Payment } from '@/types/general';
-import DateParser from '@/functions/dateParser';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import { useChat } from '@/contexts/chat';
+import { supabase } from '@/config/supabaseClient';
 
 interface InChatPaymentReceiptCardProps {
     transactionId: string;
@@ -14,8 +16,8 @@ const InChatPaymentReceiptCard = ({
     transactionId,
 }: InChatPaymentReceiptCardProps) => {
     const numberFormater = new Intl.NumberFormat();
-    const dateParser = new DateParser();
-    const { activeChatRoom } = useChat();
+    const { authUser } = useSelector((state: RootState) => state.auth );
+    const { activeChatRoom, createNewChatRoom, loadChatRoomData, changeChatRoom } = useChat();
     const [isLoading, setIsLoading] = useState(false);
     const [payment, setPayment] = useState<Payment | null>(null);
 
@@ -48,8 +50,41 @@ const InChatPaymentReceiptCard = ({
             }
         }
 
-        const handleOnClickContactSupport = () => {
-            console.log('contact support');
+        //TODO: this function may use for multiple times export from context
+        const handleOnClickContactSupport = async () => {
+            if(activeChatRoom && authUser){
+                setIsLoading(true);
+
+                const freelancerId = authUser.profile.id;
+                const employerId = 1; //admin profileId
+
+                const { data: chatRooms, error } = await supabase
+                    .from('chat_rooms')
+                    .select(`*, messages (*)`)
+                    .eq('freelancer_id', freelancerId)
+                    .eq('employer_id', employerId)
+                    .order('id', { ascending: false });
+
+                if (error) {
+                    console.log('Supabase fetching error', error);
+                    return;
+                }
+
+                if(chatRooms.length !== 0){
+                    const existedChatRooms = await loadChatRoomData(chatRooms);
+                    if(existedChatRooms.length !== 0) changeChatRoom(existedChatRooms[0]);
+                } else {
+                    const newChatRoom = await createNewChatRoom(
+                        activeChatRoom.service_id,
+                        activeChatRoom.match_id,
+                        freelancerId,
+                        employerId
+                    );
+                    changeChatRoom(newChatRoom);
+                }
+
+                setIsLoading(false);
+            }
         }
         
     return (
@@ -124,7 +159,7 @@ const InChatPaymentReceiptCard = ({
                                 color="info"
                                 size="sm"
                                 title="Contact Support"
-                                onClick={() => console.log('gg')}
+                                onClick={handleOnClickContactSupport}
                             />
                         </div>
                     </div>

@@ -18,7 +18,7 @@ const AdminRoot = ({
         >
             <div className="flex-1 flex flex-row">
                 <AdminNavDrawer/>
-                <div className="flex-1">
+                <div className="flex-1 flex">
                     {children}
                 </div>
             </div>
