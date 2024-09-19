@@ -37,7 +37,25 @@ const NewProgressList = () => {
 
                         {/* Render the Contract Progress Section */}
                         <ContractProgressSection />
-                        <MilestoneProgressSection id={""} title={""} dueDate={""} price={0} tasks={[]}/>
+
+                        {/* Milestone section with conditional rendering */}
+                        {milestones.length !== 0 ? (
+                            // Map through milestones and render each MilestoneProgressSection
+                            milestones.map(milestone => (
+                                <MilestoneProgressSection
+                                    key={milestone.id} // Ensure each milestone has a unique key
+                                    {...milestone} // Spread milestone data as props
+                                />
+                            ))
+                        ) : (
+                            // If there are no milestones, display a message
+                            <div className="flex justify-center">
+                                <span className="text-gray-400 text-sm">
+                                    No Milestones
+                                </span>
+                            </div>
+                        )}
+                        
                         {/* Render the Review and Complete Work sections */}
                         <ReviewProgressSection />
                         <CompleteWorkSection />
