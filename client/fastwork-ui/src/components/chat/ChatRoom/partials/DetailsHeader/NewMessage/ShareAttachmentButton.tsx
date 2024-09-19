@@ -1,11 +1,11 @@
-import { DocumentTextIcon, PaperClipIcon, SpeakerWaveIcon } from "@heroicons/react/24/solid";
+import { ChatBubbleLeftRightIcon, DocumentTextIcon, PaperClipIcon, SpeakerWaveIcon } from "@heroicons/react/24/solid";
 import { ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import { useChat } from "@/contexts/chat";
 
 const ShareAttachmentButton = () => {
     const { activeChatRoom, sendMessage } = useChat();
-    const [showPopup, setShowPopup] = useState(true);
+    const [showPopup, setShowPopup] = useState(false);
     const handleOnToggle = () => {
         setShowPopup(prev => !prev);
     };
@@ -36,9 +36,9 @@ const ShareAttachmentButton = () => {
                                     className="flex flex-row items-center space-x-2 p-3 border-b border-b-gray-200 hover:opacity-80 active:opacity-50"
                                     onClick={handleOnShareChatRoom}
                                 >
-                                    <ArrowUpOnSquareIcon className="size-5 text-blue-500"/>
+                                    <ChatBubbleLeftRightIcon className="size-5 text-blue-500"/>
                                     <span className="text-sm text-blue-500 whitespace-nowrap">
-                                        Share your chatroom
+                                        Share this Chat Room
                                     </span>
                                 </button>
 

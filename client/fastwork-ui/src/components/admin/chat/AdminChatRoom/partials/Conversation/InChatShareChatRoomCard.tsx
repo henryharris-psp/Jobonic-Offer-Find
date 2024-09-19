@@ -1,6 +1,10 @@
+import Button from "@/components/Button";
 import MediaSkeleton from "@/components/chat/ChatRoom/partials/Conversation/MediaSkeleton";
 import { supabase } from "@/config/supabaseClient";
+import { useChat } from "@/contexts/chat";
+import { ChatRoom } from "@/types/chat";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface InChatShareChatRoomCardProps {
@@ -10,13 +14,15 @@ interface InChatShareChatRoomCardProps {
 const InChatShareChatRoomCard = ({
     chatRoomId,
 }: InChatShareChatRoomCardProps) => {
-    const [chatRoom, setChatRoom] = useState(null);
+    const router = useRouter();
+    const { changeChatRoom, loadChatRoomData } = useChat();
+    const [chatRoom, setChatRoom] = useState<ChatRoom | null>(null);
 
     useEffect(() => {
         (async () => {
             const { data, error } = await supabase
-                .from("your_table_name")
-                .select("*")
+                .from("chat_rooms")
+                .select(`*, messages (*)`)
                 .eq("id", chatRoomId)
                 .single();
 
@@ -24,12 +30,19 @@ const InChatShareChatRoomCard = ({
                 console.error("Error fetching data:", error);
                 return;
             } else {
-                setChatRoom(data);
+                const chatRoomsWithData = await loadChatRoomData([data]);
+                console.log('all chat rooms', chatRoomsWithData);
+                if(chatRoomsWithData) setChatRoom(chatRoomsWithData[0]);
             }
         })();
     }, [chatRoomId]);
 
-    return chatRoom ? (
+    //methods
+        const handleOnGoToChatRoom = () => {
+            router.push('/chat')
+        }
+
+    return !chatRoom ? (
         <MediaSkeleton />
     ) : (
         <div className="bg-white shadow rounded-lg p-4 border border-gray-200">
@@ -57,6 +70,16 @@ const InChatShareChatRoomCard = ({
             <div className="mt-3 flex justify-between items-center text-gray-500 space-x-4">
                 <span className="text-xs">Last active: 10 mins ago</span>
                 <span className="text-xs">25 messages</span>
+            </div>
+
+            <div className="mt-3">
+                <Button
+                    fullWidth
+                    size="sm"
+                    color="info"
+                    title="Go to Chat Room"
+                    onClick={handleOnGoToChatRoom}
+                />
             </div>
         </div>
     );

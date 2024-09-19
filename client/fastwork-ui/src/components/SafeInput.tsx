@@ -10,7 +10,7 @@ export type SafeInputChangeEvent = ChangeEvent<HTMLInputElement> | ChangeEvent<H
 type InputProps = {
     id?: string | undefined;
     name?: string;
-    size?: 'xs' | 'sm';
+    size?: 'lg' | 'xs' | 'sm';
     type?: 'text' | 'number' | 'password' | 'decimal' | 'textarea';
     title?: string;
     value: string | number;

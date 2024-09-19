@@ -147,7 +147,7 @@ const AdminChatPage = () => {
 
     return (
         <div
-            className="select-none flex flex-row relative overflow-hidden"
+            className="flex-1 select-none flex flex-row relative overflow-hidden"
             style={{
                 height: "91vh",
             }}
