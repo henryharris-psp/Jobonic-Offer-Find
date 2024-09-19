@@ -5,6 +5,7 @@ import { BookmarkSquareIcon, PencilIcon, PencilSquareIcon, PlusCircleIcon, Trash
 import httpClient from '@/client/httpClient';
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+
 interface Education {
     id?: string;
     institute: string;
@@ -68,7 +69,7 @@ const EducationComponent = () => {
                 // Update existing education entry
                 const updatedEducation = { ...educationList[editIndex], ...newEducation };
 
-                // Ensure the endpoint is correct and matches the backend route
+                //the endpoint is correct and matches the backend route
                 const response = await httpClient.put(`/user-education?id=${updatedEducation.id}`, updatedEducation);
 
                 setEducationList((prev) => {
@@ -206,10 +207,10 @@ const EducationComponent = () => {
             {/* Confirmation Modal */}
             {showConfirmDelete !== null && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-gray-100 py-8 px-6 rounded-lg shadow-lg">
+                    <div className="bg-gray-100 py-8 px-6 rounded-lg shadow-lg font-bold">
                         <p>Are you sure you want to remove this education?</p>
                         <div className="flex justify-center space-x-4 mt-4">
-                            <button onClick={handleConfirmDelete} className="bg-red-500 text-white px-4 py-2 rounded">
+                            <button onClick={handleConfirmDelete} className="bg-red-500 text-white py-2 rounded-lg px-6">
                                 OK
                             </button>
                             <button onClick={handleCancelDelete} className="bg-gray-300 px-4 py-2 rounded">

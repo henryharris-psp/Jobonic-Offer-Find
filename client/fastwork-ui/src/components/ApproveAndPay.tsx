@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { XCircleIcon } from '@heroicons/react/24/solid';
-import { Milestone } from '@/type/Milestone';
+import { Milestone } from '@/types/general';
 import Button from './Button';
 
 interface ModalProps {
