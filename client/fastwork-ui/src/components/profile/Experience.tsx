@@ -33,7 +33,6 @@ const ExperienceComponent = () => {
   const companyRef = useRef<HTMLInputElement>(null);
   const experienceStartDateRef = useRef<HTMLInputElement>(null);
   const experienceEndDateRef = useRef<HTMLInputElement>(null);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -97,6 +96,9 @@ const ExperienceComponent = () => {
     setFormData(experienceList[index]);
     setShowNewEntry(true);
     setEditIndex(index);
+  
+    // Enable the inputs for editing
+    setEnabledInputs((prev) => ({ ...prev, "user-experience": true }));
   };
 
   const handleRemoveClick = (index: number) => {
@@ -188,7 +190,7 @@ const ExperienceComponent = () => {
                     <strong className="capitalize">
                       {key.replace('startDate', 'Start Date').replace('endDate', 'End Date')}:
                     </strong>
-                    <span className="text-black text-sm ml-2">{value}</span>
+                    <span className="text-black text-sm pl-2 pt-2 font-semibold">{value}</span>
                   </li>
                 );
               })}
@@ -200,18 +202,18 @@ const ExperienceComponent = () => {
       {/* Confirmation Modal */}
       {showConfirmDelete !== null && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-gray-100 py-8 px-6 rounded-lg shadow-lg">
-            <p>Are you sure you want to remove this experience?</p>
+          <div className="bg-gray-100 py-8 px-6 rounded-lg shadow-lg ">
+            <h2 className="font-bold">Are you sure you want to remove this experience?</h2>
             <div className="flex justify-center space-x-4 mt-4">
               <button
                 onClick={handleConfirmDelete}
-                className="bg-red-500 text-white px-4 py-2 rounded"
+                className="bg-red-500 text-white px-6 py-2 rounded-lg"
               >
                 OK
               </button>
               <button
                 onClick={handleCancelDelete}
-                className="bg-gray-300 px-4 py-2 rounded"
+                className="bg-gray-300 px-4 py-2 rounded-lg"
               >
                 Cancel
               </button>

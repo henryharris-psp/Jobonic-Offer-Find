@@ -21,6 +21,7 @@ const FinancialForm = () => {
   const { authUser } = useSelector((state: RootState) => state.auth);
 
   const [financialList, setFinancialList] = useState<any[]>([]);
+  const [filteredList, setFilteredList] = useState<any[]>([]);
   const [formData, setFormData] = useState<FinancialData>({
     cardNumber: '',
     cardExpiryDate: '',
@@ -47,6 +48,16 @@ const FinancialForm = () => {
     });
     setFeedbackMessage('');
   };
+
+  const filteredFields: (keyof FinancialData)[] = [
+    'cardNumber',
+    'cardExpiryDate',
+    'bankAccountNumber',
+    'walletAddress',
+    'cryptoType',
+    'paymentMethod',
+    'receivePaymentMethod',
+  ];
   
 
   const fetchFinancialData = async () => {
@@ -55,14 +66,41 @@ const FinancialForm = () => {
       console.error('User ID is undefined.');
       return;
     }
-
+  
     try {
-      const response = await httpClient.get(`/user?id=${profileId}`);
-      setFinancialList(response.data);
+      const response = await httpClient.get(`/user/all?userId=${profileId}`);
+      console.log('Fetched financial data:', response.data);
+  
+      // Filter and map the data to ensure only the necessary fields are included
+      const uniqueFields = new Set([
+        'cardNumber',
+        'cardExpiryDate',
+        'bankAccountNumber',
+        'walletAddress',
+        'cryptoType',
+        'paymentMethod',
+        'receivePaymentMethod',
+      ]);
+  
+      const filteredData = response.data
+        .map((item: FinancialData) => {
+          const filteredItem: Partial<FinancialData> = {};
+          uniqueFields.forEach(field => {
+            const value = item[field as keyof FinancialData];
+            if (value !== undefined) {
+              filteredItem[field as keyof FinancialData] = value;
+            }
+          });
+          return filteredItem as FinancialData;
+        });
+  
+      // Set the state with the filtered data, ensuring old data is replaced
+      setFinancialList(filteredData);
     } catch (error) {
       console.error('Failed to fetch financial data:', error);
     }
   };
+  
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
@@ -98,7 +136,7 @@ const FinancialForm = () => {
       if (editIndex !== null) {
         // Update existing financial entry
         const updatedFinancialData = { ...financialList[editIndex], ...newFinancialData };
-        const response = await httpClient.put(`/user?id=${updatedFinancialData.id}`, updatedFinancialData);
+        const response = await httpClient.put(`/user?id=${updatedFinancialData.profileId}`, updatedFinancialData);
         setFinancialList((prev) => {
           const updatedList = [...prev];
           updatedList[editIndex] = response.data;
@@ -126,30 +164,21 @@ const FinancialForm = () => {
     setShowConfirmDelete(index);
   };
 
-  const handleConfirmDelete = async () => {
-    if (showConfirmDelete !== null) {
-      const financialToDelete = financialList[showConfirmDelete];
-      try {
-        await httpClient.delete(`/user?id=${financialToDelete.id}`); // Changed endpoint to `user-financials`
-        setFinancialList((prev) => prev.filter((_, i) => i !== showConfirmDelete));
-        setFeedbackMessage('Financial information deleted successfully!');
-      } catch (error) {
-        console.error('Error deleting financial data:', error);
-        setFeedbackMessage('Failed to delete financial information.');
-      }
-    }
-    setShowConfirmDelete(null);
-  };
-
-  const handleCancelDelete = () => {
-    setShowConfirmDelete(null);
-  };
-
   const handleEdit = (index: number) => {
+    const selectedItem = financialList[index];
+    const filteredFormData: Partial<FinancialData> = {};
+  
+    filteredFields.forEach(field => {
+      if (selectedItem[field] !== undefined) {
+        filteredFormData[field] = selectedItem[field];
+      }
+    });
+  
     setEditIndex(index);
-    setFormData(financialList[index]);
+    setFormData(filteredFormData as FinancialData);
     setShowNewEntry(true);
   };
+  
 
   return (
     <div className="flex flex-col justify-start w-[60%] ml-16 mt-4 pb-4">
@@ -209,31 +238,22 @@ const FinancialForm = () => {
         <div className="p-4 border rounded-lg bg-gray-100 shadow-sm">
           <ul className="list-disc pl-5 relative">
             {Array.isArray(financialList) && financialList.length > 0 ? (
-              financialList.map((data, index) => (
+              financialList.map((item, index) => (
                 <li key={index} className="mb-2 flex justify-between items-center">
                   <div>
-                    {/* Log each data item */}
-                    {Object.entries(data)
-                      .filter(([key]) =>
-                        ['cardNumber', 'cardExpiryDate', 'bankAccountNumber', 'walletAddress', 'cryptoType', 'paymentMethod', 'receivePaymentMethod']
-                          .includes(key))
-                      .map(([key, value]) => (
-                        <div key={key}>
-                          <strong>{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</strong>
-                          <span className="ml-2">{String(value)}</span>
-                        </div>
-                      ))}
+                    {['cardNumber', 'cardExpiryDate', 'bankAccountNumber', 'walletAddress', 'cryptoType', 'paymentMethod', 'receivePaymentMethod'].map((field) => (
+                      item[field as keyof typeof item] && (
+                        <p key={field} className="flex flex-col justify-start items-start">
+                          <strong>{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</strong>
+                          {item[field as keyof typeof item]}
+                        </p>
+                      )
+                    ))}
                   </div>
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => handleRemoveClick(index)}
-                      className="absolute top-2 right-2 text-white p-1 rounded-full hover:bg-white transition duration-300"
-                    >
-                      <TrashIcon className="w-5 h-5 cursor-pointer text-red-700" />
-                    </button>
-                    <button
                       onClick={() => handleEdit(index)}
-                      className="absolute top-2 right-10 text-white p-1 rounded-full hover:bg-[#77E3C8] transition duration-300"
+                      className="absolute top-0 right-0 text-white p-1 rounded-full hover:bg-[#77E3C8] transition duration-300"
                     >
                       <PencilSquareIcon className="w-5 h-5 cursor-pointer text-yellow-700" />
                     </button>
@@ -248,15 +268,7 @@ const FinancialForm = () => {
         </div>
       )}
 
-      {showConfirmDelete !== null && (
-        <div className="p-4 mt-2 bg-red-100 border border-red-500 rounded-lg">
-          <p className="text-red-700">Are you sure you want to delete this item?</p>
-          <div className="mt-2 flex space-x-2">
-            <button onClick={handleConfirmDelete} className="px-4 py-2 bg-red-500 text-white rounded-lg">Confirm</button>
-            <button onClick={handleCancelDelete} className="px-4 py-2 bg-gray-300 text-black rounded-lg">Cancel</button>
-          </div>
-        </div>
-      )}
+    
     </div>
   );
 };
