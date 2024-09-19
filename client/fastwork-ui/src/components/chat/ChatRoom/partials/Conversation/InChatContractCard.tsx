@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useChat } from '@/contexts/chat';
 import MediaSkeleton from './MediaSkeleton';
 import Button from '@/components/Button';
-import { ArrowPathIcon, CheckCircleIcon, CheckIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
 import { ClockIcon } from '@heroicons/react/24/outline';
 import Modal from '@/components/Modal';
 import { useSelector } from 'react-redux';
@@ -12,6 +11,7 @@ import { Contract } from '@/types/general';
 import { fetchContract } from '@/functions/helperFunctions';
 import ContractCard from '@/components/contract/ContractCard';
 import DateParser from '@/functions/dateParser';
+import { ArrowPathIcon, CheckCircleIcon, CheckIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
 
 interface InChatContractCardProps {
     contractId: string | number;

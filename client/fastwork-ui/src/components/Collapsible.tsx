@@ -4,7 +4,7 @@ interface CollapsibleProps {
     isOpen: boolean;
     mt?: number;
     onClick?: () => void;
-    maxHeight: string;
+    maxHeight?: string;
     children: ReactNode;
 }
 
@@ -12,7 +12,7 @@ const Collapsible = ({
     isOpen,
     mt = 0, 
     onClick,
-    maxHeight = '200px',
+    maxHeight = '300px',
     children, 
 }: CollapsibleProps) => {
     const handleClick = () => {

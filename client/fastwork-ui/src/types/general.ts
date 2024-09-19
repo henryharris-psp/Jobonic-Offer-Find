@@ -15,19 +15,26 @@ export interface PageLink {
 }
 
 export interface Task {
-    id: string | number,
-    checkpointId?: string | number,
+    id: string,
+    checkpointId?: string,
     name: string
 }
 
+export interface UploadedFile {
+    id: string;
+    name: string;
+    size: number;
+    status: boolean;
+}
+
 export interface Milestone {
-    id: string | number,
+    id: string,
     contractId?: string | number,
     title: string,
     dueDate: string,
     price: number,
     tasks: Task[],
-
+    uploadedFiles?: UploadedFile[];
     //not_required
     serviceId?: string | number,
     matchId?: string | number,

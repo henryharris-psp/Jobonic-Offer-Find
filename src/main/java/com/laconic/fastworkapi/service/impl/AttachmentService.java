@@ -56,7 +56,7 @@ public class AttachmentService implements IAttachmentService {
         assert extension != null;
         var fileName = attachmentDTO.getFile().getName().concat(".").concat(extension);
         var attachment = Attachment.builder()
-                .name(attachmentDTO.getFile().getName())
+                .name(attachmentDTO.getFile().getOriginalFilename())
                 .serviceId(attachmentDTO.getServiceId() != null ? attachmentDTO.getServiceId() : null)
                 .userId(attachmentDTO.getUserId() != null ? attachmentDTO.getUserId() : null)
                 .proposalId(attachmentDTO.getProposalId() != null ? attachmentDTO.getProposalId() : null)

@@ -55,7 +55,7 @@ const ChatPage = () => {
                 const chatRoomsWithData = await loadChatRoomData(chatRooms);
                 setChatRooms(chatRoomsWithData);
                 
-                //new chatroom creation 
+                //new chatroom creation
                 if(serviceParam){
                     const service = JSON.parse(serviceParam);
                     const existedChatRoom = chatRoomsWithData.find( e => e.service_id === service.id );
@@ -134,7 +134,7 @@ const ChatPage = () => {
                         event: "INSERT",
                         schema: "public",
                         table: "messages",
-                        // filter: `room_id=in.(${roomIds.join(',')})`, //TODO: Listen to only related chat rooms
+                        // filter: `room_id=in.(${roomIds.join(',')})`, //TODO: Listen messages from auth user related chatrooms only
                     },
                     (payload: { new: Message }) => {
                         handleOnGetNewMessage(payload.new.room_id, payload.new);

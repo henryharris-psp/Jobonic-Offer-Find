@@ -1,3 +1,4 @@
+'use client'
 import { useChat } from "@/contexts/chat";
 import { RootState } from "@/store";
 import { PaperClipIcon, PhotoIcon } from "@heroicons/react/24/solid";

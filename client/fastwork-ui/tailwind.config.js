@@ -18,6 +18,9 @@ module.exports = {
             animation: {
                 marquee: 'marquee 10s linear infinite',
             },
+            boxShadow: {
+                'bold': '0px 4px 6px rgba(0, 0, 0, 0.3)',
+            },
         },
     },
     plugins: [

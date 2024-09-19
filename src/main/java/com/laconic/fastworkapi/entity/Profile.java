@@ -24,15 +24,24 @@ public class Profile extends Auditable<UUID> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     private String companyName;
+
     private String phoneNumber;
+
     // either location or byte
     private String image;
+
     private String cardNumber;
+
     private LocalDate cardExpiryDate;
+
     private String walletAddress;
+
     private double review = 0;
+
     private boolean isActive = true;
+
     @Column(unique = true)
     private Long userId;
 

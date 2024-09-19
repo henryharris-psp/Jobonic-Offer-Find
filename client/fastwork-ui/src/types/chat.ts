@@ -71,6 +71,7 @@ export type MediaType =
     'image' | 
     'contract' | 
     'service' |
+    'chat_room' |
     'payment_request' |
     'payment_receipt';
 
@@ -90,10 +91,11 @@ export type CollaborationStatus =
     'signing_contract' |
     'payment_verification' |
     'to_submit' |
-
-    'to_pay' | 
-    'waiting_for_review' |
+    'to_review' |
+    'contract_termination' |
     'completed' |
+
+    'to_pay' |
     'cancelled';
 ;
 
