@@ -15,11 +15,7 @@ interface MilestoneProgressSectionProps extends Milestone {
     isDisabled?: boolean;
 }
 const MilestoneProgressSection = ({
-    id,
-    title,
-    tasks,
-    isDisabled = false,
-    isCompleted = false
+    
 }: MilestoneProgressSectionProps) => {
     const { activeChatRoom, authUserType, latestContract } = useChat();
     const [openMilestones, setOpenMilestones] = useState<string[]>([]);
@@ -37,13 +33,13 @@ const MilestoneProgressSection = ({
     const [selectedMilestone, setSelectedMilestone] = useState(null);
     const [hasFetched, setHasFetched] = useState(false);
     useEffect(() => {
-        if (!hasFetched && latestContract) {
+        if (latestContract && !hasFetched) {
             console.log('Fetching milestones for contract ID:', latestContract.id);
 
             fetchMilestonesPerContract(latestContract.id)
                 .then(() => setHasFetched(true));
         }
-    }, [latestContract, hasFetched]);
+    }, [hasFetched]);
     const fetchMilestonesPerContract = async (contractId: string | number) => {
         try {
             const serviceId = activeChatRoom?.service_id;
@@ -77,17 +73,27 @@ const MilestoneProgressSection = ({
                 })
             );
 
-            // Ensure uniqueness
+            // Ensure uniqueness using a Map based on normalized title or id
             const uniqueMilestonesMap = new Map();
+
             updatedMilestones.forEach((milestone) => {
-                if (!uniqueMilestonesMap.has(milestone.title)) {
-                    uniqueMilestonesMap.set(milestone.title, milestone);
+                // Normalize the title by trimming spaces and converting to lowercase to handle duplicates more accurately
+                const key = milestone.title.trim().toLowerCase(); // Or use milestone.id if the ID is unique
+
+                if (!uniqueMilestonesMap.has(key)) {
+                    uniqueMilestonesMap.set(key, milestone);
+                } else {
+                    console.log('Duplicate detected:', milestone); // This will help you debug duplicates
                 }
             });
 
+            // Convert the unique milestones map back to an array
             const uniqueMilestones = Array.from(uniqueMilestonesMap.values());
             console.log('Unique Milestones:', uniqueMilestones);
             setMilestones(uniqueMilestones);
+
+
+
         } catch (error) {
             console.error('Cannot fetch contract data:', error);
         }
@@ -323,14 +329,14 @@ const MilestoneProgressSection = ({
             <ul className="space-y-4">
                 {uniqueMilestones.length > 0 ? uniqueMilestones.map((milestone, index) => (
                     <li key={milestone.id} className="relative">
-                        {index !== uniqueMilestones.length - 1 && (  // This condition ensures the line doesn't extend past the last item
+                        {/* {index !== uniqueMilestones.length - 1 && (  // This condition ensures the line doesn't extend past the last item
                             <div
                                 className="absolute left-3 top-0 h-full bg-cyan-900"
                                 style={{
                                     width: '2px',
                                 }}
                             ></div>
-                        )}
+                        )} */}
                         <div
                             className={`flex items-center cursor-pointer relative
                                 }`}
@@ -363,9 +369,8 @@ const MilestoneProgressSection = ({
                                 </ul>
                                 {authUserType === 'freelancer' && milestone.title !== 'Review' ? (
                                     <div className="mt-2 flex flex-col justify-center items-center">
-                                        <label className="text-white bg-yellow-500 py-1 px-2 text-2xs rounded-lg inline-flex items-center cursor-pointer w-48 overflow-hidden">
+                                        <label className="text-white bg-[#D0693B] py-1 px-2 text-2xs rounded-lg inline-flex items-center cursor-pointer w-48 overflow-hidden">
                                             <DocumentArrowUpIcon className="h-4 w-4 mr-1 flex-shrink-0" />
-
                                             {selectedFile ? (
                                                 <Marquee text={selectedFile.name} />
                                             ) : (
