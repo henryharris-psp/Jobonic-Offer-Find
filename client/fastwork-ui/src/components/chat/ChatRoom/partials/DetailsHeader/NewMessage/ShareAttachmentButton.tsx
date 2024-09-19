@@ -20,11 +20,13 @@ const ShareAttachmentButton = () => {
     return (
         <>
             {/* backdrop */}
-            <div 
-                className="absolute top-0 bottom-0 right-0 left-0"
-                onClick={() => setShowPopup(false)}
-            >
-            </div>
+            {showPopup ? (
+                <div 
+                    className="absolute top-0 bottom-0 right-0 left-0"
+                    onClick={() => setShowPopup(false)}
+                >
+                </div>
+            ) : ''}
             <div className="relative">
                 { showPopup ? (
                         <div className="flex absolute bg-white rounded-xl border border-gray-200 bottom-12 shadow overflow-hidden">

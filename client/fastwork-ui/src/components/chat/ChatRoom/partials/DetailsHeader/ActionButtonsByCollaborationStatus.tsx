@@ -37,11 +37,14 @@ const employerActionButtonsMap = {
     invited: <WaitingStatus status="Waiting For Confirmation"/>,
     signing_contract: <ContractAndPaymentButtons/>,
     payment_verification: <ContractAndPaymentButtons/>,
-    to_submit: <WaitingStatus status="Waiting For Milestone 1 submission"/>, //TODO: render current milestone name
+    to_submit: 
+        <div className="flex flex-row space-x-3">
+            <HireAgainButton/>
+            <WaitingStatus status="Currently, waiting for milestone 1 submission"/>
+        </div>, //TODO: render current milestone name
     to_review: <ReviewButtons/>,
     contract_termination: <TerminationContractButton role="employer"/>,
     completed: <HireAgainButton/>
-    
 };
 
 const actionButtonsMap: Record<'freelancer' | 'employer', ActionButtonMap> = {
