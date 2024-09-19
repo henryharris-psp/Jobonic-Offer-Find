@@ -149,7 +149,8 @@ public class ProfileService implements IProfileService {
         Profile existingUser = null;
 
         if (name.equalsIgnoreCase("profile")) {
-            existingUser = userRepo.findByUserId(id);
+            existingUser = userRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
+                    id.toString()));
         }
 
         if (name.equalsIgnoreCase("user")) {
