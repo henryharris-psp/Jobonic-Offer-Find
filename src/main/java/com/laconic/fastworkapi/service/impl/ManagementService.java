@@ -284,7 +284,7 @@ public class ManagementService implements IManagementService {
     public PaginationDTO<ExtendedServiceRequestDTO.WithProfile> getAllExtendedRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
         Specification<ServiceManagement> specs =
-                GenericSpecification.hasKeyword(keyword, Set.of("title"));
+                GenericSpecification.hasKeyword((String) keyword, Set.of("title"));
 
         Page<ServiceManagement> servicePage = (keyword != null) ?
                 this.serviceRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
@@ -292,6 +292,7 @@ public class ManagementService implements IManagementService {
 
         // Map the entities to DTOs
         List<ExtendedServiceRequestDTO.WithProfile> extendedServiceWithProfile = servicePage.stream()
+                .filter(service -> !service.getProfile().getId().equals(pageAndFilterDTO.getAuthId()))
                 .map(service -> getAllExtendedRequestWithProfile(service, service.getProfile()))
                 .collect(Collectors.toList());
 
