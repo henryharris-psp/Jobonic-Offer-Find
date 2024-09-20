@@ -6,12 +6,11 @@ import ApproveAndPayModal from '@/components/ApproveAndPay';
 import Button from '@/components/Button';
 import Marquee from './Marquee/Marquee';
 import Modal from '@/components/Modal';
-import PaymentCard from '@/components/payment/PaymentCard';
+import PaymentCard from './PyamentForMilestone/PaymentCardMilestone';
 import FileSizeAlertModal from './AlertMessage/FileAlertMessage';
-import { token } from '@/baseURL';
 
 type UploadedFile = {
-    id: string; // Ensure 'id' is part of the file object
+    id: string;
     name: string;
     size: number;
     status: boolean;
@@ -23,6 +22,7 @@ interface Milestone {
     price: number;
     tasks: string[];
     isOpen: boolean;
+    isDisabled: boolean;
     serviceId: string;
     uploadedFiles?: UploadedFile[];
 }
@@ -38,7 +38,10 @@ const ProgressList: React.FC = () => {
     const [isAlertModalOpen, setIsAlertModalOpen] = useState<boolean>(false);
     const [isPaymentCardOpen, setIsPaymentCardOpen] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
-
+    const [isApproveAndPay, setIsApproveAndPay] = useState<boolean>(false);
+    const [approvedMilestone, setApprovedMilestone] = useState<Record<string, boolean>>({});
+    const [milestonesState, setMilestonesState] = useState(milestones);
+    const [selectedMilestone, setSelectedMilestone] = useState(null);
     useEffect(() => {
         if (latestContract) {
             fetchMilestonesPerContract(latestContract.id);
@@ -53,7 +56,6 @@ const ProgressList: React.FC = () => {
             // Fetch contract data to get milestones
             const contractResponse = await httpClient.get(`/contract/${contractId}`);
             const milestonesData: Milestone[] = contractResponse.data.milestones;
-
             const updatedMilestones = await Promise.all(
                 milestonesData.map(async (milestone) => {
                     try {
@@ -63,16 +65,14 @@ const ProgressList: React.FC = () => {
                         console.log('Attachments Response:', attachmentsResponse.data);
                         const milestoneAttachments = attachmentsResponse.data;
 
-                        const files = milestoneAttachments.map((attachment: { id: string; name: string; fileSize: string; file: string; status: boolean;}) => ({
+                        const files = milestoneAttachments.map((attachment: { id: string; name: string; fileSize: string; file: string; status: boolean; }) => ({
                             id: attachment.id,
                             name: attachment.name,
                             size: attachment.fileSize,
                             file: attachment.file,
                             status: attachment.status
                         }));
-
                         const isSubmitted = files.some((file: { status: any; }) => file.status);
-
                         return { ...milestone, uploadedFiles: files, isSubmitted };
                     } catch (attachmentError) {
                         console.error(`Cannot fetch attachments for milestone ${milestone.id}:`, attachmentError);
@@ -94,7 +94,7 @@ const ProgressList: React.FC = () => {
                 params: { id: fileId },
                 responseType: 'blob', // Set response type to 'blob' for binary data
             });
-    
+
             // Check if the request was successful
             if (response.status === 200) {
                 // Convert response to Blob
@@ -122,22 +122,22 @@ const ProgressList: React.FC = () => {
             console.error('Error downloading file:', error);
         }
     };
-    
+
     const uploadFile = async (milestoneId: string, file: File) => {
         try {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('documentType', 'CHECKPOINT');
             formData.append('checkPointId', milestoneId);
-            
+
             const response = await httpClient.post('/attachment', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-    
+
             if (response.status === 200) {
-                const fileId = response.data.fileId; 
+                const fileId = response.data.fileId;
 
                 setMilestones((prevMilestones) =>
                     prevMilestones.map((milestone) => {
@@ -158,10 +158,10 @@ const ProgressList: React.FC = () => {
                         return milestone;
                     })
                 );
-    
+
                 // Save the milestone submission status
                 saveUploadedMilestone(milestoneId);
-    
+
                 // Hide the submit button
                 setMilestones((prevMilestones) =>
                     prevMilestones.map((milestone) => {
@@ -253,8 +253,14 @@ const ProgressList: React.FC = () => {
             console.error(`Failed to save status for attachments of checkpoint ${checkPointId}:`, error);
         }
     };
-    const handleApproveClick = () => {
+    const handleApproveClick = (milestoneId: string) => {
+        setIsApproveAndPay(true);
         setIsModalOpen(true);
+        const updatedMilestones = milestonesState.map((milestone) =>
+            milestone.id === milestoneId ? { ...milestone, isPaid: true } : milestone
+          );
+          setMilestonesState(updatedMilestones);
+          setSelectedMilestone(null);
     };
     const handleCloseModal = () => {
         setIsModalOpen(false);
@@ -307,7 +313,7 @@ const ProgressList: React.FC = () => {
                 {milestones.length > 0 ? milestones.map((milestone, index) => (
                     <li key={milestone.id}>
                         <div
-                            className={`flex items-center cursor-pointer ${isCurrentMilestone(index) ? 'bg-sky-200' : 'bg-gray-100'
+                            className={`flex items-center cursor-pointer
                                 } p-4 rounded-lg`}
                             onClick={() => toggleMilestone(milestone.id)}
                         >
@@ -316,14 +322,14 @@ const ProgressList: React.FC = () => {
                             >
                                 ▶
                             </span>
-                            <span className={`font-semibold text-sm ${isCurrentMilestone(index) ? 'text-yellow-500' : 'text-gray-500'
+                            <span className={`font-semibold text-sm ${isCurrentMilestone(index) ? 'text-yellow-600' : 'text-gray-400'
                                 } text-cyan-950`}>
                                 {milestone.title}
                             </span>
                         </div>
                         {openMilestones.includes(milestone.id) && (
                             <div className="ml-4 mt-2">
-                                <ul className={`list-disc list-outside font-bold text-sm ml-6 ${isCurrentMilestone(index) ? 'text-yellow-500' : 'text-gray-500'
+                                <ul className={`list-disc list-outside font-bold text-sm ml-6 ${isCurrentMilestone(index) ? 'text-yellow-600' : 'text-gray-400'
                                     }`}>
                                     {milestone.tasks.map(task =>
                                         <li key={task}>{task.name}</li>
@@ -344,6 +350,7 @@ const ProgressList: React.FC = () => {
                                                 type="file"
                                                 className="hidden"
                                                 onChange={(e) => handleFileChange(e, milestone.id)}
+                                                disabled={approvedMilestone[milestone.id]}
                                             />
                                         </label>
                                         <FileSizeAlertModal
@@ -356,6 +363,7 @@ const ProgressList: React.FC = () => {
                                             color="success"
                                             size="xs"
                                             onClick={() => handleSubmit(milestone.id)}
+                                            disabled={(approvedMilestone[milestone.id])}
                                         />
                                     </div>
                                 ) : ''}
@@ -378,10 +386,10 @@ const ProgressList: React.FC = () => {
                                                     <span className="text-xs">{file.size}</span>
                                                     {milestone.uploadedFiles?.map((file) => (
                                                         <div key={file.name} className="flex">
-                                                            <ArrowDownTrayIcon onClick={() => downloadFile(file.id, file.name)} className="w-4 h-4 cursor-pointer"/>
+                                                            <ArrowDownTrayIcon onClick={() => downloadFile(file.id, file.name)} className="w-4 h-4 cursor-pointer" />
                                                         </div>
                                                     ))}
-                                                    
+
                                                 </div>
                                             ))
                                         ) : (
@@ -392,8 +400,8 @@ const ProgressList: React.FC = () => {
                                             title="Approve&Pay"
                                             color='warning'
                                             size='xs'
-                                            onClick={handleApproveClick}
-                                            disabled={!milestone.uploadedFiles || milestone.uploadedFiles.length === 0}
+                                            onClick={() => handleApproveClick(milestone.id)}
+                                            disabled={isApproveAndPay || !milestone.uploadedFiles || milestone.uploadedFiles.length === 0 || milestone.isDisabled}
                                         />
                                     </div>
                                 )}

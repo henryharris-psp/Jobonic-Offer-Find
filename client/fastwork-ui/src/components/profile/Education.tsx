@@ -133,7 +133,7 @@ const EducationComponent = () => {
 
     return (
         <section className="flex flex-col w-[60%] justify-start ml-16 mt-4 pb-4 ">
-            <div className="flex flex-row space-x-3 items-center mb-6 animate-pulse">
+            <div className="flex flex-row space-x-3 items-center mb-6">
                 <h2 className="text-2xl font-bold text-cyan-950">Education</h2>
                 <PlusCircleIcon
                     className="w-6 h-6 cursor-pointer text-yellow-700"

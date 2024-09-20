@@ -126,7 +126,7 @@ const ExperienceComponent = () => {
 
   return (
     <section className="flex flex-col w-[60%] justify-start ml-16 mt-4 pb-4">
-      <div className="flex space-x-3 mb-6 justify-start items-center animate-pulse">
+      <div className="flex space-x-3 mb-6 justify-start items-center">
         <h2 className="text-2xl font-bold text-cyan-950">Experience</h2>
         <PlusCircleIcon
           className="w-6 h-6 cursor-pointer text-yellow-700"

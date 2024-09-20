@@ -100,8 +100,8 @@ export const RegisterForm: React.FC = () => {
 
         const URL = `${SERVER_AUTH}/v1/login/verify/otp?userId=${userId}&otp=${values.checkOTP}`;
         try {
-            await httpAuth.post(URL);
-
+            const response = await httpAuth.post(URL);
+            console.log('Register successfully...' , response);
             const laconicAuthPageUrl = process.env.NEXT_PUBLIC_LACONIC_AUTH_PAGE_URL;
             window.location.href = `${laconicAuthPageUrl}/authentication?page=logout`;
 
