@@ -114,8 +114,8 @@ public class AttachmentService implements IAttachmentService {
 
                 if (resource.exists() || resource.isReadable()) {
                     return ResponseEntity.ok()
-                            .contentType(MediaType.APPLICATION_OCTET_STREAM) // Correct content type
-                            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + document.getName() + "\"") // Change inline to attachment
+                            .contentType(MediaType.valueOf(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + document.getName() + "\"")
                             .body(resource);
                 } else {
                     throw new FileNotFoundException("Could not read file: " + filePath.toString());
