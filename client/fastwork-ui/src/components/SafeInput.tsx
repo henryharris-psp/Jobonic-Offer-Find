@@ -7,10 +7,10 @@ interface Error {
 
 export type SafeInputChangeEvent = ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>;
 
-type InputProps = {
+type SafeInputProps = {
     id?: string | undefined;
     name?: string;
-    size?: 'lg' | 'xs' | 'sm';
+    size?: 'lg' | 'sm' | 'xs';
     type?: 'text' | 'number' | 'password' | 'decimal' | 'textarea';
     title?: string;
     value: string | number;
@@ -23,7 +23,14 @@ type InputProps = {
     disabled?: boolean;
 };
 
-const Input = ({
+const inputHeightMap = {
+    'lg': '14',
+    'md': '12',
+    'sm': '10',
+    'xs': '10'
+}
+
+const SafeInput = ({
     id,
     name,
     size = 'xs',
@@ -36,8 +43,7 @@ const Input = ({
     placeholder = '',
     onPressEnterKey = () => null,
     disabled,
-}: InputProps) => {
-
+}: SafeInputProps) => {
     const showError = useMemo( () => {
         return errors.some( e => e ? e.show : false );
     }, [errors]);
@@ -83,7 +89,7 @@ const Input = ({
             ) : ''}
 
             { type === 'textarea' ? (
-                <textarea 
+                <textarea
                     className={`pl-3 pt-3 rounded-lg placeholder:text-xs placeholder:text-dim-gray focus:outline-none w-full h-14 border 
                         text-${size}
                         ${showError ? 'border-red-500' : 'border-gray-300' }
@@ -100,8 +106,9 @@ const Input = ({
                         id={id}
                         name={name}
                         inputMode={inputMode}
-                        className={`w-full h-10 border-gray-300 min-w-0 pl-3 placeholder:text-xs rounded-lg border
+                        className={`w-full border-gray-300 min-w-0 pl-3 placeholder:text-xs rounded-lg border
                             text-${size}
+                            h-${inputHeightMap[size]}
                             ${showError ? 'border-red-500' : 'border-gray-300' }
                             ${disabled ? 'border-none outline-none' : 'focus:outline focus:outline-blue-500'}
                         `}
@@ -134,4 +141,4 @@ const Input = ({
     )
 }
 
-export default memo(Input);
+export default memo(SafeInput);

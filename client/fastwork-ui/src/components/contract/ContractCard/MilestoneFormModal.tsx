@@ -130,8 +130,9 @@ const MilestoneFormModal = ({
                     <div className="flex flex-col space-y-3">                        
 
                         <SafeInput
+                            title="Milestone Name"
+                            placeholder="eg. Milestone 1"
                             type="text"
-                            placeholder="Milestone name"
                             name="title"
                             value={inputs.title}
                             onChange={handleInputChange}
@@ -144,8 +145,9 @@ const MilestoneFormModal = ({
                         />
 
                         <SafeInput
+                            title="Price"
+                            placeholder="eg. 50.25"
                             type="decimal"
-                            placeholder="Price"
                             name="price"
                             value={inputs.price}
                             onChange={handleInputChange}
@@ -156,22 +158,12 @@ const MilestoneFormModal = ({
                                 }
                             ]}
                         />
-
-                        <div className="flex flex-col space-y-1">
-                            <input
-                                type="date"
-                                placeholder="Due Date"
-                                value={inputs.dueDate}
-                                onChange={handleInputChange}
-                                className="border border-gray-300 rounded-lg h-12 w-full"
-                            />
-                        </div>
                     </div>
 
                     {/* tasks section*/}
                     <div className="flex flex-col space-y-3 overflow-hidden">
                         <div className="flex">
-                            <span className="font-bold text-gray-500">
+                            <span className="font-bold text-gray-800">
                                 Tasks
                             </span>
                         </div>

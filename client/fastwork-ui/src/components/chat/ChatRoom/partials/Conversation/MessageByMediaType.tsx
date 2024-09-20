@@ -11,6 +11,7 @@ import InChatPaymentRequestCard from "./InChatPaymentRequestCard";
 import InChatSystemMessage from "./InChatSystemMessage";
 import InChatPaymentReceiptCard from "./InChatPaymentReceiptCard";
 import InChatShareChatRoomCard from "@/components/admin/chat/AdminChatRoom/partials/Conversation/InChatShareChatRoomCard";
+import InChatPaymentReceivedCard from "./InChatPaymentReceivedCard";
 
 const MessageByMediaType = (message: Message) => {
     const { authUserType } = useChat();
@@ -79,6 +80,11 @@ const MessageByMediaType = (message: Message) => {
                     />
                 </div>
             </div>,
+        payment_received: authUserType === 'freelancer'
+            ? <InChatPaymentReceivedCard
+                transactionId={transitionId}
+            />
+            : <InChatSystemMessage message="Payment for milestone 1 has been successfully transfered to freelancer."/>
     };
 
     return (

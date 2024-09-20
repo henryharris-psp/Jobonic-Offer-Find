@@ -1,59 +1,55 @@
-import React, { useEffect, useState } from 'react'
-import MediaSkeleton from './MediaSkeleton';
-import Button from '@/components/Button';
-import { ArrowPathIcon } from '@heroicons/react/24/solid';
-import { Payment } from '@/types/general';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
-import { useChat } from '@/contexts/chat';
-import { supabase } from '@/config/supabaseClient';
+import React, { useEffect, useState } from "react";
+import MediaSkeleton from "./MediaSkeleton";
+import { Payment } from "@/types/general";
+import Button from "@/components/Button";
+import { useChat } from "@/contexts/chat";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
-interface InChatPaymentReceiptCardProps {
+interface InChatPaymentReceivedCardProps {
     transactionId: string;
 }
 
-const InChatPaymentReceiptCard = ({
+const InChatPaymentReceivedCard = ({
     transactionId,
-}: InChatPaymentReceiptCardProps) => {
+}: InChatPaymentReceivedCardProps) => {
     const numberFormater = new Intl.NumberFormat();
     const { authUser } = useSelector((state: RootState) => state.auth );
     const { activeChatRoom, createNewChatRoom, loadChatRoomData, changeChatRoom } = useChat();
     const [isLoading, setIsLoading] = useState(false);
     const [payment, setPayment] = useState<Payment | null>(null);
 
-    //on mounted
+    //mounted
     useEffect(() => {
-        getPayment();
-    }, []);
+        const controller = new AbortController();
+        const signal = controller.signal;
 
-    //methods
-        const getPayment = async () => {
-            const controller = new AbortController();
-            const signal = controller.signal;
+        (async () => {
+            try {
+                // const res = await httpClient.get('payments', {
+                //     transactionId: transactionId
+                // });
 
-            setIsLoading(true);
-            try{
-                //get_payment
-                // const contractRes = await fetchPayment(transactionId, signal);
                 const paymentRes: Payment = {
                     transactionId: transactionId,
                     amount: 123,
                     billedTo: "Jobonic",
                     date: "31/12/2024",
                     paymentMethod: "Payni",
-                    senderName: "Feelancer Dummy",
-                    receiveName: "Jobonic"
+                    senderName: "Jobonic",
+                    receiveName: "Dummy Freelancer"
                 };
 
                 if(paymentRes) setPayment(paymentRes);
             } catch (error) {
-                console.log('error fetching contract', error);
-            } finally {
-                setIsLoading(false);
+                console.log(error);
             }
-        }
+        })();
 
-        //TODO: this function may use for multiple times export from context
+        return () => controller.abort();
+    }, []);
+
+    //methods
         const handleOnClickContactSupport = async () => {
             if(activeChatRoom && authUser){
                 setIsLoading(true);
@@ -89,7 +85,7 @@ const InChatPaymentReceiptCard = ({
                 setIsLoading(false);
             }
         }
-        
+
     return (
         <>
             { isLoading ? (
@@ -112,14 +108,14 @@ const InChatPaymentReceiptCard = ({
                 ) : (
                     <div className="max-w-md mx-auto p-4 bg-gray-50 shadow-md rounded-lg border border-gray-200">
                         <div className="flex flex-row mb-2">
-                            <span className="italic text-gray-400 text-2xs">
+                            <span className="italic text-gray-400 text-xs">
                                 System Message
                             </span>
                         </div>
 
                         <div className="flex items-center justify-between">
                             <div className="font-semibold text-gray-800">
-                                Payment Receipt
+                                Payment Received
                             </div>
                             <div className="text-xs text-gray-500">{payment.date}</div>
                         </div>
@@ -127,12 +123,24 @@ const InChatPaymentReceiptCard = ({
 
                         <div className="mt-3">
                             <div className="flex justify-between text-gray-600">
-                                <span className="text-sm">Amount Paid:</span>
+                                <span className="text-sm">From:</span>
+                                <span className="text-sm font-bold text-gray-800">
+                                    {payment.senderName}
+                                </span>
+                            </div>
+                            <div className="flex justify-between text-gray-600 mt-2">
+                                <span className="text-sm">For:</span>
+                                <span className="font-bold text-sm">
+                                    Milestone 1
+                                </span>
+                            </div>
+                            <div className="flex justify-between items-center text-gray-600 mt-2">
+                                <span className="text-sm">Amount Received:</span>
                                 <span className="font-bold text-sm text-green-600">
                                     ${numberFormater.format(payment.amount)}
                                 </span>
                             </div>
-                            <div className="flex justify-between items-center text-gray-600 mt-2">
+                            <div className="flex justify-between text-gray-600 mt-2">
                                 <span className="text-sm">Transaction ID:</span>
                                 <span className="font-mono text-xs">
                                     {payment.transactionId}
@@ -146,22 +154,15 @@ const InChatPaymentReceiptCard = ({
 
                         <hr className="my-2 border-gray-300" />
 
-                        <div className="mt-3">
-                            <div className="flex justify-between mt-2">
-                                <span className="text-sm font-semibold text-gray-800">Billed To:</span>
-                                <span className="text-sm text-gray-600">{payment.billedTo}</span>
-                            </div>
-                        </div>
-
                         <div className="mt-4 text-center space-y-3">
                             <p className="text-gray-500 text-xs">
                                 If you have any questions, contact our support.
                             </p>
                             <Button
-                                fullWidth
-                                color="info"
+                                fullWidth={true}
                                 size="sm"
                                 title="Contact Support"
+                                color="info"
                                 onClick={handleOnClickContactSupport}
                             />
                         </div>
@@ -170,6 +171,6 @@ const InChatPaymentReceiptCard = ({
             )}
         </>
     )
-}
+};
 
-export default InChatPaymentReceiptCard
+export default InChatPaymentReceivedCard;

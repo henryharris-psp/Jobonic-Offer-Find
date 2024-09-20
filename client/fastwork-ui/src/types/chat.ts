@@ -73,7 +73,8 @@ export type MediaType =
     'service' |
     'chat_room' |
     'payment_request' |
-    'payment_receipt';
+    'payment_receipt' | 
+    'payment_received'
 
 export interface Message {
     id: string | number;

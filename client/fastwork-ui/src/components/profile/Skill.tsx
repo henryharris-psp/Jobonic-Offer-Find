@@ -10,7 +10,6 @@ type SkillInstance = {
     id: string;
     name: string;
 };
-
 const Skills = () => {
     const { authUser } = useSelector((state: RootState) => state.auth);
     const [isEditing, setIsEditing] = useState(false);
@@ -25,11 +24,9 @@ const Skills = () => {
     const [feedbackMessage, setFeedbackMessage] = useState<{ [key: string]: string | null }>({
         skills: "",
     });
-
     useEffect(() => {
         fetchUserSkills();
     }, []);
-
     const fetchSkills = async () => {
         try {
             const response = await httpClient.get("skill/all");
@@ -38,7 +35,6 @@ const Skills = () => {
             console.error("Error fetching skills:", error);
         }
     };
-
     const fetchUserSkills = async () => {
 
         if(!authUser?.profile.id) {
@@ -48,27 +44,21 @@ const Skills = () => {
         try {
             const response = await httpClient.get(`/user-skill/all?profileId=${authUser?.profile.id}`);
             const displayData = response.data;
-
             // Check if displayData is an array and has at least one item
         if (Array.isArray(displayData) && displayData.length > 0) {
-            
             // Access the skillList from the first item in the array
             const skills = displayData[0]?.skillList || [];
-
             // Extract only the skill names
             const namesOnly = skills.map((skill: any) => ({ id : skill.id , name : skill.name}));
-
             console.log('Skill Names:', namesOnly);
             setSelectedSkills(namesOnly); // Update state with only the names
         } else {
             console.error("Unexpected API response structure:", displayData);
         }
-            
         } catch (error) {
             console.error("Error fetching user skills:", error);
         }
     };
-
     const filteredSkills = skills.filter((skill) =>
         skill.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -95,13 +85,11 @@ const Skills = () => {
         });
         setShowDropdown(false);
     };
-
     const handleSave = async () => {
         try {
             const skillIdsParams = selectedSkills
                 .map((skill) => `skillIds=${skill.id}`)
                 .join("&");
-
             const response = await httpClient.post(`user-skill?profileId=${authUser?.profile.id}&${skillIdsParams}`);
             console.log("Save successful:", response.data);
             setIsEditing(false);
@@ -110,10 +98,9 @@ const Skills = () => {
             console.error("Error saving skills:", error);
         }
     };
-
     return (
         <section className="flex flex-col w-[60%] justify-start ml-16 mt-4 pb-4">
-            <div className="flex space-x-3 justify-start items-center mb-6 animate-pulse">
+            <div className="flex space-x-3 justify-start items-center mb-6">
                 <h2 className="text-2xl font-bold text-cyan-950">Skills</h2>
                 <PencilSquareIcon
                     className="w-6 h-6 cursor-pointer text-yellow-700"

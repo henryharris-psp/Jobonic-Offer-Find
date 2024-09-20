@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowDownTrayIcon, DocumentArrowUpIcon, BookmarkSquareIcon, CheckIcon } from "@heroicons/react/24/solid";
+import { ArrowDownTrayIcon, DocumentArrowUpIcon, BookmarkSquareIcon, CheckIcon, XMarkIcon, TrashIcon } from "@heroicons/react/24/solid";
 import httpClient from '@/client/httpClient';
 import { useChat } from '@/contexts/chat';
 import ApproveAndPayModal from '@/components/ApproveAndPay';
 import Button from '@/components/Button';
 import Marquee from '../ProgressList/Marquee/Marquee';
 import Modal from '@/components/Modal';
-import PaymentCard from '../ProgressList/PyamentForMilestone/PaymentCardMilestone';
+import MilestonePaymentCard from '@/components/payment/MilestonePaymentCard';
 import FileSizeAlertModal from '../ProgressList/AlertMessage/FileAlertMessage';
 import { Milestone } from '@/types/general';
 import Collapsible from '@/components/Collapsible';
+import AlertMessageCard from '../NewProgressList/RejectAlertMessage';
 interface MilestoneProgressSectionProps extends Milestone {
     isCompleted?: boolean;
     isDisabled?: boolean;
 }
 const MilestoneProgressSection = ({
-    
+
 }: MilestoneProgressSectionProps) => {
     const { activeChatRoom, authUserType, latestContract } = useChat();
     const [openMilestones, setOpenMilestones] = useState<string[]>([]);
@@ -32,6 +33,7 @@ const MilestoneProgressSection = ({
     const [milestonesState, setMilestonesState] = useState(milestones);
     const [selectedMilestone, setSelectedMilestone] = useState(null);
     const [hasFetched, setHasFetched] = useState(false);
+    const [showRejectAlert, setShowRejectAlert] = useState<boolean>(false);
     useEffect(() => {
         if (latestContract && !hasFetched) {
             console.log('Fetching milestones for contract ID:', latestContract.id);
@@ -44,10 +46,10 @@ const MilestoneProgressSection = ({
         try {
             const serviceId = activeChatRoom?.service_id;
             if (!serviceId) return;
-
+    
             const contractResponse = await httpClient.get(`/contract/${contractId}`);
             const milestonesData: Milestone[] = contractResponse.data.milestones;
-
+    
             const updatedMilestones = await Promise.all(
                 milestonesData.map(async (milestone) => {
                     try {
@@ -55,7 +57,7 @@ const MilestoneProgressSection = ({
                             params: { checkPointId: milestone.id },
                         });
                         const milestoneAttachments = attachmentsResponse.data;
-
+    
                         const files = milestoneAttachments.map((attachment: { id: string; name: string; fileSize: string; file: string; status: boolean; }) => ({
                             id: attachment.id,
                             name: attachment.name,
@@ -63,7 +65,7 @@ const MilestoneProgressSection = ({
                             file: attachment.file,
                             status: attachment.status
                         }));
-
+    
                         const isSubmitted = files.some((file: { status: any; }) => file.status);
                         return { ...milestone, uploadedFiles: files, isSubmitted };
                     } catch (attachmentError) {
@@ -72,34 +74,15 @@ const MilestoneProgressSection = ({
                     }
                 })
             );
-
-            // Ensure uniqueness using a Map based on normalized title or id
-            const uniqueMilestonesMap = new Map();
-
-            updatedMilestones.forEach((milestone) => {
-                // Normalize the title by trimming spaces and converting to lowercase to handle duplicates more accurately
-                const key = milestone.title.trim().toLowerCase(); // Or use milestone.id if the ID is unique
-
-                if (!uniqueMilestonesMap.has(key)) {
-                    uniqueMilestonesMap.set(key, milestone);
-                } else {
-                    console.log('Duplicate detected:', milestone); // This will help you debug duplicates
-                }
-            });
-
-            // Convert the unique milestones map back to an array
-            const uniqueMilestones = Array.from(uniqueMilestonesMap.values());
-            console.log('Unique Milestones:', uniqueMilestones);
-            setMilestones(uniqueMilestones);
-
-
-
+            // Set the milestones without filtering or deduplication
+            console.log('All Milestones:', updatedMilestones);
+            setMilestones(updatedMilestones);
+    
         } catch (error) {
             console.error('Cannot fetch contract data:', error);
         }
     };
-
-
+    
     const downloadFile = async (fileId: string, fileName: string) => {
         try {
             // Make a GET request to the endpoint with file ID
@@ -107,7 +90,6 @@ const MilestoneProgressSection = ({
                 params: { id: fileId },
                 responseType: 'blob', // Set response type to 'blob' for binary data
             });
-
             // Check if the request was successful
             if (response.status === 200) {
                 // Convert response to Blob
@@ -136,13 +118,41 @@ const MilestoneProgressSection = ({
         }
     };
 
+    // Function to delete an uploaded file for a milestone
+    const deleteUploadedMilestone = async (fileId: string, milestoneId: string) => {
+        try {
+            // API call to delete the file by fileId
+            const response = await httpClient.delete(`/attachment`, {
+                params: { id: fileId }, // Make sure correct fileId is used here
+            });
+            if (response.status === 200) {
+                setMilestones((prevMilestones) =>
+                    prevMilestones.map((milestone) => {
+                        if (milestone.id === milestoneId) {
+                            return {
+                                ...milestone,
+                                uploadedFiles: milestone.uploadedFiles?.filter((file) => file.id !== fileId), // Ensure correct file is filtered
+                            };
+                        }
+                        return milestone;
+                    })
+                );
+                console.log(`File ${fileId} deleted successfully from milestone ${milestoneId}.`);
+            } else {
+                console.error('Error deleting file:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error occurred while deleting the uploaded file:', error);
+        }
+    };
+
+
     const uploadFile = async (milestoneId: string, file: File) => {
         try {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('documentType', 'CHECKPOINT');
             formData.append('checkPointId', milestoneId);
-
             const response = await httpClient.post('/attachment', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -266,6 +276,7 @@ const MilestoneProgressSection = ({
             console.error(`Failed to save status for attachments of checkpoint ${checkPointId}:`, error);
         }
     };
+
     const handleApproveClick = (milestoneId: string) => {
         setIsApproveAndPay(true);
         setIsModalOpen(true);
@@ -324,19 +335,25 @@ const MilestoneProgressSection = ({
             index === self.findIndex((m) => m.title === milestone.title)
     );
 
+    console.log("milestones : ", milestones);
+
+    // Handle reject button click
+    const handleRejectClick = () => {
+        setShowRejectAlert(true);
+    };
+
+    // Close the alert
+    const handleCloseAlert = () => {
+        setShowRejectAlert(false);
+    };
+
+    console.log('Milestone lenght : ', milestones.length);
+
     return (
         <div className="relative">
             <ul className="space-y-4">
-                {uniqueMilestones.length > 0 ? uniqueMilestones.map((milestone, index) => (
+                {milestones.length > 0 ? milestones.map((milestone, index) => (
                     <li key={milestone.id} className="relative">
-                        {/* {index !== uniqueMilestones.length - 1 && (  // This condition ensures the line doesn't extend past the last item
-                            <div
-                                className="absolute left-3 top-0 h-full bg-cyan-900"
-                                style={{
-                                    width: '2px',
-                                }}
-                            ></div>
-                        )} */}
                         <div
                             className={`flex items-center cursor-pointer relative
                                 }`}
@@ -399,7 +416,6 @@ const MilestoneProgressSection = ({
                                                 icon={<CheckIcon className="h-4 w-4 text-white" />}
                                                 onClick={() => console.log("complete")} />
                                         </div>
-
                                     </div>
                                 ) : ''}
                                 {authUserType === 'employer' && (
@@ -419,38 +435,52 @@ const MilestoneProgressSection = ({
                                                         {file.name}
                                                     </a>
                                                     <span className="text-xs">{file.size}</span>
-                                                    {milestone.uploadedFiles?.map((file) => (
-                                                        <div key={file.name} className="flex">
-                                                            <ArrowDownTrayIcon onClick={() => downloadFile(file.id, file.name)} className="w-4 h-4 cursor-pointer" />
-                                                        </div>
-                                                    ))}
-
+                                                    <ArrowDownTrayIcon onClick={() => downloadFile(file.id, file.name)} className="w-4 h-4 cursor-pointer" />
                                                 </div>
                                             ))
                                         ) : (
                                             <p className="text-cyan-950 text-sm font-bold mb-2">No files submitted yet.</p>
                                         )}
-                                        <Button
-                                            icon={<DocumentArrowUpIcon className="w-4 h-4 mr-2" />}
-                                            title="Approve&Pay"
-                                            color='warning'
-                                            size='xs'
-                                            onClick={() => handleApproveClick(milestone.id)}
-                                            disabled={isApproveAndPay || !milestone.uploadedFiles || milestone.uploadedFiles.length === 0} />
+                                        <div className="flex flex-row gap-2 space-x-1">
+                                            <Button
+                                                icon={<DocumentArrowUpIcon className="w-4 h-4 mr-2" />}
+                                                title="Approve&Pay"
+                                                color='warning'
+                                                size='xs'
+                                                onClick={() => handleApproveClick(milestone.id)}
+                                                disabled={isApproveAndPay || !milestone.uploadedFiles || milestone.uploadedFiles.length === 0} />
+                                            <Button
+                                                icon={<XMarkIcon className="w-4 h-4 mr-2" />}
+                                                title="Reject"
+                                                color="danger"
+                                                size='xs'
+                                                onClick={handleRejectClick}
+                                                disabled={!milestone.uploadedFiles || milestone.uploadedFiles.length === 0}
+                                            />
+                                            {/* Conditionally render the RejectAlertMessage */}
+                                            {showRejectAlert && (
+                                                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                                                    <div className="bg-white p-5 rounded-lg shadow-lg">
+                                                        <AlertMessageCard onClose={handleCloseAlert} />
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
+                                    
                                 )}
                                 {authUserType === 'freelancer' && milestone.uploadedFiles && milestone.uploadedFiles.length > 0 && (
                                     <div className="mt-4 ml-7">
                                         {milestone.uploadedFiles.map((file, index) => (
                                             <div key={index} className="flex flex-row gap-3 space-x-3">
                                                 <a
-
                                                     download
                                                     className="text-blue-500 underline text-xs cursor-pointer w-[50%]"
                                                 >
                                                     {file.name}
                                                 </a>
                                                 <span className="text-xs">{file.size}</span>
+                                                <TrashIcon className="w-4 h-4 cursor-pointer text-red-600" onClick={() => deleteUploadedMilestone(file.id, milestone.id)} />
                                             </div>
                                         ))}
                                     </div>
@@ -477,7 +507,7 @@ const MilestoneProgressSection = ({
                 isOpen={isPaymentCardOpen}
                 onClose={() => setIsPaymentCardOpen(false)}
             >
-                <PaymentCard
+                <MilestonePaymentCard
                     totalAmount={totalAmount}
                     onPaid={closePaymentCard}
                 />

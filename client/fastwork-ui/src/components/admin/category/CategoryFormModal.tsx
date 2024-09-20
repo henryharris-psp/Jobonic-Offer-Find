@@ -48,7 +48,7 @@ const CategoryFormModal = ({
                         </span>
                     </div>
                     <SafeInput
-                        size=""
+                        size="lg"
                         type="text"
                         value={name}
                         placeholder="type category name..."

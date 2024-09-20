@@ -71,7 +71,7 @@ const defaultFilters = {
 
 const defaultPagination = {
     currentPage: 1,
-    itemsPerPage: 100,
+    itemsPerPage: 12,
     totalPages: 0,
     totalElements: 0
 }
@@ -132,7 +132,8 @@ const OfferService = () => {
                     pageSize: pagination.itemsPerPage,
                     sortBy: sorting.sortBy,
                     sortOrder: sorting.sortOrder,
-                    filter: filters
+                    filter: filters,
+                    authId: authUser?.profile?.id || 0
                 }
 
                 const servicesData = await fetchServices('request', signal, payload);
@@ -148,7 +149,7 @@ const OfferService = () => {
             })();
 
             return () => controller.abort();
-        }, [filters, sorting, pagination.currentPage]);
+        }, [filters, sorting, pagination.currentPage, pagination.itemsPerPage]);
 
     //methods
         const handleOnFilterChange = (newFilters: object) => {
@@ -168,20 +169,6 @@ const OfferService = () => {
             setSorting(newSorting);
         }
 
-        const handleOnClickNextPage = () => {
-            setPagination( prev => ({
-                ...prev,
-                currentPage: prev.currentPage + 1
-            }));
-        }
-
-        const handleOnClickPreviousPage = () => {
-            setPagination( prev => ({
-                ...prev,
-                currentPage: prev.currentPage - 1
-            }))
-        }
-
         const handleOnSearch = (event: FormEvent) => {
             event.preventDefault();
             setFilters(() => {
@@ -192,6 +179,29 @@ const OfferService = () => {
                 }
             });
         }
+
+        //pagination handler
+            const handleOnItemsPerPageChange = (newItemsPerPage: number) => {
+                setPagination( prev => ({
+                    ...prev,
+                    currentPage: 1,
+                    itemsPerPage: newItemsPerPage
+                }))
+            }
+
+            const handleOnClickNextPage = () => {
+                setPagination( prev => ({
+                    ...prev,
+                    currentPage: prev.currentPage + 1
+                }));
+            }
+
+            const handleOnClickPreviousPage = () => {
+                setPagination( prev => ({
+                    ...prev,
+                    currentPage: prev.currentPage - 1
+                }))
+            }
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -339,14 +349,12 @@ const OfferService = () => {
                     </div>
 
                     { pagination.totalElements !== 0 ? (
-                        <div className="flex justify-end">
-                            <PaginationButtons
-                                currentPage={pagination.currentPage}
-                                totalPage={pagination.totalPages}
-                                onClickNext={handleOnClickNextPage}
-                                onClickPrevious={handleOnClickPreviousPage}
-                            />
-                        </div>
+                        <PaginationButtons
+                            {...pagination}
+                            onItemsPerPageChange={handleOnItemsPerPageChange}
+                            onClickNext={handleOnClickNextPage}
+                            onClickPrevious={handleOnClickPreviousPage}
+                        />
                     ) : ''}
 
                 </div>

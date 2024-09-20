@@ -11,4 +11,6 @@ public interface IEmployerPaymentService {
     PaginationDTO<EmployerPaymentDTO> getAll(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
 
     EmployerPaymentDTO getByPaymentId(UUID id);
+
+    EmployerPaymentDTO savePaymentData(EmployerPaymentDTO employerPaymentDTO);
 }

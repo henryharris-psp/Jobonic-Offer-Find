@@ -182,7 +182,7 @@ const FinancialForm = () => {
 
   return (
     <div className="flex flex-col justify-start w-[60%] ml-16 mt-4 pb-4">
-      <div className="flex space-x-3 justify-start items-center animate-pulse mb-6">
+      <div className="flex space-x-3 justify-start items-center mb-6">
         <h2 className="text-2xl font-bold text-cyan-950">Other Information</h2>
         <PencilSquareIcon
           className="w-6 h-6 cursor-pointer text-yellow-700"

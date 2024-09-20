@@ -58,6 +58,8 @@ export interface Payment {
     billedTo: string;
     date: string;
     paymentMethod: string;
+    senderName: string;
+    receiveName: string;
 }
 
 export type TailwindSizes = "xs" | "sm" | "" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl";
