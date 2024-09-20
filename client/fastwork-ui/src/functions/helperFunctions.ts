@@ -1,6 +1,6 @@
 import httpClient from '@/client/httpClient';
 import { Category, Contract } from '@/types/general';
-import { Service, ServiceApiResponse, ServicePayload } from '@/types/service';
+import { ServiceApiResponse, ServicePayload } from '@/types/service';
 import axios from 'axios';
 
 // function to get user ID from the init endpoint
@@ -159,29 +159,8 @@ export const getCategoryName = async (categoryId: string) => {
         payload: ServicePayload
     ): Promise<ServiceApiResponse | undefined> => {
         try {
-            const authUser = await getUser();
-            const res = await httpClient.post<ServiceApiResponse>(`service/offer/all`, payload, { signal });
-
-            //TODO: temporary filter
-            //don't show service posted by login user
-            const services = res.data.content.filter( e => e.profileDTO.id !== authUser?.profile?.id ).map((service: Service) => ({
-                ...service,
-                type: type
-            }))
-
-            //TODO: temporary filter
-            // to seperate service requests and service offers
-            let gg = [];
-
-            if(type === 'offer'){
-                gg = services.filter( e => e.serviceRequestDTO === null );
-            } else {
-                gg = services.filter( e => e.serviceRequestDTO !== null );
-            }
-            return {
-                ...res.data,
-                content: gg
-            }
+            const res = await httpClient.post<ServiceApiResponse>(`service/${type}/all`, payload, { signal });
+            return res.data;
         } catch (error: any) {
             if (error.name === 'AbortError') {
                 console.log('Fetch services aborted');

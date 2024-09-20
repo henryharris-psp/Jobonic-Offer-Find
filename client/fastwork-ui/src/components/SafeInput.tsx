@@ -7,7 +7,7 @@ interface Error {
 
 export type SafeInputChangeEvent = ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>;
 
-type InputProps = {
+type SafeInputProps = {
     id?: string | undefined;
     name?: string;
     size?: 'lg' | 'xs' | 'sm';
@@ -23,7 +23,7 @@ type InputProps = {
     disabled?: boolean;
 };
 
-const Input = ({
+const SafeInput = ({
     id,
     name,
     size = 'xs',
@@ -36,8 +36,7 @@ const Input = ({
     placeholder = '',
     onPressEnterKey = () => null,
     disabled,
-}: InputProps) => {
-
+}: SafeInputProps) => {
     const showError = useMemo( () => {
         return errors.some( e => e ? e.show : false );
     }, [errors]);
@@ -83,7 +82,7 @@ const Input = ({
             ) : ''}
 
             { type === 'textarea' ? (
-                <textarea 
+                <textarea
                     className={`pl-3 pt-3 rounded-lg placeholder:text-xs placeholder:text-dim-gray focus:outline-none w-full h-14 border 
                         text-${size}
                         ${showError ? 'border-red-500' : 'border-gray-300' }
@@ -134,4 +133,4 @@ const Input = ({
     )
 }
 
-export default memo(Input);
+export default memo(SafeInput);
