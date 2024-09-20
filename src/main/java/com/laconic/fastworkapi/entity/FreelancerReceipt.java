@@ -18,11 +18,18 @@ public class FreelancerReceipt extends Auditable<UUID> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
     private UUID paymentId;
+
     private LocalDate releaseDate;
-    private double releaseAmount = 0;
+
+    private double releaseAmount;
+
     private String toAccountNumber;
+
     private UUID profileId;
+
     private UUID serviceId;
+
     private UUID checkPointId;
 }
