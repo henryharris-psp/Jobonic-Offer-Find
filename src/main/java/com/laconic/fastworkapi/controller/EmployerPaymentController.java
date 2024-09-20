@@ -33,4 +33,10 @@ public class EmployerPaymentController {
     public EmployerPaymentDTO getByReceiptId(@RequestParam UUID id) {
         return this.employerPaymentService.getByPaymentId(id);
     }
+
+    @PostMapping("/save-payment-data")
+    public EmployerPaymentDTO savePaymentData(@RequestBody EmployerPaymentDTO employerPaymentDTO) {
+        System.out.println("EmployerPaymentController.savePaymentData");
+        return this.employerPaymentService.savePaymentData(employerPaymentDTO);
+    }
 }

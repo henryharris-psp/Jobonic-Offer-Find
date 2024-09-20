@@ -1,10 +1,7 @@
 package com.laconic.fastworkapi.dto;
 
 import com.laconic.fastworkapi.entity.EmployerPayment;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -16,6 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
+@Data
 public class EmployerPaymentDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -5595001474187733297L;
@@ -23,15 +21,27 @@ public class EmployerPaymentDTO implements Serializable {
     private UUID serviceId;
     private Long clientId;
     private Long freelancerId;
-    private double amount = 0;
+    private String paymentMethod;
+    private Long cardNumber;
+    private Long cardExpiryDate;
+    private Long cardCvv;
+    private String bankAccountNumber;
+    private String bankAccountHolderName;
+    private double amount;
     private double remainingAmount = 0;
     private LocalDate paymentDate;
 
     public EmployerPaymentDTO(EmployerPayment employerPayment) {
         this.id = employerPayment.getId();
         this.serviceId = employerPayment.getServiceId();
-        this.clientId = employerPayment.getClient().getId();
-        this.freelancerId = employerPayment.getFreelancer().getId();
+        this.clientId = employerPayment.getClientId().getId();
+        this.freelancerId = employerPayment.getFreelancerId().getId();
+        this.paymentMethod = employerPayment.getPaymentMethod();
+        this.cardNumber = employerPayment.getCardNumber();
+        this.cardExpiryDate = employerPayment.getCardExpiryDate();
+        this.cardCvv = employerPayment.getCardCvv();
+        this.bankAccountNumber = employerPayment.getBankAccountNumber();
+        this.bankAccountHolderName = employerPayment.getBankAccountHolderName();
         this.amount = employerPayment.getAmount();
         this.remainingAmount = employerPayment.getRemainingAmount();
         this.paymentDate = employerPayment.getPaymentDate();
