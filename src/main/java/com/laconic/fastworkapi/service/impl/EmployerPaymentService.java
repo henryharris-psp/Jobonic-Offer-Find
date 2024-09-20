@@ -40,4 +40,11 @@ public class EmployerPaymentService implements IEmployerPaymentService {
     public EmployerPaymentDTO getByPaymentId(UUID id) {
         return new EmployerPaymentDTO(this.employerPaymentRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.EMPLOYER_PAYMENT, "id", id.toString())));
     }
+
+    @Override
+    public EmployerPaymentDTO savePaymentData(EmployerPaymentDTO employerPaymentData) {
+        var employerPayment = new EmployerPayment(employerPaymentData);
+
+        return new EmployerPaymentDTO(this.employerPaymentRepo.save(employerPayment));
+    }
 }
