@@ -66,7 +66,6 @@ public class ServiceManagementController {
         return this.managementService.getById(serviceId);
     }
 
-
     @Operation(summary = APIDocsHelper.ServiceAPI.DELETE_OFFER)
     @DeleteMapping("/offer")
     public String deleteOffer(@RequestParam UUID serviceOfferId) {
