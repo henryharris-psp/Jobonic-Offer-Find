@@ -1,22 +1,21 @@
 import React, { useState } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { useChat } from "@/contexts/chat";
-import SafeInput, { SafeInputChangeEvent } from "@/components/SafeInput";
-import Button from "@/components/Button";
+import SafeInput, { SafeInputChangeEvent } from "../SafeInput";
+import Button from "../Button";
 import httpClient from "@/client/httpClient";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 
-interface PaymentCardProps {
+interface MilestonePaymentCardProps {
     totalAmount: number;
     onPaid: () => void;
-    
 }
 
-const PaymentCard = ({
+const MilestonePaymentCard = ({
     totalAmount,
     onPaid
-}: PaymentCardProps) => {
+}: MilestonePaymentCardProps) => {
     const numberFormater = new Intl.NumberFormat();
     const { activeChatRoom, sendMessage, updateChatRoom } = useChat();
     const { authUser } = useSelector((state: RootState) => state.auth );
@@ -32,7 +31,15 @@ const PaymentCard = ({
         }
 
         const processPayment = async () => {
-            
+            // const res = await httpClient.post('payments', {
+            //     amount: 123,
+            //     paymentMethodId: 1,
+            //     payableId: activeChatRoom?.match_id,
+            //     payableType: 'match', // match & milestone
+            //     senderId: authUser?.id,
+            //     receiverId: 1, //id 1 will always be Jobonic
+            //     note: 'some dummy note'
+            // });
             return new Promise(resolve => setTimeout(resolve, 3000));
         }
 
@@ -46,7 +53,7 @@ const PaymentCard = ({
             try {
                 await processPayment();
                 setIsPaid(true);
-                const newlySentMessage = await sendMessage('payment_receipt', 'transaction_id', 'system');
+                const newlySentMessage = await sendMessage('payment_received', 'transaction_id', 'system');
                 if (newlySentMessage) {
                     await updateChatRoom(newlySentMessage.room_id, {
                         status: 'to_submit'
@@ -75,15 +82,37 @@ const PaymentCard = ({
                         {isPaid ? 'Payment Successful' : 'Please make a payment'}
                     </span>
                 </div>
-                <div className="flex flex-row items-center justify-between space-y-1 space-x-2">
+                <div className="flex flex-row items-center justify-between space-y-1">
                     <span className="text-gray-600">
-                        Total Amount To Pay For Milestones
+                        Total Amount to pay
                     </span>
                     <span className="font-bold text-green-600 text-xl">
                         ${numberFormater.format(totalAmount)}
                     </span>
 
                 </div>
+
+                {/* payment selection */}
+                <div className="w-full">
+                    <label htmlFor="select" className="block text-sm font-medium text-gray-600">Select Payment Method</label>
+                    <select 
+                        id="select" 
+                        name="select" 
+                        className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    >
+                        <option value="option1">-- Select --</option>
+                        <option value="option2">Payni</option>
+                        <option value="option3">PromptPay QR</option>
+                        <option value="option3">Karsikorn Bank</option>
+                        <option value="option3">SCB</option>
+                        <option value="option3">Bangkok Bank</option>
+                    </select>
+
+                    <span className="text-xs text-gray-500">
+                        * Pay via Payni and get 3% discount
+                    </span>
+                </div>
+
                 <div className="flex flex-col space-y-1">
                     <span className="text-sm font-medium text-gray-600">
                         Write Note
@@ -96,7 +125,7 @@ const PaymentCard = ({
                     />
                 </div>
                     <Button
-                        title={ isLoading ? 'Payment Processing...' : 'Request Payment For Freelancer'}
+                        title={ isLoading ? 'Payment Processing...' : 'Pay Now'}
                         onClick={submit}
                         disabled={isLoading || isPaid}
                     />
@@ -105,4 +134,4 @@ const PaymentCard = ({
     );
 };
 
-export default PaymentCard;
+export default MilestonePaymentCard;

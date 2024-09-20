@@ -10,7 +10,7 @@ export type SafeInputChangeEvent = ChangeEvent<HTMLInputElement> | ChangeEvent<H
 type SafeInputProps = {
     id?: string | undefined;
     name?: string;
-    size?: 'lg' | 'xs' | 'sm';
+    size?: 'lg' | 'sm' | 'xs';
     type?: 'text' | 'number' | 'password' | 'decimal' | 'textarea';
     title?: string;
     value: string | number;
@@ -22,6 +22,13 @@ type SafeInputProps = {
     onPressEnterKey?: () => void;
     disabled?: boolean;
 };
+
+const inputHeightMap = {
+    'lg': '14',
+    'md': '12',
+    'sm': '10',
+    'xs': '10'
+}
 
 const SafeInput = ({
     id,
@@ -99,8 +106,9 @@ const SafeInput = ({
                         id={id}
                         name={name}
                         inputMode={inputMode}
-                        className={`w-full h-10 border-gray-300 min-w-0 pl-3 placeholder:text-xs rounded-lg border
+                        className={`w-full border-gray-300 min-w-0 pl-3 placeholder:text-xs rounded-lg border
                             text-${size}
+                            h-${inputHeightMap[size]}
                             ${showError ? 'border-red-500' : 'border-gray-300' }
                             ${disabled ? 'border-none outline-none' : 'focus:outline focus:outline-blue-500'}
                         `}

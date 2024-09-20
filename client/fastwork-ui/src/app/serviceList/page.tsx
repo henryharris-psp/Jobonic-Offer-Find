@@ -150,6 +150,7 @@ const ServiceList = () => {
             const handleOnItemsPerPageChange = (newItemsPerPage: number) => {
                 setPagination( prev => ({
                     ...prev,
+                    currentPage: 1,
                     itemsPerPage: newItemsPerPage
                 }))
             }

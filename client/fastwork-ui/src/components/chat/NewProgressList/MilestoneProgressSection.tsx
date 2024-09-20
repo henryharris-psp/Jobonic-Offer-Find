@@ -6,10 +6,10 @@ import ApproveAndPayModal from '@/components/ApproveAndPay';
 import Button from '@/components/Button';
 import Marquee from '../ProgressList/Marquee/Marquee';
 import Modal from '@/components/Modal';
-import PaymentCard from '../ProgressList/PyamentForMilestone/PaymentCardMilestone';
 import FileSizeAlertModal from '../ProgressList/AlertMessage/FileAlertMessage';
 import { Milestone } from '@/types/general';
 import Collapsible from '@/components/Collapsible';
+import MilestonePaymentCard from '@/components/payment/MilestonePaymentCard';
 interface MilestoneProgressSectionProps extends Milestone {
     isCompleted?: boolean;
     isDisabled?: boolean;
@@ -312,6 +312,7 @@ const MilestoneProgressSection = ({
     // Function to check if a milestone is the current one
     const isCurrentMilestone = (index: number) =>
         currentMilestoneIndex === -1 ? index === milestones.length - 1 : index === currentMilestoneIndex;
+    
     const closePaymentCard = () => {
         setIsPaymentCardOpen(false);
     };
@@ -477,7 +478,7 @@ const MilestoneProgressSection = ({
                 isOpen={isPaymentCardOpen}
                 onClose={() => setIsPaymentCardOpen(false)}
             >
-                <PaymentCard
+                <MilestonePaymentCard
                     totalAmount={totalAmount}
                     onPaid={closePaymentCard}
                 />

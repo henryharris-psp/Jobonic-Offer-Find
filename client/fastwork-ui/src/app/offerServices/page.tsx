@@ -184,6 +184,7 @@ const OfferService = () => {
             const handleOnItemsPerPageChange = (newItemsPerPage: number) => {
                 setPagination( prev => ({
                     ...prev,
+                    currentPage: 1,
                     itemsPerPage: newItemsPerPage
                 }))
             }

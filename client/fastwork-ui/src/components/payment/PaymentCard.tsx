@@ -53,6 +53,8 @@ const PaymentCard = ({
             try {
                 await processPayment();
                 setIsPaid(true);
+
+                //send message to supabase
                 const newlySentMessage = await sendMessage('payment_receipt', 'transaction_id', 'system');
                 if (newlySentMessage) {
                     await updateChatRoom(newlySentMessage.room_id, {
