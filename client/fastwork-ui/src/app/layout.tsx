@@ -98,6 +98,7 @@ const RootLayout = ({
 
                 {/* TODO: temporary, just to load colors */}
                 <div className="hidden">
+                    <div className="text-xs text-sm text-lg text-2xl placeholder:text-xs placeholder:text-sm placeholder:text-lg placeholder:text-2xl hidden"/>
                     <div className="text-[#0B2147] bg-[#0B2147] hidden"/>
                     <div className="text-[#B0B0B0] bg-[#B0B0B0] hidden"/>
                     <div className="text-[#5A9E4A] bg-[#5A9E4A] hidden"/>
