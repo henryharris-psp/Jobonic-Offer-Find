@@ -5,6 +5,7 @@ import Button from "@/components/Button";
 import { useChat } from "@/contexts/chat";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import { ArrowPathIcon } from "@heroicons/react/24/solid";
 
 interface InChatPaymentReceivedCardProps {
     transactionId: string;
@@ -19,35 +20,37 @@ const InChatPaymentReceivedCard = ({
     const [isLoading, setIsLoading] = useState(false);
     const [payment, setPayment] = useState<Payment | null>(null);
 
-    //mounted
+    //on mounted
     useEffect(() => {
-        const controller = new AbortController();
-        const signal = controller.signal;
+        fetchPayment();
+    }, []);
 
-        (async () => {
-            try {
-                // const res = await httpClient.get('payments', {
-                //     transactionId: transactionId
-                // });
+    //methods
+        const fetchPayment = async () => {
+            const controller = new AbortController();
+            const signal = controller.signal;
 
+            setIsLoading(true);
+            try{
+                //get_payment
+                // const contractRes = await fetchPayment(transactionId, signal);
                 const paymentRes: Payment = {
                     transactionId: transactionId,
                     amount: 123,
                     billedTo: "Jobonic",
                     date: "31/12/2024",
                     paymentMethod: "Payni",
-                    senderName: "Jobonic",
-                    receiveName: "Dummy Freelancer"
+                    senderName: "Feelancer Dummy",
+                    receiveName: "Jobonic"
                 };
 
                 if(paymentRes) setPayment(paymentRes);
             } catch (error) {
-                console.log(error);
+                console.log('error fetching contract', error);
+            } finally {
+                setIsLoading(false);
             }
-        })();
-
-        return () => controller.abort();
-    }, []);
+        }
 
     //methods
         const handleOnClickContactSupport = async () => {
@@ -97,7 +100,7 @@ const InChatPaymentReceivedCard = ({
                         <div className="flex items-center justify-center absolute top-0 right-0 left-0 bottom-0">
                             <button 
                                 className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-300"
-                                onClick={getPayment}    
+                                onClick={fetchPayment}    
                             >
                                 <span className="">
                                     <ArrowPathIcon className={`size-5 font-bold text-gray-600 ${isLoading ? 'animate-spin' : ''}`}/>

@@ -62,7 +62,7 @@ const PaginationButtons = ({
                 { isEditable ? (
                     <div className="min-w-12 max-w-20">
                         <SafeInput
-                            size="lg"
+                            size="xs"
                             value={count}
                             onChange={handleOnCountChange}
                         />
