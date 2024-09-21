@@ -178,7 +178,6 @@ const ChatPage = () => {
         }
     }, [authUser, chatRooms]);
     
-
     //chatlist section width resize handler
         const maxChatListWidth = 500;
         const minChatListWidth = 1;

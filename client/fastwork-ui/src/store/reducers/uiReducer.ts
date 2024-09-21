@@ -1,16 +1,18 @@
-import { BreakPoint, Language } from "@/types/ui";
+import { BreakPoint, Language, Notification } from "@/types/ui";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface UIState {
     isMobile: boolean;
     screenSize: BreakPoint;
     selectedLanguage: Language;
+    notifications: Notification[];
 }
 
 const initialState: UIState = {
     isMobile: false,
     screenSize: 'lg',
-    selectedLanguage: 'English'
+    selectedLanguage: 'English',
+    notifications: []
 };
 
 const uiSlice = createSlice({
