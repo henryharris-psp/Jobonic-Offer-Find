@@ -8,10 +8,9 @@ import NavBar from "@/components/NavBar";
 import { useEffect } from "react";
 import { authenticate as reduxAuthenticate } from "@/store/reducers/authReducer";
 import { getAuthUserDetails, getProfileByUserId } from "@/functions/helperFunctions";
-import { ToastContainer } from 'react-toastify';
 import { usePathname } from "next/navigation";
 import AdminRoot from "@/components/admin/AdminRoot";
-import 'react-toastify/dist/ReactToastify.css';
+import Notifications from "@/components/Notifications";
 
 // import ChatBox from "../components/ChatBox";
 // import Footer from "../components/footer";
@@ -108,17 +107,7 @@ const RootLayout = ({
                 </div>
 
                 <NavBar />
-                <ToastContainer 
-                    position="top-right"
-                    autoClose={4000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    rtl={false}
-                    draggable
-                    closeOnClick
-                    pauseOnHover
-                    theme="dark"
-                />
+                <Notifications/>
                 <main>
                     { isAdminRoute ? (
                         <AdminRoot>

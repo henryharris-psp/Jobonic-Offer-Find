@@ -1,5 +1,7 @@
-import { BreakPoint, Language, Notification } from "@/types/ui";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { v4 as uuid } from "uuid";
+import { BreakPoint, Language, Notification } from "@/types/ui";
+import { AppThunk } from "..";
 
 export interface UIState {
     isMobile: boolean;
@@ -25,13 +27,40 @@ const uiSlice = createSlice({
         },
         setSelectedLanguage: (state, action: PayloadAction<Language>) => {
             state.selectedLanguage = action.payload;
+        },
+        addNotification: (state, action: PayloadAction<Notification>) => {
+            const newNotification = {
+                id: uuid(),
+                ...action.payload
+            };
+            state.notifications.push(newNotification);
+        },
+        closeNotification: (state, action: PayloadAction<string>) => {
+            state.notifications = state.notifications.filter( e => e.id !== action.payload );
+        },
+        clearNotifications: (state) => {
+            state.notifications = [];
         }
     }
 });
 
+export const notify = (notification: Notification): AppThunk => (dispatch) => {
+    const notificationId = uuid();
+    const newNotification = { ...notification, id: notificationId };
+
+    dispatch(uiSlice.actions.addNotification(newNotification));
+
+    if (newNotification.timeout !== null) {
+        setTimeout(() => {
+            dispatch(uiSlice.actions.closeNotification(notificationId));
+        }, newNotification.timeout);
+    }
+};
+
 export const {
     setScreenSize,
-    setSelectedLanguage
+    setSelectedLanguage,
+    clearNotifications
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

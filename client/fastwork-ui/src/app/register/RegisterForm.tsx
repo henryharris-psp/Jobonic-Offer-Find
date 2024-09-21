@@ -1,5 +1,4 @@
 'use client';
-
 import Form from "@/components/Form";
 import InputField from "@/components/InputField";
 import Link from "next/link";
@@ -9,7 +8,6 @@ import {baseURL, SERVER_AUTH} from "@/baseURL";
 import { useRouter } from "next/navigation";
 import httpClient from "@/client/httpClient";
 import httpAuth from "@/client/httpAuth";
-import { toast } from "react-toastify";
 import Button from "@/components/Button";
 // Validation Schemas
 const validationSchemaAuth = Yup.object().shape({
@@ -90,7 +88,6 @@ export const RegisterForm: React.FC = () => {
             setRegisterForm(localStorage.getItem('registerFormPage'));
             setUserId(userId);
         } catch (error) {
-            toast.error('Username is invalid');
             console.error('Error:', error);
         }
     };
@@ -105,10 +102,7 @@ export const RegisterForm: React.FC = () => {
             const laconicAuthPageUrl = process.env.NEXT_PUBLIC_LACONIC_AUTH_PAGE_URL;
             window.location.href = `${laconicAuthPageUrl}/authentication?page=logout`;
 
-            // Show success toast message
-            toast.success('Success verify OTP');
         } catch (error) {
-            toast.error('OTP is invalid');
             console.error('Error:', error);
         }
     };
