@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.dto;
 
+import com.laconic.fastworkapi.entity.Attachment;
 import com.laconic.fastworkapi.entity.Checkpoint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class CheckResponseDTO {
     private Double price;
     private String description;
     private List<TaskDTO> tasks;
+    private List<Attachment> attachments;
 
     public CheckResponseDTO(Checkpoint checkpoint) {
         this.serviceId=checkpoint.getService().getId();
@@ -30,6 +32,6 @@ public class CheckResponseDTO {
         this.title = checkpoint.getTitle();
         this.price = checkpoint.getPrice();
         this.description = checkpoint.getDescription();
-
+        this.attachments = checkpoint.getAttachments();
     }
 }

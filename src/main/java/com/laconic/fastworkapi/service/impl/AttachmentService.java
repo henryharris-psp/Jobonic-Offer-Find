@@ -3,9 +3,11 @@ package com.laconic.fastworkapi.service.impl;
 import com.laconic.fastworkapi.constants.AppMessage;
 import com.laconic.fastworkapi.dto.AttachmentDTO;
 import com.laconic.fastworkapi.entity.Attachment;
+import com.laconic.fastworkapi.entity.Checkpoint;
 import com.laconic.fastworkapi.exception.NotFoundException;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.IAttachmentRepo;
+import com.laconic.fastworkapi.repo.ICheckpointRepo;
 import com.laconic.fastworkapi.service.IAttachmentService;
 import com.laconic.fastworkapi.utils.DocumentUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +32,16 @@ import java.util.UUID;
 @Service
 public class AttachmentService implements IAttachmentService {
     private final IAttachmentRepo attachmentRepo;
+    private final ICheckpointRepo checkPointRepo;
+
     @Value("${server.file.basePath}")
     String filePath;
     DecimalFormat df = new DecimalFormat("#####################.##");
 
     @Autowired
-    public AttachmentService(IAttachmentRepo attachmentRepo) {
+    public AttachmentService(IAttachmentRepo attachmentRepo, ICheckpointRepo checkPointRepo) {
         this.attachmentRepo = attachmentRepo;
+        this.checkPointRepo = checkPointRepo;
     }
 
     @Override
@@ -51,16 +56,22 @@ public class AttachmentService implements IAttachmentService {
             case RESUME -> attachmentDTO.getUserId();
             case CHECKPOINT -> attachmentDTO.getCheckPointId();
         };
+
         var location = DocumentUtil.getDocumentDestination(filePath, id.toString(),
                 attachmentDTO.getDocumentType().name(), false);
         assert extension != null;
+
+        Checkpoint checkpoint = this.checkPointRepo.findById(attachmentDTO.getCheckPointId())
+                .orElseThrow(() -> new NotFoundException("Checkpoint not found"));
+
+
         var fileName = attachmentDTO.getFile().getName().concat(".").concat(extension);
         var attachment = Attachment.builder()
                 .name(attachmentDTO.getFile().getName())
                 .serviceId(attachmentDTO.getServiceId() != null ? attachmentDTO.getServiceId() : null)
                 .userId(attachmentDTO.getUserId() != null ? attachmentDTO.getUserId() : null)
                 .proposalId(attachmentDTO.getProposalId() != null ? attachmentDTO.getProposalId() : null)
-                .checkPointId(attachmentDTO.getCheckPointId() != null ? attachmentDTO.getCheckPointId() : null)
+                .checkPoint(checkpoint)
                 .contentType(attachmentDTO.getFile().getContentType())
                 .location(location)
                 .extension(extension)
