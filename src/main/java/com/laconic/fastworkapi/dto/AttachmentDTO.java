@@ -31,6 +31,7 @@ public class AttachmentDTO implements Serializable {
     private MultipartFile file;
     private UUID checkPointId;
     private Boolean status;
+    private String originalName;
 
     public AttachmentDTO(Attachment attachment) {
         this.id = attachment.getId();
@@ -43,5 +44,6 @@ public class AttachmentDTO implements Serializable {
         this.fileSize = attachment.getFileSize();
         this.documentType = attachment.getDocumentType();
         this.status=attachment.getStatus();
+        this.originalName=attachment.getOriginalName();
     }
 }

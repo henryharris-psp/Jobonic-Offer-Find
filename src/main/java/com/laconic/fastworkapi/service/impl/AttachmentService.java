@@ -56,7 +56,7 @@ public class AttachmentService implements IAttachmentService {
         assert extension != null;
         var fileName = attachmentDTO.getFile().getName().concat(".").concat(extension);
         var attachment = Attachment.builder()
-                .name(attachmentDTO.getFile().getOriginalFilename())
+                .name(attachmentDTO.getFile().getName())
                 .serviceId(attachmentDTO.getServiceId() != null ? attachmentDTO.getServiceId() : null)
                 .userId(attachmentDTO.getUserId() != null ? attachmentDTO.getUserId() : null)
                 .proposalId(attachmentDTO.getProposalId() != null ? attachmentDTO.getProposalId() : null)
@@ -65,10 +65,12 @@ public class AttachmentService implements IAttachmentService {
                 .location(location)
                 .extension(extension)
                 .fileSize(size)
+                .originalName(attachmentDTO.getFile().getOriginalFilename())
                 .documentType(attachmentDTO.getDocumentType())
                 .isActive(true)
                 .status(false)
                 .build();
+
         DocumentUtil.createFile(location, fileName, attachmentDTO.getFile());
         return new AttachmentDTO(this.attachmentRepo.save(attachment));
     }
@@ -113,9 +115,10 @@ public class AttachmentService implements IAttachmentService {
                 Resource resource = new FileSystemResource(filePath);
 
                 if (resource.exists() || resource.isReadable()) {
+
                     return ResponseEntity.ok()
                             .contentType(MediaType.valueOf(MediaType.APPLICATION_OCTET_STREAM_VALUE))
-                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + document.getName() + "\"")
+                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + document.getOriginalName() + "\"")
                             .body(resource);
                 } else {
                     throw new FileNotFoundException("Could not read file: " + filePath.toString());
@@ -127,8 +130,6 @@ public class AttachmentService implements IAttachmentService {
             throw new RuntimeException(e.getMessage());
         }
     }
-
-
 
     @Override
     public ResponseEntity<Resource> showFile(UUID id) throws IOException {

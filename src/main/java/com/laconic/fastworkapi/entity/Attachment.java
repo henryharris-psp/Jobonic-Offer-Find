@@ -34,4 +34,5 @@ public class Attachment  extends Auditable<UUID>{
     private boolean isActive = true;
     private UUID checkPointId;
     private Boolean status;
+    private String originalName;
 }

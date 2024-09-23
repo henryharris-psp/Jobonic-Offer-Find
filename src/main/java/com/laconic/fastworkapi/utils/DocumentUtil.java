@@ -21,6 +21,7 @@ public class DocumentUtil {
     public static void validateDocumentSize(MultipartFile document) {
         int fileSizeLimit = AppMessage.DEFAULT_FILE_SIZE_IN_MB;    // size in MB
         float fileSize = document.getSize() / (1000f * 1000); // size in MB
+
         if (fileSize > fileSizeLimit) {
             throw new DocumentException(document.getName() + "is greater than " + fileSize + "MB");
         }
@@ -28,14 +29,17 @@ public class DocumentUtil {
 
     public static String getDocumentDestination(String filePath, String id, String documentType, boolean isDeleted) {
         Calendar calendar = Calendar.getInstance();
+
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1; // Months are zero-based
         int day = calendar.get(Calendar.DAY_OF_MONTH);
+
         String fileDirectory = year + "/" + month + "/" + day + "/";
 
         if (isDeleted) {
             return Paths.get(filePath, fileDirectory, "deleted", documentType, id, "document").toString();
         }
+
         return Paths.get(filePath, fileDirectory, documentType, id, "document").toString();
     }
 
@@ -66,12 +70,12 @@ public class DocumentUtil {
 
     public static void createFile(String path, String fileName, MultipartFile multipartFile) throws Exception {
         Path filePath = Paths.get(path, fileName);
-        try {
+//        try {
             Files.createDirectories(filePath.getParent()); // Create parent directories if they don't exist
             Files.write(filePath, multipartFile.getBytes()); // Write the file
-        } catch (IOException e) {
-            throw new IOException(AppMessage.DOCUMENT_NOT_FOUND, e);
-        }
+//        } catch (IOException e) {
+//            throw new IOException(AppMessage.DOCUMENT_NOT_FOUND, e);
+//        }
     }
 
 
