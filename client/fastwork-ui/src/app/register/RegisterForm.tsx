@@ -53,6 +53,9 @@ export const RegisterForm: React.FC = () => {
     const ref = useRef<HTMLFormElement>(null);
     const [registerForm, setRegisterForm] = useState<string | null>(null);
     const [userId, setUserId] = useState<string | null>(null);
+    const [emailError, setEmailError] = useState<string | null>(null);
+const [usernameError, setUsernameError] = useState<string | null>(null);
+
     const [userLogin, setUserLogin] = useState<UserLogin>({
         username: '',
         password: ''
@@ -69,13 +72,17 @@ export const RegisterForm: React.FC = () => {
             emailVerified: true,
             applicationNameCode: "jobonic"
         };
-        
+    
+        // Reset error messages before each submission
+        setEmailError(null);
+        setUsernameError(null);
+    
         try {
             const response = await httpAuth.post(URL, payload);
             const userData = response.data;
-    
             const userId = userData.userId || userData.id;
     
+            // Handle successful registration (e.g., store user data, redirect)
             setUserLogin((prevState) => ({
                 ...prevState,
                 username: values.email,
@@ -86,21 +93,21 @@ export const RegisterForm: React.FC = () => {
             setRegisterForm(localStorage.getItem('registerFormPage'));
             setUserId(userId);
         } catch (error: unknown) {
+            // If the error is related to API response, check and display the correct error messages
             if (typeof error === 'object' && error !== null && 'response' in error) {
-                const errorMessage = (error as any).response?.data?.message; // Adjust based on your API response structure
+                const errorMessage = (error as any).response?.data?.message;
+    
                 if (errorMessage) {
-                    if (errorMessage.includes('duplicate key error')) {
-                        if (errorMessage.includes('email')) {
-                            toast.error('Email is already registered');
-                        } else if (errorMessage.includes('username')) {
-                            toast.error('Username is already taken');
-                        } else {
-                            toast.error('An error occurred during registration');
-                        }
-                    } else {
-                        toast.error(errorMessage); // Fallback to any other error message returned by the API
+                    // Check for email duplication error
+                    if (errorMessage.includes('email')) {
+                        setEmailError('Email is already registered');
+                    }
+                    // Check for username duplication error
+                    if (errorMessage.includes('username')) {
+                        setUsernameError('Username is already taken');
                     }
                 } else {
+                    // Handle unknown API errors
                     toast.error('An unknown error occurred');
                 }
             } else {
@@ -109,8 +116,6 @@ export const RegisterForm: React.FC = () => {
         }
     };
     
-    
-
     const handleSubmitCheckOTP = async (values: { [key: string]: any }): Promise<void> => {
         const userId = localStorage.getItem('userId');
 
@@ -188,9 +193,11 @@ export const RegisterForm: React.FC = () => {
                     </div>
                     <div className="mb-6">
                         <InputField label="Email Address" type="email" name="email" placeholder="Email address" />
+                        {emailError && <p className="text-red-500 text-sm font-semibold mt-2">{emailError}</p>}
                     </div>
                     <div className="mb-6">
                         <InputField label="Username" type="text" name="username" placeholder="Username" />
+                        {usernameError && <p className="text-red-500 text-sm font-semibold mt-2">{usernameError}</p>}
                     </div>
                     <div className="mb-6">
                         <InputField label="Password" name="password" type="password" placeholder="Your Password" />
