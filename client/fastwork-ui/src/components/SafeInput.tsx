@@ -10,7 +10,7 @@ export type SafeInputChangeEvent = ChangeEvent<HTMLInputElement> | ChangeEvent<H
 type SafeInputProps = {
     id?: string | undefined;
     name?: string;
-    size?: 'lg' | 'sm' | 'xs';
+    size?: '' | 'lg' | 'sm' | 'xs';
     type?: 'text' | 'number' | 'password' | 'decimal' | 'textarea';
     title?: string;
     value: string | number;
@@ -24,10 +24,10 @@ type SafeInputProps = {
 };
 
 const inputHeightMap = {
-    'lg': '14',
-    'md': '12',
-    'sm': '10',
-    'xs': '10'
+    'lg': 'h-16',
+    '': 'h-14',
+    'sm': 'h-12',
+    'xs': 'h-10'
 }
 
 const SafeInput = ({
@@ -90,8 +90,9 @@ const SafeInput = ({
 
             { type === 'textarea' ? (
                 <textarea
-                    className={`pl-3 pt-3 rounded-lg placeholder:text-xs placeholder:text-dim-gray focus:outline-none w-full h-14 border 
+                    className={`pl-3 pt-3 rounded-lg placeholder:text-dim-gray focus:outline-none w-full h-14 border 
                         text-${size}
+                        placeholder:text-${size}
                         ${showError ? 'border-red-500' : 'border-gray-300' }
                         ${disabled ? 'border-none outline-none' : 'focus:outline'}
                     `}
@@ -106,9 +107,10 @@ const SafeInput = ({
                         id={id}
                         name={name}
                         inputMode={inputMode}
-                        className={`w-full border-gray-300 min-w-0 pl-3 placeholder:text-xs rounded-lg border
+                        className={`w-full border-gray-300 min-w-0 pl-3 rounded-lg border
                             text-${size}
-                            h-${inputHeightMap[size]}
+                            placeholder:text-${size}
+                            ${inputHeightMap[size]}
                             ${showError ? 'border-red-500' : 'border-gray-300' }
                             ${disabled ? 'border-none outline-none' : 'focus:outline focus:outline-blue-500'}
                         `}

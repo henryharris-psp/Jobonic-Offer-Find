@@ -23,11 +23,11 @@ const InChatPaymentReceiptCard = ({
 
     //on mounted
     useEffect(() => {
-        getPayment();
+        fetchPayment();
     }, []);
 
     //methods
-        const getPayment = async () => {
+        const fetchPayment = async () => {
             const controller = new AbortController();
             const signal = controller.signal;
 
@@ -101,7 +101,7 @@ const InChatPaymentReceiptCard = ({
                         <div className="flex items-center justify-center absolute top-0 right-0 left-0 bottom-0">
                             <button 
                                 className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-300"
-                                onClick={getPayment}    
+                                onClick={fetchPayment}    
                             >
                                 <span className="">
                                     <ArrowPathIcon className={`size-5 font-bold text-gray-600 ${isLoading ? 'animate-spin' : ''}`}/>

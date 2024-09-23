@@ -2,31 +2,31 @@ import httpClient from "@/client/httpClient";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import SafeInput, { SafeInputChangeEvent } from "@/components/SafeInput";
-import { Category as BaseCategory } from "@/types/general";
+import { Skill as BaseSkill } from "@/types/general";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import React, { useState } from "react";
 
-interface Category extends BaseCategory {
+interface Skill extends BaseSkill {
     isNew: boolean;
 }
 
-interface CategoryFormModalProps {
-    category: Category | null;
+interface SkillFormModalProps {
+    skill: Skill | null;
     isOpen: boolean;
     onClose: () => void;
-    onAdded: (category: Category) => void;
-    onUpdated: (updatedCategory: Category) => void;
+    onAdded: (skill: Skill) => void;
+    onUpdated: (updatedSkill: Skill) => void;
 }
 
-const CategoryFormModal = ({
-    category,
+const SkillFormModal = ({
+    skill,
     isOpen,
     onClose,
     onAdded,
     onUpdated
-}: CategoryFormModalProps) => {
-    const isEdit = category !== null;
-    const [name, setName] = useState(isEdit ? category.name : '');
+}: SkillFormModalProps) => {
+    const isEdit = skill !== null;
+    const [name, setName] = useState(isEdit ? skill.name : '');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleInputChange = (event: SafeInputChangeEvent) => {
@@ -38,8 +38,8 @@ const CategoryFormModal = ({
         setIsLoading(true);
         try{
             const apiCall = isEdit 
-                ? httpClient.put(`category?id=${category.id}`, { name: name })
-                : httpClient.post('category', { name: name });
+                ? httpClient.put(`skill?id=${skill.id}`, { name: name })
+                : httpClient.post('skill', { name: name });
             
             const res = await apiCall;
 
@@ -60,7 +60,7 @@ const CategoryFormModal = ({
                 <div className="flex flex-col p-5 space-y-3">
                     <div className="">
                         <span className="text-lg font-bold">
-                            Create New Category
+                            Create New Skill
                         </span>
                     </div>
                     <div className="w-96">
@@ -68,7 +68,7 @@ const CategoryFormModal = ({
                             size=""
                             type="text"
                             value={name}
-                            placeholder="Type category name..."
+                            placeholder="Type skill..."
                             onChange={handleInputChange}
                         />
                     </div>
@@ -86,4 +86,4 @@ const CategoryFormModal = ({
     );
 };
 
-export default CategoryFormModal;
+export default SkillFormModal;

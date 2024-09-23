@@ -10,7 +10,6 @@ import { SERVER_AUTH } from "@/baseURL";
 import { useRouter } from "next/navigation";
 import httpClient from "@/client/httpClient";
 import httpAuth from "@/client/httpAuth";
-import { toast } from "react-toastify";
 
 const validationSchemaAuth = Yup.object().shape({
     firstname: Yup.string().required().label('First Name'),
@@ -80,7 +79,6 @@ export const RegisterForm = (): React.ReactNode => {
             setRegisterForm(localStorage.getItem('registerFormPage'));
             setUserId(localStorage.getItem('userId'));
         } catch (error) {
-            toast.error('username is invalid');
             console.error('Error:', error);
         } finally {
         }

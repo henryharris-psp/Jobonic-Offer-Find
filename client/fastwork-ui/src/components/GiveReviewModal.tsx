@@ -85,7 +85,7 @@ const GiveReviewModal = ({
                     <span className="text-gray-700">Comment</span>
                     <SafeInput
                         type="textarea"
-                        placeholder="write your review..."
+                        placeholder="Write your review..."
                         value={inputs.comment}
                         onChange={handleOnInputChange}
                     />

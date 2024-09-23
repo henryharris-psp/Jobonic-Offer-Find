@@ -11,13 +11,8 @@ import FileSizeAlertModal from '../ProgressList/AlertMessage/FileAlertMessage';
 import { Milestone } from '@/types/general';
 import Collapsible from '@/components/Collapsible';
 import AlertMessageCard from '../NewProgressList/RejectAlertMessage';
-interface MilestoneProgressSectionProps extends Milestone {
-    isCompleted?: boolean;
-    isDisabled?: boolean;
-}
 const MilestoneProgressSection = ({
-
-}: MilestoneProgressSectionProps) => {
+}) => {
     const { activeChatRoom, authUserType, latestContract } = useChat();
     const [openMilestones, setOpenMilestones] = useState<string[]>([]);
     const [milestones, setMilestones] = useState<Milestone[]>([]);
@@ -35,13 +30,11 @@ const MilestoneProgressSection = ({
     const [hasFetched, setHasFetched] = useState(false);
     const [showRejectAlert, setShowRejectAlert] = useState<boolean>(false);
     useEffect(() => {
-        if (latestContract && !hasFetched) {
-            console.log('Fetching milestones for contract ID:', latestContract.id);
-
-            fetchMilestonesPerContract(latestContract.id)
-                .then(() => setHasFetched(true));
+        if (latestContract) {
+            fetchMilestonesPerContract(latestContract.id);
         }
-    }, [hasFetched]);
+    }, [latestContract]);
+
     const fetchMilestonesPerContract = async (contractId: string | number) => {
         try {
             const serviceId = activeChatRoom?.service_id;
@@ -50,6 +43,7 @@ const MilestoneProgressSection = ({
             const contractResponse = await httpClient.get(`/contract/${contractId}`);
             const milestonesData: Milestone[] = contractResponse.data.milestones;
     
+            console.log('Milestones : ' , milestonesData);
             const updatedMilestones = await Promise.all(
                 milestonesData.map(async (milestone) => {
                     try {
@@ -74,7 +68,8 @@ const MilestoneProgressSection = ({
                     }
                 })
             );
-            // Set the milestones without filtering or deduplication
+
+            
             console.log('All Milestones:', updatedMilestones);
             setMilestones(updatedMilestones);
     
@@ -82,6 +77,9 @@ const MilestoneProgressSection = ({
             console.error('Cannot fetch contract data:', error);
         }
     };
+
+    console.log('Milestones length : ' , milestones.length);
+            // Set the milestones without filtering or deduplication
     
     const downloadFile = async (fileId: string, fileName: string) => {
         try {
@@ -123,7 +121,7 @@ const MilestoneProgressSection = ({
         try {
             // API call to delete the file by fileId
             const response = await httpClient.delete(`/attachment`, {
-                params: { id: fileId }, // Make sure correct fileId is used here
+                params: { id: fileId }, // Check correct fileId is used here
             });
             if (response.status === 200) {
                 setMilestones((prevMilestones) =>
@@ -216,7 +214,7 @@ const MilestoneProgressSection = ({
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, milestoneId: string) => {
         if (e.target.files && e.target.files.length > 0) {
             setSelectedFile(e.target.files[0]);
-            // Ensure the milestone ID is correctly added to the set
+            //The milestone ID is correctly added to the set
             setSubmittedMilestones((prev) => {
                 const newSet = new Set(prev);
                 newSet.add(milestoneId);
@@ -310,12 +308,6 @@ const MilestoneProgressSection = ({
             prev.includes(id) ? prev.filter((milestoneId) => milestoneId !== id) : [...prev, id]
         );
     };
-    const formatFileSize = (sizeInBytes: number): string => {
-        const units: string[] = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-        let size: number = sizeInBytes;
-        let unitIndex: number = 0;
-        return `${size.toFixed(2)} ${units[unitIndex]}`;
-    }
     //index of the current milestone
     const currentMilestoneIndex = milestones.findIndex(
         (milestone) => !isSubmitted.includes(milestone.id)
@@ -323,19 +315,13 @@ const MilestoneProgressSection = ({
     // Function to check if a milestone is the current one
     const isCurrentMilestone = (index: number) =>
         currentMilestoneIndex === -1 ? index === milestones.length - 1 : index === currentMilestoneIndex;
+
     const closePaymentCard = () => {
         setIsPaymentCardOpen(false);
     };
     const handleCloseAlertModal = () => {
         setIsAlertModalOpen(false);
     };
-
-    const uniqueMilestones = milestones.filter(
-        (milestone, index, self) =>
-            index === self.findIndex((m) => m.title === milestone.title)
-    );
-
-    console.log("milestones : ", milestones);
 
     // Handle reject button click
     const handleRejectClick = () => {
@@ -347,7 +333,7 @@ const MilestoneProgressSection = ({
         setShowRejectAlert(false);
     };
 
-    console.log('Milestone lenght : ', milestones.length);
+    console.log('Milestone length : ', milestones.length);
 
     return (
         <div className="relative">
@@ -466,17 +452,16 @@ const MilestoneProgressSection = ({
                                                 </div>
                                             )}
                                         </div>
-                                    </div>
-                                    
+                                    </div>  
                                 )}
                                 {authUserType === 'freelancer' && milestone.uploadedFiles && milestone.uploadedFiles.length > 0 && (
                                     <div className="mt-4 ml-7">
                                         {milestone.uploadedFiles.map((file, index) => (
-                                            <div key={index} className="flex flex-row gap-3 space-x-3">
+                                            <div key={index} className="flex flex-row gap-2 space-x-2 items-center mt-2">
                                                 <a
                                                     download
                                                     className="text-blue-500 underline text-xs cursor-pointer w-[50%]"
-                                                >
+                                            >
                                                     {file.name}
                                                 </a>
                                                 <span className="text-xs">{file.size}</span>
@@ -489,10 +474,9 @@ const MilestoneProgressSection = ({
                             </div></Collapsible>
                     </li>
                 )) : (
-                    <li>No milestones available</li>
+                    <li className="text-sm text-gray-500 ml-8">No milestones available</li>
                 )}
             </ul>
-
             {isModalOpen && (
                 <ApproveAndPayModal
                     isOpen={isModalOpen}

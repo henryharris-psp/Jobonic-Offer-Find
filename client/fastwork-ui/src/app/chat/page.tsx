@@ -4,15 +4,14 @@ import SideDrawer from "@/components/SideDrawer";
 import ChatList from "@/components/chat/ChatList";
 import { ChatRoom, Message } from "@/types/chat";
 import { RootState } from "@/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ChatProvider, useChat } from "@/contexts/chat";
 import { supabase } from "@/config/supabaseClient";
 import { useSearchParams } from "next/navigation";
 import ChatRoomComponent from "@/components/chat/ChatRoom";
 import httpClient from "@/client/httpClient";
-import ProgressList from "@/components/chat/ProgressList";
-import { toast } from "react-toastify";
 import NewProgressList from "@/components/chat/NewProgressList";
+import { notify } from "@/store/reducers/uiReducer";
 
 const ChatPage = () => {
     //catch url params
@@ -20,6 +19,7 @@ const ChatPage = () => {
     const serviceParam = params.get('service');
     
     const { 
+        activeChatRoom,
         chatRooms,
         showChatList, 
         showProgressList, 
@@ -32,6 +32,7 @@ const ChatPage = () => {
         loadChatRoomData,
         insertOrUpdateLocalChatRoom,
     } = useChat();
+    const dispatch = useDispatch();
     const { isMobile, screenSize } = useSelector((state: RootState) => state.ui);
     const { authUser } = useSelector((state: RootState) => state.auth );
     const [isLoadingChatRooms, setIsLoadingChatRooms] = useState(false);
@@ -98,7 +99,12 @@ const ChatPage = () => {
 
             //notify only incoming text messages
             if(newMessage.media_type === 'text' && newMessage.sender_id != authUser?.profile.id){
-                toast(newMessage.content.toString());
+                dispatch(notify({
+                    title: activeChatRoom?.sender.firstName ?? 'New Message', 
+                    content: newMessage.content.toString(),
+                    status: 'chat',
+                    timeout: 3000
+                }));
             }
         }
 
@@ -178,7 +184,6 @@ const ChatPage = () => {
         }
     }, [authUser, chatRooms]);
     
-
     //chatlist section width resize handler
         const maxChatListWidth = 500;
         const minChatListWidth = 1;

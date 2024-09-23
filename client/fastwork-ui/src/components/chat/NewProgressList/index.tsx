@@ -63,13 +63,11 @@ const NewProgressList = () => {
                         <ContractProgressSection />
 
                         {/* milestone section */}
-                        {milestones.length !== 0 ? (
-                            milestones.map(milestone =>
-                                <MilestoneProgressSection
-                                    key={milestone.id}
-                                    {...milestone}
-                                />
-                            )
+                        {milestones.length > 0 ? (
+
+                            <MilestoneProgressSection
+                            />
+
                         ) : (
                             <div className="flex justify-center">
                                 <span className="text-gray-400 text-sm">

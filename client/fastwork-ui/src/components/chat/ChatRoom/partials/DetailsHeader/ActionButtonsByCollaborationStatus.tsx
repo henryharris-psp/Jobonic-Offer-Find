@@ -16,9 +16,8 @@ import TerminationContractButton from "../action_buttons/TerminationContractButt
 import SubmitWorkButton from "../action_buttons/SubmitWorkButton";
 import HireAgainButton from "../action_buttons/HireAgainButton";
 
-type ActionButtonMap = {
-    [key: string]: JSX.Element | null;
-};
+type ActionButtonMap = { [key: string]: JSX.Element | null };
+
 const freelancerActionButtonsMap = {
     enquiring: <ApplyButtons/>,
     applied: <WaitingStatus status="Waiting For Confirmation"/>,
@@ -38,7 +37,7 @@ const employerActionButtonsMap = {
     signing_contract: <ContractAndPaymentButtons/>,
     payment_verification: <ContractAndPaymentButtons/>,
     to_submit: 
-        <div className="flex flex-row space-x-3">
+        <div className="flex flex-col space-x-3 items-center space-y-2">
             <HireAgainButton/>
             <WaitingStatus status="Currently, waiting for milestone 1 submission"/>
         </div>, //TODO: render current milestone name

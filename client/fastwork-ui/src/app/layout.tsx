@@ -8,10 +8,9 @@ import NavBar from "@/components/NavBar";
 import { useEffect } from "react";
 import { authenticate as reduxAuthenticate } from "@/store/reducers/authReducer";
 import { getAuthUserDetails, getProfileByUserId } from "@/functions/helperFunctions";
-import { ToastContainer } from 'react-toastify';
 import { usePathname } from "next/navigation";
 import AdminRoot from "@/components/admin/AdminRoot";
-import 'react-toastify/dist/ReactToastify.css';
+import Notifications from "@/components/Notifications";
 
 // import ChatBox from "../components/ChatBox";
 // import Footer from "../components/footer";
@@ -98,6 +97,7 @@ const RootLayout = ({
 
                 {/* TODO: temporary, just to load colors */}
                 <div className="hidden">
+                    <div className="text-xs text-sm text-lg text-2xl placeholder:text-xs placeholder:text-sm placeholder:text-lg placeholder:text-2xl hidden"/>
                     <div className="text-[#0B2147] bg-[#0B2147] hidden"/>
                     <div className="text-[#B0B0B0] bg-[#B0B0B0] hidden"/>
                     <div className="text-[#5A9E4A] bg-[#5A9E4A] hidden"/>
@@ -107,17 +107,7 @@ const RootLayout = ({
                 </div>
 
                 <NavBar />
-                <ToastContainer 
-                    position="top-right"
-                    autoClose={4000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    rtl={false}
-                    draggable
-                    closeOnClick
-                    pauseOnHover
-                    theme="dark"
-                />
+                <Notifications/>
                 <main>
                     { isAdminRoute ? (
                         <AdminRoot>

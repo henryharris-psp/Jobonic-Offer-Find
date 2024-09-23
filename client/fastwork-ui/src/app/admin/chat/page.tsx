@@ -4,30 +4,25 @@ import SideDrawer from "@/components/SideDrawer";
 import ChatList from "@/components/admin/chat/AdminChatList";
 import { ChatRoom, Message } from "@/types/chat";
 import { RootState } from "@/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ChatProvider, useChat } from "@/contexts/chat";
 import { supabase } from "@/config/supabaseClient";
-import { useSearchParams } from "next/navigation";
 import ChatRoomComponent from "@/components/admin/chat/AdminChatRoom";
-import httpClient from "@/client/httpClient";
-import ProgressList from "@/components/chat/ProgressList";
-import { toast } from "react-toastify";
-import NewProgressList from "@/components/chat/NewProgressList";
+import { notify } from "@/store/reducers/uiReducer";
 
 const AdminChatPage = () => {
     const { 
+        activeChatRoom,
         chatRooms,
         showChatList, 
-        showProgressList, 
         setShowChatList,
         setShowProgressList,
         setChatRooms,
         addMessage, 
-        createNewChatRoom, 
-        changeChatRoom, 
         loadChatRoomData,
         insertOrUpdateLocalChatRoom,
     } = useChat();
+    const dispatch = useDispatch();
     const { isMobile, screenSize } = useSelector((state: RootState) => state.ui);
     const { authUser } = useSelector((state: RootState) => state.auth );
     const [isLoadingChatRooms, setIsLoadingChatRooms] = useState(false);
@@ -60,7 +55,12 @@ const AdminChatPage = () => {
 
             //notify only incoming text messages
             if(newMessage.media_type === 'text' && newMessage.sender_id != authUser?.profile.id){
-                toast(newMessage.content.toString());
+                dispatch(notify({
+                    title: activeChatRoom?.sender.firstName ?? 'New Message', 
+                    content: newMessage.content.toString(),
+                    status: 'chat',
+                    timeout: 3000
+                }));
             }
         }
 
