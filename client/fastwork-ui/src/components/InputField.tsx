@@ -4,6 +4,7 @@ import Image from 'next/image'
 import eye from '@/../public/eye-on.svg'
 import eyeOff from '@/../public/eye-off.svg'
 import { Field, ErrorMessage, useFormikContext } from 'formik'
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid'
 
 interface InputFieldProps {
   as?: string
@@ -46,7 +47,7 @@ const InputField = ({
   
   return (
     <div>
-      <label htmlFor={name} className='block text-sm font-medium text-black mb-1'>
+      <label htmlFor={name} className='block text-md font-semibold text-cyan-900 mb-1'>
         {label}
       </label>
       <div className='relative'>
@@ -55,7 +56,7 @@ const InputField = ({
           disabled={isDisabled}
           type={showPassword ? 'text' : type}
           id={name} name={name} value={formik.values[name] || value || ''}
-          className={`${className} text-black ${
+          className={`${className} text-cyan-900 font-semibold text-sm ${
             formik?.errors[name] && formik?.touched[name]
               ? 'border border-red-500 hover:border-red-500 focus:border-red-500 hover:outline-0 focus:outline-0'
               : 'border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 hover:border-gray-400'
@@ -69,12 +70,12 @@ const InputField = ({
             onClick={() =>
               setShowPassword(!showPassword)}
           >
-            {showPassword ? <Image src={eye} alt='' /> : <Image src={eyeOff} alt='' />}
+            {showPassword ? <EyeIcon className="w-4 h-4 cursor-pointer"/> : <EyeSlashIcon className="w-4 h-4 cursor-pointer"/>}
           </button>
         )}
       </div>
 
-      <ErrorMessage name={name} component='div' className='text-red-500 text-sm mt-1' />
+      <ErrorMessage name={name} component='div' className='text-red-500 text-sm font-semibold mt-1' />
     </div>
   )
 }

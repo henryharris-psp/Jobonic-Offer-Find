@@ -78,7 +78,7 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
                     <div className="flex flex-col">
                         <div className="flex flex-row space-x-2">
                             <StarRating
-                                value={3}
+                                value={4}
                             />
                         </div>
                         <span className="text-gray-500">
