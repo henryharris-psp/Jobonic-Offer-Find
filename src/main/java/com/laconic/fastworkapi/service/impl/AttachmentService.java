@@ -95,13 +95,19 @@ public class AttachmentService implements IAttachmentService {
         var attachment =
                 this.attachmentRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.ATTACHMENT, "id",
                         id.toString()));
+
         var source = attachment.getLocation();
+
         var destination = DocumentUtil.getDocumentDestination(filePath, id.toString(),
-                attachment.getDocumentType().name(), false);
+                attachment.getDocumentType().name(), true);
+
         DocumentUtil.moveFile(source, destination);
+
         attachment.setActive(false);
         attachment.setLocation(destination);
+
         this.attachmentRepo.save(attachment);
+
         return String.format(AppMessage.DELETE_MESSAGE, AppMessage.ATTACHMENT);
     }
 

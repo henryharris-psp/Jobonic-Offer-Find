@@ -80,11 +80,17 @@ public class DocumentUtil {
 
 
     public static void moveFile(String source, String destination) throws Exception {
-        // creating deleted folder to store all deleted files
-        File f = new File(destination);
-        if (!f.exists()) {
-            f.mkdirs();
+        File destinationFolder = new File(destination);
+
+        if (!destinationFolder.exists()) {
+            destinationFolder.mkdirs();
         }
-        Files.move(Paths.get(source), Paths.get(destination));
+
+        Path sourcePath = Paths.get(source);
+        String fileName = sourcePath.getFileName().toString();
+
+        Path destinationPath = Paths.get(destination, fileName);
+
+        Files.move(sourcePath, destinationPath);
     }
 }
