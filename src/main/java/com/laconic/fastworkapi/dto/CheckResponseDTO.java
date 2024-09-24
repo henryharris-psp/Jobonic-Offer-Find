@@ -23,7 +23,7 @@ public class CheckResponseDTO {
     private Double price;
     private String description;
     private List<TaskDTO> tasks;
-    private List<Attachment> attachments;
+    private List<AttachmentDTO> attachments;
 
     public CheckResponseDTO(Checkpoint checkpoint) {
         this.serviceId=checkpoint.getService().getId();
@@ -32,6 +32,8 @@ public class CheckResponseDTO {
         this.title = checkpoint.getTitle();
         this.price = checkpoint.getPrice();
         this.description = checkpoint.getDescription();
-        this.attachments = checkpoint.getAttachments();
+        this.attachments = checkpoint.getAttachments().stream()
+                .map(AttachmentDTO::new)
+                .toList();
     }
 }

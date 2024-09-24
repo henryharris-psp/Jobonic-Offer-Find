@@ -55,6 +55,7 @@ const MyProfile = () => {
             });
             console.log("Description saved successfully.");
             setIsEditing(false); // Close the editing mode after saving
+            setIsEditingPosition(false);
 
         } catch (error) {
             console.error("Error occurred while saving the description", error);

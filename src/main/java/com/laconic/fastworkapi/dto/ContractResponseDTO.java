@@ -30,6 +30,8 @@ public class ContractResponseDTO {
     private List<CheckResponseDTO> milestones;
     private Long profileId;
 
+    private CheckResponseDTO currentCheckpoint;
+
     public ContractResponseDTO(Contract contract) {
         this.id = contract.getId();
         this.matchesId = contract.getMatches().getId();
@@ -39,5 +41,6 @@ public class ContractResponseDTO {
         this.createdBy = contract.getCreatedBy();
         this.createdDate = contract.getCreatedDate();
         this.profileId=contract.getProfile().getId();
+        this.currentCheckpoint = contract.getCurrentCheckpoint() != null ? new CheckResponseDTO(contract.getCurrentCheckpoint()) : null;
     }
 }

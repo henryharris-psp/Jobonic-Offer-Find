@@ -3,6 +3,7 @@ package com.laconic.fastworkapi.service.impl;
 import com.laconic.fastworkapi.constants.AppMessage;
 import com.laconic.fastworkapi.dto.CheckpointDTO;
 import com.laconic.fastworkapi.entity.Checkpoint;
+import com.laconic.fastworkapi.entity.Contract;
 import com.laconic.fastworkapi.exception.NotFoundException;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.ICheckpointRepo;
@@ -76,6 +77,7 @@ public class CheckpointService implements ICheckpointService {
         checkpoint.setNumberOfHoursCompleted(checkpointDTO.getNumberOfHoursCompleted());
         checkpoint.setDescription(checkpointDTO.getDescription());
         checkpoint.setContract(contractRepo.findById(checkpointDTO.getContractId()).get());
+
         try {
             checkpoint.setTasks(checkpointDTO.getTasks()); // Set tasks using JSON conversion
         } catch (IOException e) {
@@ -83,11 +85,16 @@ public class CheckpointService implements ICheckpointService {
             checkpoint.setTasks(new String[0]); // Default to empty array if conversion fails
         }
 
-        // Save entity
         var savedCheckpoint = this.checkpointRepo.save(checkpoint);
 
-        // Map saved entity to DTO
+        var checkpoints = this.checkpointRepo.findFirstByMatchesIdOrderByCreatedDateAsc(checkpointDTO.getMatchId());
+
+        Contract contract = contractRepo.findById(checkpointDTO.getContractId()).get();
+        contract.setCurrentCheckpoint(checkpoints.get());
+        this.contractRepo.save(contract);
+
         CheckpointDTO savedCheckpointDTO = new CheckpointDTO(savedCheckpoint);
+
         return savedCheckpointDTO;
     }
 
