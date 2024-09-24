@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Entity
@@ -39,6 +40,13 @@ public class Contract extends Auditable<UUID> {
     @JoinColumn(name = "profile_id")
     private Profile profile;
 
+    @OneToMany(mappedBy = "contract", cascade = CascadeType.ALL)
+    private List<Checkpoint> milestones;
+
     private boolean isActive = true;
+
+    @OneToOne
+    @JoinColumn(name = "current_checkpoint_id")
+    private Checkpoint currentCheckpoint;
 }
 

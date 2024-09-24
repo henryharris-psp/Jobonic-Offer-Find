@@ -44,12 +44,14 @@ public class Checkpoint extends Auditable<UUID> {
     @Column(columnDefinition = "CLOB")
     private String description;
 
+    @Column(name = "status")
+    private String status;
+
     @ManyToOne
     @JoinColumn(name = "match_id")
     private Matches matches;
 
     private static final ObjectMapper mapper = new ObjectMapper();
-
 
     @ManyToOne
     @JoinColumn(name = "contract_id")
@@ -58,22 +60,13 @@ public class Checkpoint extends Auditable<UUID> {
     @OneToMany(mappedBy = "checkPoint", cascade = CascadeType.ALL)
     private List<Attachment> attachments = new ArrayList<>();
 
-    /**
-     * @param tasks Array of tasks to be converted to JSON
-     * @throws IOException if JSON conversion fails
-     * @Author soe
-     * @Note Sets the tasks field as a JSON string.
-     */
+    @OneToOne(mappedBy = "currentCheckpoint")
+    private Contract currentContract;
+
     public void setTasks(String[] tasks) throws IOException {
         this.tasks = mapper.writeValueAsString(tasks); // Convert array to JSON
     }
 
-    /**
-     * @return Array of tasks extracted from JSON
-     * @throws IOException if JSON conversion fails
-     * @Author soe
-     * @Note Gets the tasks field as a String array.
-     */
     public String[] getTasks() throws IOException {
         return mapper.readValue(this.tasks, new TypeReference<>() {
         }); // Convert JSON back to array
