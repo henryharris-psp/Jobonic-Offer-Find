@@ -3,7 +3,7 @@ import React, { Suspense, useCallback, useEffect, useState } from "react";
 import SideDrawer from "@/components/SideDrawer";
 import ChatList from "@/components/admin/chat/AdminChatList";
 import { ChatRoom, Message } from "@/types/chat";
-import { RootState } from "@/store";
+import { AppDispatch, RootState } from "@/store";
 import { useDispatch, useSelector } from "react-redux";
 import { ChatProvider, useChat } from "@/contexts/chat";
 import { supabase } from "@/config/supabaseClient";
@@ -22,7 +22,7 @@ const AdminChatPage = () => {
         loadChatRoomData,
         insertOrUpdateLocalChatRoom,
     } = useChat();
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const { isMobile, screenSize } = useSelector((state: RootState) => state.ui);
     const { authUser } = useSelector((state: RootState) => state.auth );
     const [isLoadingChatRooms, setIsLoadingChatRooms] = useState(false);
@@ -59,7 +59,7 @@ const AdminChatPage = () => {
                     title: activeChatRoom?.sender.firstName ?? 'New Message', 
                     content: newMessage.content.toString(),
                     status: 'chat',
-                    timeout: 3000
+                    timeout: 4000
                 }));
             }
         }

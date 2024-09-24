@@ -4,13 +4,13 @@ import Modal from "../Modal";
 import Button from "../Button";
 import PaymentCard from "./PaymentCard";
 
-interface PaymentRequestCardProps {
+interface TotalPaymentPreviewCardProps {
     onPaid?: () => void;
 }
 
-const PaymentRequestCard = ({
+const TotalPaymentPreviewCard = ({
     onPaid
-}: PaymentRequestCardProps) => {
+}: TotalPaymentPreviewCardProps) => {
     const numberFormater = new Intl.NumberFormat();
     const { latestContract } = useChat();
     const [showPaymentCardModal, setShowPaymentCardModal] = useState(false);
@@ -101,4 +101,4 @@ const PaymentRequestCard = ({
     );
 };
 
-export default PaymentRequestCard;
+export default TotalPaymentPreviewCard;

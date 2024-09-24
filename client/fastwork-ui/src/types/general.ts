@@ -1,3 +1,6 @@
+export type TailwindSizes = "xs" | "sm" | "" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl";
+export type FileStatus = "pending" | "uploaded" | "failed";
+
 export interface Category {
     id: string;
     name: string;
@@ -20,12 +23,11 @@ export interface Task {
     name: string
 }
 
-export interface UploadedFile {
-    id: string;
-    name: string;
-    size: number;
-    status: boolean;
-}
+export type MilestoneStatus = 
+    'not_started' | 
+    'waiting_for_submission' | 
+    'submitted' |
+    'paid';
 
 export interface Milestone {
     id: string,
@@ -34,12 +36,14 @@ export interface Milestone {
     dueDate: string,
     price: number,
     tasks: Task[],
-    uploadedFiles?: UploadedFile[];
+    uploadedFiles?: FileProps[];
+    description: MilestoneStatus
+    //TODO: currently, description column is used as status bcoz api is not ready for this
+
     //not_required
     serviceId?: string | number,
     matchId?: string | number,
     numberOfHoursCompleted?: number,
-    description?: string,
 }
 
 export interface Contract {
@@ -48,6 +52,7 @@ export interface Contract {
     deliverable: string;
     acceptBy: string[] | number[];
     milestones: Milestone[];
+    currentMilestone: Milestone | null;
     profileId: string | number;
     matchesId: string | number;
 }
@@ -55,47 +60,53 @@ export interface Contract {
 export interface Payment {
     transactionId: string;
     amount: number;
-    billedTo: string;
     date: string;
     paymentMethod: string;
     senderName: string;
-    receiveName: string;
+    receiverName: string;
 }
 
-export interface CardProps {
-    title: string;
-    earned: string;
-    description: {
-      avatar: string;
-      username: string;
-      review: string;
-    }[];
-    details: string[];
-  }
-  
- export interface ServiceRequestDTO {
+export interface FileProps {
     id: string;
-    submissionDeadline: string;
-    workExample: string;
-  }
-  
- export interface Service {
-    id: string;
-    serviceOfferDTO?: any;
-    serviceRequestDTO?: ServiceRequestDTO;
-    profileId: number;
-    title: string;
-    employmentType: string,
-    description: string,
-    description1: string,
-    description2: string,
-    description3: string,
-    languageSpoken: string,
-    location: string,
-    categoryId: string,
-    categoryName?: string,
-    price: number,
-    priceUnit: string
-  }
+    name: string;
+    size: string;
+    source?: File;
+    status: FileStatus
+}
 
-export type TailwindSizes = "xs" | "sm" | "" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl";
+//by pyae sone phyo
+    export interface CardProps {
+        title: string;
+        earned: string;
+        description: {
+            avatar: string;
+            username: string;
+            review: string;
+        }[];
+        details: string[];
+    }
+    
+    export interface ServiceRequestDTO {
+        id: string;
+        submissionDeadline: string;
+        workExample: string;
+    }
+    
+    export interface Service {
+        id: string;
+        serviceOfferDTO?: any;
+        serviceRequestDTO?: ServiceRequestDTO;
+        profileId: number;
+        title: string;
+        employmentType: string,
+        description: string,
+        description1: string,
+        description2: string,
+        description3: string,
+        languageSpoken: string,
+        location: string,
+        categoryId: string,
+        categoryName?: string,
+        price: number,
+        priceUnit: string
+    }

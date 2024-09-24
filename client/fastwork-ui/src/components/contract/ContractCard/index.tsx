@@ -109,8 +109,7 @@ const ContractCard = ({
 
         const uploadTask = async (payload: Task) => {
             try{
-                const res = await httpClient.post('task', payload);
-                console.log(`Upload successful for task id ${payload.id}:`, res.data);
+                await httpClient.post('task', payload);
             } catch (error) {
                 console.log('error uploading new task', error);
             }
@@ -158,7 +157,7 @@ const ContractCard = ({
                             }
                         }
                     }
-
+                    await sendMessage('text', 'I just updated the contract. Please take a look.');
                     await sendMessage('contract', contractId.toString());
 
                     setShowMilestoneFormModal(false);
@@ -212,7 +211,7 @@ const ContractCard = ({
                 <div className={`flex-1 flex flex-row space-x-2 flex-wrap ${size === 'xs' ? 'p-4' : 'p-6'}`}>
 
                     {/* form */}
-                    <div className="flex-1 flex flex-col justify-between min-w-72 space-y-5 overflow-hidden">
+                    <div className="flex-1 flex flex-col justify-between min-w-64 space-y-5 overflow-hidden">
                         <div className="space-y-5">
                             <div className="flex flex-row space-x-3 items-center">
                                 <Image

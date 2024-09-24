@@ -60,7 +60,8 @@ export const notify = (notification: Notification): AppThunk => (dispatch) => {
 export const {
     setScreenSize,
     setSelectedLanguage,
-    clearNotifications
+    clearNotifications,
+    closeNotification
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

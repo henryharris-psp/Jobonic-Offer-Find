@@ -11,7 +11,8 @@ import InChatPaymentRequestCard from "./InChatPaymentRequestCard";
 import InChatSystemMessage from "./InChatSystemMessage";
 import InChatPaymentReceiptCard from "./InChatPaymentReceiptCard";
 import InChatShareChatRoomCard from "@/components/admin/chat/AdminChatRoom/partials/Conversation/InChatShareChatRoomCard";
-import InChatPaymentReceivedCard from "./InChatPaymentReceivedCard";
+import InChatMilestoneSubmissionCard from "./InChatMilestoneSubmissionCard";
+import InChatPaymentCard from "./InChatPaymentCard";
 
 const MessageByMediaType = (message: Message) => {
     const { authUserType } = useChat();
@@ -50,6 +51,11 @@ const MessageByMediaType = (message: Message) => {
                 serviceId={message.content}
                 isSentByAuthUser={isSentByAuthUser}
             />,
+        milestone: 
+            <InChatMilestoneSubmissionCard 
+                milestoneId={message.content}
+                isSentByAuthUser={isSentByAuthUser}    
+            />,
         chat_room:
             <InChatShareChatRoomCard
                 chatRoomId={message.content}
@@ -60,31 +66,32 @@ const MessageByMediaType = (message: Message) => {
             />
             : <div className="flex flex-col space-y-3">
                 <InChatSystemMessage
-                    message="Please transfer the total signed price to Jobonic. Jobonic will securely hold the funds and release payment to the freelancer once the submitted work is approved."
+                    message="You both signed the contract. Please transfer the total signed price to Jobonic. Jobonic will securely hold the funds and release payment to the freelancer once the submitted work is approved."
                 />
                 <div className="flex justify-center">
                     <InChatPaymentRequestCard/>
                 </div>
             </div>,
-        payment_receipt: authUserType === 'freelancer'
+        full_payment: authUserType === 'freelancer'
             ? <InChatSystemMessage
                 message="The employer has transferred the full payment to Jobonic. Your collaboration has officially started. Give it your best."
             />
             : <div className="flex flex-col space-y-3">
                 <InChatSystemMessage
-                    message="Your Payment is successfully transfered to Jobonic. Jobonic will send to freelancer for each successful milestone."
+                    message="Your payment is successfully transfered to Jobonic. Jobonic will send to freelancer for each successful milestone."
                 />
                 <div className="flex justify-center">
-                    <InChatPaymentReceiptCard
+                    <InChatPaymentCard
                         transactionId={transitionId}
+                        transactionType="sent"
                     />
                 </div>
             </div>,
-        payment_received: authUserType === 'freelancer'
-            ? <InChatPaymentReceivedCard
+        milestone_payment:
+            <InChatPaymentCard
                 transactionId={transitionId}
+                transactionType={ authUserType === 'freelancer' ? 'received' : 'sent'}
             />
-            : <InChatSystemMessage message="Payment for milestone 1 has been successfully transfered to freelancer."/>
     };
 
     return (

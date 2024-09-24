@@ -3,7 +3,7 @@ import React, { Suspense, useCallback, useEffect, useState } from "react";
 import SideDrawer from "@/components/SideDrawer";
 import ChatList from "@/components/chat/ChatList";
 import { ChatRoom, Message } from "@/types/chat";
-import { RootState } from "@/store";
+import { AppDispatch, RootState } from "@/store";
 import { useDispatch, useSelector } from "react-redux";
 import { ChatProvider, useChat } from "@/contexts/chat";
 import { supabase } from "@/config/supabaseClient";
@@ -32,7 +32,7 @@ const ChatPage = () => {
         loadChatRoomData,
         insertOrUpdateLocalChatRoom,
     } = useChat();
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const { isMobile, screenSize } = useSelector((state: RootState) => state.ui);
     const { authUser } = useSelector((state: RootState) => state.auth );
     const [isLoadingChatRooms, setIsLoadingChatRooms] = useState(false);
@@ -103,14 +103,13 @@ const ChatPage = () => {
                     title: activeChatRoom?.sender.firstName ?? 'New Message', 
                     content: newMessage.content.toString(),
                     status: 'chat',
-                    timeout: 3000
+                    timeout: 4000
                 }));
             }
         }
 
         const handleOnChatRoomChange = async (chatRoom: ChatRoom) => {
             try{
-                console.log('chat room data changed', chatRoom);
                 const chatRoomsWithData = await loadChatRoomData([chatRoom]);
                 insertOrUpdateLocalChatRoom(chatRoomsWithData[0]);
             } catch (error) {
@@ -254,7 +253,7 @@ const ChatPage = () => {
                     <ChatRoomComponent />
 
                     <SideDrawer
-                        width={300}
+                        width={320}
                         show={showProgressList} 
                         onClose={() => setShowProgressList(false)}
                         animate

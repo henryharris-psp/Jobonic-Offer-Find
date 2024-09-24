@@ -3,9 +3,7 @@ import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { useChat } from "@/contexts/chat";
 import SafeInput, { SafeInputChangeEvent } from "../SafeInput";
 import Button from "../Button";
-import httpClient from "@/client/httpClient";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
+import { updateMilestoneStatus } from "@/functions/helperFunctions";
 
 interface PaymentCardProps {
     totalAmount: number;
@@ -17,8 +15,7 @@ const PaymentCard = ({
     onPaid
 }: PaymentCardProps) => {
     const numberFormater = new Intl.NumberFormat();
-    const { activeChatRoom, sendMessage, updateChatRoom } = useChat();
-    const { authUser } = useSelector((state: RootState) => state.auth );
+    const { latestContract, sendMessage, updateChatRoom } = useChat();
     const [note, setNote] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
@@ -54,8 +51,13 @@ const PaymentCard = ({
                 await processPayment();
                 setIsPaid(true);
 
+                const firstMilestone = latestContract?.milestones[0];
+                if(firstMilestone){
+                    await updateMilestoneStatus(firstMilestone, 'waiting_for_submission');
+                }
+
                 //send message to supabase
-                const newlySentMessage = await sendMessage('payment_receipt', 'transaction_id', 'system');
+                const newlySentMessage = await sendMessage('full_payment', 'transaction_id', 'system');
                 if (newlySentMessage) {
                     await updateChatRoom(newlySentMessage.room_id, {
                         status: 'to_submit'
