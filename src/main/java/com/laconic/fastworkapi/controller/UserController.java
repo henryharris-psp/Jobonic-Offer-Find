@@ -67,7 +67,7 @@ public class UserController {
 
     @PostMapping("/get-user-info/")
     public UserProfileDTO getUserProfileDto(@RequestParam Long id, @RequestParam String name) {
-        return userService.getUserProfileDto(id,name);
+        return userService.getUserProfileDto(id, name);
     }
 
 }
