@@ -3,7 +3,6 @@
 import Button from "@/components/Button";
 import Form from "@/components/Form";
 import InputField from "@/components/InputField";
-import Link from "next/link";
 import { useEffect, useRef, useState, MouseEvent } from "react";
 import * as Yup from "yup";
 import { SERVER_AUTH } from "@/baseURL";
@@ -97,9 +96,9 @@ export const RegisterForm = (): React.ReactNode => {
             localStorage.setItem('refresh_token', response.data.refresh_token);
             localStorage.setItem('registerFormPage', 'jobonicRegister');
             window.location.reload();
-            toast.success('success verify otp');
+            console.log('success verify otp');
         } catch (error) {
-            toast.error('otp is invalid');
+            console.log('otp is invalid');
             console.error('Error:', error);
         } finally {
         }
@@ -263,10 +262,11 @@ export const RegisterForm = (): React.ReactNode => {
                         <InputField label="Confirm Password" type="password" name="confirmPassword" placeholder="Confirm Password" />
                     </div>
                     <div className="flex items-center justify-center">
-                        <Button type="submit"
-                                variant="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2">
-                            Create User
-                        </Button>
+                        <Button
+                            title="Create User"
+                            color="primary"
+                            onClick={handleSubmitAuthRegister}
+                        />
                     </div>
                 </Form>
             }
@@ -286,10 +286,11 @@ export const RegisterForm = (): React.ReactNode => {
                         <InputField label="Check OTP In Email" type="text" name="checkOTP" placeholder="OTP Number" />
                     </div>
                     <div className="flex items-center justify-center">
-                        <Button type="submit"
-                                variant="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2">
-                            Confirm OTP
-                        </Button>
+                        <Button
+                            title="Confirm OTP"
+                            color="primary"
+                            onClick={handleSubmitCheckOTP}
+                        />
                     </div>
                 </Form>
             }
@@ -332,10 +333,11 @@ export const RegisterForm = (): React.ReactNode => {
                         <InputField label="Wallet Address" type="text" name="walletAddress" placeholder="Wallet Address" />
                     </div>
                     <div className="flex items-center justify-center">
-                        <Button type="submit"
-                                variant="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 mb-2">
-                            Create Profile
-                        </Button>
+                        <Button
+                            title="Create Profile"
+                            color="primary"
+                            onClick={handleSubmitJobonicRegister}
+                        />
                     </div>
                 </Form>
             }

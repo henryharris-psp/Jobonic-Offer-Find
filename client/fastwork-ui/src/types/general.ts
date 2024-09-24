@@ -58,7 +58,7 @@ export interface Contract {
 }
 
 export interface Payment {
-    transactionId: string;
+    transactionId: string; //otherwise, paymentId
     amount: number;
     date: string;
     paymentMethod: string;
