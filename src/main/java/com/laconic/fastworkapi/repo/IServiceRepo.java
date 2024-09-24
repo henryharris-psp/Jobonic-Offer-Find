@@ -1,6 +1,9 @@
 package com.laconic.fastworkapi.repo;
 
 import com.laconic.fastworkapi.entity.ServiceManagement;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -26,4 +29,7 @@ public interface IServiceRepo extends JpaRepository<ServiceManagement, UUID>, Jp
             @Param("minPrice") Double minPrice,
             @Param("maxPrice") Double maxPrice,
             @Param("submissionDeadline") LocalDate submissionDeadline);
+
+    @Query("SELECT s FROM ServiceManagement s WHERE s.profile.id <> :authUserId")
+    Page<ServiceManagement> findAllExceptAuthUser(@Param("authUserId") Long authUserId, Pageable pageable);
 }

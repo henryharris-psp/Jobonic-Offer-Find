@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,7 +37,7 @@ public class PageAndFilterDTO<T extends SearchAndFilterDTO> implements Serializa
 
     private T filter;
 
-    private int authId;
+    private Long authId;
 
     @Hidden
     public PageRequest getPageRequest() {
@@ -44,14 +45,7 @@ public class PageAndFilterDTO<T extends SearchAndFilterDTO> implements Serializa
             return PageRequest.of(pageNumber - 1, pageSize, sortOrder == SortOrder.ASC ? Sort.Direction.ASC :
                     Sort.Direction.DESC, sortBy);
         }
+
         return PageRequest.of(pageNumber - 1, pageSize);
-    }
-
-    public int getAuthId() {
-        return authId;
-    }
-
-    public void setAuthId(int authId) {
-        this.authId = authId;
     }
 }

@@ -197,15 +197,16 @@ public class ManagementService implements IManagementService {
     @Override
     public PaginationDTO<ServiceDTO.WithProfile> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
+
         Specification<ServiceManagement> specs =
                 GenericSpecification.hasKeyword((String) keyword, Set.of("title"));
 
-        Page<ServiceManagement> servicePage = keyword != null ?
-                this.serviceRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
-                : this.serviceRepo.findAll(pageAndFilterDTO.getPageRequest());
+        Page<ServiceManagement> servicePage = keyword != null
+                ? this.serviceRepo.findAll(Specification.where(specs).and((root, query, criteriaBuilder) ->
+                criteriaBuilder.notEqual(root.get("profile").get("id"), pageAndFilterDTO.getAuthId())), pageAndFilterDTO.getPageRequest())
+                : this.serviceRepo.findAllExceptAuthUser(pageAndFilterDTO.getAuthId(), pageAndFilterDTO.getPageRequest());
 
         List<ServiceDTO.WithProfile> servicesWithProfile = servicePage.stream()
-                .filter(service -> !service.getProfile().getId().equals(pageAndFilterDTO.getAuthId()))
                 .map(service -> getServiceWithProfile(service, service.getProfile()))
                 .collect(Collectors.toList());
 
@@ -286,13 +287,12 @@ public class ManagementService implements IManagementService {
         Specification<ServiceManagement> specs =
                 GenericSpecification.hasKeyword((String) keyword, Set.of("title"));
 
-        Page<ServiceManagement> servicePage = (keyword != null) ?
-                this.serviceRepo.findAll(specs, pageAndFilterDTO.getPageRequest())
-                : this.serviceRepo.findAll(pageAndFilterDTO.getPageRequest());
+        Page<ServiceManagement> servicePage = keyword != null
+                ? this.serviceRepo.findAll(Specification.where(specs).and((root, query, criteriaBuilder) ->
+                criteriaBuilder.notEqual(root.get("profile").get("id"), pageAndFilterDTO.getAuthId())), pageAndFilterDTO.getPageRequest())
+                : this.serviceRepo.findAllExceptAuthUser(pageAndFilterDTO.getAuthId(), pageAndFilterDTO.getPageRequest());
 
-        // Map the entities to DTOs
         List<ExtendedServiceRequestDTO.WithProfile> extendedServiceWithProfile = servicePage.stream()
-                .filter(service -> !service.getProfile().getId().equals(pageAndFilterDTO.getAuthId()))
                 .map(service -> getAllExtendedRequestWithProfile(service, service.getProfile()))
                 .collect(Collectors.toList());
 

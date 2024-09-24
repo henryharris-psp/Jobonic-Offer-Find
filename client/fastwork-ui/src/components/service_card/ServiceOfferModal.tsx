@@ -3,6 +3,8 @@ import ServiceOfferCard from "@/components/service_card/ServiceOfferCard";
 import httpClient from "@/client/httpClient";
 import { fetchServices } from "@/functions/helperFunctions";
 import { Service } from "@/types/service";
+import { RootState } from "@/store";
+import { useSelector } from "react-redux";
 
 interface ServiceOfferModalProps {
     onClick: (serviceId: string) => void;
@@ -11,6 +13,7 @@ interface ServiceOfferModalProps {
 const ServiceOfferModal = ({ 
     onClick 
 }: ServiceOfferModalProps) => {
+    const { authUser } = useSelector((state: RootState) => state.auth );
     const [setCloseModal, isSetCloseModal] = useState(false);
     const [serviceOfferOpen, SetServiceOfferOpen] = useState(false);
     const handleCloseModal = () => {
@@ -41,6 +44,7 @@ const ServiceOfferModal = ({
                         deadlineDate: "",
                         categoryId: "",
                     },
+                    authId: authUser?.profile.id || 0,
                 });
 
                 setServices(res?.content ?? []);
