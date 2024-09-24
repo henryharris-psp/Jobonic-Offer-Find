@@ -85,7 +85,7 @@ const SafeInput = ({
         <div className="flex flex-col space-y-1 w-full">
 
             { title ? (
-                <span className="text-xs font-bold text-gray">{title}</span>
+                <span className="text-xs font-bold text-gray-500">{title}</span>
             ) : ''}
 
             { type === 'textarea' ? (

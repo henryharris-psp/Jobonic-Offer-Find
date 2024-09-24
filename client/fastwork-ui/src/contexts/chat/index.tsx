@@ -54,30 +54,17 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
     //methods
         //fetch from jobonic db
-            const fetchLatestContract = useCallback(async (messages: Message[], signal: AbortSignal) => {
-                const contractMessages = messages.filter((message) => message.media_type === 'contract');
-
-                if (contractMessages.length === 0) {
+            const fetchLatestContract = useCallback( async (contractId: string | null, signal: AbortSignal) => {
+                if (!contractId) {
                     setLatestContract(null);
                     return;
                 }
-
-                const latestContractMessage = contractMessages.reduce(
-                    (latest, message) => (message.id > latest.id ? message : latest),
-                    contractMessages[0]
-                );
-
-                const latestContractId = latestContractMessage?.content;
-
-                if (latestContractId) {
-                    try {
-                        const contract = await fetchContract(latestContractId, signal);
-                        if(contract) setLatestContract(contract);
-                    } catch (error) {
-                        console.error('Error fetching latest contract:', error);
-                    }
-                } else {
-                    setLatestContract(null);
+            
+                try {
+                    const contract = await fetchContract(contractId, signal);
+                    if (contract) setLatestContract(contract);
+                } catch (error) {
+                    console.error('Error fetching latest contract:', error);
                 }
             }, []);
 
@@ -109,9 +96,6 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
                         match = matchRes.data;
                     }
-
-                    // console.log('receiverId', receiverId, receiver.lastName);
-                    // console.log('senderId', authUser?.profile.id, authUser?.profile.lastName);
                     
                     return {
                         ...chatRoom,
@@ -303,20 +287,29 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             };
 
     //watcher and computed
+        //this effect runs on every new message
         useEffect(() => {
             const controller = new AbortController();
             const { signal } = controller;
-    
+        
             const { activeChatRoom } = state;
             const messages = activeChatRoom?.messages || [];
-    
+        
             if (!activeChatRoom || messages.length === 0) {
                 setLatestContract(null);
                 return;
             }
-    
-            fetchLatestContract(messages, signal);
-    
+        
+            const sortedMessages = [...messages].sort((a, b) => b.id - a.id);// [...messages] used with spread params not to effect messages directly
+            const latestContractMessage = sortedMessages.find((message) => message.media_type === 'contract');
+            const latestContractId = latestContractMessage?.content || null;
+        
+            if (latestContractId) {
+                fetchLatestContract(latestContractId, signal);
+            } else {
+                setLatestContract(null);
+            }
+        
             return () => controller.abort();
         }, [state.activeChatRoom?.messages, fetchLatestContract]);
     

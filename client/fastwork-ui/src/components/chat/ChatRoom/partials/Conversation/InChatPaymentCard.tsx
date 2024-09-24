@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from 'react'
-import MediaSkeleton from './MediaSkeleton';
-import Button from '@/components/Button';
-import { ArrowPathIcon } from '@heroicons/react/24/solid';
-import { Payment } from '@/types/general';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
-import { useChat } from '@/contexts/chat';
-import { supabase } from '@/config/supabaseClient';
+import React, { useEffect, useState } from "react";
+import MediaSkeleton from "./MediaSkeleton";
+import { Payment } from "@/types/general";
+import Button from "@/components/Button";
+import { useChat } from "@/contexts/chat";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import { ArrowPathIcon } from "@heroicons/react/24/solid";
+import { supabase } from "@/config/supabaseClient";
 
-interface InChatPaymentReceiptCardProps {
+interface InChatPaymentCardProps {
     transactionId: string;
+    transactionType: 'sent' | 'received';
 }
 
-const InChatPaymentReceiptCard = ({
+const InChatPaymentCard = ({
     transactionId,
-}: InChatPaymentReceiptCardProps) => {
+    transactionType
+}: InChatPaymentCardProps) => {
     const numberFormater = new Intl.NumberFormat();
     const { authUser } = useSelector((state: RootState) => state.auth );
     const { activeChatRoom, createNewChatRoom, loadChatRoomData, changeChatRoom } = useChat();
@@ -52,7 +54,7 @@ const InChatPaymentReceiptCard = ({
             }
         }
 
-        //TODO: this function may use for multiple times export from context
+    //methods
         const handleOnClickContactSupport = async () => {
             if(activeChatRoom && authUser){
                 setIsLoading(true);
@@ -88,7 +90,7 @@ const InChatPaymentReceiptCard = ({
                 setIsLoading(false);
             }
         }
-        
+
     return (
         <>
             { isLoading ? (
@@ -111,29 +113,33 @@ const InChatPaymentReceiptCard = ({
                 ) : (
                     <div className="max-w-md mx-auto p-4 bg-gray-50 shadow-md rounded-lg border border-gray-200">
                         <div className="flex flex-row mb-2">
-                            <span className="italic text-gray-400 text-2xs">
+                            <span className="italic text-gray-400 text-xs">
                                 System Message
                             </span>
                         </div>
 
                         <div className="flex items-center justify-between">
                             <div className="font-semibold text-gray-800">
-                                Receipt
+                                { transactionType === 'sent' ? 'Payment Sent' : 'Payment Received'}
                             </div>
-                            <div className="text-xs text-gray-500">
-                                {payment.date}
-                            </div>
+                            <div className="text-xs text-gray-500">{payment.date}</div>
                         </div>
                         <hr className="my-2 border-gray-300" />
 
                         <div className="mt-3">
-                            <div className="flex justify-between text-gray-600">
-                                <span className="text-sm">Amount Paid:</span>
+                            <div className="flex justify-between text-gray-600 mt-2">
+                                <span className="text-sm">For:</span>
+                                <span className="font-bold text-sm">
+                                    All Milestone
+                                </span>
+                            </div>
+                            <div className="flex justify-between items-center text-gray-600 mt-2">
+                                <span className="text-sm">Amount { transactionType === 'sent' ? 'Sent' : 'Received'}:</span>
                                 <span className="font-bold text-sm text-green-600">
                                     ${numberFormater.format(payment.amount)}
                                 </span>
                             </div>
-                            <div className="flex justify-between items-center text-gray-600 mt-2">
+                            <div className="flex justify-between text-gray-600 mt-2">
                                 <span className="text-sm">Transaction ID:</span>
                                 <span className="font-mono text-xs">
                                     {payment.transactionId}
@@ -147,11 +153,18 @@ const InChatPaymentReceiptCard = ({
 
                         <hr className="my-2 border-gray-300" />
 
-                        <div className="mt-3">
-                            <div className="flex justify-between mt-2">
-                                <span className="text-sm font-semibold text-gray-800">Billed To:</span>
-                                <span className="text-sm text-gray-600">{payment.receiverName}</span>
-                            </div>
+                        <div className="flex flex-col mt-3 space-y-2">
+                            { transactionType === 'sent' ? (
+                                <div className="flex justify-between">
+                                    <span className="text-sm font-semibold text-gray-800">Billed To:</span>
+                                    <span className="text-sm text-gray-600">{payment.receiverName}</span>
+                                </div>
+                            ) : (
+                                <div className="flex justify-between">
+                                    <span className="text-sm font-semibold text-gray-800">Received From:</span>
+                                    <span className="text-sm text-gray-600">{payment.senderName}</span>
+                                </div>
+                            )}
                         </div>
 
                         <div className="mt-4 text-center space-y-3">
@@ -159,10 +172,10 @@ const InChatPaymentReceiptCard = ({
                                 If you have any questions, contact our support.
                             </p>
                             <Button
-                                fullWidth
-                                color="info"
+                                fullWidth={true}
                                 size="sm"
                                 title="Contact Support"
+                                color="info"
                                 onClick={handleOnClickContactSupport}
                             />
                         </div>
@@ -171,6 +184,6 @@ const InChatPaymentReceiptCard = ({
             )}
         </>
     )
-}
+};
 
-export default InChatPaymentReceiptCard
+export default InChatPaymentCard;

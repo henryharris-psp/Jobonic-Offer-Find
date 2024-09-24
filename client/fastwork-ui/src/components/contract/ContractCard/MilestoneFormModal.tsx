@@ -100,12 +100,12 @@ const MilestoneFormModal = ({
                     id: isEdit ? milestone.id : uuid(),
                     price: Number(inputs.price),
                     tasks,
+                    description: "not_started",
 
                     //not_required
                     serviceId: activeChatRoom?.service_id,
                     matchId: activeChatRoom?.match_id,
                     numberOfHoursCompleted: 0,
-                    description: "not_required",
                 }
 
                 isEdit ? onUpdated(submitData) : onAdded(submitData);
@@ -163,7 +163,7 @@ const MilestoneFormModal = ({
                     {/* tasks section*/}
                     <div className="flex flex-col space-y-3 overflow-hidden">
                         <div className="flex">
-                            <span className="font-bold text-gray-800">
+                            <span className="font-bold text-gray-500">
                                 Tasks
                             </span>
                         </div>

@@ -1,7 +1,7 @@
 import { TailwindSizes } from "@/types/general";
 import { ReactNode,MouseEventHandler } from "react";
 
-interface ButtonProps {
+export interface ButtonProps {
     variant?: 'contained' | 'outlined',
     title: string;
     color?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info';

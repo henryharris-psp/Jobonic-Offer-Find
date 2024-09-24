@@ -48,7 +48,6 @@ export interface People {
 //     numSold: number;
 // }
 
-
 //new
 export interface Match {
     id: string;
@@ -71,10 +70,11 @@ export type MediaType =
     'image' | 
     'contract' | 
     'service' |
+    'milestone' |
     'chat_room' |
     'payment_request' |
-    'payment_receipt' | 
-    'payment_received'
+    'full_payment' | 
+    'milestone_payment';
 
 export interface Message {
     id: string | number;

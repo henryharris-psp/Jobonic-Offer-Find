@@ -6,6 +6,7 @@ import { useChat } from "@/contexts/chat";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { ArrowPathIcon } from "@heroicons/react/24/solid";
+import { supabase } from "@/config/supabaseClient";
 
 interface InChatPaymentReceivedCardProps {
     transactionId: string;
@@ -37,11 +38,10 @@ const InChatPaymentReceivedCard = ({
                 const paymentRes: Payment = {
                     transactionId: transactionId,
                     amount: 123,
-                    billedTo: "Jobonic",
                     date: "31/12/2024",
                     paymentMethod: "Payni",
                     senderName: "Feelancer Dummy",
-                    receiveName: "Jobonic"
+                    receiverName: "Jobonic"
                 };
 
                 if(paymentRes) setPayment(paymentRes);
@@ -118,7 +118,7 @@ const InChatPaymentReceivedCard = ({
 
                         <div className="flex items-center justify-between">
                             <div className="font-semibold text-gray-800">
-                                Payment Received
+                                You Received a Payment
                             </div>
                             <div className="text-xs text-gray-500">{payment.date}</div>
                         </div>

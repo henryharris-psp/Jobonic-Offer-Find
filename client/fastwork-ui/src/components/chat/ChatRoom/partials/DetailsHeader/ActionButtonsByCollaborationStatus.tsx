@@ -14,7 +14,7 @@ import ReviewButtons from "../action_buttons/ReviewButtons";
 import ContractAndPaymentButtons from "../action_buttons/ContractAndPaymentButtons";
 import TerminationContractButton from "../action_buttons/TerminationContractButton";
 import SubmitWorkButton from "../action_buttons/SubmitWorkButton";
-import HireAgainButton from "../action_buttons/HireAgainButton";
+import HireAgainAndViewProgressButton from "../action_buttons/HireAgainAndViewProgressButton";
 
 type ActionButtonMap = { [key: string]: JSX.Element | null };
 
@@ -36,14 +36,10 @@ const employerActionButtonsMap = {
     invited: <WaitingStatus status="Waiting For Confirmation"/>,
     signing_contract: <ContractAndPaymentButtons/>,
     payment_verification: <ContractAndPaymentButtons/>,
-    to_submit: 
-        <div className="flex flex-col space-x-3 items-center space-y-2">
-            <HireAgainButton/>
-            <WaitingStatus status="Currently, waiting for milestone 1 submission"/>
-        </div>, //TODO: render current milestone name
+    to_submit: <HireAgainAndViewProgressButton/>,
     to_review: <ReviewButtons/>,
     contract_termination: <TerminationContractButton role="employer"/>,
-    completed: <HireAgainButton/>
+    completed: <div>Completed Employer side</div>
 };
 
 const actionButtonsMap: Record<'freelancer' | 'employer', ActionButtonMap> = {
@@ -54,8 +50,6 @@ const actionButtonsMap: Record<'freelancer' | 'employer', ActionButtonMap> = {
 const ActionButtonsByCollaborationStatus = () => {
     const { activeChatRoom, authUserType } = useChat();
     const currentStatus = activeChatRoom ? activeChatRoom.status : '';
-
-    console.log('authUserType : ', authUserType);
 
     let ActionButtonComponent = null;
 

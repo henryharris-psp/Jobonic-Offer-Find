@@ -1,4 +1,3 @@
-import React from "react";
 import { useChat } from "@/contexts/chat";
 import { RootState } from "@/store";
 import { useSelector } from "react-redux";
@@ -8,7 +7,7 @@ import ActionButtonsByCollaborationStatus from "./ActionButtonsByCollaborationSt
 
 const DetailsHeader = () => {
     const { authUser } = useSelector((state: RootState) => state.auth);
-    const { activeChatRoom } = useChat();
+    const { activeChatRoom, latestContract } = useChat();
     const stringParser = new StringParser();
 
     return (
@@ -88,7 +87,10 @@ const DetailsHeader = () => {
                         </div>
                         <div className="bg-[#82BDC5] px-3 py-2 rounded-lg text-sm text-white whitespace-nowrap text-start">
                             <span className="capitalize text-sm">
-                                {stringParser.replaceUnderscoreWithSpace(activeChatRoom?.status ?? '')}
+                                { activeChatRoom?.status === "to_submit" 
+                                    ? latestContract?.currentMilestone?.title
+                                    : stringParser.replaceUnderscoreWithSpace(activeChatRoom?.status ?? '')
+                                }
                             </span>
                         </div>
                     </div>

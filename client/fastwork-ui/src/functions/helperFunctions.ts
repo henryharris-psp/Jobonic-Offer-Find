@@ -1,5 +1,5 @@
 import httpClient from '@/client/httpClient';
-import { Category, Contract } from '@/types/general';
+import { Category, Contract, FileProps, Milestone, MilestoneStatus } from '@/types/general';
 import { ServiceApiResponse, ServicePayload } from '@/types/service';
 import axios from 'axios';
 
@@ -185,14 +185,49 @@ export const getCategoryName = async (categoryId: string) => {
         }
     };
 
+    export const fetchUploadedFiles = async (
+        milestoneId: string | number,
+        signal?: AbortSignal
+    ): Promise<FileProps[] | undefined> => {
+        try {
+            const filesRes = await httpClient.get(`attachment/checkpoint?checkPointId=${milestoneId}`, { signal });
+            const files = filesRes.data.map((file: any) => ({ 
+                id: file.id,
+                name: file.name,
+                size: file.fileSize,
+                status: 'uploaded'
+            }));
+
+            return files
+        } catch (error) {
+            console.error('Error fetching uploaded files:', error);
+        }
+    };
+    
     export const fetchContract = async (
         contractId: string | number,
         signal?: AbortSignal
     ): Promise<Contract | undefined> => {
         try {
-            //get_contract
             const res = await httpClient.get(`contract/${contractId}`, { signal });
-            return res.data;
+            const contract = res.data;
+            //sort the first one on the top
+            const sortedMilestones = contract.milestones.reverse();
+            const milestonesWithFiles = await Promise.all(sortedMilestones.map(async (milestone: Milestone) => {
+                const uploadedFiles = await fetchUploadedFiles(milestone.id, signal);
+                return {
+                    ...milestone,
+                    uploadedFiles
+                };
+            }));
+    
+            const currentMilestone = milestonesWithFiles.find((milestone: Milestone) => !['not_started', 'paid'].includes(milestone.description));
+    
+            return {
+                ...contract,
+                milestones: milestonesWithFiles,
+                currentMilestone
+            };
         } catch (error: any) {
             if (error.name === 'AbortError') {
                 console.log('Fetch contract aborted');
@@ -200,7 +235,8 @@ export const getCategoryName = async (categoryId: string) => {
                 console.error('Fetch contract error:', error);
             }
         }
-    }
+    };
+    
 
     export const fetchPayment = async (
         transactionId: string | number,
@@ -213,6 +249,29 @@ export const getCategoryName = async (categoryId: string) => {
         } catch (error: any) {
             if (error.name === 'AbortError') {
                 console.log('Fetch contract aborted');
+            } else {
+                console.error('Fetch contract error:', error);
+            }
+        }
+    }
+
+    export const updateMilestoneStatus = async (
+        milestone: Milestone,
+        newStatus: MilestoneStatus,
+        signal?: AbortSignal
+    ): Promise<Milestone | undefined> => {
+        try {
+            //update_milestone
+            const res = await httpClient.put(`checkpoint?id=${milestone.id}`, {
+                ...milestone,
+                description: newStatus,
+                tasks: []
+            }, { signal });
+
+            return res.data;
+        } catch (error: any) {
+            if (error.name === 'AbortError') {
+                console.log('Update milestone aborted');
             } else {
                 console.error('Fetch contract error:', error);
             }

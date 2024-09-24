@@ -40,7 +40,7 @@ const SideDrawer = ({
     return (
         <>
             <div
-                className={`top-0 bottom-0 bg-none flex shadow overflow-hidden ${
+                className={`flex top-0 bottom-0 bg-none shadow overflow-hidden ${
                     fullScreen ? 'fixed' : 'absolute'
                 }`}
                 style={{

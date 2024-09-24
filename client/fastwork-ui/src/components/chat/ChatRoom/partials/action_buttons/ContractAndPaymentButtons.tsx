@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import ContractAcceptStatus from "../DetailsHeader/ContractAcceptStatus";
 import Button from "@/components/Button";
-import PaymentRequestCard from "@/components/payment/PaymentRequestCard";
+import TotalPaymentPreviewCard from "@/components/payment/TotalPaymentPreviewCard";
 import LatestContractModal from "@/components/contract/LatestContractModal";
 
 const ContractAndPaymentButtons = () => {
@@ -36,10 +36,10 @@ const ContractAndPaymentButtons = () => {
         }
 
     //payment modal controller
-        const [showPaymentRequestCardModal, setShowPaymentRequestCardModal] = useState(false);
+        const [showTotalPaymentPreviewCardModal, setShowTotalPaymentPreviewModal] = useState(false);
                 
         const handleOnClickPayNow = () => {
-            setShowPaymentRequestCardModal(true);
+            setShowTotalPaymentPreviewModal(true);
         }
 
     return (
@@ -89,11 +89,11 @@ const ContractAndPaymentButtons = () => {
                     />
 
                     <Modal
-                        isOpen={showPaymentRequestCardModal}
-                        onClose={() => setShowPaymentRequestCardModal(false)}
+                        isOpen={showTotalPaymentPreviewCardModal}
+                        onClose={() => setShowTotalPaymentPreviewModal(false)}
                     >
-                        <PaymentRequestCard
-                            onPaid={() => setShowPaymentRequestCardModal(false)}
+                        <TotalPaymentPreviewCard
+                            onPaid={() => setShowTotalPaymentPreviewModal(false)}
                         />
                     </Modal>
                 </>
