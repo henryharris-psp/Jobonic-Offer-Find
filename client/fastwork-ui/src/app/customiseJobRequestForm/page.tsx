@@ -238,225 +238,237 @@ const CustomiseJobRequestForm: React.FC = () => {
     ],
   };
   return (
-    <div className="flex justify-center">
-      <div className="flex flex-col justify-center items-center w-[65%] my-12 pb-6">
+    <div className="flex flex-col lg:flex-row justify-center sm:flex-wrap md:flex-wrap">
+      <div className="flex flex-col justify-center items-center w-full lg:w-[65%] my-6 lg:my-12 md:my-12">
         <h1 className="text-4xl font-bold text-cyan-900 text-center mb-8">Create Service Request</h1>
         <form className='w-full bg-white p-8 shadow-md rounded-md' onSubmit={handleSubmit}>
-          <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="mb-4">
-              <label htmlFor="title" className=" required block text-lg font-semibold mb-2 ml-2">Title</label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                value={formState.title}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 font-semibold bg-gray-50 text-sm rounded-lg"
-                placeholder="Service Title"
-              />
-              {formErrors.title && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.title}</p>}
-            </div>
-            <div className='mb-4'>
-              <label className="required block text-lg font-semibold ml-2 mb-2" htmlFor="workCategory">Work Category</label>
-              <select
-                id="workCategory"
-                name="workCategory"
-                value={formState.workCategory}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 font-semibold bg-gray-50 text-sm rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-100">
-                <option value="" disabled>Select an option</option>
-                {categoryList.map((category: Category, index: number) => (
-                  <option key={index} value={category.name}>{category.name}</option>
-                ))}
-              </select>
-              {formErrors.workCategory && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.workCategory}</p>}
-            </div>
-            <div className='mb-4'>
-              <label className="required block text-lg font-semibold ml-2 mb-2" htmlFor="employmentType">Employment Type</label>
-              <select
-                id="employmentType"
-                name="employmentType"
-                value={formState.employmentType}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 font-semibold bg-gray-50 text-sm rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-100">
-                <option value="" disabled>Select an option</option>
-                <option value="FULL_TIME">Full-time</option>
-                <option value="PART_TIME">Part-time</option>
-                <option value="CONTRACT">Contract</option>
-              </select>
-              {formErrors.employmentType && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.employmentType}</p>}
-            </div>
-            <div className='mb-4'>
-              <label className="required block text-lg font-semibold ml-2 mb-2" htmlFor="detailedDescription">Detailed Job Description</label>
-              <textarea
-                id="detailedDescription"
-                name="detailedDescription"
-                value={formState.detailedDescription}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 font-semibold bg-gray-50 text-sm rounded-lg"
-                placeholder="Detailed description of the job"
-              />
-              {formErrors.detailedDescription && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.detailedDescription}</p>}
-            </div>
-            <div className='mb-4'>
-              <label className="required block text-lg font-semibold ml-2 mb-2" htmlFor="requirement1">Job Description 1</label>
-              <input
-                type="text"
-                id="requirement1"
-                name="requirement1"
-                value={formState.requirement1}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
-                placeholder="Teach Middle School students"
-              />
-              {formErrors.requirement1 && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.requirement1}</p>}
-            </div>
-            <div className='mb-4'>
-              <label className="required block text-lg font-semibold ml-2 mb-2" htmlFor="requirement2">Job Description 2</label>
-              <input
-                type="text"
-                id="requirement2"
-                name="requirement2"
-                value={formState.requirement2}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
-                placeholder="Familiar with GCE O Levels"
-              />
-              {formErrors.requirement2 && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.requirement2}</p>}
-            </div>
-            <div className='mb-4'>
-              <label className="required block text-lg font-semibold ml-2 mb-2" htmlFor="requirement3">Job Description 3</label>
-              <input
-                type="text"
-                id="requirement3"
-                name="requirement3"
-                value={formState.requirement3}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
-                placeholder="Able to travel to my house"
-              />
-              {formErrors.requirement3 && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.requirement3}</p>}
-            </div>
-            <div className='mb-4'>
-              <label className="block text-lg font-semibold ml-2 mb-2" htmlFor="exampleWork">Examples of Work</label>
-              <input
-                type="text"
-                id="exampleWork"
-                name="exampleWork"
-                value={formState.exampleWork}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
-                placeholder="https://www.netflix.com"
-              />
-              {formErrors.exampleWork && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.exampleWork}</p>}
-            </div>
-            <div className='mb-4'>
-              <label className="block text-lg font-semibold ml-2 mb-2" htmlFor="deadline">Submission Deadline</label>
-              <input
-                type="date"
-                id="deadline"
-                name="deadline"
-                value={formState.deadline}
-                onChange={handleChange}
-                className="w-full border p-3 border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
-                placeholder="Select a date"
-              />
-              {formErrors.deadline && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.deadline}</p>}
-            </div>
-            <div className='flex'>
-              <div className='mb-4 w-[60%] mr-2'>
-                <label className="required block text-lg font-semibold ml-2 mb-2" htmlFor="budget">Budget</label>
+          <div className="w-full shadow-sm p-4 xs:p-8 sm:p-16 lg:p-12 flex flex-col gap-6 rounded-md">
+            <div className="flex md:flex-row lg:flex-row flex-col gap-4">
+              <div className="flex flex-col w-full lg:w-1/2 mb-4">
+                <label htmlFor="title" className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg">Title</label>
                 <input
-                  type="number"
-                  id="budget"
-                  name="budget"
-                  value={formState.budget}
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={formState.title}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 font-semibold text-sm rounded-lg bg-gray-50"
-                  placeholder="$14"
+                  className="w-full p-3 border border-gray-300 font-semibold bg-gray-50 text-sm rounded-lg"
+                  placeholder="Service Title"
                 />
-                {formErrors.budget && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.budget}</p>}
+                {formErrors.title && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.title}</p>}
               </div>
-              <div className='mb-4 w-[38%]'>
-                <label className="required block text-lg font-semibold ml-2 mb-2" htmlFor="priceUnit">Price Unit</label>
+              <div className="flex flex-col w-full lg:w-1/2 mb-4">
+                <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="workCategory">Work Category</label>
                 <select
-                  id="priceUnit"
-                  name="priceUnit"
-                  value={formState.priceUnit}
+                  id="workCategory"
+                  name="workCategory"
+                  value={formState.workCategory}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50 cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-100">
-                  <option value="" disabled>Select a unit</option>
-                  <option value="HOUR">Hour</option>
-                  <option value="WEEK">Week</option>
-                  <option value="MONTH">Month</option>
-                  <option value="PROJECT">Project</option>
+                  className="w-full p-3 border border-gray-300 font-semibold bg-gray-50 text-sm rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-100">
+                  <option value="" disabled>Select an option</option>
+                  {categoryList.map((category: Category, index: number) => (
+                    <option key={index} value={category.name}>{category.name}</option>
+                  ))}
                 </select>
+                {formErrors.workCategory && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.workCategory}</p>}
               </div>
             </div>
-            <div className="mb-4">
-              <label className="required block text-lg font-semibold ml-2 mb-2" htmlFor="language">
-                Language Spoken
-              </label>
-              <div className="relative">
-                <button
-                  onClick={toggleDropdown}
-                  className="inline-flex justify-between items-center p-3 w-full text-sm font-medium text-center bg-gray-100 text-black rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-100"
-                  type="button"
-                >
-                  Select Languages
-                  <svg className="w-2.5 h-2.5 ms-2.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="m1 1 4 4 4-4"
-                    />
-                  </svg>
-                </button>
-                {/* Dropdown Menu */}
-                {isDropdownOpen && (
-                  <div className="z-10 absolute w-full bg-gray-100 rounded-lg shadow mt-2 dark:bg-gray-700 max-h-42 overflow-y-auto">
-                    <ul className="h-32 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200">
-                      {languages.map((language, index) => (
-                        <li key={index}>
-                          <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                            <input
-                              id={`checkbox-item-${index}`}
-                              type="checkbox"
-                              value={language.value}
-                              onChange={handleLanguageCheckboxChange}
-                              checked={formState.language.includes(language.value)} // Check if language is selected
-                              className="w-4 h-4 text-blue-600 border-gray-300 rounded"
-                            />
-                            <label htmlFor={`checkbox-item-${index}`} className="w-full ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                              {language.display}
-                            </label>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+            <div className="flex md:flex-row lg:flex-row flex-col gap-4">
+              <div className="flex flex-col w-full lg:w-1/2 mb-4">
+                <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="employmentType">Employment Type</label>
+                <select
+                  id="employmentType"
+                  name="employmentType"
+                  value={formState.employmentType}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 font-semibold bg-gray-50 text-sm rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-100">
+                  <option value="" disabled>Select an option</option>
+                  <option value="FULL_TIME">Full-time</option>
+                  <option value="PART_TIME">Part-time</option>
+                  <option value="CONTRACT">Contract</option>
+                </select>
+                {formErrors.employmentType && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.employmentType}</p>}
               </div>
-              {/* Display selected languages */}
-              <div className="mt-2 text-sm text-gray-700 font-semibold">
-                Selected Languages: {formState.language.join(', ') || 'None'}
+              <div className='flex flex-col w-full lg:w-1/2 mb-4'>
+                <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="detailedDescription">Detailed Job Description</label>
+                <textarea
+                  id="detailedDescription"
+                  name="detailedDescription"
+                  value={formState.detailedDescription}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 font-semibold bg-gray-50 text-sm rounded-lg"
+                  placeholder="Detailed description of the job"
+                />
+                {formErrors.detailedDescription && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.detailedDescription}</p>}
               </div>
-              {formErrors.language && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.language}</p>}
             </div>
-            <div className='mb-4'>
-              <label className="required block text-lg font-semibold ml-2 mb-2" htmlFor="location">Location</label>
-              <input
-                type="text"
-                id="location"
-                name="location"
-                value={formState.location}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 text-sm rounded-lg font-semibold bg-gray-50"
-                placeholder="Online / Phra Khanong / On Nut"
-              />
-              {formErrors.location && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.location}</p>}
+            <div className="flex md:flex-row lg:flex-row flex-col gap-4">
+              <div className='flex flex-col w-full lg:w-1/2 mb-4'>
+                <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="requirement1">Job Description 1</label>
+                <input
+                  type="text"
+                  id="requirement1"
+                  name="requirement1"
+                  value={formState.requirement1}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
+                  placeholder="Teach Middle School students"
+                />
+                {formErrors.requirement1 && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.requirement1}</p>}
+              </div>
+              <div className='flex flex-col w-full lg:w-1/2 mb-4'>
+                <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="requirement2">Job Description 2</label>
+                <input
+                  type="text"
+                  id="requirement2"
+                  name="requirement2"
+                  value={formState.requirement2}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
+                  placeholder="Familiar with GCE O Levels"
+                />
+                {formErrors.requirement2 && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.requirement2}</p>}
+              </div>
+            </div>
+            <div className="flex md:flex-row lg:flex-row flex-col gap-4">
+              <div className='flex flex-col w-full lg:w-1/2 mb-4'>
+                <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="requirement3">Job Description 3</label>
+                <input
+                  type="text"
+                  id="requirement3"
+                  name="requirement3"
+                  value={formState.requirement3}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
+                  placeholder="Able to travel to my house"
+                />
+                {formErrors.requirement3 && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.requirement3}</p>}
+              </div>
+              <div className='flex flex-col w-full lg:w-1/2 mb-4'>
+                <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="exampleWork">Examples of Work</label>
+                <input
+                  type="text"
+                  id="exampleWork"
+                  name="exampleWork"
+                  value={formState.exampleWork}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
+                  placeholder="https://www.netflix.com"
+                />
+                {formErrors.exampleWork && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.exampleWork}</p>}
+              </div>
+            </div>
+            <div className="flex md:flex-row lg:flex-row flex-col gap-4">
+              <div className='flex flex-col w-full lg:w-1/2 mb-4 '>
+                <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="deadline">Submission Deadline</label>
+                <input
+                  type="date"
+                  id="deadline"
+                  name="deadline"
+                  value={formState.deadline}
+                  onChange={handleChange}
+                  className="w-full border p-3 border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
+                  placeholder="Select a date"
+                />
+                {formErrors.deadline && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.deadline}</p>}
+              </div>
+              <div className='flex flex-row w-full lg:w-1/2 mb-4'>
+                <div className='mb-4 w-[60%] mr-2'>
+                  <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="budget">Budget</label>
+                  <input
+                    type="number"
+                    id="budget"
+                    name="budget"
+                    value={formState.budget}
+                    onChange={handleChange}
+                    className="w-full p-3 border border-gray-300 font-semibold text-sm rounded-lg bg-gray-50"
+                    placeholder="$14"
+                  />
+                  {formErrors.budget && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.budget}</p>}
+                </div>
+                <div className='mb-4 w-[38%]'>
+                  <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="priceUnit">Price Unit</label>
+                  <select
+                    id="priceUnit"
+                    name="priceUnit"
+                    value={formState.priceUnit}
+                    onChange={handleChange}
+                    className="w-full p-3 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50 cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-100">
+                    <option value="" disabled>Select a unit</option>
+                    <option value="HOUR">Hour</option>
+                    <option value="WEEK">Week</option>
+                    <option value="MONTH">Month</option>
+                    <option value="PROJECT">Project</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="flex md:flex-row lg:flex-row flex-col gap-4">
+              <div className="flex flex-col w-full lg:w-1/2 mb-4">
+                <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="language">
+                  Language Spoken
+                </label>
+                <div className="relative">
+                  <button
+                    onClick={toggleDropdown}
+                    className="inline-flex justify-between items-center p-3 w-full text-sm font-medium text-center bg-gray-100 text-black rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-100"
+                    type="button"
+                  >
+                    Select Languages
+                    <svg className="w-2.5 h-2.5 ms-2.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                      <path
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="m1 1 4 4 4-4"
+                      />
+                    </svg>
+                  </button>
+                  {/* Dropdown Menu */}
+                  {isDropdownOpen && (
+                    <div className="z-10 absolute w-full bg-gray-100 rounded-lg shadow mt-2 dark:bg-gray-700 max-h-42 overflow-y-auto">
+                      <ul className="h-32 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200">
+                        {languages.map((language, index) => (
+                          <li key={index}>
+                            <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                              <input
+                                id={`checkbox-item-${index}`}
+                                type="checkbox"
+                                value={language.value}
+                                onChange={handleLanguageCheckboxChange}
+                                checked={formState.language.includes(language.value)} // Check if language is selected
+                                className="w-4 h-4 text-blue-600 border-gray-300 rounded"
+                              />
+                              <label htmlFor={`checkbox-item-${index}`} className="w-full ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                {language.display}
+                              </label>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+                {/* Display selected languages */}
+                <div className="mt-2 text-sm text-gray-700 font-semibold ml-2">
+                  Selected Languages: {formState.language.join(', ') || 'None'}
+                </div>
+                {formErrors.language && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.language}</p>}
+              </div>
+              <div className='flex flex-col w-full lg:w-1/2 mb-4'>
+                <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="location">Location</label>
+                <input
+                  type="text"
+                  id="location"
+                  name="location"
+                  value={formState.location}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 text-sm rounded-lg font-semibold bg-gray-50"
+                  placeholder="Online / Phra Khanong / On Nut"
+                />
+                {formErrors.location && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.location}</p>}
+              </div>
             </div>
           </div>
           <div className="flex justify-center text-center items-center">
