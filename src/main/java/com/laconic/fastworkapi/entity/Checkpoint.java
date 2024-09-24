@@ -8,6 +8,8 @@ import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -53,6 +55,8 @@ public class Checkpoint extends Auditable<UUID> {
     @JoinColumn(name = "contract_id")
     private Contract contract;
 
+    @OneToMany(mappedBy = "checkPoint", cascade = CascadeType.ALL)
+    private List<Attachment> attachments = new ArrayList<>();
 
     /**
      * @param tasks Array of tasks to be converted to JSON

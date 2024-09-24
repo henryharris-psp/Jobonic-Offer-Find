@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.dto;
 
+import com.laconic.fastworkapi.entity.Attachment;
 import com.laconic.fastworkapi.entity.Checkpoint;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.Setter;
 import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -30,6 +32,7 @@ public class CheckpointDTO implements Serializable {
     @Column(columnDefinition = "CLOB")
     private String description;
     private String[] tasks; // Added to handle the tasks array
+    private List<Attachment> attachments; // Added to handle the attachments array
 
     /**
      * @param checkpoint the Checkpoint entity
@@ -45,6 +48,7 @@ public class CheckpointDTO implements Serializable {
         this.numberOfHoursCompleted = checkpoint.getNumberOfHoursCompleted();
         this.description = checkpoint.getDescription();
         this.contractId=checkpoint.getContract().getId();
+        this.attachments = checkpoint.getAttachments();
         try {
             this.tasks = checkpoint.getTasks();
         } catch (IOException e) {

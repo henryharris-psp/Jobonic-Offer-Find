@@ -1,4 +1,5 @@
 'use client';
+
 import Form from "@/components/Form";
 import InputField from "@/components/InputField";
 import Link from "next/link";
@@ -8,6 +9,7 @@ import {baseURL, SERVER_AUTH} from "@/baseURL";
 import { useRouter } from "next/navigation";
 import httpClient from "@/client/httpClient";
 import httpAuth from "@/client/httpAuth";
+import { toast } from "react-toastify";
 import Button from "@/components/Button";
 // Validation Schemas
 const validationSchemaAuth = Yup.object().shape({
@@ -20,18 +22,15 @@ const validationSchemaAuth = Yup.object().shape({
         .oneOf([Yup.ref('password')], 'Password confirmation must match the password')
         .label('Confirm Password')
 });
-
 const validationSchemaCheckOTP = Yup.object().shape({
     checkOTP: Yup.string().required().label('Check OTP'),
 });
-
 const validationSchemaJobonic = Yup.object().shape({
     phoneNumber: Yup.string().required().label('Phone Number'),
     address: Yup.string().required().label('Address'),
     cardNumber: Yup.string().required().label('Card Number'),
     cardExpiryDate: Yup.string().required().label('Card Expiry Date'),
 });
-
 interface RegisterForm {
     authRegister: boolean;
     checkOTP: boolean;
@@ -54,6 +53,9 @@ export const RegisterForm: React.FC = () => {
     const ref = useRef<HTMLFormElement>(null);
     const [registerForm, setRegisterForm] = useState<string | null>(null);
     const [userId, setUserId] = useState<string | null>(null);
+    const [emailError, setEmailError] = useState<string | null>(null);
+const [usernameError, setUsernameError] = useState<string | null>(null);
+
     const [userLogin, setUserLogin] = useState<UserLogin>({
         username: '',
         password: ''
@@ -70,28 +72,50 @@ export const RegisterForm: React.FC = () => {
             emailVerified: true,
             applicationNameCode: "jobonic"
         };
+    
+        // Reset error messages before each submission
+        setEmailError(null);
+        setUsernameError(null);
+    
         try {
             const response = await httpAuth.post(URL, payload);
             const userData = response.data;
-
             const userId = userData.userId || userData.id;
-
-            console.log('User Id :' , userData);
-
+    
+            // Handle successful registration (e.g., store user data, redirect)
             setUserLogin((prevState) => ({
                 ...prevState,
                 username: values.email,
                 password: values.password
             }));
-            localStorage.setItem('userId', userData);
+            localStorage.setItem('userId', userId);
             localStorage.setItem('registerFormPage', 'checkOTP');
             setRegisterForm(localStorage.getItem('registerFormPage'));
             setUserId(userId);
-        } catch (error) {
-            console.error('Error:', error);
+        } catch (error: unknown) {
+            // If the error is related to API response, check and display the correct error messages
+            if (typeof error === 'object' && error !== null && 'response' in error) {
+                const errorMessage = (error as any).response?.data?.message;
+    
+                if (errorMessage) {
+                    // Check for email duplication error
+                    if (errorMessage.includes('email')) {
+                        setEmailError('Email is already registered');
+                    }
+                    // Check for username duplication error
+                    if (errorMessage.includes('username')) {
+                        setUsernameError('Username is already taken');
+                    }
+                } else {
+                    // Handle unknown API errors
+                    toast.error('An unknown error occurred');
+                }
+            } else {
+                toast.error('An unknown error occurred');
+            }
         }
     };
-
+    
     const handleSubmitCheckOTP = async (values: { [key: string]: any }): Promise<void> => {
         const userId = localStorage.getItem('userId');
 
@@ -102,7 +126,10 @@ export const RegisterForm: React.FC = () => {
             const laconicAuthPageUrl = process.env.NEXT_PUBLIC_LACONIC_AUTH_PAGE_URL;
             window.location.href = `${laconicAuthPageUrl}/authentication?page=logout`;
 
+            // Show success toast message
+            toast.success('Success verify OTP');
         } catch (error) {
+            toast.error('OTP is invalid');
             console.error('Error:', error);
         }
     };
@@ -157,7 +184,7 @@ export const RegisterForm: React.FC = () => {
                     }}
                     innerRef={ref}
                 >
-                    <h1 className="mb-6 text-black font-inter text-2xl font-semibold text-center">Sign Up</h1>
+                    <h1 className="mb-6 text-cyan-900 font-inter text-2xl font-bold text-center">Sign Up</h1>
                     <div className="mb-6">
                         <InputField label="First Name" type="text" name="firstname" placeholder="Your First Name" />
                     </div>
@@ -166,9 +193,11 @@ export const RegisterForm: React.FC = () => {
                     </div>
                     <div className="mb-6">
                         <InputField label="Email Address" type="email" name="email" placeholder="Email address" />
+                        {emailError && <p className="text-red-500 text-sm font-semibold mt-2">{emailError}</p>}
                     </div>
                     <div className="mb-6">
                         <InputField label="Username" type="text" name="username" placeholder="Username" />
+                        {usernameError && <p className="text-red-500 text-sm font-semibold mt-2">{usernameError}</p>}
                     </div>
                     <div className="mb-6">
                         <InputField label="Password" name="password" type="password" placeholder="Your Password" />
@@ -177,10 +206,12 @@ export const RegisterForm: React.FC = () => {
                         <InputField label="Confirm Password" type="password" name="confirmPassword" placeholder="Confirm Password" />
                     </div>
                     <div className="flex items-center justify-center">
-                        <Button
-                        title="Create User"
+                        <button
+                        className="bg-[#0B2147] hover:bg-[#D0693B] text-white font-semibold py-3 px-12 rounded-2xl text-sm"
                         onClick={()=>handleSubmitAuthRegister(ref.current?.values)}
-                        />
+                        >
+                            Create User
+                        </button>
                     </div>
                 </Form>
             )}
@@ -196,11 +227,11 @@ export const RegisterForm: React.FC = () => {
                         <InputField label="Check OTP In Email" type="text" name="checkOTP" placeholder="OTP Number" />
                     </div>
                     <div className="flex items-center justify-center">
-                        <Button title="Confirm OTP" onClick={()=> handleSubmitCheckOTP(ref.current?.values)}/>
+                        <button className="bg-[#0B2147] hover:bg-[#D0693B] text-white font-semibold py-3 px-8 rounded-2xl text-sm mr-2" onClick={()=> handleSubmitCheckOTP(ref.current?.values)}>Confirm OTP</button>
                         <button
                             type="button"
                             onClick={() => setRegisterForm('authRegister')}
-                            className="btn-primary flex justify-center text-white bg-blue-900 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-blue-900/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-blue-900/55 me-2 ml-2"
+                            className="bg-[#0B2147] hover:bg-[#D0693B] text-white font-semibold py-3 px-8 rounded-2xl text-sm"
                         >
                             Back to Register
                         </button>
@@ -234,14 +265,14 @@ export const RegisterForm: React.FC = () => {
                         <InputField label="Card Expiry Date" type="text" name="cardExpiryDate" placeholder="Card Expiry Date" />
                     </div>
                     <div className="flex items-center justify-center">
-                        <Button
-                            title="Complete Registration"
+                        <button
+                            className="bg-[#0B2147] hover:bg-[#D0693B] text-white font-semibold py-3 px-8 rounded-2xl text-sm"
                             onClick={() => handleSubmitJobonicRegister(ref.current?.values)}
-                        />
-                        <Button 
-                         title="Back to register"
+                        >Complete Registration</button>
+                        <button 
+                         className="bg-[#0B2147] hover:bg-[#D0693B] text-white font-semibold py-3 px-8 rounded-2xl text-sm"
                          onClick={() => setRegisterForm('authRegister')}
-                        />
+                        >Back to register</button>
                     </div>
                 </Form>
             )}

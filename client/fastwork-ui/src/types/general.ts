@@ -62,4 +62,40 @@ export interface Payment {
     receiveName: string;
 }
 
+export interface CardProps {
+    title: string;
+    earned: string;
+    description: {
+      avatar: string;
+      username: string;
+      review: string;
+    }[];
+    details: string[];
+  }
+  
+ export interface ServiceRequestDTO {
+    id: string;
+    submissionDeadline: string;
+    workExample: string;
+  }
+  
+ export interface Service {
+    id: string;
+    serviceOfferDTO?: any;
+    serviceRequestDTO?: ServiceRequestDTO;
+    profileId: number;
+    title: string;
+    employmentType: string,
+    description: string,
+    description1: string,
+    description2: string,
+    description3: string,
+    languageSpoken: string,
+    location: string,
+    categoryId: string,
+    categoryName?: string,
+    price: number,
+    priceUnit: string
+  }
+
 export type TailwindSizes = "xs" | "sm" | "" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl";
