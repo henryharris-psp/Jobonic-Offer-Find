@@ -9,7 +9,6 @@ import {baseURL, SERVER_AUTH} from "@/baseURL";
 import { useRouter } from "next/navigation";
 import httpClient from "@/client/httpClient";
 import httpAuth from "@/client/httpAuth";
-import { toast } from "react-toastify";
 import Button from "@/components/Button";
 // Validation Schemas
 const validationSchemaAuth = Yup.object().shape({
@@ -108,10 +107,10 @@ const [usernameError, setUsernameError] = useState<string | null>(null);
                     }
                 } else {
                     // Handle unknown API errors
-                    toast.error('An unknown error occurred');
+                    console.log('An unknown error occurred');
                 }
             } else {
-                toast.error('An unknown error occurred');
+                console.log('An unknown error occurred');
             }
         }
     };
@@ -126,11 +125,11 @@ const [usernameError, setUsernameError] = useState<string | null>(null);
             const laconicAuthPageUrl = process.env.NEXT_PUBLIC_LACONIC_AUTH_PAGE_URL;
             window.location.href = `${laconicAuthPageUrl}/authentication?page=logout`;
 
-            // Show success toast message
-            toast.success('Success verify OTP');
+            // Show success message
+            console.log('Success verify OTP');
         } catch (error) {
-            toast.error('OTP is invalid');
-            console.error('Error:', error);
+            console.log('OTP is invalid');
+            console.log('Error:', error);
         }
     };
 
@@ -156,7 +155,7 @@ const [usernameError, setUsernameError] = useState<string | null>(null);
             window.location.href = '/myProfile';
             setRegisterForm(localStorage.getItem('registerFormPage'));
         } catch (error) {
-            console.error('Error:', error);
+            console.log('Error:', error);
         }
     };
 
