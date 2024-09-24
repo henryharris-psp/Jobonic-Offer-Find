@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ContractDTO {
+public class ContractDTO extends Contract {
 
     private UUID id;
     private UUID matchesId;
@@ -26,6 +26,9 @@ public class ContractDTO {
     @JsonIgnore
     private Instant createdDate;
     private Long profileId;
+
+    @JsonIgnore
+    private UUID currentCheckpointId;
 
     public ContractDTO(Contract contract) {
         this.id = contract.getId();
