@@ -34,11 +34,6 @@ public class CheckpointDTO implements Serializable {
     private String[] tasks; // Added to handle the tasks array
     private List<Attachment> attachments; // Added to handle the attachments array
 
-    /**
-     * @param checkpoint the Checkpoint entity
-     * @Author soe
-     * @Note Constructs a CheckpointDTO from a Checkpoint entity.
-     */
     public CheckpointDTO(Checkpoint checkpoint) {
         this.id = checkpoint.getId();
         this.serviceId = checkpoint.getService() != null ? checkpoint.getService().getId() : null;

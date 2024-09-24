@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:oracle:thin:@//localhost:1521/ORCLCDB}
-    username: ${DB_USERNAME:SYS as sysdba}
-    password: ${DB_PASSWORD:123}
+    url: ${DB_URL:jdbc:oracle:thin:@//192.168.1.125:1521/LACONIC}
+    username: ${DB_USERNAME:jobonic}
+    password: ${DB_PASSWORD:jobonic}
     driver-class-name: oracle.jdbc.OracleDriver
   jpa:
     hibernate:
@@ -25,4 +25,9 @@ springdoc:
 server:
   port: 8081
   file:
-    basePath: /Users/bibek/Desktop/workspace/photo/
+    basePath: /Users/bibek¬/Desktop/workspace/photo/
+authorize:
+  url: http://localhost:8765
+  password: sso_laconic
+  file: /Users/bibek/Downloads/sso.p12
+
