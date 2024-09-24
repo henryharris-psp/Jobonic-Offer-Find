@@ -211,13 +211,20 @@ const CustomiseService: React.FC = () => {
         return isValid;
     };
     return (
-        <div className="">
-            <div className="flex justify-center">
-                <div className="flex flex-col justify-center items-center w-[65%] my-12 pb-6">
-                    <h2 className="text-4xl font-bold text-cyan-900 mb-12 text-center">Create Service Offer</h2>
-                    <div className="w-full bg-white shadow-md p-8 grid grid-cols-1 md:grid-cols-2 gap-4 rounded-md">
-                        <div className="mb-4">
-                            <label className="required block text-lg font-semibold mb-2 ml-2" htmlFor="service-title">Service Title</label>
+
+        <div className="flex flex-col lg:flex-row justify-center sm:flex-wrap md:flex-wrap">
+            <div className="flex flex-col justify-center items-center w-full lg:w-[65%] my-6 lg:my-12 md:my-12">
+                <h2 className="text-3xl lg:text-4xl font-bold text-cyan-900 mb-6 lg:mb-12 text-center">
+                    Create Service Offer
+                </h2>
+                <div className="w-full bg-white shadow-sm p-4 xs:p-8 sm:p-16 lg:p-12 flex flex-col gap-6 rounded-md">
+                    {/* First Row */}
+                    <div className="flex md:flex-row lg:flex-row flex-col gap-4">
+                        {/* Service Title Input */}
+                        <div className="flex flex-col w-full lg:w-1/2 mb-4">
+                            <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="service-title">
+                                Service Title
+                            </label>
                             <input
                                 type="text"
                                 id="service-title"
@@ -227,20 +234,18 @@ const CustomiseService: React.FC = () => {
                                 onChange={(e) => {
                                     setTitle(e.target.value);
                                     if (e.target.value.trim() !== '') {
-                                        setTitleError('');  // Clear the error when valid input is provided
+                                        setTitleError(''); // Clear the error when valid input is provided
                                     }
                                 }}
                             />
-
-                            {titleError && (
-                                <div className="text-red-500 font-semibold text-sm mt-1">
-                                    {titleError}
-                                </div>
-                            )}
+                            {titleError && <div className="text-red-500 font-semibold text-sm mt-1">{titleError}</div>}
                         </div>
 
-                        <div className="mb-4">
-                            <label className="required block text-lg font-semibold mb-2 ml-2" htmlFor="employment-type">Employment Type</label>
+                        {/* Employment Type Select */}
+                        <div className="flex flex-col w-full lg:w-1/2 mb-4">
+                            <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="employment-type">
+                                Employment Type
+                            </label>
                             <select
                                 id="employment-type"
                                 value={employmentType}
@@ -248,7 +253,7 @@ const CustomiseService: React.FC = () => {
                                 onChange={(e) => {
                                     setEmploymentType(e.target.value);
                                     if (e.target.value.trim() !== '') {
-                                        setEmploymentType('');  // Clear the error when valid input is provided
+                                        setEmploymentTypeError(''); // Clear the error when valid input is provided
                                     }
                                 }}
                             >
@@ -256,22 +261,20 @@ const CustomiseService: React.FC = () => {
                                 <option value="FULL_TIME">Full-time</option>
                                 <option value="CONTRACT">Contract</option>
                             </select>
-                            {employmentTypeError && (
-                                <div className="text-red-500 font-semibold text-sm mt-1">
-                                    {employmentTypeError}
-                                </div>
-                            )}
+                            {employmentTypeError && <div className="text-red-500 font-semibold text-sm mt-1">{employmentTypeError}</div>}
                         </div>
-                        <div className="max-w-4xl mx-auto w-full mb-4">
-                            <label className="required block text-lg font-semibold mb-2 ml-2" htmlFor="description1">Job Description 1</label>
+                    </div>
+                    <div className="flex md:flex-row lg:flex-row flex-col gap-4">
+                        <div className="flex flex-col w-full lg:w-1/2 mb-4">
+                            <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="description1">Job Description 1</label>
                             <input
                                 type="text"
                                 id="description1"
-                                value={description1}  // This binds the input value to the state
+                                value={description1}
                                 placeholder="Job Description 1"
                                 className="block w-full text-cyan-900 border text-sm font-semibold p-3 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                                 onChange={(e) => {
-                                    setDescription1(e.target.value);  // Update the input state
+                                    setDescription1(e.target.value);
                                     if (e.target.value.trim() !== '') {
                                         setDescription1Error('');  // Clear the error when valid input is provided
                                     }
@@ -283,9 +286,8 @@ const CustomiseService: React.FC = () => {
                                 </div>
                             )}
                         </div>
-
-                        <div className="max-w-4xl mx-auto w-full mb-4">
-                            <label className="required block text-lg font-semibold mb-2 ml-2" htmlFor="description2">Job Description 2</label>
+                        <div className="flex flex-col w-full lg:w-1/2 mb-4">
+                            <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="description2">Job Description 2</label>
                             <input
                                 type="text"
                                 id="description2"
@@ -305,8 +307,10 @@ const CustomiseService: React.FC = () => {
                                 </div>
                             )}
                         </div>
-                        <div className="max-w-4xl mx-auto w-full mb-4">
-                            <label className="required block text-lg font-semibold mb-2 ml-2" htmlFor="description3">Job Description 3</label>
+                    </div>
+                    <div className="flex md:flex-row lg:flex-row flex-col gap-4">
+                        <div className="flex flex-col w-full lg:w-1/2 mb-4">
+                            <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="description3">Job Description 3</label>
                             <input
                                 type="text"
                                 id="description3"
@@ -326,8 +330,8 @@ const CustomiseService: React.FC = () => {
                                 </div>
                             )}
                         </div>
-                        <div className="mb-4">
-                            <label className="required block text-lg font-semibold mb-2 ml-2" htmlFor="languages">Languages Spoken</label>
+                        <div className="flex flex-col w-full lg:w-1/2 mb-4">
+                            <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="languages">Languages Spoken</label>
                             <div className="flex">
                                 <input
                                     type="text"
@@ -367,8 +371,10 @@ const CustomiseService: React.FC = () => {
                                 ))}
                             </div>
                         </div>
-                        <div className="mb-4">
-                            <label className="required block text-lg font-semibold mb-2 ml-2" htmlFor="service-description">Service Description</label>
+                    </div>
+                    <div className="flex md:flex-row lg:flex-row flex-col  gap-4">
+                        <div className="flex flex-col w-full lg:w-1/2 mb-4">
+                            <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="service-description">Service Description</label>
                             <input
                                 type="text"
                                 id="service-description"
@@ -388,8 +394,8 @@ const CustomiseService: React.FC = () => {
                                 </div>
                             )}
                         </div>
-                        <div className="mb-4">
-                            <label className="block text-lg font-semibold ml-2 mb-2" htmlFor="location">Location</label>
+                        <div className="flex flex-col w-full lg:w-1/2 mb-4">
+                            <label className="block font-semibold ml-2 mb-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="location">Location</label>
                             <input
                                 type="text"
                                 id="location"
@@ -398,8 +404,10 @@ const CustomiseService: React.FC = () => {
                                 onChange={(e) => setLocation(e.target.value)}
                             />
                         </div>
-                        <div className="max-w-4xl mx-auto w-full mb-4">
-                            <label className="required block text-lg font-semibold mb-2 ml-2" htmlFor="category">Category</label>
+                    </div>
+                    <div className="flex md:flex-row lg:flex-row flex-col gap-4">
+                        <div className="flex flex-col w-full lg:w-1/2 mb-4">
+                            <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="category">Category</label>
                             <select
                                 id="category"
                                 value={selectedCategoryName}
@@ -414,8 +422,8 @@ const CustomiseService: React.FC = () => {
                             </select>
 
                         </div>
-                        <div className="mb-4">
-                            <label className="required block text-lg font-semibold mb-2 ml-2" htmlFor="asking-price">Asking Price</label>
+                        <div className="flex flex-col w-full lg:w-1/2 mb-4">
+                            <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="asking-price">Asking Price</label>
                             <div className="flex items-center space-x-4">
                                 <input
                                     type="number"
@@ -441,9 +449,10 @@ const CustomiseService: React.FC = () => {
                                 </div>
                             )}
                         </div>
-                        {/* Links Section */}
-                        <div className="mb-4">
-                            <label className="required block text-lg font-semibold mb-2 ml-2" htmlFor="description">Offer Link Description</label>
+                    </div>
+                    <div className="flex md:flex-row lg:flex-row flex-row gap-4">
+                        <div className="flex flex-col w-full lg:w-1/2 mb-4">
+                            <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="description">Offer Link Description</label>
                             <input
                                 type="text"
                                 id="new-link-description"
@@ -455,8 +464,8 @@ const CustomiseService: React.FC = () => {
                                 className="block w-full text-cyan-900 border text-sm font-semibold p-3 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                             />
                         </div>
-                        <div className="mb-4">
-                            <label className="block text-lg font-semibold mb-2 ml-2" htmlFor="description">Website Link</label>
+                        <div className="flex flex-col w-full lg:w-1/2 mb-4">
+                            <label className="block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="description">Website Link</label>
                             <div className="flex">
                                 <input
                                     type="text"
@@ -474,53 +483,51 @@ const CustomiseService: React.FC = () => {
                                     Add
                                 </button>
                             </div>
-                        </div>
-
-                        <div className="mt-2 w-[100%]">
-                            {links.map((link, index) => (
-                                <div key={index} className="flex w-full items-center bg-gray-100 rounded-xl p-3 mb-2">
-                                    <div className="flex-grow">
-                                        <p className="text-sm text-cyan-900 font-semibold">{link.description}</p>
-                                        <a
-                                            href={link.url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-blue-500 underline text-sm font-semibold"
-                                        >
-                                            {link.url}
-                                        </a>
+                            <div className="mt-2 w-[100%]">
+                                {links.map((link, index) => (
+                                    <div key={index} className="flex w-full items-center bg-gray-100 rounded-xl p-3 mb-2">
+                                        <div className="flex-grow">
+                                            <p className="text-sm text-cyan-900 font-semibold">{link.description}</p>
+                                            <a
+                                                href={link.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-blue-500 underline text-sm font-semibold"
+                                            >
+                                                {link.url}
+                                            </a>
+                                        </div>
+                                        <TrashIcon
+                                            className=" w-4 h-4 ml-4 text-red-600 hover:text-red-800 cursor-pointer"
+                                            onClick={() => handleRemoveLink(index)}
+                                        />
                                     </div>
-                                    <TrashIcon
-                                        className=" w-4 h-4 ml-4 text-red-600 hover:text-red-800 cursor-pointer"
-                                        onClick={() => handleRemoveLink(index)}
-                                    />
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
 
-                        <div className="col-span-2 text-center">
-                            <button
-                                onClick={handleSaveDescription}
-                                className="bg-[#0B2147] hover:bg-[#D0693B] text-white font-semibold py-3 px-12 text-sm rounded-2xl"
-                                disabled={!isFormValid}
-                            >
-                                Next
-                            </button>
-                        </div>
                     </div>
-
+                    <div className="col-span-2 text-center">
+                        <button
+                            onClick={handleSaveDescription}
+                            className="bg-[#0B2147] hover:bg-[#D0693B] text-white font-semibold py-3 px-12 text-sm rounded-2xl"
+                            disabled={!isFormValid}
+                        >
+                            Next
+                        </button>
+                    </div>
                 </div>
 
-                <div className="flex flex-col ml-2 items-center justify-center">
-                    {/* Card should update as form is filled in */}
-                    <ServiceOfferCard title={title} price={askingPrice !== null ? askingPrice : 0} currency="USD" description1={description1} description2={description2} description3={description3} />
-                    <h3 className="px-6 text-gray-500 text-justify text-xs">* how your service offer card will look like</h3>
-                </div>
             </div>
-
+            <div className="flex flex-col items-center justify-center">
+                {/* Card should update as form is filled in */}
+                <ServiceOfferCard title={title} price={askingPrice !== null ? askingPrice : 0} currency="USD" description1={description1} description2={description2} description3={description3} />
+                <h3 className="px-6 text-gray-500 text-justify text-xs mt-2 lg:mt-4">* how your service offer card will look like</h3>
+            </div>
         </div>
 
     );
 };
 
 export default CustomiseService;
+
