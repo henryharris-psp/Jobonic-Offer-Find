@@ -29,4 +29,5 @@ server:
 authorize:
   url: http://localhost:8765
   password: sso_laconic
-  file: Users/bibek/Downloads/sso.file
+  file: /Users/bibek/Downloads/sso.p12
+

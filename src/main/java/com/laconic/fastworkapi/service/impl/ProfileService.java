@@ -44,11 +44,11 @@ import java.util.stream.Collectors;
 public class ProfileService implements IProfileService {
 
     @Value("${authorize.url}")
-    String authorizeUrl;
+    private String authorizeUrl;
     @Value("${authorize.password}")
-    String authorizePassword;
+    private String authorizePassword;
     @Value("${authorize.file}")
-    String filePathUrl;
+    private String filePathUrl;
     private final IUserRepo userRepo;
     private final ISkillRepo skillRepo;
     private final IUserRoleRepo userRoleRepo;
@@ -161,10 +161,9 @@ public class ProfileService implements IProfileService {
             throw new NotFoundException("User Not found");
         }
 
-
         String response = null;
         boolean status = true;
-        authorizeUrl = authorizeUrl.concat("/v1/user/getById/".concat(String.valueOf(existingUser.getUserId())));
+        String url = authorizeUrl.concat("/v1/user/getById/".concat(String.valueOf(existingUser.getUserId())));
         try {
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
             try (FileInputStream file = new FileInputStream(filePathUrl)) {
@@ -181,9 +180,8 @@ public class ProfileService implements IProfileService {
 
             Unirest.setHttpClient(httpClient);
 
-            response = Unirest.get(authorizeUrl)
+            response = Unirest.get(url)
                     .asString().getBody();
-
 
         } catch (Exception e) {
             status = false;
@@ -192,7 +190,7 @@ public class ProfileService implements IProfileService {
 
         if (!status || Objects.isNull(response)) {
             try {
-                response = Unirest.get(authorizeUrl)
+                response = Unirest.get(url)
                         .asString().getBody();
 
                 System.out.println(response);
@@ -206,16 +204,13 @@ public class ProfileService implements IProfileService {
         if (!status) {
             throw new NotFoundException("Data is not available from auth server");
         }
-
         UserProfileDTO dto = EntityMapper.mapToResponse(existingUser, UserProfileDTO.class);
         JSONObject jsonResponse = new JSONObject(response);
-
-
         dto.setUsername(jsonResponse.getString("username"));
         dto.setFirstName(jsonResponse.getString("firstName"));
         dto.setLastName(jsonResponse.getString("lastName"));
         dto.setEmail(jsonResponse.getString("email"));
-        dto.setUserId(Long.parseLong(jsonResponse.getString("id")));
+        dto.setUserId((jsonResponse.getLong("id")));
 
         return dto;
     }
