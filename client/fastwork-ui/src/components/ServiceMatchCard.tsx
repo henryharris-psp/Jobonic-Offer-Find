@@ -12,7 +12,7 @@ import StarRating from "./StarRating";
 
 interface ServiceMatchCardProps {
     service: Service;
-    profile: Profile;
+    profile?: Profile;
     onClick: (service: Service) => void;
     onChatClick: (e: React.MouseEvent) => void;
 }
