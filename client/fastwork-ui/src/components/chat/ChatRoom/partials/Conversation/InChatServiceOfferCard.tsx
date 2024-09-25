@@ -35,7 +35,7 @@ const InChatServiceOfferCard = ({
 
     return (
         !service ? (
-            <MediaSkeleton/>
+            <MediaSkeleton />
         ) : (
             <div className="flex flex-col bg-[#CFEDF4] rounded-xl">
                 <ServiceOfferCard

@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import Modal from "../Modal";
 import Button from "../Button";
 import { useChat } from "@/contexts/chat";
 import httpClient from "@/client/httpClient";
+import { updateMilestoneStatus } from "@/functions/helperFunctions";
 
 interface MilestonePaymentConfirmationDialogProps {
+    milestoneId: string,
     isOpen: boolean;
     onClose: () => void;
     leftAmount: number;
@@ -12,19 +14,56 @@ interface MilestonePaymentConfirmationDialogProps {
 }
 
 const MilestonePaymentConfirmationDialog = ({
+    milestoneId,
     isOpen,
     onClose,
     leftAmount,
     amountToPay
 }: MilestonePaymentConfirmationDialogProps) => {
-    const { sendMessage } = useChat();
+    const { latestContract } = useChat();
+    const { sendMessage, updateChatRoom } = useChat();
+    const [ isLoading, setIsLoading ] = useState(false);
+
+    const processPayment = async () => {
+        return new Promise(resolve => setTimeout(resolve, 3000));
+    }
 
     const handleOnConfirm = async () => {
+        setIsLoading(true);
         try{
-            await sendMessage('milestone_payment', 'transaction_id', 'system');
+            await processPayment();
+
+            const allMilestones = latestContract?.milestones ?? [];
+            const targetMilestone = allMilestones.find( e => e.id === milestoneId );
+            
+            if(targetMilestone){
+                await updateMilestoneStatus(targetMilestone, 'paid');
+                const newlySentMessage = await sendMessage('milestone_payment', 'transaction_id', 'system');
+
+                //TODO: change after api update
+                const upcomingMilestones = allMilestones.filter( e => e.id !== milestoneId && e.description === 'not_started' );
+                
+                //if all milestone are completed
+                if(upcomingMilestones.length === 0){
+                    if(newlySentMessage){
+                        await updateChatRoom(newlySentMessage.room_id, {
+                            status: 'to_review'
+                        });
+                    }
+                } else {
+                    //or switch to next milestone
+                    const nextMilestone = upcomingMilestones[0];
+                    if(nextMilestone){
+                        await updateMilestoneStatus(nextMilestone, 'waiting_for_submission');
+                    }
+                }
+
+            }
             onClose();
         } catch (error) {
             console.log(error);    
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -40,7 +79,7 @@ const MilestonePaymentConfirmationDialog = ({
                     </span>
 
                     <div className="flex flex-col items-center space-y-3">
-                        <div className="flex flex-row items-center space-x-2">
+                        <div className="flex flex-row items-center gap-2">
                             <span className="text-gray-600 font-semibold text-center">
                                 Your credit on Jobonic:
                             </span>
@@ -49,7 +88,7 @@ const MilestonePaymentConfirmationDialog = ({
                             </span>
                         </div>
                         
-                        <div className="flex flex-row items-center space-x-2">
+                        <div className="flex flex-row items-center gap-2">
                             <span className="text-gray-600 font-semibold text-center">
                                 Payment for the current milestone:
                             </span>
@@ -68,8 +107,9 @@ const MilestonePaymentConfirmationDialog = ({
                             <Button
                                 fullWidth
                                 size="sm"
-                                title="Yes, I confirm and agree to Pay"
+                                title={ isLoading ? 'Payment Processing...' : 'Yes, I confirm and agree to Pay'}
                                 onClick={handleOnConfirm}
+                                disabled={isLoading}
                             />
                             <Button
                                 fullWidth
@@ -77,6 +117,7 @@ const MilestonePaymentConfirmationDialog = ({
                                 size="sm"
                                 title="No, cancel"
                                 onClick={onClose}
+                                disabled={isLoading}
                             />
                         </div>
                     </div>

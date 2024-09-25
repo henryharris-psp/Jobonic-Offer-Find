@@ -63,7 +63,6 @@ const skeletonCount = Array.from({ length: 6 }, (_, index) => index);
 
 const ServiceList = () => {
     const { authUser } = useSelector((state: RootState) => state.auth );
-
     const [categories, setCategories] = useState<Category[]>([]);
     const [isCategoriesFetching, setIsCategoriesFetching] = useState<boolean>(false);
 
@@ -114,10 +113,11 @@ const ServiceList = () => {
                     sortBy: sorting.sortBy,
                     sortOrder: sorting.sortOrder,
                     filter: filters,
-                    authId: authUser?.profile?.id || 0
+                    authId: authUser?.profile?.id || 0,
+                    serviceType: 'offer'
                 }
 
-                const servicesData = await fetchServices('offer', signal, payload);
+                const servicesData = await fetchServices(payload, signal);
                 if (servicesData){
                     setServices(servicesData.content);
                     setPagination( prev => ({

@@ -133,10 +133,11 @@ const OfferService = () => {
                     sortBy: sorting.sortBy,
                     sortOrder: sorting.sortOrder,
                     filter: filters,
-                    authId: authUser?.profile?.id || 0
+                    authId: authUser?.profile?.id || 0,
+                    serviceType: 'request'
                 }
 
-                const servicesData = await fetchServices('request', signal, payload);
+                const servicesData = await fetchServices(payload, signal);
                 if (servicesData){
                     setServices(servicesData.content);
                     setPagination( prev => ({

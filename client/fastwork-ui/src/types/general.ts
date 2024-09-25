@@ -69,6 +69,7 @@ export interface Payment {
 export interface FileProps {
     id: string;
     name: string;
+    originalName?: string;
     size: string;
     source?: File;
     status: FileStatus

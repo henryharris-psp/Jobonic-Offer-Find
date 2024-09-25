@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { useChat } from "@/contexts/chat";
 import ContractProgressSection from "./ContractProgressSection";
 import ReviewProgressSection from "./ReviewProgressSection";
-import CompleteWorkSection from "./CompleteWorkSection";
+import CompleteWorkProgressSection from "./CompleteWorkProgressSection";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { supabase } from "@/config/supabaseClient";
@@ -19,39 +19,45 @@ const NewProgressList = () => {
         return latestContract ? latestContract.milestones : [];
     }, [latestContract]);
 
+    //computed
+        const allMilestonesCompleted = useMemo( () => {
+            const allMilestones = latestContract?.milestones ?? [];
+            return allMilestones.every( e => e.description === 'paid' );
+        }, [latestContract]);
+
     //methods
-    const handleOnClickHelp = async () => {
-        if (activeChatRoom && authUser) {
-            setIsLoading(true);
-            const freelancerId = authUser.profile.id;
-            const employerId = 1; //admin profileId
-            const { data: chatRooms, error } = await supabase
-                .from('chat_rooms')
-                .select(`*, messages (*)`)
-                .eq('freelancer_id', freelancerId)
-                .eq('employer_id', employerId)
-                .order('id', { ascending: false });
-            if (error) {
-                console.log('Supabase fetching error', error);
-                return;
-            }
+        const handleOnClickHelp = async () => {
+            if (activeChatRoom && authUser) {
+                setIsLoading(true);
+                const freelancerId = authUser.profile.id;
+                const employerId = 1; //admin profileId
+                const { data: chatRooms, error } = await supabase
+                    .from('chat_rooms')
+                    .select(`*, messages (*)`)
+                    .eq('freelancer_id', freelancerId)
+                    .eq('employer_id', employerId)
+                    .order('id', { ascending: false });
+                if (error) {
+                    console.log('Supabase fetching error', error);
+                    return;
+                }
 
-            if (chatRooms.length !== 0) {
-                const existedChatRooms = await loadChatRoomData(chatRooms);
-                if (existedChatRooms.length !== 0) changeChatRoom(existedChatRooms[0]);
-            } else {
-                const newChatRoom = await createNewChatRoom(
-                    activeChatRoom.service_id,
-                    activeChatRoom.match_id,
-                    freelancerId,
-                    employerId
-                );
-                changeChatRoom(newChatRoom);
-            }
+                if (chatRooms.length !== 0) {
+                    const existedChatRooms = await loadChatRoomData(chatRooms);
+                    if (existedChatRooms.length !== 0) changeChatRoom(existedChatRooms[0]);
+                } else {
+                    const newChatRoom = await createNewChatRoom(
+                        activeChatRoom.service_id,
+                        activeChatRoom.match_id,
+                        freelancerId,
+                        employerId
+                    );
+                    changeChatRoom(newChatRoom);
+                }
 
-            setIsLoading(false);
+                setIsLoading(false);
+            }
         }
-    }
 
     return (
         <div className="flex-1 flex overflow-hidden bg-[#E0F7FA]">
@@ -73,7 +79,10 @@ const NewProgressList = () => {
                     <>
                         <div className="flex-1 overflow-auto">
                             <div className="flex flex-col space-y-4 my-3">
-                                <ContractProgressSection />
+                                <ContractProgressSection 
+                                    isDisabled={false}
+                                    isCurrent={false}
+                                />
 
                                 {/* milestone section */}
                                 { milestones.length === 0 ? (
@@ -87,13 +96,19 @@ const NewProgressList = () => {
                                         { milestones.map((milestone: Milestone) => 
                                             <MilestoneProgressSection
                                                 key={milestone.id}
-                                                isDisabled={['not_started', 'paid'].includes(milestone.description)}
+                                                isDisabled={['not_started'].includes(milestone.description)}
                                                 isCurrent={!['not_started', 'paid'].includes(milestone.description)}
                                                 {...milestone}
                                             />
                                         )}
-                                        <ReviewProgressSection />
-                                        <CompleteWorkSection />
+                                        <ReviewProgressSection
+                                            isDisabled={activeChatRoom.status !== 'to_review'}
+                                            isCurrent={activeChatRoom.status === 'to_review'}
+                                        />
+                                        <CompleteWorkProgressSection 
+                                            isDisabled={activeChatRoom.status !== 'completed'}
+                                            isCurrent={activeChatRoom.status === 'completed'}
+                                        />
                                     </div>
                                 )}
                             </div>
