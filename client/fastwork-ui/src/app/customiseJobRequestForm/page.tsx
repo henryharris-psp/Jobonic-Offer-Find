@@ -129,9 +129,7 @@ const CustomiseJobRequestForm: React.FC = () => {
     const profileId = await getProfileId();
 
     const serviceData = {
-      id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       serviceRequestDTO: {
-        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         submissionDeadline: formState.deadline,
         workExample: formState.exampleWork,
       },
@@ -147,6 +145,7 @@ const CustomiseJobRequestForm: React.FC = () => {
       categoryId: selectedCategory ? selectedCategory.id : '',
       price: parseInt(formState.budget),
       priceUnit: formState.priceUnit,
+      serviceType: "request"
     };
 
     console.log('Service Data:', JSON.stringify(serviceData, null, 2));

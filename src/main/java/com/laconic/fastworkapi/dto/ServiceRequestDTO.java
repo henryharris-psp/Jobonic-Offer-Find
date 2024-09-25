@@ -1,6 +1,7 @@
 package com.laconic.fastworkapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.laconic.fastworkapi.entity.ServiceRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +20,10 @@ import java.util.UUID;
 public class ServiceRequestDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -1614326500232746332L;
+
+    @JsonIgnore
     private UUID id;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate submissionDeadline;
     private String workExample;

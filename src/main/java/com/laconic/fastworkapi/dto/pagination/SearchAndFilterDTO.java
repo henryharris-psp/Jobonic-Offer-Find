@@ -17,4 +17,5 @@ public class SearchAndFilterDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -6013998079372476944L;
     private String searchKeyword;
+    private String serviceType;
 }

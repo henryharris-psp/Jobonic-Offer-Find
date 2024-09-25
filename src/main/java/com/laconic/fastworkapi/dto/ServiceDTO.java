@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.laconic.fastworkapi.enums.EmploymentType;
 import com.laconic.fastworkapi.enums.PriceUnit;
 import jakarta.persistence.Column;
@@ -20,6 +21,8 @@ import java.util.UUID;
 public class ServiceDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -8805087936102565403L;
+
+    @JsonIgnore
     private UUID id;
     private ServiceOfferDTO serviceOfferDTO;
     private ServiceRequestDTO serviceRequestDTO;
@@ -39,12 +42,13 @@ public class ServiceDTO implements Serializable {
     private UUID categoryId;
     private double price = 0;
     private PriceUnit priceUnit;
+    private String serviceType;
 
     public record WithProfile(UUID id, ServiceOfferDTO serviceOfferDTO, ServiceRequestDTO serviceRequestDTO,
                               ProfileDTO profileDTO, String title, EmploymentType employmentType, String description,
                               String description1, String description2, String description3, String languageSpoken,
                               String location, CategoryDTO categoryDTO, double price,
-                              PriceUnit priceUnit) implements Serializable {
+                              PriceUnit priceUnit, String serviceType) implements Serializable {
     }
 
     public record GetRequestService(UUID id, LocalDate submissionDeadline,

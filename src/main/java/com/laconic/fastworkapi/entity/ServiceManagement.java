@@ -50,4 +50,5 @@ public class ServiceManagement extends Auditable<UUID> {
     @Enumerated(EnumType.STRING)
     private PriceUnit priceUnit;
     private boolean isActive = true;
+    private String serviceType;
 }
