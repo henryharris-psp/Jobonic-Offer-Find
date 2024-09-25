@@ -65,7 +65,8 @@ public class ManagementService implements IManagementService {
                 service.getLocation(),
                 EntityMapper.mapToResponse(service.getCategory(), CategoryDTO.class),
                 service.getPrice(),
-                service.getPriceUnit()
+                service.getPriceUnit(),
+                service.getServiceType()
         );
     }
 
@@ -82,21 +83,23 @@ public class ManagementService implements IManagementService {
         var user = this.userRepo.findById(serviceDTO.getProfileId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
                         serviceDTO.getProfileId().toString()));
+
         var category = this.categoryRepo.findById(serviceDTO.getCategoryId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.CATEGORY, "id",
                         serviceDTO.getCategoryId().toString()));
+
         var serviceManagement = EntityMapper.mapToEntity(serviceDTO, ServiceManagement.class);
+
         serviceManagement.setProfile(user);
         serviceManagement.setCategory(category);
+
+        System.out.println("Service: " + serviceManagement.getServiceRequest());
+
         var service = this.serviceRepo.save(serviceManagement);
+
         return getServiceWithProfile(service, user);
     }
 
-    /*
-    @Author     : Soe
-    @Created At : Aug 26, 2024
-    @Note       : update method for service offer
-     */
     @Override
     public ServiceDTO.WithProfile updateService(ServiceDTO serviceDTO) {
 
@@ -197,13 +200,20 @@ public class ManagementService implements IManagementService {
     @Override
     public PaginationDTO<ServiceDTO.WithProfile> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
+        var serviceType = pageAndFilterDTO.getFilter().getServiceType();
 
-        Specification<ServiceManagement> specs =
-                GenericSpecification.hasKeyword((String) keyword, Set.of("title"));
+        Specification<ServiceManagement> specs = GenericSpecification.hasKeyword(keyword, Set.of("title"));
 
-        Page<ServiceManagement> servicePage = keyword != null
-                ? this.serviceRepo.findAll(Specification.where(specs).and((root, query, criteriaBuilder) ->
-                criteriaBuilder.notEqual(root.get("profile").get("id"), pageAndFilterDTO.getAuthId())), pageAndFilterDTO.getPageRequest())
+        if (serviceType != null && !serviceType.isEmpty()) {
+            specs = specs.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("serviceType"), serviceType));
+        }
+
+        Page<ServiceManagement> servicePage = (keyword != null || serviceType != null)
+                ? this.serviceRepo.findAll(Specification.where(specs)
+                        .and((root, query, criteriaBuilder) ->
+                                criteriaBuilder.notEqual(root.get("profile").get("id"), pageAndFilterDTO.getAuthId())),
+                pageAndFilterDTO.getPageRequest())
                 : this.serviceRepo.findAllExceptAuthUser(pageAndFilterDTO.getAuthId(), pageAndFilterDTO.getPageRequest());
 
         List<ServiceDTO.WithProfile> servicesWithProfile = servicePage.stream()

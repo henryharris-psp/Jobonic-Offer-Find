@@ -40,8 +40,6 @@ public class CheckpointController {
         return this.checkpointService.delete(id);
     }
 
-
-
     @Operation(summary = APIDocsHelper.CheckpointAPI.GET_CHECKPOINT)
     @GetMapping()
     public CheckpointDTO getById(@RequestParam UUID id) {

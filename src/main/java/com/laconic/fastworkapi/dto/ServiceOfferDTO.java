@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.laconic.fastworkapi.entity.ServiceOffer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +18,8 @@ import java.util.UUID;
 public class ServiceOfferDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -3853581697205725074L;
+
+    @JsonIgnore
     private UUID id;
 
     public ServiceOfferDTO(ServiceOffer serviceOffer) {

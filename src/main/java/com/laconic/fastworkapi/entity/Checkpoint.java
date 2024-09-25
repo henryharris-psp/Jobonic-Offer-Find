@@ -28,9 +28,9 @@ public class Checkpoint extends Auditable<UUID> {
 
     private String title;
 
-    @Lob
-    @Column(name = "tasks", columnDefinition = "CLOB")
-    private String tasks; // JSON string to store the array
+//    @Lob
+//    @Column(name = "tasks", columnDefinition = "CLOB")
+//    private String tasks; // JSON string to store the array
 
     @ManyToOne
     @JoinColumn(name = "service_id")
@@ -57,18 +57,21 @@ public class Checkpoint extends Auditable<UUID> {
     @JoinColumn(name = "contract_id")
     private Contract contract;
 
+    @OneToMany(mappedBy = "checkpoint", cascade = CascadeType.ALL)
+    private List<Task> tasks = new ArrayList<>();
+
     @OneToMany(mappedBy = "checkPoint", cascade = CascadeType.ALL)
     private List<Attachment> attachments = new ArrayList<>();
 
     @OneToOne(mappedBy = "currentCheckpoint")
     private Contract currentContract;
 
-    public void setTasks(String[] tasks) throws IOException {
-        this.tasks = mapper.writeValueAsString(tasks); // Convert array to JSON
-    }
-
-    public String[] getTasks() throws IOException {
-        return mapper.readValue(this.tasks, new TypeReference<>() {
-        }); // Convert JSON back to array
-    }
+//    public void setTasks(String[] tasks) throws IOException {
+//        this.tasks = mapper.writeValueAsString(tasks); // Convert array to JSON
+//    }
+//
+//    public String[] getTasks() throws IOException {
+//        return mapper.readValue(this.tasks, new TypeReference<>() {
+//        }); // Convert JSON back to array
+//    }
 }

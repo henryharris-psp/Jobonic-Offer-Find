@@ -69,7 +69,7 @@ public class CheckpointService implements ICheckpointService {
 
         // Map DTO to entity
         Checkpoint checkpoint = new Checkpoint();
-        checkpoint.setId(checkpointDTO.getId());
+//        checkpoint.setId(checkpointDTO.getId());
         checkpoint.setTitle(checkpointDTO.getTitle());
         checkpoint.setService(service);
         checkpoint.setMatches(matches);
@@ -78,12 +78,12 @@ public class CheckpointService implements ICheckpointService {
         checkpoint.setDescription(checkpointDTO.getDescription());
         checkpoint.setContract(contractRepo.findById(checkpointDTO.getContractId()).get());
 
-        try {
+//        try {
             checkpoint.setTasks(checkpointDTO.getTasks()); // Set tasks using JSON conversion
-        } catch (IOException e) {
-            // Handle JSON conversion exception or provide default value
-            checkpoint.setTasks(new String[0]); // Default to empty array if conversion fails
-        }
+//        } catch (IOException e) {
+//            // Handle JSON conversion exception or provide default value
+//            checkpoint.setTasks(new String[0]); // Default to empty array if conversion fails
+//        }
 
         var savedCheckpoint = this.checkpointRepo.save(checkpoint);
 

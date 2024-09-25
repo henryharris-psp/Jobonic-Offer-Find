@@ -1,7 +1,9 @@
 package com.laconic.fastworkapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.laconic.fastworkapi.entity.Attachment;
 import com.laconic.fastworkapi.entity.Checkpoint;
+import com.laconic.fastworkapi.entity.Task;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,7 +33,9 @@ public class CheckpointDTO implements Serializable {
     private int numberOfHoursCompleted;
     @Column(columnDefinition = "CLOB")
     private String description;
-    private String[] tasks; // Added to handle the tasks array
+    private List<Task> tasks; // Added to handle the tasks array
+
+    @JsonIgnore
     private List<Attachment> attachments; // Added to handle the attachments array
 
     public CheckpointDTO(Checkpoint checkpoint) {
@@ -44,11 +48,12 @@ public class CheckpointDTO implements Serializable {
         this.description = checkpoint.getDescription();
         this.contractId=checkpoint.getContract().getId();
         this.attachments = checkpoint.getAttachments();
-        try {
-            this.tasks = checkpoint.getTasks();
-        } catch (IOException e) {
-            // Handle exception or provide default value
-            this.tasks = new String[0]; // Default to empty array if conversion fails
-        }
+        this.tasks = checkpoint.getTasks();
+//        try {
+//            this.tasks = checkpoint.getTasks();
+//        } catch {
+//            // Handle exception or provide default value
+////            this.tasks = new String[0]; // Default to empty array if conversion fails
+//        }
     }
 }
