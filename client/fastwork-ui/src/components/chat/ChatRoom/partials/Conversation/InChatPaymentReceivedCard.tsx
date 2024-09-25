@@ -92,11 +92,11 @@ const InChatPaymentReceivedCard = ({
     return (
         <>
             { isLoading ? (
-                <MediaSkeleton/>
+                <MediaSkeleton />
             ) : (
                 !payment ? (
                     <div className="relative">
-                        <MediaSkeleton/>
+                        <MediaSkeleton />
                         <div className="flex items-center justify-center absolute top-0 right-0 left-0 bottom-0">
                             <button 
                                 className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-300"

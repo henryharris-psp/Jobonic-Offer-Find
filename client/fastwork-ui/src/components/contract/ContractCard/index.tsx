@@ -96,6 +96,7 @@ const ContractCard = ({
         };
 
         const uploadMilestone = async (payload: Milestone) => {
+            console.log('milestone_payload', payload);
             try {
                 const res = await httpClient.post('checkpoint', {
                     ...payload,
@@ -157,7 +158,7 @@ const ContractCard = ({
                             }
                         }
                     }
-                    await sendMessage('text', 'I just updated the contract. Please take a look.');
+
                     await sendMessage('contract', contractId.toString());
 
                     setShowMilestoneFormModal(false);

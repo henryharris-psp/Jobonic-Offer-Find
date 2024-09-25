@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { useChat } from "@/contexts/chat";
 import SafeInput, { SafeInputChangeEvent } from "../SafeInput";
@@ -16,8 +16,10 @@ const PaymentCard = ({
 }: PaymentCardProps) => {
     const numberFormater = new Intl.NumberFormat();
     const { latestContract, sendMessage, updateChatRoom } = useChat();
+    const [paymentMethod, setPaymentMethod] = useState<string>('');
     const [note, setNote] = useState('');
 
+    const [errorCheckable, setErrorCheckable] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
 
@@ -26,6 +28,10 @@ const PaymentCard = ({
             const { value } = e.target;
             setNote(value);
         }
+
+        const handlePaymentChange = (e: ChangeEvent<HTMLSelectElement>) => {
+            setPaymentMethod(e.target.value);
+        };
 
         const processPayment = async () => {
             // const res = await httpClient.post('payments', {
@@ -45,32 +51,37 @@ const PaymentCard = ({
         }
 
         const submit = async () => {
-            setIsLoading(true);
+            setErrorCheckable(true);
 
-            try {
-                await processPayment();
-                setIsPaid(true);
+            if(paymentMethod !== ''){
+                setIsLoading(true);
 
-                const firstMilestone = latestContract?.milestones[0];
-                if(firstMilestone){
-                    await updateMilestoneStatus(firstMilestone, 'waiting_for_submission');
+                try {
+                    await processPayment();
+                    setIsPaid(true);
+
+                    const firstMilestone = latestContract?.milestones[0];
+                    if(firstMilestone){
+                        await updateMilestoneStatus(firstMilestone, 'waiting_for_submission');
+                    }
+
+                    //send message to supabase
+                    const newlySentMessage = await sendMessage('full_payment', 'transaction_id', 'system');
+                    if (newlySentMessage) {
+                        await updateChatRoom(newlySentMessage.room_id, {
+                            status: 'to_submit'
+                        });
+                    }
+
+                    await timerToClose();
+                    onPaid();
+                } catch (error) {
+                    //TODO: handle payment fail errors such as unsufficient balance or payment rejected
+                    console.error('Error during submit process:', error);
+                } finally {
+                    setIsLoading(false);
+                    setErrorCheckable(false);
                 }
-
-                //send message to supabase
-                const newlySentMessage = await sendMessage('full_payment', 'transaction_id', 'system');
-                if (newlySentMessage) {
-                    await updateChatRoom(newlySentMessage.room_id, {
-                        status: 'to_submit'
-                    });
-                }
-
-                await timerToClose();
-                onPaid();
-            } catch (error) {
-                //TODO: handle payment fail errors such as unsufficient balance or payment rejected
-                console.error('Error during submit process:', error);
-            } finally {
-                setIsLoading(false);
             }
         }
         
@@ -97,24 +108,40 @@ const PaymentCard = ({
                 </div>
 
                 {/* payment selection */}
-                <div className="w-full">
-                    <label htmlFor="select" className="block text-sm font-medium text-gray-600">Select Payment Method</label>
-                    <select 
-                        id="select" 
-                        name="select" 
-                        className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    >
-                        <option value="option1">-- Select --</option>
-                        <option value="option2">Payni</option>
-                        <option value="option3">PromptPay QR</option>
-                        <option value="option3">Karsikorn Bank</option>
-                        <option value="option3">SCB</option>
-                        <option value="option3">Bangkok Bank</option>
-                    </select>
-
+                <div className="flex flex-col space-y-1">
+                    <div className="w-full">
+                        <label
+                            htmlFor="select" 
+                            className="block text-sm font-medium text-gray-600"
+                        >
+                            Select Payment Method
+                        </label>
+                        <select 
+                            id="select" 
+                            name="select" 
+                            className={`mt-1 block w-full py-2 px-3 border bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
+                                errorCheckable && paymentMethod === '' ? 'border-red-500' : 'border-gray-300'
+                            }`}
+                            value={paymentMethod}
+                            onChange={handlePaymentChange}
+                        >
+                            <option value="">-- Select --</option>
+                            <option value="Payni">Payni</option>
+                            <option value="PromptPay QR">PromptPay QR</option>
+                            <option value="Karsikorn Bank">Karsikorn Bank</option>
+                            <option value="SCB">SCB</option>
+                            <option value="Bangkok Bank">Bangkok Bank</option>
+                        </select>
+                    </div>
                     <span className="text-xs text-gray-500">
                         * Pay via Payni and get 3% discount
                     </span>
+                    { errorCheckable && paymentMethod === '' ? (
+                        <span className="text-2xs text-red-500">
+                            * Please choose a payment method
+                        </span>  
+                    ) : ''}
+
                 </div>
 
                 <div className="flex flex-col space-y-1">

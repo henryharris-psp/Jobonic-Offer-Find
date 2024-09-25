@@ -9,7 +9,6 @@ import Image from "next/image";
 import { useChat } from "@/contexts/chat";
 import InChatPaymentRequestCard from "./InChatPaymentRequestCard";
 import InChatSystemMessage from "./InChatSystemMessage";
-import InChatPaymentReceiptCard from "./InChatPaymentReceiptCard";
 import InChatShareChatRoomCard from "@/components/admin/chat/AdminChatRoom/partials/Conversation/InChatShareChatRoomCard";
 import InChatMilestoneSubmissionCard from "./InChatMilestoneSubmissionCard";
 import InChatPaymentCard from "./InChatPaymentCard";

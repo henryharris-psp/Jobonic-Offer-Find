@@ -1,7 +1,7 @@
 import httpClient from "@/client/httpClient";
 import { FileStatus } from "@/types/general";
 import { CloudArrowUpIcon } from "@heroicons/react/24/outline";
-import { CheckIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { ArrowPathIcon, CheckIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/solid";
 
 const statusIconMap = {
     uploaded: <CheckIcon className="size-4 text-green-500" />,
@@ -14,7 +14,9 @@ interface FileItemProps {
     name: string;
     size: string;
     status: FileStatus;
+    isUploading?: boolean;
     isDeletable?: boolean;
+    isDownloadable?: boolean;
     onDelete: (fileId: string, status: FileStatus) => void;
 }
 
@@ -23,52 +25,52 @@ const FileItem = ({
     name,
     size,
     status,
+    isUploading = false,
+    isDownloadable = true,
     isDeletable = true,
     onDelete
 }: FileItemProps) => {
-
-    console.log(status);
     
     //methods
         const handleOnDownloadFile = () => {
-            if(status === 'uploaded'){
-                if(confirm("Do you want to download this file?")){
-                    const downloadFile = async (fileId: string, fileName: string) => {
-                        try {
-                            // Make a GET request to the endpoint with file ID
-                            const response = await httpClient.get(`/attachment/download`, {
-                                params: { id: fileId },
-                                responseType: 'blob', // Set response type to 'blob' for binary data
-                            });
-                            // Check if the request was successful
-                            if (response.status === 200) {
-                                // Convert response to Blob
-                                const blob = new Blob([response.data], { type: response.headers['content-type'] });
-                                // Create a URL for the Blob
-                                const url = window.URL.createObjectURL(blob);
-                                // Create a link element
-                                const link = document.createElement('a');
-                                // Set the link's href to the Blob URL
-                                link.href = url;
-                                // Set the download attribute with the file name
-                                link.download = fileName;
-                                // Append the link to the document body
-                                document.body.appendChild(link);
-                                // Trigger the download
-                                link.click();
-                                // Clean up by removing the link
-                                document.body.removeChild(link);
-                                // Revoke the Blob URL
-                                window.URL.revokeObjectURL(url);
-                            } else {
-                                console.error('File download failed:', response.statusText);
-                            }
-                        } catch (error) {
-                            console.error('Error downloading file:', error);
-                        }
-                    };
-                    downloadFile(id, name);
-                }
+            if(isDownloadable){
+                // if(confirm("Do you want to download this file?")){
+                //     const downloadFile = async (fileId: string, fileName: string) => {
+                //         try {
+                //             // Make a GET request to the endpoint with file ID
+                //             const response = await httpClient.get(`/attachment/download`, {
+                //                 params: { id: fileId },
+                //                 responseType: 'blob', // Set response type to 'blob' for binary data
+                //             });
+                //             // Check if the request was successful
+                //             if (response.status === 200) {
+                //                 // Convert response to Blob
+                //                 const blob = new Blob([response.data], { type: response.headers['content-type'] });
+                //                 // Create a URL for the Blob
+                //                 const url = window.URL.createObjectURL(blob);
+                //                 // Create a link element
+                //                 const link = document.createElement('a');
+                //                 // Set the link's href to the Blob URL
+                //                 link.href = url;
+                //                 // Set the download attribute with the file name
+                //                 link.download = fileName;
+                //                 // Append the link to the document body
+                //                 document.body.appendChild(link);
+                //                 // Trigger the download
+                //                 link.click();
+                //                 // Clean up by removing the link
+                //                 document.body.removeChild(link);
+                //                 // Revoke the Blob URL
+                //                 window.URL.revokeObjectURL(url);
+                //             } else {
+                //                 console.error('File download failed:', response.statusText);
+                //             }
+                //         } catch (error) {
+                //             console.error('Error downloading file:', error);
+                //         }
+                //     };
+                //     downloadFile(id, name);
+                // }
             }
         }
 
@@ -80,23 +82,27 @@ const FileItem = ({
 
     return (
         <div className="flex text-xs flex-row overflow-hidden space-x-2 items-center">
-            <div className="flex flex-row flex-1 space-x-2 items-center">
+            <div className="flex flex-row flex-1 space-x-1 items-center">
                 <div>
-                    {statusIconMap[status]}
+                    { isUploading ? (
+                        <ArrowPathIcon className="size-3 text-yellow-500 animate-spin" />
+                    ) : (
+                        statusIconMap[status]
+                    )}
                 </div>
                 <button
-                    className={`break-all text-start underline ${
-                        status === 'uploaded' ? 'text-blue-500' : 'text-gray-500 cursor-default'
+                    className={`break-all text-start ${
+                        isDownloadable ? 'text-blue-500 underline' : 'cursor-default'
                     }`}
                     onClick={handleOnDownloadFile}
                 >
                     {name}
                 </button>
             </div>
-            <span className="text-gray-500">
+            <span className="text-xs">
                 { size }
             </span>
-            { isDeletable ? (
+            { isDeletable && !isUploading ? (
                 <button onClick={handleOnDeleteFile}>
                     <TrashIcon className="size-4 text-red-500" />
                 </button>

@@ -11,7 +11,7 @@ const SubmitWorkButton = () => {
             <Button
                 size="sm"
                 icon={<DocumentPlusIcon className="size-5 text-white"/>}
-                title="Submit Work"
+                title="Submit Work in Progress List"
                 onClick={() => setShowProgressList(true)}
             />
         </div>
