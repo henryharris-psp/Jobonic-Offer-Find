@@ -22,8 +22,6 @@ const ReviewProgressSection = ({
     return (
         <>
             <ProgressSectionRoot
-                defaultOpened={false}
-                isToggleable={true}
                 title="To Review"
                 isCurrent={isCurrent}
                 isDisabled={isDisabled}

@@ -1,5 +1,5 @@
 import httpClient from "@/client/httpClient";
-import { FileStatus } from "@/types/general";
+import { AttachmentStatus } from "@/types/general";
 import { CloudArrowUpIcon } from "@heroicons/react/24/outline";
 import { ArrowPathIcon, CheckIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/solid";
 
@@ -13,11 +13,11 @@ interface FileItemProps {
     id: string;
     name: string;
     size: string;
-    status: FileStatus;
+    status: AttachmentStatus;
     isUploading?: boolean;
     isDeletable?: boolean;
     isDownloadable?: boolean;
-    onDelete: (fileId: string, status: FileStatus) => void;
+    onDelete: (fileId: string, status: AttachmentStatus) => void;
 }
 
 const FileItem = ({

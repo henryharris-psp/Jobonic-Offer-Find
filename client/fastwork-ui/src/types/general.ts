@@ -1,5 +1,5 @@
 export type TailwindSizes = "xs" | "sm" | "" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl";
-export type FileStatus = "pending" | "uploaded" | "failed";
+export type AttachmentStatus = "pending" | "uploaded" | "failed";
 
 export interface Category {
     id: string;
@@ -36,7 +36,7 @@ export interface Milestone {
     dueDate: string,
     price: number,
     tasks: Task[],
-    uploadedFiles?: FileProps[];
+    uploadedFiles?: Attachment[];
     description: MilestoneStatus
     //TODO: currently, description column is used as status bcoz api is not ready for this
 
@@ -66,13 +66,13 @@ export interface Payment {
     receiverName: string;
 }
 
-export interface FileProps {
+export interface Attachment {
     id: string;
     name: string;
     originalName?: string;
     size: string;
     source?: File;
-    status: FileStatus
+    status: AttachmentStatus
 }
 
 //by pyae sone phyo

@@ -1,5 +1,5 @@
 import httpClient from '@/client/httpClient';
-import { Category, Contract, FileProps, Milestone, MilestoneStatus } from '@/types/general';
+import { Category, Contract, Attachment, Milestone, MilestoneStatus } from '@/types/general';
 import { ServiceApiResponse, ServicePayload } from '@/types/service';
 import axios from 'axios';
 
@@ -187,7 +187,7 @@ export const getCategoryName = async (categoryId: string) => {
     export const fetchUploadedFiles = async (
         milestoneId: string | number,
         signal?: AbortSignal
-    ): Promise<FileProps[] | undefined> => {
+    ): Promise<Attachment[] | undefined> => {
         try {
             const filesRes = await httpClient.get(`attachment/checkpoint?checkPointId=${milestoneId}`, { signal });
             const files = filesRes.data.map((file: any) => ({ 

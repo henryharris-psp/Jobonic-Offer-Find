@@ -30,8 +30,11 @@ const InChatMilestoneSubmissionCard = ({
 
     //on mounted
         useEffect(() => {
-            fetchMilestone();
-        }, []);
+            console.log('milestoneId', milestoneId)
+            if(milestoneId){
+                fetchMilestone();
+            }
+        }, [milestoneId]);
 
     //computed
         const total = useMemo( () => {
@@ -60,10 +63,7 @@ const InChatMilestoneSubmissionCard = ({
             setIsLoading(true);
             try {
                 //get_milestone
-                const milestoneRes = await httpClient.get(
-                    `checkpoint?id=${milestoneId}`,
-                    { signal }
-                );
+                const milestoneRes = await httpClient.get(`checkpoint?id=${milestoneId}`, { signal });
                 const files = await fetchUploadedFiles(milestoneRes.data.id);
 
                 setMilestone({
@@ -160,14 +160,16 @@ const InChatMilestoneSubmissionCard = ({
 
                             <div className="flex flex-col space-y-1">
                                 { firstThreeFiles.map( file => 
-                                    <button 
-                                        key={file.id}
-                                        onClick={handleOnDownload}
-                                    >
-                                        <span className="text-blue-500 underline">
-                                            { file.name }
-                                        </span>
-                                    </button>
+                                    <div key={file.id}>
+                                        <button 
+                                            key={file.id}
+                                            onClick={handleOnDownload}
+                                        >
+                                            <span className="text-blue-500 underline">
+                                                { file.name }
+                                            </span>
+                                        </button>
+                                    </div>
                                 )}
                                 { total.count > 3 ? (
                                     <div>

@@ -4,7 +4,7 @@ import { fetchCategories, fetchServices } from "@/functions/helperFunctions";
 import { Category } from "@/types/general";
 import { Service, ServiceFilter, ServicePayload } from "@/types/service";
 import Link from "next/link";
-import SortingFilterDropDown from "@/components/SortingDropDown";
+import SortingDropDown from "@/components/SortingDropDown";
 import { Sorting, SortingValue } from "@/types/Sorting";
 import PaginationButtons from "@/components/PaginationButtons";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
@@ -297,7 +297,7 @@ const OfferService = () => {
                                 deadlineDate={filters.deadlineDate}
                                 onChange={handleOnFilterChange}
                             />
-                            <SortingFilterDropDown
+                            <SortingDropDown
                                 selectedSorting={sorting}
                                 sortings={sortings}
                                 onChange={handleOnSortingChange}
