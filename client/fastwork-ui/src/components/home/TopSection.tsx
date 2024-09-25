@@ -72,7 +72,9 @@ const TopSection: React.FC = (): React.ReactNode => {
                         />
                     </div>
                     <div>
-                        <button className="px-4 w-full h-full border bg-[#D0693B] border-[#D0693B] text-white rounded-r-lg">
+                        <button
+                        onClick={handleSubmit}
+                        className="px-4 w-full h-full border bg-[#D0693B] border-[#D0693B] text-white rounded-r-lg">
                             <MagnifyingGlassIcon className="size-6 font-bold text-white"/>
                         </button>
                     </div>
