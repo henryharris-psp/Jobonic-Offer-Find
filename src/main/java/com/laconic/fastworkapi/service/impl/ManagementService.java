@@ -215,7 +215,7 @@ public class ManagementService implements IManagementService {
                                 criteriaBuilder.notEqual(root.get("profile").get("id"), pageAndFilterDTO.getAuthId())),
                 pageAndFilterDTO.getPageRequest())
                 : this.serviceRepo.findAllExceptAuthUser(pageAndFilterDTO.getAuthId(), pageAndFilterDTO.getPageRequest());
-        
+
         List<ServiceDTO.WithProfile> servicesWithProfile = servicePage.stream()
                 .map(service -> getServiceWithProfile(service, service.getProfile()))
                 .collect(Collectors.toList());
