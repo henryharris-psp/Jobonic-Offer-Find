@@ -25,7 +25,7 @@ springdoc:
 server:
   port: 8081
   file:
-    basePath: /Users/bibek¬/Desktop/workspace/photo/
+    basePath: /Users/bibek/Desktop/workspace/photo/
 authorize:
   url: http://localhost:8765
   password: sso_laconic
