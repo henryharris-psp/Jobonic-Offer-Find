@@ -32,4 +32,7 @@ public interface IServiceRepo extends JpaRepository<ServiceManagement, UUID>, Jp
 
     @Query("SELECT s FROM ServiceManagement s WHERE s.profile.id <> :authUserId")
     Page<ServiceManagement> findAllExceptAuthUser(@Param("authUserId") Long authUserId, Pageable pageable);
+
+    @Query("SELECT s FROM ServiceManagement s WHERE s.serviceRequest.id = :serviceRequestId")
+    ServiceManagement findAllByServiceRequestId(@Param("serviceRequestId") UUID serviceRequestId);
 }

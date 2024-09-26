@@ -13,11 +13,6 @@ import java.util.UUID;
 @Repository
 public interface IServiceRequestRepo extends JpaRepository<ServiceRequest, UUID>, JpaSpecificationExecutor<ServiceRequest> {
 
-    /**
-     * @Author : soe
-     * @CreatedAt : Aug 27, 2024
-     * @Note : select all of service requests and their related entities details with pagination and sorting.
-     */
 //    public static final String FIND_ALL_SERVICE_REQUEST = "SELECT new com.laconic.fastworkapi.dto.ExtendedServiceRequestDTO(" +
 //            "sr.id, sr.submissionDeadline, sr.workExample, sr.profile.id, " +
 //            "sm.description, sm.description1, sm.description2, sm.description3, " +
@@ -32,4 +27,12 @@ public interface IServiceRequestRepo extends JpaRepository<ServiceRequest, UUID>
 //
 //    @Query(FIND_ALL_SERVICE_REQUEST)
 //    Page<ExtendedServiceRequestDTO> findAllExtendedServiceRequestDetails(Pageable pageable);
+    public static final String FILTER_BY_PRICE_AND_DATE = "SELECT srm FROM ServiceRequest srm" +
+            " LEFT JOIN srm.serviceManagement sr" +
+            " WHERE (srm.price BETWEEN :minPrice AND :maxPrice)" +
+            " AND (:submissionDeadline IS NULL OR sr.submissionDeadline = :submissionDeadline)";
+
+    @Query("SELECT s FROM ServiceRequest s WHERE s.profile.id <> :authUserId")
+    Page<ServiceRequest> findAllExceptAuthUser(Long authUserId, Pageable pageable);
+
 }

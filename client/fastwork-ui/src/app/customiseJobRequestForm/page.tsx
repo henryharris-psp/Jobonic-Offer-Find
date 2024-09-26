@@ -135,6 +135,7 @@ const CustomiseJobRequestForm: React.FC = () => {
 
     const serviceData = {
       serviceRequestDTO: {
+        profileId: profileId,
         submissionDeadline: formState.deadline,
         workExample: formState.exampleWork,
       },

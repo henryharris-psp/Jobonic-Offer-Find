@@ -30,11 +30,15 @@ public class ServiceRequestDTO implements Serializable {
     private Long profileId;
     private UUID serviceId;
 
+    @JsonIgnore
+    private UUID serviceManagementId;
+
     public ServiceRequestDTO(ServiceRequest serviceRequest) {
         this.id = serviceRequest.getId();
         this.submissionDeadline = serviceRequest.getSubmissionDeadline();
         this.workExample = serviceRequest.getWorkExample();
         this.profileId = serviceRequest.getProfile().getId();
+        this.serviceManagementId = serviceRequest.getServiceManagement().getId();
     }
 
     public ServiceRequest updateServiceRequest(ServiceRequest serviceRequest) {
