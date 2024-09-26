@@ -21,15 +21,12 @@ import com.laconic.fastworkapi.utils.EntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -69,6 +66,26 @@ public class ManagementService implements IManagementService {
         );
     }
 
+    private static ExtendedServiceRequestDTO.WithProfile getRequestServiceWithProfile(ServiceManagement service, Profile user) {
+        return new ExtendedServiceRequestDTO.WithProfile(
+                service.getId(),
+                EntityMapper.mapToResponse(service.getServiceOffer(), ServiceOfferDTO.class),
+                EntityMapper.mapToResponse(service.getServiceRequest(), ServiceRequestDTO.class),
+                EntityMapper.mapToResponse(user, ProfileDTO.class),
+                service.getTitle(),
+                service.getEmploymentType(),
+                service.getDescription(),
+                service.getDescription1(),
+                service.getDescription2(),
+                service.getDescription3(),
+                service.getLanguageSpoken(),
+                service.getLocation(),
+                EntityMapper.mapToResponse(service.getCategory(), CategoryDTO.class),
+                service.getPrice(),
+                service.getPriceUnit()
+        );
+    }
+
     private static ServiceDTO.GetRequestService mapToGetRequestService(ServiceRequest service) {
         return new ServiceDTO.GetRequestService(
                 service.getId(),
@@ -82,9 +99,11 @@ public class ManagementService implements IManagementService {
         var user = this.userRepo.findById(serviceDTO.getProfileId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
                         serviceDTO.getProfileId().toString()));
+
         var category = this.categoryRepo.findById(serviceDTO.getCategoryId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.CATEGORY, "id",
                         serviceDTO.getCategoryId().toString()));
+
         var serviceManagement = EntityMapper.mapToEntity(serviceDTO, ServiceManagement.class);
         serviceManagement.setProfile(user);
         serviceManagement.setCategory(category);
@@ -276,94 +295,62 @@ public class ManagementService implements IManagementService {
         return PaginationHelper.getResponse(serviceRequests, serviceRequestDTOS);
     }
 
-    /**
-     * @Author : soe
-     * @CreatedAt : Aug 27, 2024
-     * @Note : Get All request services and related of theirs with pagination and filter
-     */
     @Override
-    public PaginationDTO<ExtendedServiceRequestDTO.WithProfile> getAllExtendedRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+    public PaginationDTO getAllExtendedRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
 
-        Specification<ServiceManagement> specs =
-                GenericSpecification.hasKeyword((String) keyword, Set.of("title"));
+        Specification<ServiceRequest> specs =
+                GenericSpecification.hasKeyword(keyword, Set.of("title"));
 
-        Page<ServiceManagement> servicePage = keyword != null
-                ? this.serviceRepo.findAll(Specification.where(specs).and((root, query, criteriaBuilder) ->
+        Page<ServiceRequest> servicePage = keyword != null
+                ? this.serviceRequestRepo.findAll(Specification.where(specs).and((root, query, criteriaBuilder) ->
                 criteriaBuilder.notEqual(root.get("profile").get("id"), pageAndFilterDTO.getAuthId())), pageAndFilterDTO.getPageRequest())
-                : this.serviceRepo.findAllExceptAuthUser(pageAndFilterDTO.getAuthId(), pageAndFilterDTO.getPageRequest());
+                : this.serviceRequestRepo.findAllExceptAuthUser(pageAndFilterDTO.getAuthId(), pageAndFilterDTO.getPageRequest());
 
-        List<ExtendedServiceRequestDTO.WithProfile> extendedServiceWithProfile = servicePage.stream()
-                .map(service -> getAllExtendedRequestWithProfile(service, service.getProfile()))
+        List<ExtendedServiceRequestDTO.WithProfile> extendedService = servicePage.stream()
+                .map(this::mapToExtendedServiceRequestDTO)
                 .collect(Collectors.toList());
 
-        // Return the paginated response with the mapped DTOs
-        return PaginationHelper.getResponse(servicePage, extendedServiceWithProfile);
-    }
-
-    private static ExtendedServiceRequestDTO.WithProfile getAllExtendedRequestWithProfile(ServiceManagement service, Profile user) {
-        return new ExtendedServiceRequestDTO.WithProfile(
-                service.getId(),
-                EntityMapper.mapToResponse(service.getServiceOffer(), ServiceOfferDTO.class),
-                EntityMapper.mapToResponse(service.getServiceRequest(), ServiceRequestDTO.class),
-                EntityMapper.mapToResponse(user, ProfileDTO.class),
-                service.getTitle(),
-                service.getEmploymentType(),
-                service.getDescription(),
-                service.getDescription1(),
-                service.getDescription2(),
-                service.getDescription3(),
-                service.getLanguageSpoken(),
-                service.getLocation(),
-                EntityMapper.mapToResponse(service.getCategory(), CategoryDTO.class),
-                service.getPrice(),
-                service.getPriceUnit()
-        );
+        return PaginationHelper.getResponse(servicePage, extendedService);
     }
 
     // Internal method to map ServiceRequest to ExtendedServiceRequestDTO
-    private ExtendedServiceRequestDTO mapToExtendedServiceRequestDTO(ServiceRequest serviceRequest) {
+    private ExtendedServiceRequestDTO.WithProfile mapToExtendedServiceRequestDTO(ServiceRequest serviceRequest) {
         if (serviceRequest == null) {
             return null;
         }
 
-        var serviceManagement = serviceRequest.getServiceManagement();
+        var serviceManagement = serviceRepo.findAllByServiceRequestId(serviceRequest.getId());
+
         if (serviceManagement == null) {
             throw new IllegalArgumentException("ServiceManagement is null for ServiceRequest ID: " + serviceRequest.getId());
         }
 
-        serviceManagement = this.serviceRepo.findById(serviceManagement.getId())
-                .orElseThrow();
+//        serviceManagement = this.serviceRepo.findById(serviceManagement.getId())
+//                .orElseThrow();
 
         UUID categoryId = null;
+
         if (serviceManagement.getCategory() != null) {
             categoryId = serviceManagement.getCategory().getId();
         }
 
-        return new ExtendedServiceRequestDTO(
+        return new ExtendedServiceRequestDTO.WithProfile(
                 serviceRequest.getId(),
-                serviceRequest.getSubmissionDeadline(),
-                serviceRequest.getWorkExample(),
-                serviceManagement.getProfile().getId(),
+                EntityMapper.mapToResponse(serviceManagement.getServiceOffer(), ServiceOfferDTO.class),
+                EntityMapper.mapToResponse(serviceManagement.getServiceRequest(), ServiceRequestDTO.class),
+                EntityMapper.mapToResponse(serviceManagement.getProfile(), ProfileDTO.class),
+                serviceManagement.getTitle(),
+                serviceManagement.getEmploymentType(),
                 serviceManagement.getDescription(),
                 serviceManagement.getDescription1(),
                 serviceManagement.getDescription2(),
                 serviceManagement.getDescription3(),
-                serviceManagement.getEmploymentType(),
                 serviceManagement.getLanguageSpoken(),
                 serviceManagement.getLocation(),
+                EntityMapper.mapToResponse(serviceManagement.getCategory(), CategoryDTO.class),
                 serviceManagement.getPrice(),
-                serviceManagement.getPriceUnit(),
-                serviceManagement.getTitle(),
-                categoryId,
-                serviceManagement.getProfile().getCardExpiryDate(),
-                serviceManagement.getProfile().getCardNumber(),
-                serviceManagement.getProfile().getCompanyName(),
-                serviceManagement.getProfile().getImage(),
-                serviceManagement.getProfile().getPhoneNumber(),
-                serviceManagement.getProfile().getReview(),
-                serviceManagement.getProfile().getUserId(),
-                serviceManagement.getProfile().getWalletAddress()
+                serviceManagement.getPriceUnit()
         );
     }
 }
