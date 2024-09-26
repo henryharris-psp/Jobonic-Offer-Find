@@ -125,19 +125,19 @@ const ExperienceComponent = () => {
   };
 
   return (
-    <section className="flex flex-col w-[60%] justify-start ml-16 mt-4 pb-4">
+    <section className="flex flex-col lg:w-[65%] justify-start mt-4 pb-4">
       <div className="flex space-x-3 mb-6 justify-start items-center">
-        <h2 className="text-2xl font-bold text-cyan-950">Experience</h2>
+        <h2 className="text-xl font-bold text-cyan-950">Experience</h2>
         <PlusCircleIcon
-          className="w-6 h-6 cursor-pointer text-yellow-700"
+          className="w-5 h-5 cursor-pointer text-black"
           onClick={(e) => addMode("user-experience", e)}
         />
         <h3 className="text-xs text-gray-400 items-center select-none">Add Experience</h3>
       </div>
       {showNewEntry && (
-        <div className="space-y-3 rounded-lg p-6 bg-gray-100 mt-4">
+        <div className="space-y-3 rounded-lg p-6 bg-gray-50 mt-4">
           {['company', 'startDate', 'endDate'].map((field, index) => (
-            <div key={index} className="grid grid-cols-3 items-center p-2">
+            <div key={index} className="grid grid-cols-3 items-center p-3">
               <h3 className="flex flex-col font-bold">
                 {field === 'startDate' ? 'Start Date' : field === 'endDate' ? 'End Date' : 'Company'}
               </h3>
@@ -148,7 +148,7 @@ const ExperienceComponent = () => {
                 value={formData[field as keyof Experience]}
                 onChange={handleInputChange}
                 placeholder={`Enter your ${field}`}
-                className={`text-black col-span-2 ${enabledInputs["user-experience"]
+                className={`text-black col-span-2 text-sm font-semibold p-4 ${enabledInputs["user-experience"]
                   ? "border-none bg-white"
                   : "border-none bg-transparent"} rounded-lg`}
                 ref={field === 'startDate' ? experienceStartDateRef : field === 'endDate' ? experienceEndDateRef : companyRef}
@@ -156,18 +156,18 @@ const ExperienceComponent = () => {
               />
             </div>
           ))}
-          <div
+          <button
             onClick={handleSave}
-            className="flex justify-center items-center mt-2 p-2 w-28 shadow-lg bg-[#0B2147] text-white font-bold rounded-md cursor-pointer"
+            className="flex justify-center items-center mt-2 p-3 w-28 text-sm shadow-lg bg-[#0B2147] text-white font-semibold rounded-2xl cursor-pointer"
           >
-            <BookmarkSquareIcon className="w-6 h-6 mr-2" />
+            <BookmarkSquareIcon className="w-5 h-5 mr-2" />
             <span>Save</span>
-          </div>
+          </button>
         </div>
       )}
       <ul className="flex justify-start flex-wrap ">
         {experienceList.map((experience, index) => (
-          <li key={index} className="px-8 py-4 mt-4 mr-6 bg-gray-100 rounded-lg relative ">
+          <li key={index} className="px-8 py-4 mt-4 mr-6 bg-gray-50 rounded-lg relative ">
             <button
               onClick={() => handleRemoveClick(index)}
               className="absolute top-2 right-2 text-white p-1  rounded-full hover:bg-white transition duration-300"
@@ -186,12 +186,13 @@ const ExperienceComponent = () => {
                 if (key === 'id' || key === 'profileId') return null;
 
                 return (
-                  <li key={key} className="flex flex-col">
-                    <strong className="capitalize">
-                      {key.replace('startDate', 'Start Date').replace('endDate', 'End Date')}:
-                    </strong>
-                    <span className="text-black text-sm pl-2 pt-2 font-semibold">{value}</span>
-                  </li>
+                  <li key={key} className="list-disc mr-5 mt-4">
+                  <div className="flex flex-col">
+                      <span className="text-black text-sm font-semibold ml-2">
+                          {value}
+                      </span>
+                  </div>
+              </li>
                 );
               })}
             </ul>

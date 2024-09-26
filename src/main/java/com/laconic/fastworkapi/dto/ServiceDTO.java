@@ -42,13 +42,12 @@ public class ServiceDTO implements Serializable {
     private UUID categoryId;
     private double price = 0;
     private PriceUnit priceUnit;
-    private String serviceType;
 
     public record WithProfile(UUID id, ServiceOfferDTO serviceOfferDTO, ServiceRequestDTO serviceRequestDTO,
                               ProfileDTO profileDTO, String title, EmploymentType employmentType, String description,
                               String description1, String description2, String description3, String languageSpoken,
                               String location, CategoryDTO categoryDTO, double price,
-                              PriceUnit priceUnit, String serviceType) implements Serializable {
+                              PriceUnit priceUnit) implements Serializable {
     }
 
     public record GetRequestService(UUID id, LocalDate submissionDeadline,

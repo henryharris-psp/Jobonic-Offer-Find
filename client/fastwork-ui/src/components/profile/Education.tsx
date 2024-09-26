@@ -132,19 +132,19 @@ const EducationComponent = () => {
 
 
     return (
-        <section className="flex flex-col w-[60%] justify-start ml-16 mt-4 pb-4 ">
+        <section className="flex flex-col justify-start lg:w-[65%] mt-4 pb-4 ">
             <div className="flex flex-row space-x-3 items-center mb-6">
-                <h2 className="text-2xl font-bold text-cyan-950">Education</h2>
+                <h2 className="text-xl font-bold text-cyan-950">Education</h2>
                 <PlusCircleIcon
-                    className="w-6 h-6 cursor-pointer text-yellow-700"
+                    className="w-5 h-5 cursor-pointer text-black"
                     onClick={() => setShowNewEntry((prev) => !prev)}
                 />
                 <h3 className="text-xs text-gray-400 items-center select-none">Add Education</h3>
             </div>
             {showNewEntry && (
-                <div className="space-y-3 rounded-lg p-6 bg-gray-100">
+                <div className="space-y-3 rounded-lg p-6 bg-gray-50">
                     {['institute', 'degree', 'startDate', 'endDate'].map((field, index) => (
-                        <div key={index} className="grid grid-cols-3 items-center p-2">
+                        <div key={index} className="grid grid-cols-3 items-center p-3">
                             <label htmlFor={`education.${field}`} className="flex flex-col font-bold capitalize">
                                 {field.replace('startDate', 'Start Date').replace('endDate', 'End Date')}
                             </label>
@@ -155,22 +155,22 @@ const EducationComponent = () => {
                                 value={formData[field as keyof Education]}
                                 onChange={handleInputChange}
                                 placeholder={`Enter your ${field}`}
-                                className="text-black col-span-2 border-none bg-white rounded-lg"
+                                className="text-black text-sm font-semibold p-4 col-span-2 border-none bg-white rounded-lg"
                             />
                         </div>
                     ))}
-                    <div
+                    <button
                         onClick={handleSave}
-                        className="flex justify-center items-center mt-2 p-2 w-28 shadow-lg bg-[#0B2147] text-white font-bold rounded-md cursor-pointer"
+                        className="flex justify-center items-center mt-2 p-3 text-sm w-28 shadow-lg bg-[#0B2147] text-white font-bold rounded-2xl cursor-pointer"
                     >
                         <BookmarkSquareIcon className="w-6 h-6 mr-2" />
                         <span>Save</span>
-                    </div>
+                    </button>
                 </div>
             )}
             <ul className="flex justify-start flex-wrap">
                 {educationList.map((education, index) => (
-                    <li key={index} className="px-8 py-4 mt-4 mr-6 bg-gray-100 rounded-lg relative">
+                    <li key={index} className="px-8 py-4 mt-4 mr-6 bg-gray-50 rounded-lg relative">
                         <button
                             onClick={() => handleRemoveClick(index)}
                             className="absolute top-2 right-2 text-white p-1 rounded-full hover:bg-white transition duration-300"
@@ -179,23 +179,20 @@ const EducationComponent = () => {
                         </button>
                         <button
                             onClick={() => handleEdit(index)}
-                            className="absolute top-2 right-8 text-white p-1 rounded-full hover:bg-[#77E3C8] transition duration-300"
+                            className="absolute top-2 right-7 text-white p-1 rounded-full hover:bg-[#77E3C8] transition duration-300"
                         >
                             <PencilSquareIcon className="w-4 h-4 text-yellow-700" />
                         </button>
-                        <ul className="space-y-2">
+                        <ul className="space-y-1">
                             {Object.entries(education).map(([key, value]) => {
-                                // Hide the 'id' and 'profileId' fields
                                 if (key === 'id' || key === 'profileId') return null;
-
                                 return (
-                                    <li key={key} className="flex flex-col">
-                                        <strong className="capitalize">
-                                            {key.replace('startDate', 'Start Date').replace('endDate', 'End Date')}:
-                                        </strong>
-                                        <span className="text-black text-sm ml-2">
-                                            {value}
-                                        </span>
+                                    <li key={key} className="list-disc mr-5 mt-4">
+                                        <div className="flex flex-col">
+                                            <span className="text-black text-sm font-semibold ml-2">
+                                                {value}
+                                            </span>
+                                        </div>
                                     </li>
                                 );
                             })}

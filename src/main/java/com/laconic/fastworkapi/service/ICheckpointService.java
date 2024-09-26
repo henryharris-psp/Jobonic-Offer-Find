@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.service;
 
+import com.laconic.fastworkapi.dto.CheckResponseDTO;
 import com.laconic.fastworkapi.dto.CheckpointDTO;
 import com.laconic.fastworkapi.entity.Checkpoint;
 
@@ -12,7 +13,7 @@ public interface ICheckpointService {
 
     CheckpointDTO update(UUID id, CheckpointDTO checkpointDTO);
 
-    CheckpointDTO getById(UUID id);
+    CheckResponseDTO getById(UUID id);
 
     List<CheckpointDTO> getAll();
 

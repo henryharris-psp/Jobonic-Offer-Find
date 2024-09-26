@@ -12,7 +12,7 @@ import StarRating from "./StarRating";
 
 interface ServiceMatchCardProps {
     service: Service;
-    profile: Profile;
+    profile?: Profile;
     onClick: (service: Service) => void;
     onChatClick: (e: React.MouseEvent) => void;
 }
@@ -82,7 +82,7 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
                             />
                         </div>
                         <span className="text-gray-500">
-                            {profile.numReviews} reviews | {profile.numSold ?? 0} sold
+                            {profile?.numReviews} reviews | {profile?.numSold ?? 0} sold
                         </span>
                     </div>
                 </div>

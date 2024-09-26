@@ -63,7 +63,6 @@ const CustomiseJobRequestForm: React.FC = () => {
     fetchCategory();
   }, []);
 
-
   const fetchCategory = async () => {
     try {
       const response = await httpClient.get('/category/all');
@@ -79,24 +78,30 @@ const CustomiseJobRequestForm: React.FC = () => {
   };
   const handleLanguageCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = event.target;
-    if (checked) {
-      setFormState(prevState => ({
-        ...prevState,
-        language: [...prevState.language, value],
-      }));
-    } else {
-      setFormState(prevState => ({
-        ...prevState,
-        language: prevState.language.filter(lang => lang !== value),
-      }));
-    }
-  };
 
+    setFormState(prevState => {
+      // Update the selected languages array
+      const updatedLanguages = checked
+        ? [...prevState.language, value] // Add the selected language
+        : prevState.language.filter(lang => lang !== value); // Remove the deselected language
+
+      // Clear the error if there is at least one selected language
+      if (updatedLanguages.length > 0) {
+        setFormErrors(prevErrors => ({
+          ...prevErrors,
+          language: '', // Clear the error message
+        }));
+      }
+
+      return {
+        ...prevState,
+        language: updatedLanguages,
+      };
+    });
+  };
   const toggleDropdown = () => {
     setIsDropdownOpen(prev => !prev);
   };
-
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -145,7 +150,6 @@ const CustomiseJobRequestForm: React.FC = () => {
       categoryId: selectedCategory ? selectedCategory.id : '',
       price: parseInt(formState.budget),
       priceUnit: formState.priceUnit,
-      serviceType: "request"
     };
 
     console.log('Service Data:', JSON.stringify(serviceData, null, 2));
@@ -195,9 +199,6 @@ const CustomiseJobRequestForm: React.FC = () => {
     }
   };
 
-
-
-
   const saveDataToCsv = async (data: any) => {
     try {
       const response = await fetch('/api/writeCsv', {
@@ -237,11 +238,11 @@ const CustomiseJobRequestForm: React.FC = () => {
     ],
   };
   return (
-    <div className="flex flex-col lg:flex-row justify-center sm:flex-wrap md:flex-wrap">
-      <div className="flex flex-col justify-center items-center w-full lg:w-[65%] my-6 lg:my-12 md:my-12">
-        <h1 className="text-4xl font-bold text-cyan-900 text-center mb-8">Create Service Request</h1>
-        <form className='w-full bg-white p-8 shadow-md rounded-md' onSubmit={handleSubmit}>
-          <div className="w-full shadow-sm p-4 xs:p-8 sm:p-16 lg:p-12 flex flex-col gap-6 rounded-md">
+    <div className=" flex flex-col lg:flex-row justify-between sm:flex-wrap md:flex-wrap">
+      <div className="flex flex-col justify-around items-center w-full lg:w-[80%] my-6 lg:mt-12 md:mt-12">
+        <h1 className="text-4xl font-bold text-cyan-900 text-center">Create Service Request</h1>
+        <form className='w-full rounded-md' onSubmit={handleSubmit}>
+          <div className=" p-8 xs:p-8 xs:p-8 sm:p-16 lg:px-36 lg:py-10 flex flex-col gap-6">
             <div className="flex md:flex-row lg:flex-row flex-col gap-4">
               <div className="flex flex-col w-full lg:w-1/2 mb-4">
                 <label htmlFor="title" className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg">Title</label>
@@ -251,7 +252,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                   name="title"
                   value={formState.title}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 font-semibold bg-gray-50 text-sm rounded-lg"
+                  className="w-full p-4 border border-gray-300 font-semibold bg-gray-50 text-sm rounded-lg"
                   placeholder="Service Title"
                 />
                 {formErrors.title && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.title}</p>}
@@ -263,7 +264,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                   name="workCategory"
                   value={formState.workCategory}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 font-semibold bg-gray-50 text-sm rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-100">
+                  className="w-full p-4 border border-gray-300 font-semibold bg-gray-50 text-sm rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-100">
                   <option value="" disabled>Select an option</option>
                   {categoryList.map((category: Category, index: number) => (
                     <option key={index} value={category.name}>{category.name}</option>
@@ -280,7 +281,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                   name="employmentType"
                   value={formState.employmentType}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 font-semibold bg-gray-50 text-sm rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-100">
+                  className="w-full p-4 border border-gray-300 font-semibold bg-gray-50 text-sm rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-100">
                   <option value="" disabled>Select an option</option>
                   <option value="FULL_TIME">Full-time</option>
                   <option value="PART_TIME">Part-time</option>
@@ -295,7 +296,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                   name="detailedDescription"
                   value={formState.detailedDescription}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 font-semibold bg-gray-50 text-sm rounded-lg"
+                  className="w-full p-4 border border-gray-300 font-semibold bg-gray-50 text-sm rounded-lg"
                   placeholder="Detailed description of the job"
                 />
                 {formErrors.detailedDescription && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.detailedDescription}</p>}
@@ -310,7 +311,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                   name="requirement1"
                   value={formState.requirement1}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
+                  className="w-full p-4 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
                   placeholder="Teach Middle School students"
                 />
                 {formErrors.requirement1 && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.requirement1}</p>}
@@ -323,7 +324,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                   name="requirement2"
                   value={formState.requirement2}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
+                  className="w-full p-4 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
                   placeholder="Familiar with GCE O Levels"
                 />
                 {formErrors.requirement2 && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.requirement2}</p>}
@@ -338,7 +339,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                   name="requirement3"
                   value={formState.requirement3}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
+                  className="w-full p-4 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
                   placeholder="Able to travel to my house"
                 />
                 {formErrors.requirement3 && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.requirement3}</p>}
@@ -351,7 +352,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                   name="exampleWork"
                   value={formState.exampleWork}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
+                  className="w-full p-4 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
                   placeholder="https://www.netflix.com"
                 />
                 {formErrors.exampleWork && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.exampleWork}</p>}
@@ -366,7 +367,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                   name="deadline"
                   value={formState.deadline}
                   onChange={handleChange}
-                  className="w-full border p-3 border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
+                  className="w-full border p-4 border-gray-300 font-semibold rounded-lg text-sm bg-gray-50"
                   placeholder="Select a date"
                 />
                 {formErrors.deadline && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.deadline}</p>}
@@ -380,19 +381,19 @@ const CustomiseJobRequestForm: React.FC = () => {
                     name="budget"
                     value={formState.budget}
                     onChange={handleChange}
-                    className="w-full p-3 border border-gray-300 font-semibold text-sm rounded-lg bg-gray-50"
+                    className="w-full p-4 border border-gray-300 font-semibold text-sm rounded-lg bg-gray-50"
                     placeholder="$14"
                   />
                   {formErrors.budget && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.budget}</p>}
                 </div>
                 <div className='mb-4 w-[38%]'>
-                  <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="priceUnit">Price Unit</label>
+                  <label className="block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="priceUnit">Price Unit</label>
                   <select
                     id="priceUnit"
                     name="priceUnit"
                     value={formState.priceUnit}
                     onChange={handleChange}
-                    className="w-full p-3 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50 cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-100">
+                    className="w-full p-4 border border-gray-300 font-semibold rounded-lg text-sm bg-gray-50 cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-100">
                     <option value="" disabled>Select a unit</option>
                     <option value="HOUR">Hour</option>
                     <option value="WEEK">Week</option>
@@ -410,7 +411,7 @@ const CustomiseJobRequestForm: React.FC = () => {
                 <div className="relative">
                   <button
                     onClick={toggleDropdown}
-                    className="inline-flex justify-between items-center p-3 w-full text-sm font-medium text-center bg-gray-100 text-black rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-100"
+                    className="inline-flex justify-between items-center p-4 w-full text-sm font-medium text-center bg-gray-100 text-black rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-100"
                     type="button"
                   >
                     Select Languages
@@ -463,25 +464,25 @@ const CustomiseJobRequestForm: React.FC = () => {
                   name="location"
                   value={formState.location}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 text-sm rounded-lg font-semibold bg-gray-50"
+                  className="w-full p-4 border border-gray-300 text-sm rounded-lg font-semibold bg-gray-50"
                   placeholder="Online / Phra Khanong / On Nut"
                 />
                 {formErrors.location && <p className="text-red-500 text-sm font-semibold mt-1">{formErrors.location}</p>}
               </div>
             </div>
           </div>
-          <div className="flex justify-center text-center items-center">
+          <div className="flex justify-center pb-6 text-center items-center">
             <button type="submit" className="bg-[#0B2147] hover:bg-[#D0693B] text-white font-semibold py-3 px-12 text-sm rounded-2xl">
               Submit
             </button>
           </div>
         </form>
       </div>
-      <div className="flex flex-col items-center justify-center">
-        {/* Card should update as form is filled in */}
+      <div className="lg:fixed lg:-top-16 lg:-end-16 w-full lg:w-[30%] px-4 py-8 flex flex-col items-center lg:h-screen sm:h-auto justify-center">
         <CreateServiceRequestCard {...cardProps} />
         <h3 className="px-6 text-gray-500 text-justify text-xs">* how your service request card will look like</h3>
       </div>
+
     </div>
   );
 };

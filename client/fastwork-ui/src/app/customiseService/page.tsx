@@ -146,7 +146,6 @@ const CustomiseService: React.FC = () => {
             price: askingPrice,
             priceUnit: priceUnit,
             links: links,
-            serviceType: "offer"
         };
         try {
             const response = await httpClient.post('service', serviceData);
@@ -213,12 +212,12 @@ const CustomiseService: React.FC = () => {
     };
     return (
 
-        <div className="flex flex-col lg:flex-row justify-center sm:flex-wrap md:flex-wrap">
-            <div className="flex flex-col justify-center items-center w-full lg:w-[65%] my-6 lg:my-12 md:my-12">
-                <h2 className="text-3xl lg:text-4xl font-bold text-cyan-900 mb-6 lg:mb-12 text-center">
+        <div className="flex flex-col lg:flex-row justify-between sm:flex-wrap md:flex-wrap">
+            <div className="flex flex-col justify-center items-center w-full lg:w-[80%] my-6 lg:my-12 md:my-12">
+                <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-cyan-900 text-center">
                     Create Service Offer
                 </h2>
-                <div className="w-full bg-white shadow-sm p-4 xs:p-8 sm:p-16 lg:p-12 flex flex-col gap-6 rounded-md">
+                <div className="w-full p-8 xs:p-8 xs:p-8 sm:p-16 lg:px-36 lg:py-10 flex flex-col gap-6 rounded-md">
                     {/* First Row */}
                     <div className="flex md:flex-row lg:flex-row flex-col gap-4">
                         {/* Service Title Input */}
@@ -231,7 +230,7 @@ const CustomiseService: React.FC = () => {
                                 id="service-title"
                                 value={title}
                                 placeholder="e.g. Web Developer"
-                                className="block w-full p-3 text-cyan-900 border font-semibold border-gray-300 rounded-lg bg-gray-50 text-sm focus:ring-blue-500 focus:border-blue-500"
+                                className="block w-full p-4 text-cyan-900 border font-semibold border-gray-300 rounded-lg bg-gray-50 text-sm focus:ring-blue-500 focus:border-blue-500"
                                 onChange={(e) => {
                                     setTitle(e.target.value);
                                     if (e.target.value.trim() !== '') {
@@ -250,7 +249,7 @@ const CustomiseService: React.FC = () => {
                             <select
                                 id="employment-type"
                                 value={employmentType}
-                                className="block w-full p-3 text-cyan-900 border font-semibold border-gray-300 rounded-lg bg-gray-50 text-sm focus:ring-blue-500 focus:border-blue-500"
+                                className="block w-full p-4 text-cyan-900 border font-semibold border-gray-300 rounded-lg bg-gray-50 text-sm focus:ring-blue-500 focus:border-blue-500"
                                 onChange={(e) => {
                                     setEmploymentType(e.target.value);
                                     if (e.target.value.trim() !== '') {
@@ -273,7 +272,7 @@ const CustomiseService: React.FC = () => {
                                 id="description1"
                                 value={description1}
                                 placeholder="Job Description 1"
-                                className="block w-full text-cyan-900 border text-sm font-semibold p-3 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                                className="block w-full text-cyan-900 border text-sm font-semibold p-4 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                                 onChange={(e) => {
                                     setDescription1(e.target.value);
                                     if (e.target.value.trim() !== '') {
@@ -294,7 +293,7 @@ const CustomiseService: React.FC = () => {
                                 id="description2"
                                 value={description2}
                                 placeholder="Job Description 2"
-                                className="block w-full text-cyan-900 border text-sm font-semibold p-3 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                                className="block w-full text-cyan-900 border text-sm font-semibold p-4 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                                 onChange={(e) => {
                                     setDescription2(e.target.value);
                                     if (e.target.value.trim() !== '') {
@@ -317,7 +316,7 @@ const CustomiseService: React.FC = () => {
                                 id="description3"
                                 value={description3}
                                 placeholder="Job Description 3"
-                                className="block w-full text-cyan-900 border text-sm font-semibold p-3 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                                className="block w-full text-cyan-900 border text-sm font-semibold p-4 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                                 onChange={(e) => {
                                     setDescription3(e.target.value);
                                     if (e.target.value.trim() !== '') {
@@ -343,7 +342,7 @@ const CustomiseService: React.FC = () => {
                                         setNewLanguage(e.target.value);
                                         setLanguageError(''); // Clear the error when the user starts typing
                                     }}
-                                    className="block w-[90%] text-sm font-semibold p-3 text-cyan-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                                    className="block w-[90%] text-sm font-semibold p-4 text-cyan-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                                 />
                                 <button
                                     onClick={handleAddLanguage}
@@ -381,7 +380,7 @@ const CustomiseService: React.FC = () => {
                                 id="service-description"
                                 placeholder="e.g. I can design websites..."
                                 value={description}
-                                className="block w-full text-sm font-semibold p-3 text-cyan-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                                className="block w-full text-sm font-semibold p-4 text-cyan-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                                 onChange={(e) => {
                                     setDescription(e.target.value);
                                     if (e.target.value.trim() !== '') {
@@ -401,7 +400,7 @@ const CustomiseService: React.FC = () => {
                                 type="text"
                                 id="location"
                                 placeholder="e.g. Phra Khanong"
-                                className="block w-full text-cyan-900 border text-sm font-semibold p-3 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                                className="block w-full text-cyan-900 border text-sm font-semibold p-4 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                                 onChange={(e) => setLocation(e.target.value)}
                             />
                         </div>
@@ -412,7 +411,7 @@ const CustomiseService: React.FC = () => {
                             <select
                                 id="category"
                                 value={selectedCategoryName}
-                                className="block w-full text-cyan-900 border text-sm font-semibold p-3 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                                className="block w-full text-cyan-900 border text-sm font-semibold p-4 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                                 onChange={(e) => setSelectedCategoryName(e.target.value)}
                             >
                                 {categoryList.map((category) => (
@@ -430,11 +429,11 @@ const CustomiseService: React.FC = () => {
                                     type="number"
                                     id="asking-price"
                                     placeholder="Price"
-                                    className="block w-[80%] text-cyan-900 border text-sm font-semibold p-3 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                                    className="block w-[80%] text-cyan-900 border text-sm font-semibold p-4 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                                     onChange={handlePriceChange}
                                 />
                                 <select
-                                    className="block text-cyan-900 border text-sm font-semibold p-3 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                                    className="block text-cyan-900 border text-sm font-semibold p-4 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                                     value={priceUnit}
                                     onChange={(e) => setPriceUnit(e.target.value)}
                                 >
@@ -451,7 +450,7 @@ const CustomiseService: React.FC = () => {
                             )}
                         </div>
                     </div>
-                    <div className="flex md:flex-row lg:flex-row flex-row gap-4">
+                    <div className="flex md:flex-row lg:flex-row flex-col gap-4">
                         <div className="flex flex-col w-full lg:w-1/2 mb-4">
                             <label className="required block font-semibold mb-2 ml-2 text-sm sm:text-sm md:text-md lg:text-lg" htmlFor="description">Offer Link Description</label>
                             <input
@@ -462,7 +461,7 @@ const CustomiseService: React.FC = () => {
                                 onChange={(e) => {
                                     setNewLinkDescription(e.target.value);
                                 }}
-                                className="block w-full text-cyan-900 border text-sm font-semibold p-3 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                                className="block w-full text-cyan-900 border text-sm font-semibold p-4 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                             />
                         </div>
                         <div className="flex flex-col w-full lg:w-1/2 mb-4">
@@ -474,7 +473,7 @@ const CustomiseService: React.FC = () => {
                                     placeholder="Link"
                                     value={newLinkUrl}
                                     onChange={(e) => setNewLinkUrl(e.target.value)}
-                                    className="block w-[90%] text-cyan-900 border text-sm font-semibold p-3 border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                                    className="block w-[90%] text-cyan-900 border text-sm font-semibold p-4 border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
 
                                 />
                                 <button
@@ -520,9 +519,21 @@ const CustomiseService: React.FC = () => {
                 </div>
 
             </div>
-            <div className="flex flex-col items-center justify-center">
+            <div className="lg:fixed lg:-top-16 lg:-end-16 w-full lg:w-[30%] px-4 py-8 flex flex-col items-center lg:h-screen sm:h-auto justify-center">
                 {/* Card should update as form is filled in */}
-                <ServiceOfferCard title={title} price={askingPrice !== null ? askingPrice : 0} currency="USD" description1={description1} description2={description2} description3={description3} />
+                <ServiceOfferCard
+                    title={title}
+                    price={askingPrice !== null ? askingPrice : 0} // Show price, default to 0
+                    currency="USD"
+                    description1={description1}
+                    description2={description2}
+                    description3={description3}
+                    avatar="/profile.png"
+                    rating={4}
+                    reviews={20}
+                    sold={10}
+                />
+
                 <h3 className="px-6 text-gray-500 text-justify text-xs mt-2 lg:mt-4">* how your service offer card will look like</h3>
             </div>
         </div>

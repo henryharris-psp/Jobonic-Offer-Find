@@ -6,7 +6,7 @@ import { Category } from "@/types/general";
 import { Service, ServiceFilter, ServicePayload } from "@/types/service";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import SortingFilterDropDown from "@/components/SortingDropDown";
+import SortingDropDown from "@/components/SortingDropDown";
 import { Sorting, SortingValue } from "@/types/Sorting";
 import PaginationButtons from "@/components/PaginationButtons";
 import { useSelector } from "react-redux";
@@ -117,7 +117,7 @@ const ServiceList = () => {
                     serviceType: 'offer'
                 }
 
-                const servicesData = await fetchServices(payload, signal);
+                const servicesData = await fetchServices('request', signal, payload);
                 if (servicesData){
                     setServices(servicesData.content);
                     setPagination( prev => ({
@@ -231,7 +231,7 @@ const ServiceList = () => {
                                 deadlineDate={filters.deadlineDate}
                                 onChange={handleOnFilterChange}
                             />
-                            <SortingFilterDropDown
+                            <SortingDropDown
                                 selectedSorting={sorting}
                                 sortings={sortings}
                                 onChange={handleOnSortingChange}

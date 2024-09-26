@@ -102,12 +102,13 @@ const NewProgressList = () => {
                                             />
                                         )}
                                         <ReviewProgressSection
-                                            isDisabled={activeChatRoom.status !== 'to_review'}
+                                            isDisabled={!allMilestonesCompleted}
                                             isCurrent={activeChatRoom.status === 'to_review'}
+                                            //TODO: check condition for already reviewed or not
                                         />
                                         <CompleteWorkProgressSection 
-                                            isDisabled={activeChatRoom.status !== 'completed'}
-                                            isCurrent={activeChatRoom.status === 'completed'}
+                                            isOpen={activeChatRoom.status === 'completed'}
+                                            isDone={activeChatRoom.status === 'completed'}
                                         />
                                     </div>
                                 )}

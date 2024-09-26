@@ -32,6 +32,9 @@ public class CheckResponseDTO {
         this.title = checkpoint.getTitle();
         this.price = checkpoint.getPrice();
         this.description = checkpoint.getDescription();
+        this.tasks = checkpoint.getTasks().stream()
+                .map(TaskDTO::new)
+                .toList();
         this.attachments = checkpoint.getAttachments().stream()
                 .map(AttachmentDTO::new)
                 .toList();

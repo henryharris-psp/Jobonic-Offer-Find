@@ -49,7 +49,7 @@ public class ServiceManagementController {
 
     // get employer offer services
     @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL)
-    @PostMapping("/all")
+    @PostMapping("/offer/all")
     public PaginationDTO<ServiceDTO.WithProfile> getAllServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         return this.managementService.getAllServices(pageAndFilterDTO);
     }

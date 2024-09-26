@@ -20,8 +20,7 @@ public interface IServiceRepo extends JpaRepository<ServiceManagement, UUID>, Jp
     public static final String FILTER_BY_PRICE_AND_DATE = "SELECT srm FROM ServiceManagement srm" +
             " LEFT JOIN srm.serviceRequest sr" +
             " WHERE (srm.price BETWEEN :minPrice AND :maxPrice)" +
-            " AND (:submissionDeadline IS NULL OR sr.submissionDeadline = :submissionDeadline)" +
-            " AND (:serviceType IS NULL OR srm.serviceType = :serviceType)";
+            " AND (:submissionDeadline IS NULL OR sr.submissionDeadline = :submissionDeadline)";
 
     List<ServiceManagement> findAllByProfileId(Long profileId);
 

@@ -1,13 +1,13 @@
 import { memo, useRef } from "react";
 import Button, { ButtonProps } from "./Button";
 import { v4 as uuid } from "uuid";
-import { FileProps } from "@/types/general";
+import { Attachment } from "@/types/general";
 import StringParser from "@/functions/stringParser";
 
 type FilePickErrorTypes = "type" | "size";
 
 interface FilePickerProps extends Omit<ButtonProps, 'onClick'> {
-    onPick: (pickedFile: FileProps) => void;
+    onPick: (pickedFile: Attachment) => void;
     onError: (filePickErrorMessages: string[]) => void;
 }
 
@@ -62,7 +62,7 @@ const FilePicker = ({
                 }
 
             //pick on error
-            const pickedFile: FileProps = {
+            const pickedFile: Attachment = {
                 id: uuid(),
                 name: selectedFile.name,
                 size: stringParser.convertBytesToMB(selectedFile.size) + ' MB',

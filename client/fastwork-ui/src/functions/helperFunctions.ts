@@ -1,5 +1,5 @@
 import httpClient from '@/client/httpClient';
-import { Category, Contract, FileProps, Milestone, MilestoneStatus } from '@/types/general';
+import { Category, Contract, Attachment, Milestone, MilestoneStatus } from '@/types/general';
 import { ServiceApiResponse, ServicePayload } from '@/types/service';
 import axios from 'axios';
 
@@ -154,11 +154,12 @@ export const getCategoryName = async (categoryId: string) => {
     }
 
     export const fetchServices = async (
-        payload: ServicePayload,
+        type: 'offer' | 'request',
         signal: AbortSignal,
+        payload: ServicePayload
     ): Promise<ServiceApiResponse | undefined> => {
         try {
-            const res = await httpClient.post<ServiceApiResponse>(`service/all`, payload, { signal });
+            const res = await httpClient.post<ServiceApiResponse>(`service/${type}/all`, payload, { signal });
             return res.data;
         } catch (error: any) {
             if (error.name === 'AbortError') {
@@ -187,7 +188,7 @@ export const getCategoryName = async (categoryId: string) => {
     export const fetchUploadedFiles = async (
         milestoneId: string | number,
         signal?: AbortSignal
-    ): Promise<FileProps[] | undefined> => {
+    ): Promise<Attachment[] | undefined> => {
         try {
             const filesRes = await httpClient.get(`attachment/checkpoint?checkPointId=${milestoneId}`, { signal });
             const files = filesRes.data.map((file: any) => ({ 

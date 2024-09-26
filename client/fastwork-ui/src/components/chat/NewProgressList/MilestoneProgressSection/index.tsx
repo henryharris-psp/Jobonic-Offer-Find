@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Button from "../../../Button";
 import { CheckIcon, CloudArrowUpIcon, DocumentPlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { FileProps, FileStatus, Milestone } from "@/types/general";
+import { Attachment, AttachmentStatus, Milestone } from "@/types/general";
 import FilePicker from "@/components/FilePicker";
 import httpClient from "@/client/httpClient";
 import FileItem from "./FileItem";
@@ -32,10 +32,10 @@ const MilestoneProgressSection = ({
     } = useChat();
 
     //file upload
-    const [pendingFiles, setPendingFiles] = useState<FileProps[]>([]);
+    const [pendingFiles, setPendingFiles] = useState<Attachment[]>([]);
     const [pendingFilesCount, setPendingFilesCount] = useState<number>(0); // just for completed percent calculation
-    const [uploadedFiles, setUploadedFiles] = useState<FileProps[]>(oldFiles ?? []);
-    const [failedFiles, setFailedFiles] = useState<FileProps[]>([]);
+    const [uploadedFiles, setUploadedFiles] = useState<Attachment[]>(oldFiles ?? []);
+    const [failedFiles, setFailedFiles] = useState<Attachment[]>([]);
     const [filePickErrorMessages, setFilePickErrorMessages] = useState<string[]>([]);
     const [isUploading, setIsUploading] = useState<boolean>(false);
     const [currentUploadingFileId, setCurrentUploadingFileId] = useState<string | null>(null);
@@ -85,7 +85,7 @@ const MilestoneProgressSection = ({
             }
 
         //file upload handlers
-            const handleOnPickFile = (pickedFile: FileProps) => {
+            const handleOnPickFile = (pickedFile: Attachment) => {
                 setPendingFiles(prev => ([...prev, pickedFile]));
                 setPendingFilesCount(prev => prev + 1);
                 setFilePickErrorMessages([]);
@@ -95,7 +95,7 @@ const MilestoneProgressSection = ({
                 setFilePickErrorMessages(filePickErrorMessages);
             }
 
-            const handleOnDeleteFile = async (fileId: string, status: FileStatus) => {
+            const handleOnDeleteFile = async (fileId: string, status: AttachmentStatus) => {
                 const deleteWarningMessage = status === 'uploaded'
                     ? `This file is already submitted to employer. \nAre you sure you want to delete this file?`
                     : "Are you sure you want to remove this file?";
@@ -171,7 +171,7 @@ const MilestoneProgressSection = ({
                         });
                         const { id, originalName, fileSize } = res.data;
 
-                        const newlyUploadedFile: FileProps = {
+                        const newlyUploadedFile: Attachment = {
                             id: id,
                             name: originalName,
                             size: fileSize,
@@ -180,7 +180,7 @@ const MilestoneProgressSection = ({
                         setUploadedFiles( prev => ([...prev, newlyUploadedFile]));
                     } catch (error) {
                         setFailedFiles( prev => {
-                            const failedFile: FileProps = {
+                            const failedFile: Attachment = {
                                 ...targetFile,
                                 status: 'failed'
                             }
@@ -196,8 +196,6 @@ const MilestoneProgressSection = ({
     return (
         <>
             <ProgressSectionRoot
-                defaultOpened={isCurrent}
-                isToggleable={true}
                 title={title}
                 isCurrent={isCurrent}
                 isDisabled={isDisabled}
