@@ -16,12 +16,12 @@ const FindingServiceSection: React.FC = (): React.ReactNode => {
                 </p>
                 <div className="flex space-x-4">
                     <Link href="/findServices">
-                        <button className="bg-[#71BAC7] text-white py-2 px-4 rounded-lg">
+                        <button className="bg-[#71BAC7] font-semibold text-md text-white py-3 px-4 rounded-xl">
                             Find a service
                         </button>
                     </Link>
                     <Link href="/serviceList">
-                        <button className="bg-[#71BAC7] text-white py-2 px-4 rounded-lg">
+                        <button className="bg-[#71BAC7] font-semibold text-md text-white py-3 px-4 rounded-xl">
                             View service offers
                         </button>
                     </Link>

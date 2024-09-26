@@ -4,8 +4,6 @@ import { ReactNode, useState } from "react";
 
 interface ProgressSectionRootProps {
     title: string;
-    defaultOpened?: boolean;
-    isToggleable?: boolean;
     isCurrent: boolean;
     isDisabled: boolean;
     children: ReactNode;
@@ -13,19 +11,15 @@ interface ProgressSectionRootProps {
 
 const ProgressSectionRoot = ({
     title,
-    defaultOpened = false,
-    isToggleable = true,
     isCurrent,
     isDisabled,
     children
 }: ProgressSectionRootProps) => {
-    const [isOpen, setIsOpen] = useState(defaultOpened);
+    const [isOpen, setIsOpen] = useState(false);
     const [showReviewModal, setShowReviewModal] = useState(false);
 
     const handleOnToggle = () => {
-        if(isToggleable){
-            setIsOpen((prev) => !prev);
-        }
+        setIsOpen((prev) => !prev);
     };
 
     return (

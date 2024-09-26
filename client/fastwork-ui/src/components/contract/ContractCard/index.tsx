@@ -96,7 +96,6 @@ const ContractCard = ({
         };
 
         const uploadMilestone = async (payload: Milestone) => {
-            console.log('milestone_payload', payload);
             try {
                 const res = await httpClient.post('checkpoint', {
                     ...payload,

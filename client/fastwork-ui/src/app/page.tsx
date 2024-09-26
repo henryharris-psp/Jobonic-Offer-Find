@@ -72,7 +72,7 @@ const Home = () => {
             {/* Join Now Button */}
             <section className="text-center py-16 -mt-32">
                 <Link href="/register">
-                    <button className="bg-[#D0693B] text-white py-4 px-8 rounded-lg text-xl hover:bg-[#a8562e]">
+                    <button className="bg-[#D0693B] text-white py-3 px-8 rounded-lg text-md font-semibold hover:bg-[#a8562e]">
                         Join now
                     </button>
                 </Link>

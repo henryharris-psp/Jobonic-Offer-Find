@@ -44,8 +44,6 @@ const ContractProgressSection = ({
     return (
         <>
             <ProgressSectionRoot
-                defaultOpened={false}
-                isToggleable={true}
                 title="Collaboration Contract"
                 isCurrent={isCurrent}
                 isDisabled={isDisabled}
