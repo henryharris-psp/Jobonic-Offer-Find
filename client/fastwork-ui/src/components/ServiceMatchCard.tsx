@@ -82,7 +82,7 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
                             />
                         </div>
                         <span className="text-gray-500">
-                            {profile.numReviews} reviews | {profile.numSold ?? 0} sold
+                            {profile?.numReviews} reviews | {profile?.numSold ?? 0} sold
                         </span>
                     </div>
                 </div>
