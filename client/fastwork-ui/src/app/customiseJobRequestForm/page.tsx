@@ -150,7 +150,6 @@ const CustomiseJobRequestForm: React.FC = () => {
       categoryId: selectedCategory ? selectedCategory.id : '',
       price: parseInt(formState.budget),
       priceUnit: formState.priceUnit,
-      serviceType: "request"
     };
 
     console.log('Service Data:', JSON.stringify(serviceData, null, 2));

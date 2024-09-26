@@ -154,11 +154,12 @@ export const getCategoryName = async (categoryId: string) => {
     }
 
     export const fetchServices = async (
-        payload: ServicePayload,
+        type: 'offer' | 'request',
         signal: AbortSignal,
+        payload: ServicePayload
     ): Promise<ServiceApiResponse | undefined> => {
         try {
-            const res = await httpClient.post<ServiceApiResponse>(`service/all`, payload, { signal });
+            const res = await httpClient.post<ServiceApiResponse>(`service/${type}/all`, payload, { signal });
             return res.data;
         } catch (error: any) {
             if (error.name === 'AbortError') {

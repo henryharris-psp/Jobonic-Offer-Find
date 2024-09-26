@@ -146,7 +146,6 @@ const CustomiseService: React.FC = () => {
             price: askingPrice,
             priceUnit: priceUnit,
             links: links,
-            serviceType: "offer"
         };
         try {
             const response = await httpClient.post('service', serviceData);

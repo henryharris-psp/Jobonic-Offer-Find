@@ -137,7 +137,7 @@ const OfferService = () => {
                     serviceType: 'request'
                 }
 
-                const servicesData = await fetchServices(payload, signal);
+                const servicesData = await fetchServices('offer', signal, payload);
                 if (servicesData){
                     setServices(servicesData.content);
                     setPagination( prev => ({

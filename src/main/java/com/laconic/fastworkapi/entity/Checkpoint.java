@@ -57,8 +57,8 @@ public class Checkpoint extends Auditable<UUID> {
     @JoinColumn(name = "contract_id")
     private Contract contract;
 
-    @OneToMany(mappedBy = "checkpoint", cascade = CascadeType.ALL)
-    private List<Task> tasks = new ArrayList<>();
+    @OneToMany(mappedBy = "checkpoint", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Task> tasks;
 
     @OneToMany(mappedBy = "checkPoint", cascade = CascadeType.ALL)
     private List<Attachment> attachments = new ArrayList<>();

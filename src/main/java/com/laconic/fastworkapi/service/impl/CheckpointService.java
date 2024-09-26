@@ -1,6 +1,7 @@
 package com.laconic.fastworkapi.service.impl;
 
 import com.laconic.fastworkapi.constants.AppMessage;
+import com.laconic.fastworkapi.dto.CheckResponseDTO;
 import com.laconic.fastworkapi.dto.CheckpointDTO;
 import com.laconic.fastworkapi.entity.Checkpoint;
 import com.laconic.fastworkapi.entity.Contract;
@@ -117,9 +118,10 @@ public class CheckpointService implements ICheckpointService {
     }
 
     @Override
-    public CheckpointDTO getById(UUID id) {
+    public CheckResponseDTO getById(UUID id) {
         var existingCheckpoint = getCheckpoint(id);
-        return new CheckpointDTO(existingCheckpoint);
+
+        return new CheckResponseDTO(existingCheckpoint);
     }
 
     @Override

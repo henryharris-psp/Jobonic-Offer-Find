@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.controller;
 
+import com.laconic.fastworkapi.dto.CheckResponseDTO;
 import com.laconic.fastworkapi.dto.CheckpointDTO;
 import com.laconic.fastworkapi.entity.Checkpoint;
 import com.laconic.fastworkapi.helper.APIDocsHelper;
@@ -42,7 +43,7 @@ public class CheckpointController {
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.GET_CHECKPOINT)
     @GetMapping()
-    public CheckpointDTO getById(@RequestParam UUID id) {
+    public CheckResponseDTO getById(@RequestParam UUID id) {
         return this.checkpointService.getById(id);
     }
 
