@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 
@@ -9,6 +9,7 @@ const TopSection: React.FC = (): React.ReactNode => {
     const router = useRouter();
     const [selectedCategory, setSelectedCategory] = useState("Find Service");
     const [placeholder, setPlaceholder] = useState("e.g. I need a plumber");
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const handleCategorySelect = (category: string) => {
         setSelectedCategory(category);
@@ -21,10 +22,14 @@ const TopSection: React.FC = (): React.ReactNode => {
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        if (selectedCategory === "Find Service") {
-            router.push("/serviceList");
+        const searchKeyword = (inputRef.current as HTMLInputElement)?.value ?? '';
+        if(searchKeyword){
+            
+        }
+        if (selectedCategory === "Find Service" || searchKeyword) {
+            router.push(`/serviceList?searchKeyword=${searchKeyword}`);
         } else {
-            router.push("/offerServices");
+            router.push(`/offerServices?searchKeyword=${searchKeyword}`);
         }
     };
 
@@ -66,6 +71,7 @@ const TopSection: React.FC = (): React.ReactNode => {
                 <div className="flex-1 flex flex-row overflow-hidden min-h-14">
                     <div className="flex-1">
                         <input 
+                            ref={inputRef}
                             className="w-full h-full bg-white border border-gray-300 placeholder:text-sm rounded-l-lg sm:rounded-none"
                             type="text" 
                             placeholder={placeholder}
