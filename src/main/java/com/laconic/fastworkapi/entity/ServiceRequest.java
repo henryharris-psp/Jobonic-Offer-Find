@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.laconic.fastworkapi.entity.audit.Auditable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Entity

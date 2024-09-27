@@ -35,4 +35,7 @@ public interface IServiceRepo extends JpaRepository<ServiceManagement, UUID>, Jp
 
     @Query("SELECT s FROM ServiceManagement s WHERE s.serviceRequest.id = :serviceRequestId")
     ServiceManagement findAllByServiceRequestId(@Param("serviceRequestId") UUID serviceRequestId);
+
+    @Query("SELECT s FROM ServiceManagement s WHERE s.serviceRequest.id = :serviceRequestId")
+    ServiceManagement findByServiceRequestId(UUID serviceRequestId);
 }
