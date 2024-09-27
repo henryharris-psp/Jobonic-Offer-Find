@@ -1,11 +1,11 @@
 package com.laconic.fastworkapi.repo;
 
-import com.laconic.fastworkapi.entity.PaymentAgreement;
+import com.laconic.fastworkapi.entity.PaymentOut;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public interface IPaymentAgreementRepo extends JpaRepository<PaymentAgreement, UUID> {
+public interface IPaymentOutRepo extends JpaRepository<PaymentOut, UUID> {
 }
