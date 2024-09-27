@@ -163,7 +163,7 @@ const InChatMilestoneSubmissionCard = ({
                                     <div key={file.id}>
                                         <button 
                                             key={file.id}
-                                            onClick={() => handleOnDownload(file.id, file.name)}
+                                            onClick={() => handleOnDownload(file.id, file.originalName ?? 'unknown_file')}
                                         >
                                             <span className="text-blue-500 underline">
                                                 { file.originalName ?? 'no_file_name' }

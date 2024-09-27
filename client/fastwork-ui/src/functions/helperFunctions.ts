@@ -272,10 +272,11 @@ export const getCategoryName = async (categoryId: string) => {
 
     export const downloadFile = async (fileId: string, fileName: string) => {
         try {
-            const { data, status, headers } = await axios.get(`/attachment/download`, {
-                params: { id: fileId },
+            const res = await httpClient.get(`attachment/download?id=${fileId}`, {
                 responseType: 'blob',
             });
+            
+            const { data, headers, status } = res;
     
             if (status === 200) {
                 const blob = new Blob([data], { type: headers['content-type'] });
