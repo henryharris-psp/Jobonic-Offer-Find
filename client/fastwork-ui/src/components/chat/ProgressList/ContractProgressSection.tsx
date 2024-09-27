@@ -17,7 +17,7 @@ const ContractProgressSection = ({
     isCurrent,
     isDisabled
 }: ContractProgressSectionProps) => {
-    const { activeChatRoom } = useChat();
+    const { latestContract } = useChat();
     const [showLatestContractModal, setShowLatestContractModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
@@ -68,21 +68,37 @@ const ContractProgressSection = ({
                             </button>
                         </div>
                     </div>
-                    <div className="flex flex-row gap-1">
-                        <Button
-                            size="2xs"
-                            title="View"
-                            icon={<EyeIcon className="size-4 text-bold"/>}
-                            onClick={handleOnClickViewContract}
-                        />
-
+                    { latestContract.payoutAgreements.length === 0 ? (
+                        <div className="flex flex-row gap-1">
+                            <Button
+                                size="2xs"
+                                title="View"
+                                icon={<EyeIcon className="size-4 text-bold"/>}
+                                onClick={handleOnClickViewContract}
+                            />
                             <Button
                                 size="2xs"
                                 title="End Contract"
                                 icon={<StopIcon className="size-4 font-bold text-bold"/>}
                                 onClick={handleOnClickEndContract}
                             />
-                    </div>
+                        </div>
+                    ) : (
+                        <div className="flex flex-row gap-1">
+                            <Button
+                                size="2xs"
+                                title="View"
+                                icon={<EyeIcon className="size-4 text-bold"/>}
+                                onClick={handleOnClickViewContract}
+                            />
+                            <Button
+                                size="2xs"
+                                title="End Contract"
+                                icon={<StopIcon className="size-4 font-bold text-bold"/>}
+                                onClick={handleOnClickEndContract}
+                            />
+                        </div>
+                    )}
                 </div>
             </ProgressSectionRoot>
 

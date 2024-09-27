@@ -50,10 +50,11 @@ const EndContractConfirmationDialog = ({
 
                     <div className="flex flex-col space-y-1">
                         <span className="text-xs text-gray-500 font-semibold text-center">
-                            Both parties have to agree to end collaboration.
+                            If you request to end the contract, a payout price negotiation form will be generated.
                         </span>
+
                         <span className="text-xs text-gray-500 font-semibold text-center">
-                            The payment for the current milestone will still be send to your collaborator.
+                            Both users must agree on the payout price for the current milestone in order to end the contract.
                         </span>
                     </div>
                     <div className="flex flex-row items-center gap-2 flex-wrap">
