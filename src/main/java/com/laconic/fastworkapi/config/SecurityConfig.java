@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/actuator/**",
-                                        "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/api/v1/skill/all", "api/v1/category/all").permitAll()
+                                        "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/api/v1/skill/all", "api/v1/category/all", "api/v1/service/offer/all", "api/v1/service/request/all").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2ResourceServer ->

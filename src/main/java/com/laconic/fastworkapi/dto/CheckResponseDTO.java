@@ -24,6 +24,7 @@ public class CheckResponseDTO {
     private String description;
     private List<TaskDTO> tasks;
     private List<AttachmentDTO> attachments;
+    private String status;
 
     public CheckResponseDTO(Checkpoint checkpoint) {
         this.serviceId=checkpoint.getService().getId();
@@ -38,5 +39,6 @@ public class CheckResponseDTO {
         this.attachments = checkpoint.getAttachments().stream()
                 .map(AttachmentDTO::new)
                 .toList();
+        this.status = checkpoint.getStatus();
     }
 }

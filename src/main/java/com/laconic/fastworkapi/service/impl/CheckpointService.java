@@ -61,16 +61,8 @@ public class CheckpointService implements ICheckpointService {
         var matches = this.matchesRepo.findById(checkpointDTO.getMatchId())
                 .orElseThrow(() -> new NotFoundException("Match not found with ID: " + checkpointDTO.getMatchId()));
 
-        // Uncomment and adjust as needed for business logic
-        // if (matches.getNumberOfCheckpointsLeft() <= 0) {
-        //     throw new NotFoundException("No checkpoints left for this match.");
-        // }
-        // matches.setNumberOfCheckpointsLeft(matches.getNumberOfCheckpointsLeft() - 1);
-        // this.matchesRepo.save(matches);
-
         // Map DTO to entity
         Checkpoint checkpoint = new Checkpoint();
-//        checkpoint.setId(checkpointDTO.getId());
         checkpoint.setTitle(checkpointDTO.getTitle());
         checkpoint.setService(service);
         checkpoint.setMatches(matches);
@@ -78,13 +70,7 @@ public class CheckpointService implements ICheckpointService {
         checkpoint.setNumberOfHoursCompleted(checkpointDTO.getNumberOfHoursCompleted());
         checkpoint.setDescription(checkpointDTO.getDescription());
         checkpoint.setContract(contractRepo.findById(checkpointDTO.getContractId()).get());
-
-//        try {
-            checkpoint.setTasks(checkpointDTO.getTasks()); // Set tasks using JSON conversion
-//        } catch (IOException e) {
-//            // Handle JSON conversion exception or provide default value
-//            checkpoint.setTasks(new String[0]); // Default to empty array if conversion fails
-//        }
+        checkpoint.setTasks(checkpointDTO.getTasks());
 
         var savedCheckpoint = this.checkpointRepo.save(checkpoint);
 

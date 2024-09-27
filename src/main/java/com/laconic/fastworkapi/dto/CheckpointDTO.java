@@ -33,6 +33,7 @@ public class CheckpointDTO implements Serializable {
     private int numberOfHoursCompleted;
     @Column(columnDefinition = "CLOB")
     private String description;
+    private String status;
 
     @JsonIgnore
     private List<Task> tasks; // Added to handle the tasks array
@@ -51,5 +52,6 @@ public class CheckpointDTO implements Serializable {
         this.contractId=checkpoint.getContract().getId();
         this.attachments = checkpoint.getAttachments();
         this.tasks = checkpoint.getTasks();
+        this.status = checkpoint.getStatus();
     }
 }
