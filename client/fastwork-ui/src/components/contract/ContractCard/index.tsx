@@ -38,7 +38,6 @@ const ContractCard = ({
         deliverable: contract ? contract.deliverable : ''
     });
     const [milestones, setMilestones] = useState<Milestone[]>(contract ? contract.milestones : []);
-
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [showScrollShadow, setShowScrollShadow] = useState<boolean>(false);
 
@@ -53,7 +52,7 @@ const ContractCard = ({
                 return total + Number(current.price);
             }, 0);
 
-            setInputs( prev => ({...prev, price: milestoneTotalPrice}) );
+            setInputs( prev => ({...prev, price: milestoneTotalPrice.toFixed(2) }) );
         }
     }, [milestones]);
 
@@ -212,6 +211,7 @@ const ContractCard = ({
 
                     {/* form */}
                     <div className="flex-1 flex flex-col justify-between min-w-64 space-y-5 overflow-hidden">
+
                         <div className="space-y-5">
                             <div className="flex flex-row space-x-3 items-center">
                                 <Image

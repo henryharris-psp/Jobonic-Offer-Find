@@ -52,6 +52,7 @@ const CompleteWorkProgressSection = ({
                                 </span>
                             </div>
                         ) : (
+                            //:TODO: bind milestone count
                             <div className="flex-1 flex flex-col space-y-2 text-xs">
                                 <span className="">
                                     3 milestones left to be completed and approved to terminated a contract.

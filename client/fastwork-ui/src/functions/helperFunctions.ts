@@ -185,7 +185,7 @@ export const getCategoryName = async (categoryId: string) => {
         }
     };
 
-    export const fetchUploadedFiles = async (
+    export const fetchAttachmentsByMilestoneId = async (
         milestoneId: string | number,
         signal?: AbortSignal
     ): Promise<Attachment[] | undefined> => {
@@ -211,21 +211,14 @@ export const getCategoryName = async (categoryId: string) => {
         try {
             const res = await httpClient.get(`contract/${contractId}`, { signal });
             const contract = res.data;
+
             //sort the first one on the top
             const sortedMilestones = contract.milestones.reverse();
-            const milestonesWithFiles = await Promise.all(sortedMilestones.map(async (milestone: Milestone) => {
-                const uploadedFiles = await fetchUploadedFiles(milestone.id, signal);
-                return {
-                    ...milestone,
-                    uploadedFiles
-                };
-            }));
-    
-            const currentMilestone = milestonesWithFiles.find((milestone: Milestone) => !['not_started', 'paid'].includes(milestone.description));
-    
+            const currentMilestone = sortedMilestones.find((milestone: Milestone) => !['not_started', 'paid'].includes(milestone.description));
+
+            console.log(contract.milestones);
             return {
                 ...contract,
-                milestones: milestonesWithFiles,
                 currentMilestone
             };
         } catch (error: any) {
@@ -278,3 +271,27 @@ export const getCategoryName = async (categoryId: string) => {
         }
     }
 
+    export const downloadFile = async (fileId: string, fileName: string) => {
+        try {
+            const { data, status, headers } = await axios.get(`/attachment/download`, {
+                params: { id: fileId },
+                responseType: 'blob',
+            });
+    
+            if (status === 200) {
+                const blob = new Blob([data], { type: headers['content-type'] });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            } else {
+                console.error('File download failed:', status);
+            }
+        } catch (error) {
+            console.error('Error downloading file:', error);
+        }
+    };

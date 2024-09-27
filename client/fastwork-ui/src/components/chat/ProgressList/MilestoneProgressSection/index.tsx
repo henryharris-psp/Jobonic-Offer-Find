@@ -20,7 +20,7 @@ const MilestoneProgressSection = ({
     id,
     title,
     tasks = [],
-    uploadedFiles: oldFiles,
+    attachments = [],
     description: status,
     isCurrent = false,
     isDisabled = false
@@ -34,7 +34,7 @@ const MilestoneProgressSection = ({
     //file upload
     const [pendingFiles, setPendingFiles] = useState<Attachment[]>([]);
     const [pendingFilesCount, setPendingFilesCount] = useState<number>(0); // just for completed percent calculation
-    const [uploadedFiles, setUploadedFiles] = useState<Attachment[]>(oldFiles ?? []);
+    const [uploadedFiles, setUploadedFiles] = useState<Attachment[]>([]);
     const [failedFiles, setFailedFiles] = useState<Attachment[]>([]);
     const [filePickErrorMessages, setFilePickErrorMessages] = useState<string[]>([]);
     const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -44,10 +44,10 @@ const MilestoneProgressSection = ({
 
     //update updatedFiles when freelancer upload new file
     useEffect( () => {
-        if(oldFiles){
-            setUploadedFiles(oldFiles);
+        if(attachments){
+            setUploadedFiles(attachments.map( e => ({...e, status: 'uploaded'})));
         }
-    }, [oldFiles]);
+    }, [attachments]);
 
     //methods
         //freelancer actions
@@ -102,9 +102,10 @@ const MilestoneProgressSection = ({
             
                 if(confirm(deleteWarningMessage)){
                     try{
-                        if(status === 'uploaded'){
-                            await httpClient.delete(`attachment?id=${fileId}`);
-                        }
+                        //TODO: temporarily disabled
+                        // if(status === 'uploaded'){
+                        //     await httpClient.delete(`attachment?id=${fileId}`);
+                        // }
 
                         const setFiles = {
                             uploaded: setUploadedFiles,
@@ -174,7 +175,7 @@ const MilestoneProgressSection = ({
                         const newlyUploadedFile: Attachment = {
                             id: id,
                             name: originalName,
-                            size: fileSize,
+                            fileSize: fileSize,
                             status: 'uploaded'
                         }
                         setUploadedFiles( prev => ([...prev, newlyUploadedFile]));
@@ -241,14 +242,15 @@ const MilestoneProgressSection = ({
                                 ) : (
                                     allFiles.map( (file) => 
                                         <FileItem
+                                            {...file}
                                             key={file.id}
+                                            name={file.originalName ?? 'no_file_name'}
                                             isUploading={currentUploadingFileId === file.id}
                                             isDownloadable={ file.status === 'uploaded' }
                                             isDeletable={authUserType === 'freelancer' && (
                                                 status === 'waiting_for_submission' || file.status === 'pending'
                                             )}
                                             onDelete={handleOnDeleteFile}
-                                            {...file}
                                         />
                                     )
                                 )}

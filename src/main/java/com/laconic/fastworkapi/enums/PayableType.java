@@ -2,6 +2,6 @@ package com.laconic.fastworkapi.enums;
 
 public enum PayableType {
 
-    MATCHES,
+    CONTRACT,
     CHECKPOINT
 }

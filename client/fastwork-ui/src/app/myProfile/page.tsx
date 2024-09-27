@@ -11,7 +11,6 @@ import ExperienceComponent from "@/components/profile/Experience";
 import FinancialForm from "@/components/profile/Form";
 import httpAuth from "@/client/httpAuth";
 import httpClient from "@/client/httpClient";
-import Marquee from "@/components/chat/ProgressList/Marquee/Marquee";
 
 const MyProfile = () => {
 

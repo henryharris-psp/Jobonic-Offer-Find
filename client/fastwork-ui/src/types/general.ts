@@ -36,7 +36,7 @@ export interface Milestone {
     dueDate: string,
     price: number,
     tasks: Task[],
-    uploadedFiles?: Attachment[];
+    attachments?: Attachment[];
     description: MilestoneStatus
     //TODO: currently, description column is used as status bcoz api is not ready for this
 
@@ -70,7 +70,7 @@ export interface Attachment {
     id: string;
     name: string;
     originalName?: string;
-    size: string;
+    fileSize: string;
     source?: File;
     status: AttachmentStatus
 }

@@ -113,11 +113,10 @@ const ServiceList = () => {
                     sortBy: sorting.sortBy,
                     sortOrder: sorting.sortOrder,
                     filter: filters,
-                    authId: authUser?.profile?.id || 0,
-                    serviceType: 'offer'
+                    authId: authUser?.profile?.id || 0
                 }
 
-                const servicesData = await fetchServices('request', signal, payload);
+                const servicesData = await fetchServices('offer', signal, payload);
                 if (servicesData){
                     setServices(servicesData.content);
                     setPagination( prev => ({

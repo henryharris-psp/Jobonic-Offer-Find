@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Payment extends Auditable<String> {
+public class Payment extends Auditable<UUID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,7 +25,6 @@ public class Payment extends Auditable<String> {
     private Double amount;
 
     private Date paymentDate;
-
 
     @Enumerated(EnumType.STRING)
     private PayableType payableType;
