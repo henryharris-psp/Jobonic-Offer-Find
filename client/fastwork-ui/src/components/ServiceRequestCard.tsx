@@ -5,6 +5,7 @@ import Image from "next/image";
 import location from "@/../public/location-pin.svg";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { MapPinIcon } from "@heroicons/react/24/outline";
 
 interface ServiceRequest {
     title: string;
@@ -32,6 +33,7 @@ interface ServiceRequestCardProps {
     onAccept?: () => void;
     onEditOffer?: (newPrice: string) => void; // Updated to take new price
     onDeclineAndSendMessage?: () => void;
+    onClick?: () => void;
 }
 
 const ServiceRequestCard = ({
@@ -44,6 +46,7 @@ const ServiceRequestCard = ({
     onAccept,
     onEditOffer,
     onDeclineAndSendMessage,
+    onClick,
 }: ServiceRequestCardProps): React.ReactElement => {
     const router = useRouter();
     const [showAcceptModal, setShowAcceptModal] = useState(false);
@@ -56,6 +59,7 @@ const ServiceRequestCard = ({
     const [focusStates, setFocusStates] = useState<{ [key: number]: boolean }>(
         {}
     );
+
 
     const handleAddCheckpoint = () => {
         const newId = checkpoints.length + 1;
@@ -152,88 +156,105 @@ const ServiceRequestCard = ({
             <div className="job-div">
                 <div
                     className="job-card hover:cursor-pointer bg-[#CFEDF4] p-4 rounded-lg shadow-md"
-                    onClick={handleServiceRequestClick}
+                    onClick={onClick}
                 >
                     {/* Profile Pic */}
-                    <div className="flex items-center space-x-1">
-                        <span>
-                            <Image
-                                width={50}
-                                height={50}
-                                src="/jobonic.svg"
-                                alt="Profile Pic"
-                                className="h-8 w-8 border rounded-full mr-1"
-                            />
-                        </span>
-                        <span className="font-semibold text-sm underline">
-                            {serviceRequest?.company}
-                        </span>
-                        <p className="font-semibold text-sm">is looking for</p>
+                    <div className="flex justify-between items-center space-x-1">
+                        <div className="flex items-center space-x-1">
+                            <span>
+                                <Image
+                                    width={50}
+                                    height={50}
+                                    src="/avatar.svg"
+                                    alt="Profile Pic"
+                                    className="h-8 w-8 border rounded-full mr-1"
+                                />
+                            </span>
+                            <p className="font-semibold text-sm">is looking for</p>
+                        </div>
+                        <p className="text-xs font-semibold" style={styles.chip}>
+                            {serviceRequest?.employment_type}
+                        </p>
                     </div>
 
-                    <h2 className="text-lg font-bold">
-                        {serviceRequest?.title}
-                    </h2>
-                    <div className="flex flex-row justify-between">
-                        <div className="flex space-x-2">
-                            <p className="text-xs text-gray-500">
+                    <div className="overflow-auto mb-2">
+                        <h2 className="text-lg font-semibold whitespace-nowrap">
+                            {serviceRequest?.title}
+                        </h2>
+                    </div>
+
+                    <div className="flex justify-start flex-col items-start">
+                        <div className="flex justify-start items-center flex-col space-x-2">
+                            <p className="text-sm font-semibold text-gray-700">
                                 {serviceRequest?.work_category}
                             </p>
-                            <p className="text-xs" style={styles.chip}>
-                                {serviceRequest?.employment_type}
-                            </p>
                         </div>
-                        <div className="flex flex-row mb-1 pr-2">
-                            <Image
+                        <div className="flex flex-row items-center text-gray-700">
+                            <MapPinIcon
                                 className="w-5 h-5"
-                                src={location}
-                                alt="Location"
                             />
-                            <p className="text-xs">
+                            <p className="text-xs font-semibold">
                                 {serviceRequest?.location}
                             </p>
                         </div>
                     </div>
-                    <div className="overflow-auto max-h-60 my-2">
-                        <p className="job-description text-xs">
-                            {serviceRequest?.description_1}
-                        </p>
-                        <p className="job-description text-xs">
-                            {serviceRequest?.description_2}
-                        </p>
-                        <p className="job-description text-xs">
-                            {serviceRequest?.description_3}
+                    <div>
+                        <span className="font-semibold text-sm underline">
+                            {serviceRequest?.company}
+                        </span>
+                    </div>
+                    <div className="font-semibold my-2 overflow-y-scroll">
+                        <ul className="list-disc pl-5 space-y-1 overflow-y-auto h-[70px]">
+                            {serviceRequest?.description_1 && (
+                                <li className="job-description text-xs">
+                                    {serviceRequest.description_1}
+                                </li>
+                            )}
+                            {serviceRequest?.description_2 && (
+                                <li className="job-description text-xs">
+                                    {serviceRequest.description_2}
+                                </li>
+                            )}
+                            {serviceRequest?.description_3 && (
+                                <li className="job-description text-xs">
+                                    {serviceRequest.description_3}
+                                </li>
+                            )}
+                        </ul>
+                    </div>
+
+                    <div>
+                        <p className="text-xs font-semibold pl-2">
+                            <span className="text-xs">Budget:</span>{serviceRequest?.budget}
                         </p>
                     </div>
                     {/* chat and apply buttons */}
                     {applyDisplay && (
                         <div className="flex items-center justify-center mt-2 space-x-2">
-                            <Link 
-                                href={{ 
-                                    pathname: '/chat', 
+                            <Link
+                                href={{
+                                    pathname: '/chat',
                                     query: {
                                         service: JSON.stringify(service),
                                     }
                                 }}
                             >
-                                <svg
-                                    className="w-10 h-10 text-[#0B2147] dark:text-white hover:text-[#D0693B]"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    fill="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        fillRule="evenodd"
-                                        d="M3 5.983C3 4.888 3.895 4 5 4h14c1.105 0 2 .888 2 1.983v8.923a1.992 1.992 0 0 1-2 1.983h-6.6l-2.867 2.7c-.955.899-2.533.228-2.533-1.08v-1.62H5c-1.105 0-2-.888-2-1.983V5.983Zm5.706 3.809a1 1 0 1 0-1.412 1.417 1 1 0 1 0 1.412-1.417Zm2.585.002a1 1 0 1 1 .003 1.414 1 1 0 0 1-.003-1.414Zm5.415-.002a1 1 0 1 0-1.412 1.417 1 1 0 1 0 1.412-1.417Z"
-                                        clipRule="evenodd"
-                                    />
-                                </svg>
+                                <button className="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors" onClick={(e) => e.stopPropagation()}>
+                                    <svg
+                                        className="w-6 h-6 text-black"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 5.983C3 4.888 3.895 4 5 4h14c1.105 0 2 .888 2 1.983v8.923a1.992 1.992 0 0 1-2 1.983h-6.6l-2.867 2.7c-.955.899-2.533.228-2.533-1.08v-1.62H5c-1.105 0-2-.888-2-1.983V5.983Zm5.706 3.809a1 1 0 1 0-1.412 1.417 1 1 0 1 0 1.412-1.417Zm2.585.002a1 1 0 1 1 .003 1.414 1 1 0 0 1-.003-1.414Zm5.415-.002a1 1 0 1 0-1.412 1.417 1 1 0 1 0 1.412-1.417Z" />
+                                    </svg>
+                                </button>
                             </Link>
                             <button
-                                className="bg-[#0B2147] text-white rounded-xl px-4 py-2 hover:bg-[#D0693B] text-sm"
+                                className="bg-[#0B2147] text-white rounded-2xl font-semibold text-sm px-4 py-2 hover:bg-[#D0693B]"
                                 onClick={handleApply}
                                 style={{ borderColor: "transparent" }}
                             >
@@ -246,7 +267,7 @@ const ServiceRequestCard = ({
                         <div className="flex items-center justify-center mt-2 space-x-2">
                             <button
                                 className="bg-[#0B2147] text-white rounded-xl px-4 py-2 hover:bg-[#D0693B] text-sm"
-                                onClick={handleAccept}
+                                onClick={handleApply}
                                 style={{ borderColor: "transparent" }}
                             >
                                 Accept
@@ -389,11 +410,10 @@ const ServiceRequestCard = ({
                                                     e.target.value
                                                 )
                                             }
-                                            className={`w-full px-3 py-2 border rounded-lg mt-1 ${
-                                                focusStates[checkpoint.id]
-                                                    ? ""
-                                                    : "border-none"
-                                            }`}
+                                            className={`w-full px-3 py-2 border rounded-lg mt-1 ${focusStates[checkpoint.id]
+                                                ? ""
+                                                : "border-none"
+                                                }`}
                                             placeholder="deliverable"
                                         />
                                         <input
@@ -412,11 +432,10 @@ const ServiceRequestCard = ({
                                                     e.target.value
                                                 )
                                             }
-                                            className={`w-full px-3 py-2 border rounded-lg mt-1 ${
-                                                focusStates[checkpoint.id]
-                                                    ? ""
-                                                    : "border-none"
-                                            }`}
+                                            className={`w-full px-3 py-2 border rounded-lg mt-1 ${focusStates[checkpoint.id]
+                                                ? ""
+                                                : "border-none"
+                                                }`}
                                             placeholder="Payment"
                                         />
                                     </div>
@@ -495,18 +514,21 @@ const ServiceRequestCard = ({
         </>
     );
 };
-
 const styles = {
     chip: {
-        padding: "0.25rem 0.5rem",
-        borderRadius: "999px",
-        backgroundColor: "#e0f2fe",
-        color: "#0369a1",
-        fontSize: "0.75rem",
-        fontWeight: 500,
-        alignItems: "center",
+        padding: "0.3rem 1rem", // Increased padding for comfort
+        borderRadius: "9999px", // Smooth, rounded edges
+        backgroundColor: "#b3e5fc", // Softer background color for user-friendliness
+        color: "#01579b", // Darker text color for improved readability
+        fontSize: "0.6rem", // Slightly larger font for better visibility
+        fontWeight: 600, // Bolder text for emphasis
+        display: "inline-flex", // Ensures proper flexbox alignment
+        alignItems: "center", // Vertical centering
+        justifyContent: "center", // Horizontal centering
+        whiteSpace: "nowrap", // Prevents text wrapping
         alignContent: "center",
-        justifyContent: "center",
+        boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)", // Adds subtle depth with a shadow
+        margin: "0.25rem", // Adds spacing between chips
     },
 };
 

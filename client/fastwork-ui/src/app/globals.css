@@ -53,29 +53,43 @@ body {
 }
 
 .job-card {
-  width: 90%;
+  width: 100%;
   height: 300px;
   padding: 20px;
-  /* margin: 10px; */
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background-color: #ffff; 
+  background-color: #fff;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  justify-items: end;
   color: black;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add smooth transitions */
+  margin-bottom: 4px;
+}
+
+.job-card:hover {
+  transform: translateY(-8px); /* Slight lift effect */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+.job-card h2 {
+  transition: color 0.3s ease, text-decoration 0.3s ease; /* Smooth transition for text styles */
 }
 
 .job-card:hover h2 {
   color: #2c96ec; /* Blue-400 */
-  text-decoration: underline;
+  text-decoration: none;
 }
 
-.job-card:hover Image {
-  filter: none;
+.job-card img {
+  transition: filter 0.3s ease; /* Smooth transition for image filter */
 }
+
+.job-card:hover img {
+  filter: brightness(1.1); /* Lightens the image on hover */
+}
+
 
 
 .job-category {
@@ -186,6 +200,59 @@ body {
   overflow: hidden; /* Hide any overflow to prevent scrollbars */
   
 }
+
+.marquee-container {
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+}
+
+.marquee {
+  display: inline-block;
+  animation: marquee 10s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+      transform: translateX(100%);
+  }
+  100% {
+      transform: translateX(-100%);
+  }
+}
+
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 600px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
 
 
 
