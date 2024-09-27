@@ -1,90 +1,172 @@
+"use client";
 import httpClient from "@/client/httpClient";
 import Button from "@/components/Button";
-import Modal from "@/components/Modal";
-import SafeInput, { SafeInputChangeEvent } from "@/components/SafeInput";
+import CategoryFormModal from "@/components/admin/category/CategoryFormModal";
+import CategoryItem from "@/components/admin/category/CategoryItem";
 import { Category as BaseCategory } from "@/types/general";
 import { PlusIcon } from "@heroicons/react/24/solid";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface Category extends BaseCategory {
     isNew: boolean;
 }
 
-interface CategoryFormModalProps {
-    category: Category | null;
-    isOpen: boolean;
-    onClose: () => void;
-    onAdded: (category: Category) => void;
-    onUpdated: (updatedCategory: Category) => void;
-}
+const AdminCategoryManagementPage = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [showCategoryFormModal, setShowCategoryFormModal] = useState(false);
 
-const CategoryFormModal = ({
-    category,
-    isOpen,
-    onClose,
-    onAdded,
-    onUpdated
-}: CategoryFormModalProps) => {
-    const isEdit = category !== null;
-    const [name, setName] = useState(isEdit ? category.name : '');
+    const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+    const [deletingCategoryId, setDeletingCategoryId] = useState<string | number | null>(null);
 
-    const [isLoading, setIsLoading] = useState(false);
+    // Fetch all categories on mount
+    useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
 
-    const handleInputChange = (event: SafeInputChangeEvent) => {
-        const { value } = event.target;
-        setName(value);
-    }
-
-    const handleSubmit = async () => {
         setIsLoading(true);
-        try{
-            const apiCall = isEdit 
-                ? httpClient.put(`category?id=${category.id}`, { name: name })
-                : httpClient.post('category', { name: name });
-            
-            const res = await apiCall;
+    
+        (async () => {
+            try {
+                const res = await httpClient.get('category/all', { signal });
+                if (res.status === 200) {
+                    const allCategories = res.data;
+                    setCategories(allCategories);
+                } else {
+                    console.log('Failed to fetch categories', res.status);
+                }
+            } catch (error: any) {
+                if (error.name === 'AbortError') {
+                    console.log('Fetch aborted');
+                } else {
+                    console.log('Error fetching categories', error);
+                }
+            } finally {
+                setIsLoading(false);
+            }
+        })();
+    
+        return () => controller.abort();
+    }, []);
 
-            isEdit ? onUpdated(res.data) : onAdded(res.data);
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setIsLoading(false);
+    //methods
+        const handleOnClickAdd = () => {
+            setShowCategoryFormModal(() => {
+                setEditingCategory(null);
+                return true;
+            });
         }
-    }
 
+        const handleOnClickDelete = async (categoryId: string | number) => {
+            setDeletingCategoryId(categoryId);
+            try {
+                await httpClient.delete(`category?id=${categoryId}`)
+                handleOnCategoryDeleted(categoryId);
+            } catch (error) {
+                console.log('Error on delete', error);
+            } finally {
+                setDeletingCategoryId(null);
+            }
+        }
+
+        const handleOnClickEdit = (categoryId: string | number) => {
+            setShowCategoryFormModal( () => {
+                setEditingCategory( () => {
+                    const targetCategory = categories.find( category => category.id === categoryId); 
+                    return targetCategory ?? null;
+                });
+                return true;
+            });
+        }
+
+        //CRUD methods for local state update
+            const handleOnCategoryAdded = (newCategory: Category) => {
+                setCategories( prev => {
+                    const newCategoryWithNewStatus = {
+                        ...newCategory,
+                        isNew: true
+                    }
+                    return [
+                        newCategoryWithNewStatus,
+                        ...prev
+                    ]
+                })
+                setShowCategoryFormModal(false);
+            }
+
+            const handleOnCategoryUpdated = (updatedCategory: Category) => {
+                setCategories( prev => {
+                    return prev.map( category => category.id === updatedCategory.id ? updatedCategory : category );
+                });
+                setShowCategoryFormModal(false);
+            }
+
+            const handleOnCategoryDeleted = (categoryId: string | number) => {
+                setCategories( prev => prev.filter(category => category.id !== categoryId));
+            }
+        
     return (
-        <Modal
-            isOpen={isOpen}
-            onClose={onClose}
-        >
-            <div className="bg-white rounded-lg">
-                <div className="flex flex-col p-5 space-y-3">
-                    <div className="">
-                        <span className="text-lg font-bold">
-                            Create New Category
-                        </span>
-                    </div>
-                    <div className="w-96 space-y-2">
-                        <SafeInput
-                            size=""
-                            type="text"
-                            value={name}
-                            placeholder="English"
-                            onChange={handleInputChange}
+        <>
+            <div className="flex-1 flex flex-col">
+
+                {/* header */}
+                <div className="h-14 flex flex-row items-center shadow justify-between bg-white">
+                    <span className="font-semibold text-xl ml-5 text-sky-800">
+                        Category Management
+                    </span>
+                    <div className="mr-5">
+                        <Button
+                            title="Add New"
+                            color="success"
+                            size="sm"
+                            icon={<PlusIcon className="size-5 text-white"/>}
+                            onClick={handleOnClickAdd}
                         />
                     </div>
-                    <Button
-                        disabled={isLoading}
-                        color="success"
-                        size="lg"
-                        icon={isLoading ? '' : ( isEdit ? '' : <PlusIcon className="size-5 text-white"/>)}
-                        title={isLoading ? 'Saving...' : ( isEdit ? 'Update' : 'Add' )}
-                        onClick={handleSubmit}
-                    />
                 </div>
+
+                { isLoading ? (
+                    <div className="flex-1 flex items-center justify-center">
+                        <span>
+                            Loading...
+                        </span>
+                    </div>
+                ) : (
+                    categories.length === 0 ? (
+                        <div className="flex-1 flex items-center justify-center">
+                            <span>
+                                No Categories Found
+                            </span>
+                        </div>
+                    ) : (
+                        <div className="flex-1 overflow-auto">
+                            <div className="flex flex-col">
+                                { categories.map( (category) => 
+                                    <CategoryItem
+                                        key={category.id}
+                                        isDeleting={category.id === deletingCategoryId }
+                                        onEdit={handleOnClickEdit}
+                                        onDelete={handleOnClickDelete}
+                                        {...category}
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    )
+                )}
             </div>
-        </Modal>
+
+            <CategoryFormModal
+                key={editingCategory?.id}
+                isOpen={showCategoryFormModal}
+                category={editingCategory}
+                onClose={() => setShowCategoryFormModal(false)}
+                onAdded={handleOnCategoryAdded}
+                onUpdated={handleOnCategoryUpdated}
+            />
+        </>
+        
     );
 };
 
-export default CategoryFormModal;
+export default AdminCategoryManagementPage;

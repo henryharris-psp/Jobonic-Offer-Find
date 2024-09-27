@@ -1,10 +1,11 @@
+"use client"
 import httpClient from "@/client/httpClient";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import SafeInput, { SafeInputChangeEvent } from "@/components/SafeInput";
 import { Category as BaseCategory } from "@/types/general";
 import { PlusIcon } from "@heroicons/react/24/solid";
-import React, { useState } from "react";
+import { useState } from "react";
 
 interface Category extends BaseCategory {
     isNew: boolean;
@@ -26,9 +27,7 @@ const CategoryFormModal = ({
     onUpdated
 }: CategoryFormModalProps) => {
     const isEdit = category !== null;
-    const [englishName, setEnglishName] = useState(isEdit ? category.name : '');
-    const [chineseName, setChineseName] = useState(isEdit ? category.name : '');
-    const [thaiName, setThaiName] = useState(isEdit ? category.name : '');
+    const [name, setName] = useState(isEdit ? category.name : '');
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -74,21 +73,6 @@ const CategoryFormModal = ({
                             placeholder="English"
                             onChange={handleInputChange}
                         />
-                        <SafeInput
-                            size=""
-                            type="text"
-                            value={name}
-                            placeholder="Chinese"
-                            onChange={handleInputChange}
-                        />
-                        <SafeInput
-                            size=""
-                            type="text"
-                            value={name}
-                            placeholder="Thai"
-                            onChange={handleInputChange}
-                        />
-
                     </div>
                     <Button
                         disabled={isLoading}
