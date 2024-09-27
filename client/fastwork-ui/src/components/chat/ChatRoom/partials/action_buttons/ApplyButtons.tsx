@@ -61,6 +61,7 @@ const ApplyButtons = () => {
             >
                 <ServiceOfferModal
                     onClick={handleOnClickService}
+                    type="offer"
                 />
             </Modal>
         </>

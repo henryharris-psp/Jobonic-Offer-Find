@@ -83,7 +83,8 @@ export interface ServicePayload {
     sortBy: string; // current - bestmatch(emptyString), price, rating
     sortOrder: 'ASC' | 'DESC';
     filter: ServiceFilter;
-    authId: number
+    authId: number;
+    postedByAuthUser: Boolean
 }
 
 export interface ServiceApiResponse {

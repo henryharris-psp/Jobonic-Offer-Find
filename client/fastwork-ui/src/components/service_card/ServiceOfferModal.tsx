@@ -8,20 +8,26 @@ import { useSelector } from "react-redux";
 
 interface ServiceOfferModalProps {
     onClick: (serviceId: string) => void;
+    type: 'offer' | 'request';
 }
 
 const ServiceOfferModal = ({ 
-    onClick 
+    onClick,
+    type,
 }: ServiceOfferModalProps) => {
     const { authUser } = useSelector((state: RootState) => state.auth );
     const [setCloseModal, isSetCloseModal] = useState(false);
-    const [serviceOfferOpen, SetServiceOfferOpen] = useState(false);
     const handleCloseModal = () => {
         isSetCloseModal(false);
     };
 
-    const handleServiceOfferOpen = () => {
-        SetServiceOfferOpen(true);
+    const handleNewServiceOffer = () => {
+        window.location.href = "/customiseService";
+    };
+
+    const handleNewServiceRequest = () => {
+        
+        window.location.href = "/customiseJobRequestForm";
     };
 
     const [services, setServices] = useState<Service[]>([]);
@@ -32,10 +38,10 @@ const ServiceOfferModal = ({
 
         (async () => {
             try {
-                const res = await fetchServices({
+                const res = await fetchServices(type, signal, {
                     pageNumber: 1,
                     pageSize: 100,
-                    sortBy: "price",
+                    sortBy: "",
                     sortOrder: "DESC",
                     filter: {
                         searchKeyword: "",
@@ -44,9 +50,9 @@ const ServiceOfferModal = ({
                         deadlineDate: "",
                         categoryId: "",
                     },
-                    serviceType: 'request',
                     authId: authUser?.profile.id || 0,
-                }, signal );
+                    postedByAuthUser: true,
+                } );
 
                 setServices(res?.content ?? []);
             } catch (error) {
@@ -87,12 +93,21 @@ const ServiceOfferModal = ({
                     </div>
                 </div>
                 <div className="mt-12 mb-4 flex justify-center items-center">
-                    <button
-                        className="bg-orange-500 text-white py-2 px-6 rounded-lg hover:bg-orange-600 mr-6 "
-                        onClick={handleServiceOfferOpen}
-                    >
-                        Create new service offer
-                    </button>
+                    {type == 'offer' ? (
+                        <button
+                            className="bg-orange-500 text-white py-2 px-6 rounded-lg hover:bg-orange-600 mr-6 "
+                            onClick={handleNewServiceOffer}
+                        >
+                            Create new service offer
+                        </button>
+                    ) : (
+                        <button
+                            className="bg-orange-500 text-white py-2 px-6 rounded-lg hover:bg-orange-600 mr-6 "
+                            onClick={handleNewServiceRequest}
+                        >
+                            Create new service request
+                        </button>
+                    )}
                     <button
                         className="bg-gray-500 text-white py-2 px-12 rounded-lg hover:bg-gray-600"
                         onClick={handleCloseModal}
