@@ -35,7 +35,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .orElseThrow(() -> new NotFoundException("Checkpoint not found"))
                     .getId();
             case CONTRACT -> contractRepo.findById(paymentDTO.getPayableId())
-                    .orElseThrow(() -> new NotFoundException("Matches not found"))
+                    .orElseThrow(() -> new NotFoundException("CONTRACT not found"))
                     .getId();
             default -> throw new NotFoundException("Incorrect Payable type");
         };
