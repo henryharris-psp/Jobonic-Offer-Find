@@ -68,7 +68,7 @@ const ContractProgressSection = ({
                             </button>
                         </div>
                     </div>
-                    { latestContract.payoutAgreements.length === 0 ? (
+                    { latestContract?.payoutNegotiations.length === 0 ? (
                         <div className="flex flex-row gap-1">
                             <Button
                                 size="2xs"

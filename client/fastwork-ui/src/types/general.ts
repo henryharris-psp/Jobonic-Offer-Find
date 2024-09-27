@@ -46,6 +46,10 @@ export interface Milestone {
     numberOfHoursCompleted?: number,
 }
 
+// export interface PriceNegotiation {
+    
+// }
+
 export interface Contract {
     id: string | number;
     price: number
@@ -55,6 +59,7 @@ export interface Contract {
     currentMilestone: Milestone | null;
     profileId: string | number;
     matchesId: string | number;
+    payoutNegotiations: string[]
 }
 
 export interface Payment {
