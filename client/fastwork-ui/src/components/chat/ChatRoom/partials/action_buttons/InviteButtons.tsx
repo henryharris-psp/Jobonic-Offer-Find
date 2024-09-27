@@ -66,6 +66,7 @@ const InviteButtons = () => {
             >
                 <ServiceOfferModal
                     onClick={handleOnClickService}
+                    type="request"
                 />
             </Modal>
         </>

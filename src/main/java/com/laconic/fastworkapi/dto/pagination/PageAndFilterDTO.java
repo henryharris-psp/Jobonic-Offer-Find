@@ -39,6 +39,8 @@ public class PageAndFilterDTO<T extends SearchAndFilterDTO> implements Serializa
 
     private Long authId;
 
+    private Boolean postedByAuthUser;
+
     @Hidden
     public PageRequest getPageRequest() {
         if(sortBy != null && !sortBy.isEmpty() && !sortBy.equals("string")) {
