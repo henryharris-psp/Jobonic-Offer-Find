@@ -4,7 +4,7 @@ import Modal from "@/components/Modal";
 import SafeInput, { SafeInputChangeEvent } from "@/components/SafeInput";
 import { Category as BaseCategory } from "@/types/general";
 import { PlusIcon } from "@heroicons/react/24/solid";
-import React, { useState } from "react";
+import { useState } from "react";
 
 interface Category extends BaseCategory {
     isNew: boolean;

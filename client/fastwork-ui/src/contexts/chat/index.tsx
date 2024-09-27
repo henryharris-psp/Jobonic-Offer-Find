@@ -62,7 +62,7 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             
                 try {
                     const contract = await fetchContract(contractId, signal);
-                    if (contract) setLatestContract(contract);
+                    if (contract) setLatestContract({...contract, payoutNegotiations: []});
                 } catch (error) {
                     console.error('Error fetching latest contract:', error);
                 }
