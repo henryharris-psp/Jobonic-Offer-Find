@@ -90,7 +90,11 @@ const MessageByMediaType = (message: Message) => {
             <InChatPaymentCard
                 transactionId={transitionId}
                 transactionType={ authUserType === 'freelancer' ? 'received' : 'sent'}
-            />
+            />,
+        price_negotiation: 
+            <div>
+                price_negotiation
+            </div>
     };
 
     return (

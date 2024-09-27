@@ -4,6 +4,9 @@ import { useChat } from "@/contexts/chat";
 import SafeInput, { SafeInputChangeEvent } from "../SafeInput";
 import Button from "../Button";
 import { updateMilestoneStatus } from "@/functions/helperFunctions";
+import testClient from "@/client/testClient";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 interface PaymentCardProps {
     totalAmount: number;
@@ -15,7 +18,13 @@ const PaymentCard = ({
     onPaid
 }: PaymentCardProps) => {
     const numberFormater = new Intl.NumberFormat();
-    const { latestContract, sendMessage, updateChatRoom } = useChat();
+    const { 
+        activeChatRoom,
+        latestContract, 
+        sendMessage, 
+        updateChatRoom 
+    } = useChat();
+    const authUser = useSelector((state: RootState) => state.auth);
     const [paymentMethod, setPaymentMethod] = useState<string>('');
     const [note, setNote] = useState('');
 
@@ -33,6 +42,10 @@ const PaymentCard = ({
             setPaymentMethod(e.target.value);
         };
 
+        const timerToClose = async () => {
+            return new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
         const processPayment = async () => {
             // const res = await httpClient.post('payments', {
             //     amount: 123,
@@ -46,10 +59,6 @@ const PaymentCard = ({
             return new Promise(resolve => setTimeout(resolve, 3000));
         }
 
-        const timerToClose = async () => {
-            return new Promise(resolve => setTimeout(resolve, 1000));
-        }
-
         const submit = async () => {
             setErrorCheckable(true);
 
@@ -57,6 +66,16 @@ const PaymentCard = ({
                 setIsLoading(true);
 
                 try {
+                    // await testClient.post('payments/full_payment', {
+                    //     amount: 123,
+                    //     paymentMethod: 'payni',
+                    //     senderName: '',
+                    //     receiverName: '',
+                    //     payableType: 'match', // match or milestone
+                    //     payableId: activeChatRoom?.match_id,  // matchId or milestoneId
+                    //     note: 'some dummy note'
+                    // });
+
                     await processPayment();
                     setIsPaid(true);
 

@@ -111,7 +111,7 @@ const AdminCategoryManagementPage = () => {
 
                 {/* header */}
                 <div className="h-14 flex flex-row items-center shadow justify-between bg-white">
-                    <span className="font-semibold text-lg ml-5 text-sky-800">
+                    <span className="font-semibold text-xl ml-5 text-sky-800">
                         Category Management
                     </span>
                     <div className="mr-5">

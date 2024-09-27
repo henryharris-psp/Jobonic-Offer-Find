@@ -74,7 +74,8 @@ export type MediaType =
     'chat_room' |
     'payment_request' |
     'full_payment' | 
-    'milestone_payment';
+    'milestone_payment' |
+    'price_negotiation';
 
 export interface Message {
     id: string | number;
@@ -95,8 +96,6 @@ export type CollaborationStatus =
     'to_review' |
     'contract_termination' |
     'completed' |
-
-    'to_pay' |
     'cancelled';
 ;
 

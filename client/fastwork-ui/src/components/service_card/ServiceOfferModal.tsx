@@ -32,7 +32,7 @@ const ServiceOfferModal = ({
 
         (async () => {
             try {
-                const res = await fetchServices("request", signal, {
+                const res = await fetchServices({
                     pageNumber: 1,
                     pageSize: 100,
                     sortBy: "price",
@@ -44,8 +44,9 @@ const ServiceOfferModal = ({
                         deadlineDate: "",
                         categoryId: "",
                     },
+                    serviceType: 'request',
                     authId: authUser?.profile.id || 0,
-                });
+                }, signal );
 
                 setServices(res?.content ?? []);
             } catch (error) {

@@ -27,7 +27,18 @@ const freelancerActionButtonsMap = {
     to_submit: <SubmitWorkButton/>,
     to_review: <ReviewButtons/>,
     contract_termination: <TerminationContractButton role="freelancer"/>,
-    completed: <div>Completed Freelancer side</div>
+    completed: 
+        <div className="flex flex-col space-y-4 items-center">
+            <span className="text-sm font-semibold text-green-400">
+                This collaboration is successfully terminated.
+            </span>
+        </div>,
+    cancelled: 
+        <div className="flex flex-col space-y-4 items-center">
+            <span className="text-sm font-semibold text-green-400">
+                This collaboration is cancelled with agreed payout.
+            </span>
+        </div>,
 }
 
 const employerActionButtonsMap = {
@@ -39,7 +50,20 @@ const employerActionButtonsMap = {
     to_submit: <HireAgainAndViewProgressButton/>,
     to_review: <ReviewButtons/>,
     contract_termination: <TerminationContractButton role="employer"/>,
-    completed: <div>Completed Employer side</div>
+    completed: 
+        <div className="flex flex-col space-y-4 items-center">
+            <HireAgainAndViewProgressButton/>
+            <span className="text-sm font-semibold text-green-400">
+                This collaboration is successfully terminated.
+            </span>
+        </div>,
+    cancelled: 
+        <div className="flex flex-col space-y-4 items-center">
+            <HireAgainAndViewProgressButton/>
+            <span className="text-sm font-semibold text-green-400">
+                This collaboration is cancelled with agreed payout.
+            </span>
+        </div>
 };
 
 const actionButtonsMap: Record<'freelancer' | 'employer', ActionButtonMap> = {
