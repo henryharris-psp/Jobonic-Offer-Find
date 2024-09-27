@@ -116,7 +116,7 @@ const ServiceList = () => {
                     authId: authUser?.profile?.id || 0
                 }
 
-                const servicesData = await fetchServices('offer', signal, payload);
+                const servicesData = await fetchServices('offer', payload, signal);
                 if (servicesData){
                     setServices(servicesData.content);
                     setPagination( prev => ({
