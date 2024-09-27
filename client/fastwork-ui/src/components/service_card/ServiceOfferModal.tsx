@@ -38,7 +38,7 @@ const ServiceOfferModal = ({
 
         (async () => {
             try {
-                const res = await fetchServices(type, signal, {
+                const res = await fetchServices(type, {
                     pageNumber: 1,
                     pageSize: 100,
                     sortBy: "",
@@ -52,7 +52,7 @@ const ServiceOfferModal = ({
                     },
                     authId: authUser?.profile.id || 0,
                     postedByAuthUser: true,
-                } );
+                }, signal);
 
                 setServices(res?.content ?? []);
             } catch (error) {
