@@ -24,6 +24,8 @@ public interface IManagementService {
 
     ServiceDTO.WithProfile getById(UUID id);
 
+    ExtendedServiceRequestDTO.WithProfile getRequestServiceById(UUID id);
+
     List<ServiceManagement> getFilterByPriceAndDate(ServiceFilterDTO serviceFilterDTO);
 
     PaginationDTO<ServiceDTO.WithProfile> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
@@ -36,4 +38,5 @@ public interface IManagementService {
 
     PaginationDTO<ExtendedServiceRequestDTO> getAllExtendedRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO);
 
+    ServiceDTO.WithProfile getOfferServiceById(UUID serviceId);
 }

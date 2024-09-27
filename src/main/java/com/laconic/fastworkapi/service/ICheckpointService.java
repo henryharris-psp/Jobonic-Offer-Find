@@ -9,17 +9,17 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ICheckpointService {
-    CheckpointDTO save(CheckpointDTO checkpointDTO) throws IOException;
+    CheckResponseDTO save(CheckpointDTO checkpointDTO) throws IOException;
 
-    CheckpointDTO update(UUID id, CheckpointDTO checkpointDTO);
+    CheckResponseDTO update(UUID id, CheckpointDTO checkpointDTO);
 
     CheckResponseDTO getById(UUID id);
 
-    List<CheckpointDTO> getAll();
+    List<CheckResponseDTO> getAll();
 
     String delete(UUID id);
 
-    List<Checkpoint> getCheckPointByServiceId(UUID serviceId);
+    List<CheckResponseDTO> getCheckPointByServiceId(UUID serviceId);
 
     Checkpoint getCheckpoint(UUID id);
 

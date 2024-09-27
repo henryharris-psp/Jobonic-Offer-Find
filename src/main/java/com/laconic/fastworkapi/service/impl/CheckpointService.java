@@ -53,7 +53,7 @@ public class CheckpointService implements ICheckpointService {
 //    }
 
     @Override
-    public CheckpointDTO save(CheckpointDTO checkpointDTO) throws IOException {
+    public CheckResponseDTO save(CheckpointDTO checkpointDTO) throws IOException {
         // Retrieve associated service
         var service = this.serviceRepo.findById(checkpointDTO.getServiceId())
                 .orElseThrow(() -> new NotFoundException("Service not found with ID: " + checkpointDTO.getServiceId()));
@@ -94,19 +94,20 @@ public class CheckpointService implements ICheckpointService {
         contract.setCurrentCheckpoint(checkpoints.get());
         this.contractRepo.save(contract);
 
-        CheckpointDTO savedCheckpointDTO = new CheckpointDTO(savedCheckpoint);
+        CheckResponseDTO savedCheckpointDTO = new CheckResponseDTO(savedCheckpoint);
 
         return savedCheckpointDTO;
     }
 
     @Override
-    public CheckpointDTO update(UUID id, CheckpointDTO checkpointDTO) {
+    public CheckResponseDTO update(UUID id, CheckpointDTO checkpointDTO) {
         var existingCheckpoint = this.checkpointRepo.findById(id)
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.CHECKPOINT, "id", id.toString()));
 
         var service = this.serviceRepo.findById(checkpointDTO.getServiceId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
                         checkpointDTO.getServiceId().toString()));
+
         existingCheckpoint.setContract(contractRepo.findById(checkpointDTO.getContractId()).get());
         existingCheckpoint.setService(service);
         existingCheckpoint.setPrice(checkpointDTO.getPrice());
@@ -114,7 +115,8 @@ public class CheckpointService implements ICheckpointService {
         existingCheckpoint.setDescription(checkpointDTO.getDescription());
 
         var updatedCheckpoint = this.checkpointRepo.save(existingCheckpoint);
-        return EntityMapper.mapToEntity(updatedCheckpoint, CheckpointDTO.class);
+
+        return new CheckResponseDTO(updatedCheckpoint);
     }
 
     @Override
@@ -125,8 +127,8 @@ public class CheckpointService implements ICheckpointService {
     }
 
     @Override
-    public List<CheckpointDTO> getAll() {
-        return this.checkpointRepo.findAll().stream().map(CheckpointDTO::new).toList();
+    public List<CheckResponseDTO> getAll() {
+        return this.checkpointRepo.findAll().stream().map(CheckResponseDTO::new).toList();
     }
 
     @Override
@@ -138,8 +140,8 @@ public class CheckpointService implements ICheckpointService {
     }
 
     @Override
-    public List<Checkpoint> getCheckPointByServiceId(UUID serviceId) {
-        return this.checkpointRepo.findCheckpointByServiceId(serviceId);
+    public List<CheckResponseDTO> getCheckPointByServiceId(UUID serviceId) {
+        return this.checkpointRepo.findCheckpointByServiceId(serviceId).stream().map(CheckResponseDTO::new).toList();
     }
 
     public Checkpoint getCheckpoint(UUID id) {

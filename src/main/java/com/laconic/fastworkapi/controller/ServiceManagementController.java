@@ -63,7 +63,7 @@ public class ServiceManagementController {
     @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL_BY_ID)
     @GetMapping("/get")
     public ServiceDTO.WithProfile getById(@RequestParam UUID serviceId) {
-        return this.managementService.getById(serviceId);
+        return this.managementService.getOfferServiceById(serviceId);
     }
 
     @Operation(summary = APIDocsHelper.ServiceAPI.DELETE_OFFER)
@@ -108,6 +108,12 @@ public class ServiceManagementController {
     @PostMapping("/request/all")
     public PaginationDTO<ExtendedServiceRequestDTO> getAllRequestServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         return this.managementService.getAllExtendedRequestService(pageAndFilterDTO);
+    }
+
+    @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL_BY_ID)
+    @GetMapping("/request/get")
+    public ExtendedServiceRequestDTO.WithProfile getRequestById(@RequestParam UUID serviceRequestId) {
+        return this.managementService.getRequestServiceById(serviceRequestId);
     }
 
     @Operation(summary = APIDocsHelper.ServiceAPI.FILTER_SERVICES)

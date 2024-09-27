@@ -46,6 +46,19 @@ public class ManagementService implements IManagementService {
         this.serviceRequestRepo = serviceRequestRepo;
     }
 
+    @Override
+    public ServiceDTO.WithProfile getById(UUID id) {
+        var service = this.serviceRepo.findById(id)
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
+                        id.toString()));
+
+        var user = this.userRepo.findById(service.getProfile().getId())
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
+                        service.getProfile().getId().toString()));
+
+        return getServiceWithProfile(service, user);
+    }
+
     private static ServiceDTO.WithProfile getServiceWithProfile(ServiceManagement service, Profile user) {
         return new ServiceDTO.WithProfile(
                 service.getId(),
@@ -66,23 +79,42 @@ public class ManagementService implements IManagementService {
         );
     }
 
-    private static ExtendedServiceRequestDTO.WithProfile getRequestServiceWithProfile(ServiceManagement service, Profile user) {
+    private ExtendedServiceRequestDTO.WithProfile getRequestServiceWithProfile(ServiceRequest serviceRequest) {
+        if (serviceRequest == null) {
+            return null;
+        }
+
+        var serviceManagement = serviceRepo.findAllByServiceRequestId(serviceRequest.getId());
+
+        if (serviceManagement == null) {
+            throw new IllegalArgumentException("ServiceManagement is null for ServiceRequest ID: " + serviceRequest.getId());
+        }
+
+//        serviceManagement = this.serviceRepo.findById(serviceManagement.getId())
+//                .orElseThrow();
+
+        UUID categoryId = null;
+
+        if (serviceManagement.getCategory() != null) {
+            categoryId = serviceManagement.getCategory().getId();
+        }
+
         return new ExtendedServiceRequestDTO.WithProfile(
-                service.getId(),
-                EntityMapper.mapToResponse(service.getServiceOffer(), ServiceOfferDTO.class),
-                EntityMapper.mapToResponse(service.getServiceRequest(), ServiceRequestDTO.class),
-                EntityMapper.mapToResponse(user, ProfileDTO.class),
-                service.getTitle(),
-                service.getEmploymentType(),
-                service.getDescription(),
-                service.getDescription1(),
-                service.getDescription2(),
-                service.getDescription3(),
-                service.getLanguageSpoken(),
-                service.getLocation(),
-                EntityMapper.mapToResponse(service.getCategory(), CategoryDTO.class),
-                service.getPrice(),
-                service.getPriceUnit()
+                serviceRequest.getId(),
+                EntityMapper.mapToResponse(serviceManagement.getServiceOffer(), ServiceOfferDTO.class),
+                EntityMapper.mapToResponse(serviceManagement.getServiceRequest(), ServiceRequestDTO.class),
+                EntityMapper.mapToResponse(serviceManagement.getProfile(), ProfileDTO.class),
+                serviceManagement.getTitle(),
+                serviceManagement.getEmploymentType(),
+                serviceManagement.getDescription(),
+                serviceManagement.getDescription1(),
+                serviceManagement.getDescription2(),
+                serviceManagement.getDescription3(),
+                serviceManagement.getLanguageSpoken(),
+                serviceManagement.getLocation(),
+                EntityMapper.mapToResponse(serviceManagement.getCategory(), CategoryDTO.class),
+                serviceManagement.getPrice(),
+                serviceManagement.getPriceUnit()
         );
     }
 
@@ -111,11 +143,6 @@ public class ManagementService implements IManagementService {
         return getServiceWithProfile(service, user);
     }
 
-    /*
-    @Author     : Soe
-    @Created At : Aug 26, 2024
-    @Note       : update method for service offer
-     */
     @Override
     public ServiceDTO.WithProfile updateService(ServiceDTO serviceDTO) {
 
@@ -174,15 +201,28 @@ public class ManagementService implements IManagementService {
         return services.stream().map(s -> getServiceWithProfile(s, user)).toList();
     }
 
-    @Override
-    public ServiceDTO.WithProfile getById(UUID id) {
+    public ServiceDTO.WithProfile getOfferServiceById(UUID id) {
         var service = this.serviceRepo.findById(id)
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
                         id.toString()));
+
         var user = this.userRepo.findById(service.getProfile().getId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
                         service.getProfile().getId().toString()));
+
         return getServiceWithProfile(service, user);
+    }
+
+    public ExtendedServiceRequestDTO.WithProfile getRequestServiceById(UUID id) {
+        var service = this.serviceRequestRepo.findById(id)
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
+                        id.toString()));
+
+        var user = this.userRepo.findById(service.getProfile().getId())
+                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
+                        service.getProfile().getId().toString()));
+
+        return getRequestServiceWithProfile(service);
     }
 
     // Fetch the services filtered by price and date
