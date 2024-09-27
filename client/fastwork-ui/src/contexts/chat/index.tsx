@@ -76,12 +76,26 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                     
                     //fetching service
                     let service = null;
+                    let serviceRes = null;
                     if(chatRoom.service_id){
-                        const serviceRes = await httpClient.get('/service/get', {
-                            params: {
-                                serviceId: chatRoom.service_id
-                            }
-                        });
+                        try {
+                            serviceRes = await httpClient.get('/service/get', {
+                                params: {
+                                    serviceId: chatRoom.service_id
+                                }
+                            });
+
+                            console.log('offer : ', serviceRes);
+                        } catch (error) {
+                            serviceRes = await httpClient.get('/service/request/get', {
+                                params: {
+                                    serviceRequestId: chatRoom.service_id
+                                }
+                            })
+                            
+                            console.log('request : ', serviceRes);
+                        }
+                        
                         service = serviceRes.data;
                     }
 

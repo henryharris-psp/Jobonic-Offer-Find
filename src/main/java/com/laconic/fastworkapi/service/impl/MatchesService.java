@@ -6,6 +6,7 @@ import com.laconic.fastworkapi.entity.Matches;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.IMatchesRepo;
 import com.laconic.fastworkapi.repo.IServiceRepo;
+import com.laconic.fastworkapi.repo.IServiceRequestRepo;
 import com.laconic.fastworkapi.repo.IUserRepo;
 import com.laconic.fastworkapi.service.IMatchesService;
 import com.laconic.fastworkapi.utils.EntityMapper;
@@ -31,18 +32,27 @@ public class MatchesService implements IMatchesService {
         var user = this.userRepo.findById(matchesDTO.getProfileId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
                         matchesDTO.getProfileId().toString()));
-        var service = this.serviceRepo.findById(matchesDTO.getServiceId())
-                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
-                        matchesDTO.getServiceId().toString()));
+
         var employee = this.userRepo.findById(matchesDTO.getEmployeeId())
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.USER, "id",
                         matchesDTO.getProfileId().toString()));
+
         var match = EntityMapper.mapToEntity(matchesDTO, Matches.class);
+
+        var service = this.serviceRepo.findById(matchesDTO.getServiceId()).orElse(null);
+
+        if(service == null) {
+            service = this.serviceRepo.findByServiceRequestId(matchesDTO.getServiceId());
+        }
+
+        System.out.println("Service: " + service);
+
         match.setProfile(user);
         match.setService(service);
         match.setEmployeeId(employee);
 
         var savedMatch = this.matchesRepo.save(match);
+
         return EntityMapper.mapToEntity(savedMatch, MatchesDTO.class);
     }
 
@@ -75,6 +85,7 @@ public class MatchesService implements IMatchesService {
     @Override
     public MatchesDTO getById(UUID id) {
         var existingMatch = getMatch(id);
+
         return new MatchesDTO(existingMatch);
     }
 
