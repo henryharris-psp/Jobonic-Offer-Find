@@ -26,7 +26,10 @@ const CategoryFormModal = ({
     onUpdated
 }: CategoryFormModalProps) => {
     const isEdit = category !== null;
-    const [name, setName] = useState(isEdit ? category.name : '');
+    const [englishName, setEnglishName] = useState(isEdit ? category.name : '');
+    const [chineseName, setChineseName] = useState(isEdit ? category.name : '');
+    const [thaiName, setThaiName] = useState(isEdit ? category.name : '');
+
     const [isLoading, setIsLoading] = useState(false);
 
     const handleInputChange = (event: SafeInputChangeEvent) => {
@@ -63,14 +66,29 @@ const CategoryFormModal = ({
                             Create New Category
                         </span>
                     </div>
-                    <div className="w-96">
+                    <div className="w-96 space-y-2">
                         <SafeInput
                             size=""
                             type="text"
                             value={name}
-                            placeholder="Type category name..."
+                            placeholder="English"
                             onChange={handleInputChange}
                         />
+                        <SafeInput
+                            size=""
+                            type="text"
+                            value={name}
+                            placeholder="Chinese"
+                            onChange={handleInputChange}
+                        />
+                        <SafeInput
+                            size=""
+                            type="text"
+                            value={name}
+                            placeholder="Thai"
+                            onChange={handleInputChange}
+                        />
+
                     </div>
                     <Button
                         disabled={isLoading}

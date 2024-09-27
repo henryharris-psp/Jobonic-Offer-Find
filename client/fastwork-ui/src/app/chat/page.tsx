@@ -10,8 +10,8 @@ import { supabase } from "@/config/supabaseClient";
 import { useSearchParams } from "next/navigation";
 import ChatRoomComponent from "@/components/chat/ChatRoom";
 import httpClient from "@/client/httpClient";
-import NewProgressList from "@/components/chat/NewProgressList";
 import { notify } from "@/store/reducers/uiReducer";
+import ProgressList from "@/components/chat/ProgressList";
 
 const ChatPage = () => {
     //catch url params
@@ -261,8 +261,7 @@ const ChatPage = () => {
                         zStack={9}
                         type={ isMobile || screenSize === 'lg' ? 'front' : 'slide'}
                     >
-                        {/* <ProgressList/> */}
-                        <NewProgressList/>
+                        <ProgressList/>
                     </SideDrawer>
                 </>  
             )}

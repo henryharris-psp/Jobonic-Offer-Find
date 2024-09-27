@@ -6,6 +6,7 @@ import { useState } from "react";
 import EndContractConfirmationDialog from "@/components/contract/dialogs/EndContractConfirmationDialog";
 import PayoutConfirmationDialog from "@/components/contract/dialogs/PayoutConfirmationDialog";
 import ProgressSectionRoot from "./ProgressSectionRoot";
+import { useChat } from "@/contexts/chat";
 
 interface ContractProgressSectionProps {
     isCurrent: boolean,
@@ -16,6 +17,7 @@ const ContractProgressSection = ({
     isCurrent,
     isDisabled
 }: ContractProgressSectionProps) => {
+    const { activeChatRoom } = useChat();
     const [showLatestContractModal, setShowLatestContractModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
@@ -73,12 +75,13 @@ const ContractProgressSection = ({
                             icon={<EyeIcon className="size-4 text-bold"/>}
                             onClick={handleOnClickViewContract}
                         />
-                        <Button
-                            size="2xs"
-                            title="End Contract"
-                            icon={<StopIcon className="size-4 font-bold text-bold"/>}
-                            onClick={handleOnClickEndContract}
-                        />
+
+                            <Button
+                                size="2xs"
+                                title="End Contract"
+                                icon={<StopIcon className="size-4 font-bold text-bold"/>}
+                                onClick={handleOnClickEndContract}
+                            />
                     </div>
                 </div>
             </ProgressSectionRoot>

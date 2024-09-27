@@ -4,6 +4,7 @@ import Button from "../Button";
 import { useChat } from "@/contexts/chat";
 import httpClient from "@/client/httpClient";
 import { updateMilestoneStatus } from "@/functions/helperFunctions";
+import testClient from "@/client/testClient";
 
 interface MilestonePaymentConfirmationDialogProps {
     milestoneId: string,
@@ -32,6 +33,13 @@ const MilestonePaymentConfirmationDialog = ({
         setIsLoading(true);
         try{
             await processPayment();
+            // await testClient.post('payments/payout', {
+            //     amount: 123,
+            //     paymentMethod: 'payni',
+            //     payableType: 'match', // match & milestone
+            //     payableId: activeChatRoom?.match_id,
+            //     note: 'some dummy note'
+            // });
 
             const allMilestones = latestContract?.milestones ?? [];
             const targetMilestone = allMilestones.find( e => e.id === milestoneId );

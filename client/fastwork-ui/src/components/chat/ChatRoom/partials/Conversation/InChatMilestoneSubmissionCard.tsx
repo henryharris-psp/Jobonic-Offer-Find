@@ -5,7 +5,7 @@ import Button from "@/components/Button";
 import { useChat } from "@/contexts/chat";
 import { ArrowPathIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import httpClient from "@/client/httpClient";
-import { fetchUploadedFiles, updateMilestoneStatus } from "@/functions/helperFunctions";
+import { downloadFile, fetchAttachmentsByMilestoneId, updateMilestoneStatus } from "@/functions/helperFunctions";
 import MilestonePaymentConfirmationDialog from "@/components/payment/MilestonePaymentConfirmationDialog";
 
 interface InChatMilestoneSubmissionCardProps {
@@ -30,7 +30,6 @@ const InChatMilestoneSubmissionCard = ({
 
     //on mounted
         useEffect(() => {
-            console.log('milestoneId', milestoneId)
             if(milestoneId){
                 fetchMilestone();
             }
@@ -38,9 +37,9 @@ const InChatMilestoneSubmissionCard = ({
 
     //computed
         const total = useMemo( () => {
-            const uploadedFiles = milestone?.uploadedFiles || [];
-            return uploadedFiles?.reduce((acc, current) => {
-                const size = parseFloat(current.size);
+            const attachments = milestone?.attachments || [];
+            const result = attachments.reduce((acc, current) => {
+                const size = parseFloat(current.fileSize);
                 return {
                     count: acc.count + 1,
                     size: acc.size + size
@@ -48,12 +47,16 @@ const InChatMilestoneSubmissionCard = ({
             }, {
                 count: 0,
                 size: 0
-            })
-        }, [milestone?.uploadedFiles]);
+            });
+            return {
+                count: result.count,
+                size: result.size.toFixed(2)
+            }
+        }, [milestone?.attachments]);
 
         const firstThreeFiles = useMemo( () => {
-            return milestone?.uploadedFiles ? milestone.uploadedFiles.slice(0, 3) : [];
-        }, [milestone?.uploadedFiles]);
+            return milestone?.attachments ? milestone.attachments.slice(0, 3) : [];
+        }, [milestone?.attachments]);
 
     //methods
         const fetchMilestone = async () => {
@@ -63,13 +66,8 @@ const InChatMilestoneSubmissionCard = ({
             setIsLoading(true);
             try {
                 //get_milestone
-                const milestoneRes = await httpClient.get(`checkpoint?id=${milestoneId}`, { signal });
-                const files = await fetchUploadedFiles(milestoneRes.data.id);
-
-                setMilestone({
-                    ...milestoneRes.data,
-                    uploadedFiles: files ?? []
-                });
+                const res = await httpClient.get(`checkpoint?id=${milestoneId}`, { signal });
+                setMilestone(res.data);
             } catch (error) {
                 console.log("error fetching milestone", error);
             } finally {
@@ -95,8 +93,10 @@ const InChatMilestoneSubmissionCard = ({
             setShowMilestonePaymentConfirmationDialog(true);
         }
 
-        const handleOnDownload = () => {
-            console.log('fdfdd')
+        const handleOnDownload = (fileId: string, fileName: string) => {
+            if(confirm("Do you want to download this file?")){
+                downloadFile(fileId, fileName);
+            }
         }
 
     return (
@@ -163,10 +163,10 @@ const InChatMilestoneSubmissionCard = ({
                                     <div key={file.id}>
                                         <button 
                                             key={file.id}
-                                            onClick={handleOnDownload}
+                                            onClick={() => handleOnDownload(file.id, file.name)}
                                         >
                                             <span className="text-blue-500 underline">
-                                                { file.name }
+                                                { file.originalName ?? 'no_file_name' }
                                             </span>
                                         </button>
                                     </div>
