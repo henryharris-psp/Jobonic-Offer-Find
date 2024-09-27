@@ -1,6 +1,6 @@
 package com.laconic.fastworkapi.dto;
 
-import com.laconic.fastworkapi.entity.PaymentAgreement;
+import com.laconic.fastworkapi.entity.PaymentOut;
 import lombok.*;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PaymentAgreementDTO {
+public class PaymentOutDTO {
 
     private UUID id;
     private UUID checkpointId;
@@ -20,7 +20,7 @@ public class PaymentAgreementDTO {
     private Long profileId;
     private Double price;
 
-    public PaymentAgreementDTO(PaymentAgreement agreement) {
+    public PaymentOutDTO(PaymentOut agreement) {
         this.id = agreement.getId();
         this.checkpointId = agreement.getCheckpoint().getId();
         this.contractId = agreement.getContract().getId();

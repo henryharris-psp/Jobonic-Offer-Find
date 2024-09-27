@@ -1,7 +1,7 @@
 package com.laconic.fastworkapi.controller;
 
-import com.laconic.fastworkapi.dto.PaymentAgreementDTO;
-import com.laconic.fastworkapi.service.PaymentAgreementService;
+import com.laconic.fastworkapi.dto.PaymentOutDTO;
+import com.laconic.fastworkapi.service.PaymentOutService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,19 +9,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/payment-agreement")
+@RequestMapping("/api/v1/payment-out")
 @RequiredArgsConstructor
-public class PaymentAgreementController {
+public class PaymentOutController {
 
-    private final PaymentAgreementService agreementService;
+    private final PaymentOutService agreementService;
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody PaymentAgreementDTO dto) {
+    public ResponseEntity<?> save(@RequestBody PaymentOutDTO dto) {
         return ResponseEntity.ok(agreementService.save(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody PaymentAgreementDTO dto) {
+    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody PaymentOutDTO dto) {
         return ResponseEntity.ok(agreementService.update(id, dto));
     }
 
