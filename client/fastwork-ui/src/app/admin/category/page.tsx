@@ -1,3 +1,4 @@
+"use client"
 import httpClient from "@/client/httpClient";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
