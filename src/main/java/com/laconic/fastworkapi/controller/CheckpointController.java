@@ -23,13 +23,13 @@ public class CheckpointController {
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.SAVE_CHECKPOINT)
     @PostMapping
-    public CheckResponseDTO create(@RequestBody CheckpointDTO checkpointDTO) throws IOException {
+    public CheckpointDTO create(@RequestBody CheckpointDTO checkpointDTO) throws IOException {
         return this.checkpointService.save(checkpointDTO);
     }
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.UPDATE_CHECKPOINT)
     @PutMapping
-    public CheckResponseDTO update(@RequestParam UUID id, @RequestBody CheckpointDTO checkpointDTO) {
+    public CheckpointDTO update(@RequestParam UUID id, @RequestBody CheckpointDTO checkpointDTO) {
         return this.checkpointService.update(id, checkpointDTO);
     }
 
