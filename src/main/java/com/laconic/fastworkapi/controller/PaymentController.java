@@ -25,7 +25,7 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.getById(id));
     }
 
-    @GetMapping("/get-by-page")
+    @PostMapping("/get-by-page")
     public ResponseEntity<?> getByPage(@RequestBody PaymentDTO.PaymentSearchDTO filterDTO) {
         return ResponseEntity.ok(paymentService.filter(filterDTO));
 

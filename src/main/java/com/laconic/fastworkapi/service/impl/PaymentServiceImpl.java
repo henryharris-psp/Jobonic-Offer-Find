@@ -8,7 +8,7 @@ import com.laconic.fastworkapi.exception.NotFoundException;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.helper.PaginationHelper;
 import com.laconic.fastworkapi.repo.ICheckpointRepo;
-import com.laconic.fastworkapi.repo.IMatchesRepo;
+import com.laconic.fastworkapi.repo.IContractRepo;
 import com.laconic.fastworkapi.repo.IUserRepo;
 import com.laconic.fastworkapi.repo.PaymentRepo;
 import com.laconic.fastworkapi.service.PaymentService;
@@ -24,7 +24,7 @@ import java.util.UUID;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepo paymentRepo;
-    private final IMatchesRepo matchesRepo;
+    private final IContractRepo contractRepo;
     private final ICheckpointRepo checkpointRepo;
     private final IUserRepo userRepo;
 
@@ -34,13 +34,14 @@ public class PaymentServiceImpl implements PaymentService {
             case CHECKPOINT -> checkpointRepo.findById(paymentDTO.getPayableId())
                     .orElseThrow(() -> new NotFoundException("Checkpoint not found"))
                     .getId();
-            case MATCHES -> matchesRepo.findById(paymentDTO.getPayableId())
+            case CONTRACT -> contractRepo.findById(paymentDTO.getPayableId())
                     .orElseThrow(() -> new NotFoundException("Matches not found"))
                     .getId();
             default -> throw new NotFoundException("Incorrect Payable type");
         };
         Long senderId = userRepo.findById(paymentDTO.getSenderId()).get().getId();
         Long receiverId = userRepo.findById(paymentDTO.getReceiverId()).get().getId();
+
         Payment payment = Payment.builder()
                 .paymentMethod(paymentDTO.getPaymentMethod())
                 .paymentDate(paymentDTO.getPaymentDate())
