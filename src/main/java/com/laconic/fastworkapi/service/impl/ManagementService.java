@@ -261,8 +261,15 @@ public class ManagementService implements IManagementService {
                 GenericSpecification.hasKeyword((String) keyword, Set.of("title"));
 
         Page<ServiceManagement> servicePage = keyword != null
-                ? this.serviceRepo.findAll(Specification.where(specs).and((root, query, criteriaBuilder) ->
-                criteriaBuilder.notEqual(root.get("profile").get("id"), pageAndFilterDTO.getAuthId())), pageAndFilterDTO.getPageRequest())
+            ? this.serviceRepo.findAll(Specification.where(specs).and((root, query, criteriaBuilder) -> {
+                if (pageAndFilterDTO.getPostedByAuthUser() != null && pageAndFilterDTO.getPostedByAuthUser()) {
+                    return criteriaBuilder.equal(root.get("profile").get("id"), pageAndFilterDTO.getAuthId());
+                } else {
+                    return criteriaBuilder.notEqual(root.get("profile").get("id"), pageAndFilterDTO.getAuthId());
+                }
+            }), pageAndFilterDTO.getPageRequest())
+            : (pageAndFilterDTO.getAuthId() == null || pageAndFilterDTO.getAuthId() == 0)
+                ? this.serviceRepo.findAll(pageAndFilterDTO.getPageRequest())
                 : this.serviceRepo.findAllExceptAuthUser(pageAndFilterDTO.getAuthId(), pageAndFilterDTO.getPageRequest());
 
         List<ServiceDTO.WithProfile> servicesWithProfile = servicePage.stream()
@@ -342,9 +349,16 @@ public class ManagementService implements IManagementService {
         Specification<ServiceRequest> specs =
                 GenericSpecification.hasKeyword(keyword, Set.of("title"));
 
-        Page<ServiceRequest> servicePage = keyword != null
-                ? this.serviceRequestRepo.findAll(Specification.where(specs).and((root, query, criteriaBuilder) ->
-                criteriaBuilder.notEqual(root.get("profile").get("id"), pageAndFilterDTO.getAuthId())), pageAndFilterDTO.getPageRequest())
+        Page<ServiceRequest> servicePage = (keyword != null)
+            ? this.serviceRequestRepo.findAll(Specification.where(specs).and((root, query, criteriaBuilder) -> {
+                if (pageAndFilterDTO.getPostedByAuthUser() != null && pageAndFilterDTO.getPostedByAuthUser()) {
+                    return criteriaBuilder.equal(root.get("profile").get("id"), pageAndFilterDTO.getAuthId());
+                } else {
+                    return criteriaBuilder.notEqual(root.get("profile").get("id"), pageAndFilterDTO.getAuthId());
+                }
+            }), pageAndFilterDTO.getPageRequest())
+            : (pageAndFilterDTO.getAuthId() == null || pageAndFilterDTO.getAuthId() == 0)
+                ? this.serviceRequestRepo.findAll(pageAndFilterDTO.getPageRequest())
                 : this.serviceRequestRepo.findAllExceptAuthUser(pageAndFilterDTO.getAuthId(), pageAndFilterDTO.getPageRequest());
 
         List<ExtendedServiceRequestDTO.WithProfile> extendedService = servicePage.stream()

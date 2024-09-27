@@ -155,8 +155,8 @@ export const getCategoryName = async (categoryId: string) => {
 
     export const fetchServices = async (
         type: 'offer' | 'request',
+        payload: ServicePayload,
         signal: AbortSignal,
-        payload: ServicePayload
     ): Promise<ServiceApiResponse | undefined> => {
         try {
             const res = await httpClient.post<ServiceApiResponse>(`service/${type}/all`, payload, { signal });
@@ -216,7 +216,6 @@ export const getCategoryName = async (categoryId: string) => {
             const sortedMilestones = contract.milestones.reverse();
             const currentMilestone = sortedMilestones.find((milestone: Milestone) => !['not_started', 'paid'].includes(milestone.description));
 
-            console.log(contract.milestones);
             return {
                 ...contract,
                 currentMilestone

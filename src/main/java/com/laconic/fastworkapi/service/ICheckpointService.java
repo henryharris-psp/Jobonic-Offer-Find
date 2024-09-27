@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ICheckpointService {
-    CheckResponseDTO save(CheckpointDTO checkpointDTO) throws IOException;
+    CheckpointDTO save(CheckpointDTO checkpointDTO) throws IOException;
 
-    CheckResponseDTO update(UUID id, CheckpointDTO checkpointDTO);
+    CheckpointDTO update(UUID id, CheckpointDTO checkpointDTO);
 
     CheckResponseDTO getById(UUID id);
 
