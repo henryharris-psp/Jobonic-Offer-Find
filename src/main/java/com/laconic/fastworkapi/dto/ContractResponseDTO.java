@@ -32,6 +32,8 @@ public class ContractResponseDTO {
 
     private CheckResponseDTO currentCheckpoint;
 
+    private List<PaymentOutDTO> payoutNegotiations;
+
     public ContractResponseDTO(Contract contract) {
         this.id = contract.getId();
         this.matchesId = contract.getMatches().getId();
@@ -42,5 +44,6 @@ public class ContractResponseDTO {
         this.createdDate = contract.getCreatedDate();
         this.profileId=contract.getProfile().getId();
         this.currentCheckpoint = contract.getCurrentCheckpoint() != null ? new CheckResponseDTO(contract.getCurrentCheckpoint()) : null;
+        this.payoutNegotiations = contract.getPaymentOuts().stream().map(PaymentOutDTO::new).toList();
     }
 }
