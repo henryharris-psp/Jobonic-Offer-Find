@@ -14,6 +14,7 @@ import com.laconic.fastworkapi.repo.IServiceRepo;
 import com.laconic.fastworkapi.service.ICheckpointService;
 import com.laconic.fastworkapi.utils.EntityMapper;
 import jakarta.transaction.Transactional;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -95,23 +96,45 @@ public class CheckpointService implements ICheckpointService {
     }
 
     @Override
-    public CheckpointDTO update(UUID id, CheckpointDTO checkpointDTO) {
+    public ResponseEntity<?> update(UUID id, CheckpointDTO checkpointDTO) {
         var existingCheckpoint = this.checkpointRepo.findById(id)
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.CHECKPOINT, "id", id.toString()));
 
-        var service = this.serviceRepo.findById(checkpointDTO.getServiceId())
-                .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
-                        checkpointDTO.getServiceId().toString()));
+        if(checkpointDTO.getServiceId() != null) {
+            var service = this.serviceRepo.findById(checkpointDTO.getServiceId())
+                    .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.SERVICE, "id",
+                            checkpointDTO.getServiceId().toString()));
 
-        existingCheckpoint.setContract(contractRepo.findById(checkpointDTO.getContractId()).get());
-        existingCheckpoint.setService(service);
-        existingCheckpoint.setPrice(checkpointDTO.getPrice());
-        existingCheckpoint.setNumberOfHoursCompleted(checkpointDTO.getNumberOfHoursCompleted());
-        existingCheckpoint.setDescription(checkpointDTO.getDescription());
+            existingCheckpoint.setService(service);
+        }
+
+        if(checkpointDTO.getContractId() != null) {
+            var contract = this.contractRepo.findById(checkpointDTO.getContractId())
+                    .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.CONTRACT, "id",
+                            checkpointDTO.getContractId().toString()));
+
+            existingCheckpoint.setContract(contract);
+        }
+
+        if (checkpointDTO.getPrice() != 0) {
+            existingCheckpoint.setPrice(checkpointDTO.getPrice());
+        }
+
+        if (checkpointDTO.getNumberOfHoursCompleted() != 0) {
+            existingCheckpoint.setNumberOfHoursCompleted(checkpointDTO.getNumberOfHoursCompleted());
+        }
+
+        if (checkpointDTO.getDescription() != null) {
+            existingCheckpoint.setDescription(checkpointDTO.getDescription());
+        }
+
+        if (checkpointDTO.getStatus() != null) {
+            existingCheckpoint.setStatus(checkpointDTO.getStatus());
+        }
 
         var updatedCheckpoint = this.checkpointRepo.save(existingCheckpoint);
 
-        return new CheckpointDTO(updatedCheckpoint);
+        return ResponseEntity.ok(new CheckpointDTO(updatedCheckpoint));
     }
 
     @Override

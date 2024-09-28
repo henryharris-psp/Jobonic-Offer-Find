@@ -133,7 +133,7 @@ const OfferService = () => {
                 authId: authUser?.profile?.id || 0,
                 postedByAuthUser: false
             }
-            const servicesData = await fetchServices('request', signal, payload);
+            const servicesData = await fetchServices('request', payload, signal);
             if (servicesData) {
                 setServices(servicesData.content);
                 setPagination(prev => ({
