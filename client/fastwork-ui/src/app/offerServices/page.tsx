@@ -13,6 +13,7 @@ import { RootState } from "@/store";
 import ServiceRequestCard from "@/components/ServiceRequestCard";
 import ServiceMatchCardSkeleton from "@/components/ServiceMatchCardSkeleton";
 import ServiceModal from "@/components/ServiceModal";
+
 type UserData = {
     id?: number;
     email?: string;
@@ -133,7 +134,7 @@ const OfferService = () => {
                 authId: authUser?.profile?.id || 0,
                 postedByAuthUser: false
             }
-            const servicesData = await fetchServices('request', signal, payload);
+            const servicesData = await fetchServices('request', payload, signal);
             if (servicesData) {
                 setServices(servicesData.content);
                 setPagination(prev => ({

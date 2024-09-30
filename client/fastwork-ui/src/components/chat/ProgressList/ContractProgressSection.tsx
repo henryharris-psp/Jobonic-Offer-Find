@@ -18,7 +18,8 @@ const ContractProgressSection = ({
     isCurrent,
     isDisabled
 }: ContractProgressSectionProps) => {
-    const { latestContract } = useChat();
+    const { latestContract, activeChatRoom } = useChat();
+    const payoutNegotiations = latestContract?.payoutNegotiations ?? [];
     const [showLatestContractModal, setShowLatestContractModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
@@ -77,7 +78,7 @@ const ContractProgressSection = ({
                     </div>
 
                     {/* if end contract inititated */}
-                        { latestContract?.payoutNegotiations.length !== 0 ? (
+                        { payoutNegotiations.length !== 0 ? (
                             <div className="flex flex-row gap-1">
                                 <Button
                                     size="2xs"
@@ -106,7 +107,7 @@ const ContractProgressSection = ({
                                     title="End Contract"
                                     icon={<StopIcon className="size-4 font-bold text-bold"/>}
                                     onClick={handleOnClickEndContract}
-                                    // disabled={activeChatRoom?.status !== 'to_submit'}
+                                    disabled={activeChatRoom?.status !== 'to_submit'}
                                 />
                             </div>
                         )}
