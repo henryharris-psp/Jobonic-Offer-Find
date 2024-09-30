@@ -3,15 +3,15 @@ import Modal from "../../Modal";
 import Button from "../../Button";
 import SafeInput from "@/components/SafeInput";
 
-interface PayoutConfirmationDialogProps {
+interface TerminationContractPayoutTermsDialogProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
-const PayoutConfirmationDialog = ({
+const TerminationContractPayoutTermsDialog = ({
     isOpen,
     onClose,
-}: PayoutConfirmationDialogProps) => {
+}: TerminationContractPayoutTermsDialogProps) => {
     return (
         <>
             <Modal
@@ -56,4 +56,4 @@ const PayoutConfirmationDialog = ({
     );
 };
 
-export default PayoutConfirmationDialog;
+export default TerminationContractPayoutTermsDialog;

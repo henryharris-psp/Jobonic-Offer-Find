@@ -4,9 +4,10 @@ import { useChat } from "@/contexts/chat";
 import SafeInput, { SafeInputChangeEvent } from "../SafeInput";
 import Button from "../Button";
 import { updateMilestoneStatus } from "@/functions/helperFunctions";
-import testClient from "@/client/testClient";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import moment from "moment";
+import httpClient from "@/client/httpClient";
 
 interface PaymentCardProps {
     totalAmount: number;
@@ -19,12 +20,11 @@ const PaymentCard = ({
 }: PaymentCardProps) => {
     const numberFormater = new Intl.NumberFormat();
     const { 
-        activeChatRoom,
         latestContract, 
         sendMessage, 
         updateChatRoom 
     } = useChat();
-    const authUser = useSelector((state: RootState) => state.auth);
+    const { authUser } = useSelector((state: RootState) => state.auth)
     const [paymentMethod, setPaymentMethod] = useState<string>('');
     const [note, setNote] = useState('');
 
@@ -46,19 +46,6 @@ const PaymentCard = ({
             return new Promise(resolve => setTimeout(resolve, 1000));
         }
 
-        const processPayment = async () => {
-            // const res = await httpClient.post('payments', {
-            //     amount: 123,
-            //     paymentMethodId: 1,
-            //     payableId: activeChatRoom?.match_id,
-            //     payableType: 'match', // match & milestone
-            //     senderId: authUser?.id,
-            //     receiverId: 1, //id 1 will always be Jobonic
-            //     note: 'some dummy note'
-            // });
-            return new Promise(resolve => setTimeout(resolve, 3000));
-        }
-
         const submit = async () => {
             setErrorCheckable(true);
 
@@ -66,26 +53,24 @@ const PaymentCard = ({
                 setIsLoading(true);
 
                 try {
-                    // await testClient.post('payments/full_payment', {
-                    //     amount: 123,
-                    //     paymentMethod: 'payni',
-                    //     senderName: '',
-                    //     receiverName: '',
-                    //     payableType: 'match', // match or milestone
-                    //     payableId: activeChatRoom?.match_id,  // matchId or milestoneId
-                    //     note: 'some dummy note'
-                    // });
-
-                    await processPayment();
-                    setIsPaid(true);
+                    const res = await httpClient.post('payment', {
+                        paymentMethod: paymentMethod,
+                        amount: totalAmount,
+                        paymentDate: moment().format('YYYY-MM-DD'),//today
+                        payableType: "CONTRACT",
+                        payableId: latestContract?.id,//contract_id
+                        remarks: note,
+                        senderId: authUser?.profile?.id,
+                        receiverId: 1 //default admin profile id
+                    });
 
                     const firstMilestone = latestContract?.milestones[0];
                     if(firstMilestone){
-                        await updateMilestoneStatus(firstMilestone, 'waiting_for_submission');
+                        await updateMilestoneStatus(firstMilestone.id, 'waiting_for_submission');
                     }
 
-                    //send message to supabase
-                    const newlySentMessage = await sendMessage('full_payment', 'transaction_id', 'system');
+                    //send message to supabase and update chatroom state
+                    const newlySentMessage = await sendMessage('full_payment', res.data, 'system');
                     if (newlySentMessage) {
                         await updateChatRoom(newlySentMessage.room_id, {
                             status: 'to_submit'
@@ -103,7 +88,7 @@ const PaymentCard = ({
                 }
             }
         }
-        
+
     return (
         <div className="flex flex-col bg-white rounded-xl min-w-80">
             <div className="flex flex-col p-5 space-y-5">
@@ -123,7 +108,6 @@ const PaymentCard = ({
                     <span className="font-bold text-green-600 text-xl">
                         ${numberFormater.format(totalAmount)}
                     </span>
-
                 </div>
 
                 {/* payment selection */}

@@ -1,6 +1,5 @@
 "use client";
 import { Inter } from "next/font/google";
-import "./globals.css";
 import store from "@/store";
 import { Provider, useDispatch } from "react-redux";
 import useWindowResize from "@/hooks/useWindowResize";
@@ -11,6 +10,7 @@ import { getAuthUserDetails, getProfileByUserId } from "@/functions/helperFuncti
 import { usePathname } from "next/navigation";
 import AdminRoot from "@/components/admin/AdminRoot";
 import Notifications from "@/components/Notifications";
+import "./globals.css";
 
 // import ChatBox from "../components/ChatBox";
 // import Footer from "../components/footer";

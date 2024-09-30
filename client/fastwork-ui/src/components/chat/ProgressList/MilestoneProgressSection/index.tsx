@@ -21,7 +21,7 @@ const MilestoneProgressSection = ({
     title,
     tasks = [],
     attachments = [],
-    description: status,
+    status,
     isCurrent = false,
     isDisabled = false
 }: MilestoneProgressSectionProps) => {
@@ -52,11 +52,8 @@ const MilestoneProgressSection = ({
     //methods
         //freelancer actions
             const submit = async () => {
-                const targetMilestone = latestContract?.milestones.find( e => e.id === id );
-                if(targetMilestone){
-                    await updateMilestoneStatus(targetMilestone, 'submitted');
-                    await sendMessage('milestone', id);
-                }
+                await updateMilestoneStatus(id, 'submitted');
+                await sendMessage('milestone', id);
             }
 
             const handleOnClickDone = async () => {
@@ -73,11 +70,8 @@ const MilestoneProgressSection = ({
             const handleOnReject = async () => {
                 if(confirm("Are you sure to reject?")){
                     try{
-                        const targetMilestone = latestContract?.milestones.find( e => e.id === id );
-                        if(targetMilestone){
-                            await updateMilestoneStatus(targetMilestone, 'waiting_for_submission');
-                            await sendMessage('text', `Unfortunately, your submission for ${title} has been rejected.`);
-                        }
+                        await updateMilestoneStatus(id, 'waiting_for_submission');
+                        await sendMessage('text', `Unfortunately, your submission for ${title} has been rejected.`);
                     } catch (error) {
                         console.log('error on reject', error);
                     }
@@ -202,6 +196,7 @@ const MilestoneProgressSection = ({
                 isDisabled={isDisabled}
             >
                 <div className="flex-1 flex flex-col space-y-2 overflow-hidden">
+
                     {/* tasks list */}
                     <div className="flex flex-col space-y-1">
                         { tasks.length === 0 ? (

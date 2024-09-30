@@ -1,12 +1,13 @@
+import { useState } from "react";
+import { useChat } from "@/contexts/chat";
 import Button from "@/components/Button";
 import LatestContractModal from "@/components/contract/LatestContractModal";
 import { DocumentIcon } from "@heroicons/react/24/outline";
-import { ArrowDownTrayIcon, EyeIcon, StopIcon } from "@heroicons/react/24/solid";
-import { useState } from "react";
+import { ArrowDownTrayIcon, BanknotesIcon, EyeIcon, StopIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import EndContractConfirmationDialog from "@/components/contract/dialogs/EndContractConfirmationDialog";
 import PayoutConfirmationDialog from "@/components/contract/dialogs/PayoutConfirmationDialog";
 import ProgressSectionRoot from "./ProgressSectionRoot";
-import { useChat } from "@/contexts/chat";
+import LatestPayoutNegotiationModal from "@/components/contract/payout-negotiation/LatestPayoutNegotiationModal";
 
 interface ContractProgressSectionProps {
     isCurrent: boolean,
@@ -22,26 +23,32 @@ const ContractProgressSection = ({
     const [isEditMode, setIsEditMode] = useState(false);
     const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
     const [showPayoutConfirmationDialog, setPayoutConfirmationDialog] = useState(false);
+    const [showLatestPayoutNegotiationModal, setShowLatestPayoutNegotiationModal] = useState(false);
 
-    const handleOnClickViewContract = () => {
-        setShowLatestContractModal( () => {
-            setIsEditMode(false);
-            return true;
-        });
-    }
+    //methods
+        const handleOnClickViewContract = () => {
+            setShowLatestContractModal( () => {
+                setIsEditMode(false);
+                return true;
+            });
+        }
+        
+        const handleOnClickEndContract = () => {
+            setShowConfirmationDialog(true);
+        }
 
-    const handleOnCloseContract = () => {
-        setShowLatestContractModal(false);
-    }
-    
-    const handleOnClickEndContract = () => {
-        setShowConfirmationDialog(true);
-    }
+        const closeConfirmationDialog = () => {
+            setShowConfirmationDialog(false);
+            setPayoutConfirmationDialog(true);
+        }
 
-    const closeConfirmationDialog = () => {
-        setShowConfirmationDialog(false);
-        setPayoutConfirmationDialog(true);
-    }
+        const handleOnClickViewPayout = () => {
+            setShowLatestPayoutNegotiationModal(true);
+        }
+
+        const handleOnClickCancel = () => {
+            
+        }
 
     return (
         <>
@@ -68,46 +75,43 @@ const ContractProgressSection = ({
                             </button>
                         </div>
                     </div>
-                    { latestContract?.payoutNegotiations.length === 0 ? (
-                        <div className="flex flex-row gap-1">
-                            <Button
-                                size="2xs"
-                                title="View"
-                                icon={<EyeIcon className="size-4 text-bold"/>}
-                                onClick={handleOnClickViewContract}
-                            />
-                            <Button
-                                size="2xs"
-                                title="End Contract"
-                                icon={<StopIcon className="size-4 font-bold text-bold"/>}
-                                onClick={handleOnClickEndContract}
-                            />
-                        </div>
-                    ) : (
-                        <div className="flex flex-row gap-1">
-                            <Button
-                                size="2xs"
-                                title="View"
-                                icon={<EyeIcon className="size-4 text-bold"/>}
-                                onClick={handleOnClickViewContract}
-                            />
-                            <Button
-                                size="2xs"
-                                title="End Contract"
-                                icon={<StopIcon className="size-4 font-bold text-bold"/>}
-                                onClick={handleOnClickEndContract}
-                            />
-                        </div>
-                    )}
+
+                    {/* if end contract inititated */}
+                        { latestContract?.payoutNegotiations.length !== 0 ? (
+                            <div className="flex flex-row gap-1">
+                                <Button
+                                    size="2xs"
+                                    title="Payout Negotiation"
+                                    icon={<BanknotesIcon className="size-4 text-bold"/>}
+                                    onClick={handleOnClickViewPayout}
+                                />
+                                <Button
+                                    size="2xs"
+                                    title="Cancel to End"
+                                    icon={<XMarkIcon className="size-4 font-bold text-bold"/>}
+                                    onClick={handleOnClickCancel}
+                                />
+                            </div>
+                        ) : (
+                            <div className="flex flex-row gap-1">
+                                <Button
+                                    size="2xs"
+                                    title="View"
+                                    icon={<EyeIcon className="size-4 text-bold"/>}
+                                    onClick={handleOnClickViewContract}
+                                />
+                                {/* allow to end contract only when contract is started */}
+                                <Button
+                                    size="2xs"
+                                    title="End Contract"
+                                    icon={<StopIcon className="size-4 font-bold text-bold"/>}
+                                    onClick={handleOnClickEndContract}
+                                    // disabled={activeChatRoom?.status !== 'to_submit'}
+                                />
+                            </div>
+                        )}
                 </div>
             </ProgressSectionRoot>
-
-            <LatestContractModal
-                key={Math.random()}
-                isOpen={showLatestContractModal}
-                defaultEditMode={isEditMode}
-                onClose={handleOnCloseContract}
-            />
 
             <EndContractConfirmationDialog
                 isOpen={showConfirmationDialog}
@@ -119,6 +123,20 @@ const ContractProgressSection = ({
             <PayoutConfirmationDialog
                 isOpen={showPayoutConfirmationDialog}
                 onClose={() => setPayoutConfirmationDialog(false)}
+            />
+
+            <LatestContractModal
+                key={Math.random()}
+                isOpen={showLatestContractModal}
+                defaultEditMode={isEditMode}
+                onClose={() => setShowLatestContractModal(false)}
+            />
+
+            <LatestPayoutNegotiationModal
+                key={Math.random()}
+                isOpen={showLatestPayoutNegotiationModal}
+                defaultEditMode={isEditMode}
+                onClose={() => setShowLatestPayoutNegotiationModal(false)}
             />
         </>
     );

@@ -19,7 +19,7 @@ export interface PageLink {
 
 export interface Task {
     id: string,
-    checkpointId?: string,
+    checkpointId: string,
     name: string
 }
 
@@ -37,8 +37,7 @@ export interface Milestone {
     price: number,
     tasks: Task[],
     attachments?: Attachment[];
-    description: MilestoneStatus
-    //TODO: currently, description column is used as status bcoz api is not ready for this
+    status: MilestoneStatus
 
     //not_required
     serviceId?: string | number,
