@@ -8,6 +8,7 @@ import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
 import com.laconic.fastworkapi.entity.Profile;
 import com.laconic.fastworkapi.entity.ServiceManagement;
 import com.laconic.fastworkapi.entity.ServiceRequest;
+import com.laconic.fastworkapi.enums.SortOrder;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.helper.PaginationHelper;
 import com.laconic.fastworkapi.repo.ICategoryRepo;
@@ -18,8 +19,13 @@ import com.laconic.fastworkapi.repo.specification.GenericSpecification;
 import com.laconic.fastworkapi.repo.specification.ServiceManagementSpecification;
 import com.laconic.fastworkapi.service.IManagementService;
 import com.laconic.fastworkapi.utils.EntityMapper;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -346,26 +352,48 @@ public class ManagementService implements IManagementService {
     public PaginationDTO getAllExtendedRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
 
-        Specification<ServiceRequest> specs =
-                GenericSpecification.hasKeyword(keyword, Set.of("title"));
+        // Build the specification for keyword and join with serviceRequest
+        Specification<ServiceManagement> specs = (root, query, criteriaBuilder) -> {
+            // Join with the ServiceRequest entity
+            Join<ServiceManagement, ServiceRequest> serviceRequestJoin = root.join("serviceRequest", JoinType.INNER);
 
-        Page<ServiceRequest> servicePage = (keyword != null)
-            ? this.serviceRequestRepo.findAll(Specification.where(specs).and((root, query, criteriaBuilder) -> {
-                if (pageAndFilterDTO.getPostedByAuthUser() != null && pageAndFilterDTO.getPostedByAuthUser()) {
-                    return criteriaBuilder.equal(root.get("profile").get("id"), pageAndFilterDTO.getAuthId());
-                } else {
-                    return criteriaBuilder.notEqual(root.get("profile").get("id"), pageAndFilterDTO.getAuthId());
-                }
-            }), pageAndFilterDTO.getPageRequest())
-            : (pageAndFilterDTO.getAuthId() == null || pageAndFilterDTO.getAuthId() == 0)
-                ? this.serviceRequestRepo.findAll(pageAndFilterDTO.getPageRequest())
-                : this.serviceRequestRepo.findAllExceptAuthUser(pageAndFilterDTO.getAuthId(), pageAndFilterDTO.getPageRequest());
+            // Predicate to check if serviceRequestId is not null
+            Predicate serviceRequestNotNull = criteriaBuilder.isNotNull(serviceRequestJoin.get("id"));
 
-        List<ExtendedServiceRequestDTO.WithProfile> extendedService = servicePage.stream()
-                .map(this::mapToExtendedServiceRequestDTO)
+            Predicate keywordPredicate = null;
+            if (keyword != null) {
+                keywordPredicate = criteriaBuilder.like(root.get("title"), "%" + keyword + "%");
+            }
+
+            Predicate combinedPredicate = criteriaBuilder.conjunction();
+            if (serviceRequestNotNull != null) {
+                combinedPredicate = criteriaBuilder.and(combinedPredicate, serviceRequestNotNull);
+            }
+            if (keywordPredicate != null) {
+                combinedPredicate = criteriaBuilder.and(combinedPredicate, keywordPredicate);
+            }
+
+            return combinedPredicate;
+        };
+
+        // Perform the query with the updated specifications
+        Page<ServiceManagement> servicePage = keyword != null
+                ? this.serviceRepo.findAll(Specification.where(specs).and((root, query, criteriaBuilder) -> {
+            if (pageAndFilterDTO.getPostedByAuthUser() != null && pageAndFilterDTO.getPostedByAuthUser()) {
+                return criteriaBuilder.equal(root.get("profile").get("id"), pageAndFilterDTO.getAuthId());
+            } else {
+                return criteriaBuilder.notEqual(root.get("profile").get("id"), pageAndFilterDTO.getAuthId());
+            }
+        }), pageAndFilterDTO.getPageRequest())
+                : (pageAndFilterDTO.getAuthId() == null || pageAndFilterDTO.getAuthId() == 0)
+                ? this.serviceRepo.findAll(pageAndFilterDTO.getPageRequest())
+                : this.serviceRepo.findAllExceptAuthUser(pageAndFilterDTO.getAuthId(), pageAndFilterDTO.getPageRequest());
+
+        List<ServiceDTO.WithProfile> serviceDTOs = servicePage.stream()
+                .map(service -> getServiceWithProfile(service, service.getProfile()))
                 .collect(Collectors.toList());
 
-        return PaginationHelper.getResponse(servicePage, extendedService);
+        return PaginationHelper.getResponse(servicePage, serviceDTOs);
     }
 
     // Internal method to map ServiceRequest to ExtendedServiceRequestDTO

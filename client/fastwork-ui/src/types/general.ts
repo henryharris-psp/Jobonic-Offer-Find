@@ -45,9 +45,15 @@ export interface Milestone {
     numberOfHoursCompleted?: number,
 }
 
-// export interface PriceNegotiation {
-    
-// }
+export interface PayoutNegotiation {
+    id: string;
+    milestoneId: string;
+    milestone: Milestone;
+    contractId: string;
+    acceptBy: number[];
+    profileId: number;
+    price: number;
+}
 
 export interface Contract {
     id: string | number;
@@ -58,7 +64,8 @@ export interface Contract {
     currentMilestone: Milestone | null;
     profileId: string | number;
     matchesId: string | number;
-    payoutNegotiations: string[]
+    payoutNegotiations: PayoutNegotiation[];
+    latestPayoutNegotiation: PayoutNegotiation
 }
 
 export interface Payment {

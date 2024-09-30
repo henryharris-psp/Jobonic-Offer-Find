@@ -92,6 +92,10 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
                 className="job-card hover:cursor-pointer"
                 onClick={() => onClick(service)}
             >
+                {/* TODO: temporary */}
+                <span className="text-xs text-gray-400 mb-3">
+                    Posted by {profile?.id}
+                </span>
                 <div className="flex items-center mb-2">
                     <Image
                         src="/avatar.svg"

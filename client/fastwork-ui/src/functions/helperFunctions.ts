@@ -155,10 +155,10 @@ export const getCategoryName = async (categoryId: string) => {
 
     export const fetchServices = async (
         type: 'offer' | 'request',
-        signal: AbortSignal,
         payload: ServicePayload,
+        signal: AbortSignal,
         searchKeyword?: string,
-        applyFilters: boolean = false // New parameter to determine if filters should be applied
+        applyFilters: boolean = false, // New parameter to determine if filters should be applied
     ): Promise<ServiceApiResponse | undefined> => {
         try {
             if (searchKeyword) {
@@ -191,7 +191,23 @@ export const getCategoryName = async (categoryId: string) => {
         }
     };
     
-    
+    //old fetchServices func
+    // export const fetchServices = async (
+    //     type: 'offer' | 'request',
+    //     payload: ServicePayload,
+    //     signal: AbortSignal,
+    // ): Promise<ServiceApiResponse | undefined> => {
+    //     try {
+    //         const res = await httpClient.post<ServiceApiResponse>(`service/${type}/all`, payload, { signal });
+    //         return res.data;
+    //     } catch (error: any) {
+    //         if (error.name === 'AbortError') {
+    //             console.log('Fetch services aborted');
+    //         } else {
+    //             console.error('Fetch services error:', error);
+    //         }
+    //     }
+    // };
 
     export const fetchCategories = async (
         signal: AbortSignal,

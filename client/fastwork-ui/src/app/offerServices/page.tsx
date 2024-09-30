@@ -13,6 +13,7 @@ import { RootState } from "@/store";
 import ServiceRequestCard from "@/components/ServiceRequestCard";
 import ServiceMatchCardSkeleton from "@/components/ServiceMatchCardSkeleton";
 import ServiceModal from "@/components/ServiceModal";
+
 type UserData = {
     id?: number;
     email?: string;
@@ -32,13 +33,6 @@ interface CategoryDTO {
 
 const sortings: Sorting[] = [
     {
-        label: 'Best Match',
-        value: {
-            sortBy: '',
-            sortOrder: 'DESC'
-        }
-    },
-    {
         label: 'Price: Lowest to Highest',
         value: {
             sortBy: 'price',
@@ -56,6 +50,13 @@ const sortings: Sorting[] = [
         label: 'Rating',
         value: {
             sortBy: 'rating',
+            sortOrder: 'DESC'
+        }
+    },
+    {
+        label: 'Best Match',
+        value: {
+            sortBy: '',
             sortOrder: 'DESC'
         }
     }
@@ -133,7 +134,7 @@ const OfferService = () => {
                 authId: authUser?.profile?.id || 0,
                 postedByAuthUser: false
             }
-            const servicesData = await fetchServices('request', signal, payload);
+            const servicesData = await fetchServices('request', payload, signal);
             if (servicesData) {
                 setServices(servicesData.content);
                 setPagination(prev => ({
