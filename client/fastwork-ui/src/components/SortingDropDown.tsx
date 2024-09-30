@@ -59,15 +59,15 @@ const SortingDropDown = ({
         onClick={handleOnClickToggle}
       >
         <BarsArrowDownIcon className="size-5 text-white" />
-        <span>Sort</span>
+        <span className="font-semibold">Sort</span>
       </button>
 
       {/* Sorting dropdown list */}
       {show && (
         <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg z-10">
-          {sortings.map((sorting) => (
+          {sortings.map((sorting, index) => (
             <button
-              key={sorting.value.sortBy || sorting.label} // Use label as fallback for unique key
+              key={`${sorting.value.sortBy}-${index}`} // Use both sortBy and index to ensure uniqueness
               className="flex items-center w-full justify-between hover:bg-gray-50 active:bg-gray-200 py-2 px-3 border-b border-b-gray-200 last:border-0"
               onClick={() => {
                 onChange(sorting.value); // Call onChange to update sorting

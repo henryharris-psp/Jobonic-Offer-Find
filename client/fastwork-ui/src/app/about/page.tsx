@@ -84,13 +84,13 @@ const About = () => {
           <div className="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0">
             <a
               href="/findServices"
-              className="py-3 px-5 sm:ms-4 text-sm font-medium text-white bg-[#0B2147] rounded-lg hover:bg-[#D0693B] focus:z-10 focus:ring-4 focus:ring-[#D0693B] dark:focus:ring-[#D0693B]"
+              className="py-2 px-4 sm:ms-4 text-sm font-semibold text-white bg-[#0B2147] rounded-lg hover:bg-[#D0693B] focus:z-10 focus:ring-4 focus:ring-[#D0693B] dark:focus:ring-[#D0693B]"
             >
               Find services
             </a>
             <a
               href="/offerServices"
-              className="py-3 px-5 sm:ms-4 text-sm font-medium text-white bg-[#0B2147] rounded-lg hover:bg-[#D0693B] focus:z-10 focus:ring-4 focus:ring-[#D0693B] dark:focus:ring-[#D0693B]"
+              className="py-2 px-4 sm:ms-4 text-sm font-semibold text-white bg-[#0B2147] rounded-lg hover:bg-[#D0693B] focus:z-10 focus:ring-4 focus:ring-[#D0693B] dark:focus:ring-[#D0693B]"
             >
               Offer services
             </a>

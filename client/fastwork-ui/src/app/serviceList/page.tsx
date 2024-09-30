@@ -209,7 +209,7 @@ const ServiceList = () => {
                             ? '/customiseJobRequestForm'
                             : '/register'
                     }
-                    className="text-white py-2 px-4 rounded-lg inline-block hover:bg-[#D0693B] bg-[#0B2147]"
+                    className="text-white py-2 px-4 text-sm font-semibold rounded-lg inline-block hover:bg-[#D0693B] bg-[#0B2147]"
                 >
                     Not what you are looking for?
                 </Link>
@@ -223,18 +223,6 @@ const ServiceList = () => {
                     <div className="flex justify-between sm:flex-col md:flex-row flex-row items-start lg:items-center md:items-center">
                         <span className="font-bold text-xl">Match Services:{filteredServices.length}</span>
                         <div className="flex flex-row items-center space-x-2">
-                            <SearchFilterDropDown
-                                minPricePerHour={filters.minPricePerHour}
-                                maxPricePerHour={filters.maxPricePerHour}
-                                deadlineDate={filters.deadlineDate}
-                                onChange={handleOnFilterChange}
-                            />
-                            <SortingDropDown
-                                selectedSorting={sorting}
-                                sortings={sortings}
-                                onChange={handleOnSortingChange}
-                            />
-
                             {/* Work Category Dropdown */}
                             <div className="relative">
                                 <select
@@ -250,9 +238,19 @@ const ServiceList = () => {
                                     ))}
                                 </select>
                             </div>
+                            <SearchFilterDropDown
+                                minPricePerHour={filters.minPricePerHour}
+                                maxPricePerHour={filters.maxPricePerHour}
+                                deadlineDate={filters.deadlineDate}
+                                onChange={handleOnFilterChange}
+                            />
+                            <SortingDropDown
+                                selectedSorting={sorting}
+                                sortings={sortings}
+                                onChange={handleOnSortingChange}
+                            />
                         </div>
                     </div>
-
                     {/* service list */}
                     <div className="flex-grow overflow-auto pt-4 min-h-[350px]">
                         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
