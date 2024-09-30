@@ -13,11 +13,8 @@ const TopSection: React.FC = (): React.ReactNode => {
 
     const handleCategorySelect = (category: string) => {
         setSelectedCategory(category);
-        setPlaceholder(
-            category === "Find Service"
-                ? "e.g. I need a plumber"
-                : "e.g. I can be a plumber"
-        );
+
+        setPlaceholder(category === "Find Service" ? "e.g. I need a plumber" : "e.g. I can be a plumber");
     };
 
     const handleSubmit = (event: React.FormEvent) => {
@@ -26,11 +23,14 @@ const TopSection: React.FC = (): React.ReactNode => {
         if(searchKeyword){
             
         }
+
         if (selectedCategory === "Find Service" || searchKeyword) {
+            console.log("category", selectedCategory);
             router.push(`/serviceList?searchKeyword=${searchKeyword}`);
-        } else {
-            router.push(`/offerServices?searchKeyword=${searchKeyword}`);
         }
+        
+        router.push(`/offerServices?searchKeyword=${searchKeyword}`);
+    
     };
 
     return (
