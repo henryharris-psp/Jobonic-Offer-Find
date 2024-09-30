@@ -12,18 +12,12 @@ import InChatSystemMessage from "./InChatSystemMessage";
 import InChatShareChatRoomCard from "@/components/admin/chat/AdminChatRoom/partials/Conversation/InChatShareChatRoomCard";
 import InChatMilestoneSubmissionCard from "./InChatMilestoneSubmissionCard";
 import InChatPaymentCard from "./InChatPaymentCard";
+import InChatPayoutNegotiationCard from "./InChatPayoutNegotiationCard";
 
 const MessageByMediaType = (message: Message) => {
     const { authUserType } = useChat();
     const { authUser } = useSelector((state: RootState) => state.auth );
     const isSentByAuthUser = message.sender_id == authUser?.profile?.id;
-
-    //TODO: temporary, remove later
-    const generateRandomTransitionId = () => {
-        const randomNum = Math.floor(100000000 + Math.random() * 900000000);
-        return `#TRX${randomNum}`;
-    }
-    const transitionId = generateRandomTransitionId();
     
     const messageComponentMap: Record<MediaType, ReactNode> = {
         text:
@@ -81,20 +75,18 @@ const MessageByMediaType = (message: Message) => {
                 />
                 <div className="flex justify-center">
                     <InChatPaymentCard
-                        transactionId={transitionId}
+                        transactionId={message.content}
                         transactionType="sent"
                     />
                 </div>
             </div>,
         milestone_payment:
             <InChatPaymentCard
-                transactionId={transitionId}
+                transactionId={message.content}
                 transactionType={ authUserType === 'freelancer' ? 'received' : 'sent'}
             />,
-        price_negotiation: 
-            <div>
-                price_negotiation
-            </div>
+        payout_negotiation: 
+            <InChatPayoutNegotiationCard/>
     };
 
     return (

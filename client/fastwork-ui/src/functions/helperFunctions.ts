@@ -214,7 +214,7 @@ export const getCategoryName = async (categoryId: string) => {
 
             //sort the first one on the top
             const sortedMilestones = contract.milestones.reverse();
-            const currentMilestone = sortedMilestones.find((milestone: Milestone) => !['not_started', 'paid'].includes(milestone.description));
+            const currentMilestone = sortedMilestones.find((milestone: Milestone) => !['not_started', 'paid'].includes(milestone.status));
 
             return {
                 ...contract,
@@ -248,16 +248,14 @@ export const getCategoryName = async (categoryId: string) => {
     }
 
     export const updateMilestoneStatus = async (
-        milestone: Milestone,
+        milestoneId: string | number,
         newStatus: MilestoneStatus,
         signal?: AbortSignal
     ): Promise<Milestone | undefined> => {
         try {
             //update_milestone
-            const res = await httpClient.put(`checkpoint?id=${milestone.id}`, {
-                ...milestone,
-                description: newStatus,
-                tasks: []
+            const res = await httpClient.put(`checkpoint?id=${milestoneId}`, {
+                status: newStatus,
             }, { signal });
 
             return res.data;
