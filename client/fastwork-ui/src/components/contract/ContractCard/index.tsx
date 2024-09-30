@@ -137,6 +137,7 @@ const ContractCard = ({
                     if (milestones.length !== 0) {
                          //sequential upload for milestones
                         for (const milestone of milestones) {
+                            console.log('milestone : ', milestone);
                             const newlyCreatedMilestone = await uploadMilestone({
                                 ...milestone,
                                 id: null!,

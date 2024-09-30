@@ -48,5 +48,8 @@ public class Contract extends Auditable<UUID> {
     @OneToOne
     @JoinColumn(name = "current_checkpoint_id")
     private Checkpoint currentCheckpoint;
+
+    @OneToMany(mappedBy = "contract", cascade = CascadeType.ALL)
+    private List<PaymentOut> paymentOuts;
 }
 

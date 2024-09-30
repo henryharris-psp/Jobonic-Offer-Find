@@ -155,12 +155,33 @@ export const getCategoryName = async (categoryId: string) => {
 
     export const fetchServices = async (
         type: 'offer' | 'request',
-        payload: ServicePayload,
         signal: AbortSignal,
+        payload: ServicePayload,
+        searchKeyword?: string,
+        applyFilters: boolean = false // New parameter to determine if filters should be applied
     ): Promise<ServiceApiResponse | undefined> => {
         try {
-            const res = await httpClient.post<ServiceApiResponse>(`service/${type}/all`, payload, { signal });
-            return res.data;
+            if (searchKeyword) {
+                // Call the Python API for search
+                const response = await fetch(`http://127.0.0.1:5000/search?query=${encodeURIComponent(searchKeyword)}`, {
+                    signal
+                });
+    
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+    
+                const data = await response.json();
+                return data;  // Return the data from the Python API
+            } else if (applyFilters) {
+                // Call the filters API for fetching filtered services
+                const res = await httpClient.post<ServiceApiResponse>(`service/filters`, payload, { signal });
+                return res.data; // Return the filtered services data
+            } else {
+                // Call the service API for fetching all services
+                const res = await httpClient.post<ServiceApiResponse>(`service/${type}/all`, payload, { signal });
+                return res.data;
+            }
         } catch (error: any) {
             if (error.name === 'AbortError') {
                 console.log('Fetch services aborted');
@@ -169,6 +190,8 @@ export const getCategoryName = async (categoryId: string) => {
             }
         }
     };
+    
+    
 
     export const fetchCategories = async (
         signal: AbortSignal,
@@ -272,10 +295,11 @@ export const getCategoryName = async (categoryId: string) => {
 
     export const downloadFile = async (fileId: string, fileName: string) => {
         try {
-            const { data, status, headers } = await axios.get(`/attachment/download`, {
-                params: { id: fileId },
+            const res = await httpClient.get(`attachment/download?id=${fileId}`, {
                 responseType: 'blob',
             });
+            
+            const { data, headers, status } = res;
     
             if (status === 200) {
                 const blob = new Blob([data], { type: headers['content-type'] });

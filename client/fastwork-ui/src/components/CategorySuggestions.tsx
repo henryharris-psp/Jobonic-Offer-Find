@@ -22,7 +22,7 @@ const CategorySuggestions = (): React.ReactElement => {
         (async () => {
             try {
                 const res = await httpClient.get("/category/all", { signal });
-                console.log('Category ',res);
+                console.log('Category ', res);
                 setCategoryList(res.data);
             } catch (error) {
                 console.log(error);
@@ -53,7 +53,7 @@ const CategorySuggestions = (): React.ReactElement => {
             <div className="flex-1 flex flex-wrap items-center min-w-96">
                 {isLoading
                     ? skeletonCount.map((id) => <CategorySkeleton key={id} />)
-                    : categoryList.map((category: Category) => (
+                    : categoryList.map((category) => (
                         <CategoryItem
                             key={category.id}
                             id={category.id}
@@ -62,6 +62,7 @@ const CategorySuggestions = (): React.ReactElement => {
                     ))}
             </div>
         </div>
+
     );
 };
 

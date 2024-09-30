@@ -22,12 +22,15 @@ const InChatServiceOfferCard = ({
     useEffect( () => {
         const controller = new AbortController();
         const signal = controller.signal;
+        let res;
         ( async () => {
             try{
-                const res = await httpClient.get(`/service/get?serviceId=${serviceId}`, { signal })
+                res = await httpClient.get(`/service/get?serviceId=${serviceId}`, { signal })
                 setService(res.data);
             } catch (error) {
-                console.log(error);
+                res = await httpClient.get(`/service/request/get?serviceRequestId=${serviceId}`, { signal })
+                console.log(res.data);
+                setService(res.data);
             }
         })();
         return () => controller.abort();
