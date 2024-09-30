@@ -133,7 +133,7 @@ const OfferService = () => {
                 authId: authUser?.profile?.id || 0,
                 postedByAuthUser: false
             }
-            const servicesData = await fetchServices('request', payload, signal);
+            const servicesData = await fetchServices('request', signal, payload);
             if (servicesData) {
                 setServices(servicesData.content);
                 setPagination(prev => ({
@@ -201,18 +201,18 @@ const OfferService = () => {
     const handleOnCategoryChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = e.target.value;
         setSelectedWorkCategory(selectedValue);
-        
+
         // Reset pagination and filters when switching to All Categories
         setFilters(prev => ({
             ...prev,
             categoryId: selectedValue ? selectedValue : ''
         }));
-        
+
         // Reset pagination to the first page
         setPagination(defaultPagination);
     };
     return (
-        <div className="flex flex-col min-h-screen container mx-auto">
+        <div className="flex flex-col min-h-screen mx-auto">
 
             {/* top section */}
             <div className="flex flex-col items-center space-y-8 my-10">
@@ -266,9 +266,9 @@ const OfferService = () => {
                 {/* Services list and filter buttons */}
                 <div className="flex-1 flex flex-col pb-10 space-y-5">
                     {/* Filter buttons */}
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between sm:flex-col md:flex-row flex-row items-start lg:items-center md:items-center">
                         {/* Update to show filtered services count */}
-                        <span className="font-bold text-xl">
+                        <span className="font-bold text-xl mb-2">
                             Match Requests: {filteredServices.length} {/* Display filtered services count */}
                         </span>
 
@@ -306,9 +306,8 @@ const OfferService = () => {
                         </div>
                     </div>
 
-
                     {/* Service list */}
-                    <div className="mx-auto">
+                    <div className="flex-grow overflow-auto pt-4 min-h-[350px]">
                         <div className="grid grid-cols-1 gap-2 md:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
                             {isServicesFetching ? (
                                 skeletonCount.map(id => <ServiceMatchCardSkeleton key={id} />)
@@ -346,12 +345,14 @@ const OfferService = () => {
                     </div>
 
                     {pagination.totalElements !== 0 && (
-                        <PaginationButtons
-                            {...pagination}
-                            onItemsPerPageChange={handleOnItemsPerPageChange}
-                            onClickNext={handleOnClickNextPage}
-                            onClickPrevious={handleOnClickPreviousPage}
-                        />
+                        <div className="flex justify-center p-4 border-t">
+                            <PaginationButtons
+                                {...pagination}
+                                onItemsPerPageChange={handleOnItemsPerPageChange}
+                                onClickNext={handleOnClickNextPage}
+                                onClickPrevious={handleOnClickPreviousPage}
+                            />
+                        </div>
                     )}
                 </div>
             </div>
@@ -368,4 +369,3 @@ const OfferService = () => {
 };
 
 export default OfferService;
-

@@ -5,7 +5,7 @@ import { fetchCategories, fetchServices } from "@/functions/helperFunctions";
 import { Category } from "@/types/general";
 import { Service, ServiceFilter, ServicePayload } from "@/types/service";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import SortingDropDown from "@/components/SortingDropDown";
 import { Sorting, SortingValue } from "@/types/Sorting";
 import PaginationButtons from "@/components/PaginationButtons";
@@ -54,7 +54,7 @@ const defaultFilters = {
 
 const defaultPagination = {
     currentPage: 1,
-    itemsPerPage: 12,
+    itemsPerPage: 50,
     totalPages: 0,
     totalElements: 0
 }
@@ -62,7 +62,7 @@ const defaultPagination = {
 const skeletonCount = Array.from({ length: 6 }, (_, index) => index);
 
 const ServiceList = () => {
-    const { authUser } = useSelector((state: RootState) => state.auth );
+    const { authUser } = useSelector((state: RootState) => state.auth);
     const [categories, setCategories] = useState<Category[]>([]);
     const [isCategoriesFetching, setIsCategoriesFetching] = useState<boolean>(false);
 
@@ -72,104 +72,131 @@ const ServiceList = () => {
     const [sorting, setSorting] = useState<SortingValue>(sortings[0].value);
     const [filters, setFilters] = useState<ServiceFilter>(defaultFilters);
     const [pagination, setPagination] = useState(defaultPagination);
+    const [selectedWorkCategory, setSelectedWorkCategory] = useState<string>('');
+    const hasProfile = Boolean(authUser?.profile); // Check if profile exists
+    // Filter services based on the selected category
+    const filteredServices = services.filter(service => {
+        const isSelectedCategoryMatch = selectedWorkCategory ? service.categoryDTO?.name === selectedWorkCategory : true;
+        return isSelectedCategoryMatch;
+    });
+    // Mounted
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchKeyword = urlParams.get("searchKeyword");
+        const categoryId = urlParams.get("categoryId"); // Changed from "category" to "categoryId"
 
-    //mounted
-        useEffect( () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const searchKeyword = urlParams.get("searchKeyword");
-            const category = urlParams.get("category");
-            
-            if(searchKeyword || category){
-                setFilters( prev => ({
-                    ...prev,
-                    searchKeyword: searchKeyword ?? '',
-                    categoryId: category ?? ''
-                }))
-            }
-
-            const controller = new AbortController();
-            const signal = controller.signal;
-            setIsCategoriesFetching(true);
-
-            ( async () => {
-                const categoriesData = await fetchCategories(signal);
-                if (categoriesData) setCategories(categoriesData);
-                setIsCategoriesFetching(false);
-            })();
-
-            return () => controller.abort();
-        }, []);
-
-    //fetch services depends on payload
-        useEffect(() => {
-            const controller = new AbortController();
-            const signal = controller.signal;
-            setIsServicesFetching(true);
-
-            ( async () => {
-                const payload: ServicePayload = {
-                    pageNumber: pagination.currentPage,
-                    pageSize: pagination.itemsPerPage,
-                    sortBy: sorting.sortBy,
-                    sortOrder: sorting.sortOrder,
-                    filter: filters,
-                    authId: authUser?.profile?.id || 0
-                }
-
-                const servicesData = await fetchServices('offer', payload, signal);
-                if (servicesData){
-                    setServices(servicesData.content);
-                    setPagination( prev => ({
-                        ...prev,
-                        totalPages: servicesData.totalPages,
-                        totalElements: servicesData.totalElements
-                    }));
-                };
-                setIsServicesFetching(false);
-            })();
-
-            return () => controller.abort();
-        }, [filters, sorting, pagination.currentPage, pagination.itemsPerPage]);
-
-    //methods
-        const handleOnFilterChange = (newFilters: object) => {
-            setFilters( prev => {
-                return {
-                    ...prev,
-                    ...newFilters
-                }
-            });
+        // Set filters based on search keyword and category
+        if (searchKeyword || categoryId) {
+            setFilters(prev => ({
+                ...prev,
+                searchKeyword: searchKeyword ?? '',
+                categoryId: categoryId ?? ''
+            }));
+            setSelectedWorkCategory(categoryId ?? ''); // Set the selected category based on the categoryId from URL
         }
 
-        const handleOnSortingChange = (newSorting: SortingValue) => {
-            setSorting(newSorting);
-        }
+        // Fetch categories
+        const controller = new AbortController();
+        const signal = controller.signal;
+        setIsCategoriesFetching(true);
 
-        //pagination handler
-            const handleOnItemsPerPageChange = (newItemsPerPage: number) => {
-                setPagination( prev => ({
-                    ...prev,
-                    currentPage: 1,
-                    itemsPerPage: newItemsPerPage
-                }))
-            }
+        (async () => {
+            const categoriesData = await fetchCategories(signal);
+            if (categoriesData) setCategories(categoriesData);
+            setIsCategoriesFetching(false);
+        })();
 
-            const handleOnClickNextPage = () => {
-                setPagination( prev => ({
+        return () => controller.abort();
+    }, []);
+
+    useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
+        setIsServicesFetching(true);
+    
+        (async () => {
+            const payload: ServicePayload = {
+                pageNumber: pagination.currentPage,
+                pageSize: pagination.itemsPerPage,
+                sortBy: sorting.sortBy,
+                sortOrder: sorting.sortOrder,
+                filter: {
+                    ...filters,  // Includes minPricePerHour and maxPricePerHour
+                    categoryId: selectedWorkCategory, // Use selectedWorkCategory for filtering
+                    minPricePerHour: filters.minPricePerHour || '', // Passes min price
+                    maxPricePerHour: filters.maxPricePerHour || '', // Passes max price
+                    deadlineDate: filters.deadlineDate || ''
+                },
+                authId: authUser?.profile?.id || 0,
+                postedByAuthUser: false
+            };
+    
+            const servicesData = await fetchServices('offer', signal, payload);
+            if (servicesData) {
+                setServices(servicesData.content);
+                setPagination(prev => ({
                     ...prev,
-                    currentPage: prev.currentPage + 1
+                    totalPages: servicesData.totalPages,
+                    totalElements: servicesData.totalElements
                 }));
             }
+            setIsServicesFetching(false);
+        })();
+    
+        return () => controller.abort();
+    }, [filters, sorting, pagination.currentPage, pagination.itemsPerPage, selectedWorkCategory]);
 
-            const handleOnClickPreviousPage = () => {
-                setPagination( prev => ({
-                    ...prev,
-                    currentPage: prev.currentPage - 1
-                }))
-            }
-        
+    // Methods
+    const handleOnFilterChange = (newFilters: object) => {
+        setFilters(prev => ({
+            ...prev,
+            ...newFilters
+        }));
+    };    
+
+    const handleOnSortingChange = (newSorting: SortingValue) => {
+        setSorting(newSorting);  // Updates the state correctly
+    };
+
+    // Pagination handler
+    const handleOnItemsPerPageChange = (newItemsPerPage: number) => {
+        setPagination(prev => ({
+            ...prev,
+            currentPage: 1,
+            itemsPerPage: newItemsPerPage
+        }));
+    }
+
+    const handleOnClickNextPage = () => {
+        setPagination(prev => ({
+            ...prev,
+            currentPage: prev.currentPage + 1
+        }));
+    }
+
+    const handleOnClickPreviousPage = () => {
+        setPagination(prev => ({
+            ...prev,
+            currentPage: prev.currentPage - 1
+        }));
+    }
+
+    const handleOnCategoryChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = e.target.value;
+        setSelectedWorkCategory(selectedValue);
+
+        // Reset pagination and filters when switching to All Categories
+        setFilters(prev => ({
+            ...prev,
+            categoryId: selectedValue ? selectedValue : ''
+        }));
+
+        // Reset pagination to the first page
+        setPagination(defaultPagination);
+    };
+
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen mx-auto">
 
             {/* top section */}
             <div className="flex flex-col items-center space-y-8 my-10">
@@ -190,39 +217,11 @@ const ServiceList = () => {
 
             <div className="flex-1 flex flex-row space-x-4 mx-12 overflow-hidden">
 
-                {/* category list */}
-                <div className="flex flex-col w-64 max-h-96 bg-white rounded-lg overflow-hidden border border-gray-300">
-                    <div className="flex items-center justify-center py-3 bg-gray-50 border-b border-b-gray-100">
-                        <span className="text-xl font-bold">
-                            Work Category
-                        </span>       
-                    </div>
-                    <div className="flex-1 overflow-auto py-2">
-                        <div className="flex flex-col bg-white rounded-lg">
-                            { isCategoriesFetching ? (
-                                <span className="py-3 px-7 text-center">Loading...</span>
-                            ) : (
-                                categories.map( category => 
-                                    <button 
-                                        key={category.id}
-                                        className="flex items-center justify-center hover:bg-gray-50 active:bg-gray-200 py-3 px-7 border-b border-b-gray-100 last:border-0"
-                                        onClick={() => console.log(category.id)}
-                                    >
-                                        <span className="text-gray-600">{category.name}</span>
-                                    </button>
-                                )
-                            )}
-                        </div>
-                    </div>
-                </div>
-
                 {/* services list and filter buttons */}
                 <div className="flex-1 flex flex-col pb-10 space-y-5">
-
                     {/* filter buttons */}
-                    <div className="flex justify-between items-center">
-                        <span className="font-bold text-xl">Match Services: {pagination.totalElements}</span>
-
+                    <div className="flex justify-between sm:flex-col md:flex-row flex-row items-start lg:items-center md:items-center">
+                        <span className="font-bold text-xl">Match Services:{filteredServices.length}</span>
                         <div className="flex flex-row items-center space-x-2">
                             <SearchFilterDropDown
                                 minPricePerHour={filters.minPricePerHour}
@@ -235,29 +234,46 @@ const ServiceList = () => {
                                 sortings={sortings}
                                 onChange={handleOnSortingChange}
                             />
+
+                            {/* Work Category Dropdown */}
+                            <div className="relative">
+                                <select
+                                    className="border-gray-300 bg-gray-100 font-semibold text-sm rounded p-2"
+                                    value={selectedWorkCategory}
+                                    onChange={handleOnCategoryChange} // Handle category selection
+                                >
+                                    <option value="" className="font-semibold text-sm">All Categories</option>
+                                    {categories.map(category => (
+                                        <option key={category.id} value={category.name}>
+                                            {category.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                     </div>
 
                     {/* service list */}
-                    <div className="container mx-auto">
-                        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
-                            { isServicesFetching ? (
-                                skeletonCount.map( id => 
-                                    <ServiceMatchCardSkeleton key={id}/>    
+                    <div className="flex-grow overflow-auto pt-4 min-h-[350px]">
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
+                            {isServicesFetching ? (
+                                skeletonCount.map(id =>
+                                    <ServiceMatchCardSkeleton key={id} />
                                 )
                             ) : (
-                                services.map( service => 
-                                    <div 
+                                filteredServices.map(service =>
+                                    <div
                                         key={service.id}
                                         className="flex flex-col"
                                     >
-                                        <span>
+                                        {/* <span>
                                             Posted By - { service.profileDTO.id }
-                                        </span>
+                                        </span> */}
                                         <ServiceMatchCard
                                             key={service.id}
                                             service={service}
                                             profile={service.profileDTO}
+                                            hasProfile={hasProfile} // Pass the boolean
                                             onClick={() => console.log('fdf')}
                                             onChatClick={() => console.log('fdf')}
                                         />
@@ -267,15 +283,15 @@ const ServiceList = () => {
                         </div>
                     </div>
 
-                    { pagination.totalElements !== 0 ? (
-                        <div className="flex justify-end">
-                            <PaginationButtons
-                                {...pagination}
-                                onItemsPerPageChange={handleOnItemsPerPageChange}
-                                onClickNext={handleOnClickNextPage}
-                                onClickPrevious={handleOnClickPreviousPage}
-                            />
-                        </div>
+                    {pagination.totalElements !== 0 ? (
+                        <div className="flex justify-center p-4 border-t">
+                        <PaginationButtons
+                            {...pagination}
+                            onItemsPerPageChange={handleOnItemsPerPageChange}
+                            onClickNext={handleOnClickNextPage}
+                            onClickPrevious={handleOnClickPreviousPage}
+                        />
+                    </div>
                     ) : ''}
 
                 </div>
