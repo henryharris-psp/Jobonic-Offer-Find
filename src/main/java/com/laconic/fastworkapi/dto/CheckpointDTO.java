@@ -24,7 +24,6 @@ public class CheckpointDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -8805087936102565403L;
 
-    @JsonIgnore
     private UUID id;
     private UUID serviceId;
     private UUID matchId;

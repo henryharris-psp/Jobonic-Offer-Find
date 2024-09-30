@@ -19,7 +19,7 @@ export interface PageLink {
 
 export interface Task {
     id: string,
-    checkpointId?: string,
+    checkpointId: string,
     name: string
 }
 
