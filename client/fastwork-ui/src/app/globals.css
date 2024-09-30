@@ -60,13 +60,56 @@ body {
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background-color: #fff;
-  display: flex;
+  display: flex; 
   flex-direction: column;
   justify-content: space-between;
   color: black;
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add smooth transitions */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   margin-bottom: 4px;
+  align-items: stretch;
+  overflow: hidden; /* Prevent content from overflowing */
 }
+.title {
+  white-space: normal; /* Allow wrapping */
+  overflow: hidden;
+  text-overflow: ellipsis; 
+  font-size: 1.125rem; 
+  font-weight: 700; 
+  margin: 0; /* Remove margin */
+  line-height: 1.2; /* Control spacing */
+  max-height: 48px; /* Limit title height */
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .job-card {
+    height: 300px; /* Allow height to adjust */
+    padding: 20px; /* Reduce padding */
+    margin-bottom: 8px; /* Add more spacing between cards */
+  }
+
+  .job-div {
+    width: 100%; /* Ensure full width on smaller screens */
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+  }
+}
+
+/* Further adjustments for very small screens (phones) */
+@media (max-width: 480px) {
+  .job-div {
+    width: 50%; /* Ensure full width on smaller screens */
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+  }
+  .job-card {
+    padding: 15px;
+    height: 300px;
+    font-size: 14px; /* Adjust font size for better readability */
+    box-shadow: none; /* Optionally reduce shadow for smaller screens */
+  }
+}
+
 
 .job-card:hover {
   transform: translateY(-8px); /* Slight lift effect */

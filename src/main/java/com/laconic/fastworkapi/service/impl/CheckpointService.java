@@ -79,18 +79,9 @@ public class CheckpointService implements ICheckpointService {
         checkpoint.setDescription(checkpointDTO.getDescription());
         checkpoint.setContract(contract);
         checkpoint.setTasks(checkpointDTO.getTasks());
+        checkpoint.setStatus("not_started");
 
         var savedCheckpoint = this.checkpointRepo.save(checkpoint);
-
-        // Retrieve the first checkpoint for matches
-//        var checkpoints = this.checkpointRepo.findFirstByMatchesIdOrderByCreatedDateAsc(checkpointDTO.getMatchId());
-
-//        if (checkpoints.isPresent()) {
-//            contract.setCurrentCheckpoint(checkpoints.get());
-//            this.contractRepo.save(contract);
-//        } else {
-//            // Handle the case where there are no checkpoints found if necessary
-//        }
 
         return new CheckpointDTO(savedCheckpoint);
     }

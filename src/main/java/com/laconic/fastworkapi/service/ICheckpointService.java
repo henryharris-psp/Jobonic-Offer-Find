@@ -25,5 +25,6 @@ public interface ICheckpointService {
     Checkpoint getCheckpoint(UUID id);
 
     List<Checkpoint> getCheckPointByMatchesId(UUID matchesId);
+
     List<Checkpoint> getCheckPointByContractIdIn(List<UUID> contractId);
 }

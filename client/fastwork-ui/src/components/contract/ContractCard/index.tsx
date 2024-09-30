@@ -137,10 +137,8 @@ const ContractCard = ({
                     if (milestones.length !== 0) {
                          //sequential upload for milestones
                         for (const milestone of milestones) {
-                            console.log('milestone : ', milestone);
                             const newlyCreatedMilestone = await uploadMilestone({
                                 ...milestone,
-                                id: null!,
                                 contractId: contractId,
                                 tasks: [],
                                 dueDate: ''
@@ -148,8 +146,11 @@ const ContractCard = ({
 
                             const milestoneId = newlyCreatedMilestone.id;
 
+                            console.log("milestoneId : ", milestoneId);
+
                             //sequential upload for tasks
                             for(const task of milestone.tasks){
+                                console.log("milestone : ", milestone);
                                 await uploadTask({
                                     ...task,
                                     checkpointId: milestoneId

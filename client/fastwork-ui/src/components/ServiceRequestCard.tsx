@@ -177,15 +177,15 @@ const ServiceRequestCard = ({
                         </p>
                     </div>
 
-                    <div className="overflow-auto mb-2">
-                        <h2 className="text-lg font-semibold whitespace-nowrap">
-                            {serviceRequest?.title}
+                    <div className="overflow-auto mb-2 ml-1 mt-1">
+                        <h2 className="text-lg font-bold whitespace-nowrap">
+                            {serviceRequest?.title ? serviceRequest.title.charAt(0).toUpperCase() + serviceRequest.title.slice(1) : ''}
                         </h2>
                     </div>
 
                     <div className="flex justify-start flex-col items-start">
                         <div className="flex justify-start items-center flex-col space-x-2">
-                            <p className="text-sm font-semibold text-gray-700">
+                            <p className="text-sm font-semibold ml-1 text-gray-700 ">
                                 {serviceRequest?.work_category}
                             </p>
                         </div>
@@ -203,7 +203,7 @@ const ServiceRequestCard = ({
                             {serviceRequest?.company}
                         </span>
                     </div>
-                    <div className="font-semibold my-2 overflow-y-scroll">
+                    <div className="font-semibold text-gray-700 my-2 overflow-y-scroll">
                         <ul className="list-disc pl-5 space-y-1 overflow-y-auto h-[70px]">
                             {serviceRequest?.description_1 && (
                                 <li className="job-description text-xs">
@@ -225,7 +225,7 @@ const ServiceRequestCard = ({
 
                     <div>
                         <p className="text-xs font-semibold pl-2">
-                            <span className="text-xs">Budget:</span>{serviceRequest?.budget}
+                            <span className="text-xs">Budget:</span>{serviceRequest?.budget}$
                         </p>
                     </div>
                     {/* chat and apply buttons */}
@@ -239,7 +239,7 @@ const ServiceRequestCard = ({
                                     }
                                 }}
                             >
-                                <button className="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors" onClick={(e) => e.stopPropagation()}>
+                                <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-300 transition-colors" onClick={(e) => e.stopPropagation()}>
                                     <svg
                                         className="w-6 h-6 text-black"
                                         aria-hidden="true"
