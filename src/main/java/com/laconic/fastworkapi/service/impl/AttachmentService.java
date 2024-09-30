@@ -64,7 +64,6 @@ public class AttachmentService implements IAttachmentService {
         Checkpoint checkpoint = this.checkPointRepo.findById(attachmentDTO.getCheckPointId())
                 .orElseThrow(() -> new NotFoundException("Checkpoint not found"));
 
-
         var fileName = attachmentDTO.getFile().getName().concat(".").concat(extension);
         var attachment = Attachment.builder()
                 .name(attachmentDTO.getFile().getName())
@@ -83,6 +82,11 @@ public class AttachmentService implements IAttachmentService {
                 .build();
 
         DocumentUtil.createFile(location, fileName, attachmentDTO.getFile());
+
+        checkpoint.setStatus("submitted");
+
+        this.checkPointRepo.save(checkpoint);
+
         return new AttachmentDTO(this.attachmentRepo.save(attachment));
     }
 

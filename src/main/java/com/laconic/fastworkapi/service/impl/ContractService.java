@@ -54,10 +54,6 @@ public class ContractService implements IContractService {
     public ContractDTO update(UUID id, ContractDTO contractDTO) {
         Contract contract = getContract(id);
 
-        Checkpoint checkpoint = checkpointRepo.findFirstByMatchesIdOrderByCreatedDateAsc(contractDTO.getMatchesId());
-
-        contract.setCurrentCheckpoint(checkpoint);
-
         return set(contract, contractDTO);
     }
 
