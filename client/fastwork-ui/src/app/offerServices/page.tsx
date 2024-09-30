@@ -32,13 +32,6 @@ interface CategoryDTO {
 
 const sortings: Sorting[] = [
     {
-        label: 'Best Match',
-        value: {
-            sortBy: '',
-            sortOrder: 'DESC'
-        }
-    },
-    {
         label: 'Price: Lowest to Highest',
         value: {
             sortBy: 'price',
@@ -56,6 +49,13 @@ const sortings: Sorting[] = [
         label: 'Rating',
         value: {
             sortBy: 'rating',
+            sortOrder: 'DESC'
+        }
+    },
+    {
+        label: 'Best Match',
+        value: {
+            sortBy: '',
             sortOrder: 'DESC'
         }
     }
