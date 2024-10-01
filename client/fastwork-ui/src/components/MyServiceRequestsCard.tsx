@@ -82,7 +82,7 @@ const MyServiceRequestsCard: React.FC<MyServiceRequestsCardProps> = ({
         {/* Button to view applications */}
         <div className="flex items-center justify-center">
           <button
-              className="mt-4 px-4 py-2 bg-[#0B2147] text-white rounded-lg font-semibold hover:bg-[#D0693B]"
+              className="mt-4 px-4 py-2 bg-[#0B2147] text-white rounded-lg font-medium hover:bg-[#D0693B]"
               onClick={handleViewApplications}>
             View Applications
           </button>

@@ -1,52 +1,67 @@
-'use client'
+'use client';
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import MyServiceCard from '@/components/MyServiceCard';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
-type User = {
-    name: string;
-    services: string[];
-    description: string;
-    skills: string[];
-    experience: string[];
-    education: string[];
-    otherInformation: string[];
-    rating: number;
-};
+interface ServiceData {
+    title: string;
+    profileId: string;
+    description1?: string;
+    description2?: string;
+    description3?: string;
+    rating?: number;
+}
 
-export default function AIServiceMatches(): React.ReactNode {
+export default function AIServiceMatches() {
     const router = useRouter();
-    const user: User = {
-        name: "emm",
-        services: ["Service 1", "Service 2", "Service 3"],
-        description: "This is a dummy description.",
-        skills: ["UI/UX Design", "Photography", "Pottery", "Driving"],
-        experience: ["UI/UX Designer in Google", "Freelance Photographer for 5 years", "Pottery Certificate"],
-        education: ["School 1", "School 2", "School 3"],
-        otherInformation: ["random", "languages", "certifications"],
-        rating: 4.5,
+    const searchParams = useSearchParams();
+
+    // Get data from searchParams
+    const serviceData: ServiceData = {
+        title: searchParams.get('title') || '',
+        profileId: searchParams.get('profileId') || '',
+        description1: searchParams.get('description1') || '',
+        description2: searchParams.get('description2') || '',
+        description3: searchParams.get('description3') || '',
+        rating: 0, // Set default rating or adjust as needed
     };
 
-    return (
-        <div className="m-16">
-            <h3 className="text-xl font-medium text-gray-900 mb-4 text-center">From your profile and the information you&apos;ve provided</h3>
-            <h2 className="text-4xl font-bold text-gray-900 mb-8 text-center">AI has written a description for you</h2>
+    const { authUser } = useSelector((state: RootState) => state.auth);
 
-            {/* MyServiceCard Component */}
-            <div className="flex flex-col items-center grid grid-cols-1 w-full" style={{paddingLeft: '20rem', paddingRight: '20rem'}}>
+    return (
+        <div className="m-16 flex flex-col justify-center items-center">
+            <h3 className="text-xl font-medium text-gray-900 mb-4 text-center">
+                Based on the service details you&apos;ve provided
+            </h3>
+            <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">
+                AI has matched you with the following service
+            </h2>
+
+            <div className="flex flex-col items-center grid-cols-1 sm:w-full md:w-[40%] lg:w-[40%] w-full">
                 <MyServiceCard
-                    title="Plumber"
-                    name={user.name}
-                    description={user.skills}
+                    title={serviceData.title || 'No title provided'}
+                    name={authUser?.username || 'Anonymous'}
+                    description={[
+                        serviceData.description1 || '',
+                        serviceData.description2 || '',
+                        serviceData.description3 || ''
+                    ]}
                     image="/profile-pic.jpg"
-                    rating={user.rating}
+                    rating={serviceData.rating || 0}
                 />
-                <div className="flex justify-between gap-16 py-8">
-                    <button onClick={() => router.push('/selectSkills')} className='w-1/3 text-white bg-[#0B2147] hover:bg-[#D0693B] py-3 px-4 rounded-lg text-sm'>Add another service offer</button>
-                    <button onClick={() => router.push('/myProfile')} className='w-1/3 text-white bg-[#0B2147] hover:bg-[#D0693B] py-3 px-4 rounded-lg text-sm'>View my full profile</button>
+
+                <div className="flex justify-between w-full gap-4 py-6">
+                    <button onClick={() => router.push('/customiseService')} className='w-1/2 text-white bg-[#0B2147] hover:bg-[#D0693B] py-3 px-4 rounded-lg text-sm'>
+                        Add another service offer
+                    </button>
+                    <button onClick={() => router.push('/myProfile')} className='w-1/2 text-white bg-[#0B2147] hover:bg-[#D0693B] py-3 px-4 rounded-lg text-sm '>
+                        View my full profile
+                    </button>
                 </div>
             </div>
         </div>
-    )
+    );
 }

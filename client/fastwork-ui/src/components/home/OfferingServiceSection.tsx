@@ -39,14 +39,14 @@ const OfferingServiceSection: React.FC = (): React.ReactNode => {
                     <Link href="/offerServices">
                         <button
                             onClick={() => handleCreateServiceOffer}
-                            className="bg-[#71BAC7] font-semibold text-md text-white py-3 px-4 rounded-xl"
+                            className="bg-[#71BAC7] font-medium text-md text-white py-3 px-4 rounded-xl"
                         >
                             Offer a service
                         </button>
                     </Link>
 
                     <Link href="/offerServices">
-                        <button className="bg-[#71BAC7] font-semibold text-md text-white py-3 px-4 rounded-xl">
+                        <button className="bg-[#71BAC7] font-medium text-md text-white py-3 px-4 rounded-xl">
                             View service requests
                         </button>
                     </Link>
