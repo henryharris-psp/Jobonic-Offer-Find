@@ -30,8 +30,8 @@ public class CheckpointController {
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.UPDATE_CHECKPOINT)
     @PutMapping
-    public ResponseEntity<?> update(@RequestParam UUID id, @RequestBody CheckpointDTO checkpointDTO) {
-        return ResponseEntity.ok(checkpointService.update(id, checkpointDTO));
+    public ResponseEntity<CheckpointDTO> update(@RequestParam UUID id, @RequestBody CheckpointDTO checkpointDTO) {
+        return checkpointService.update(id, checkpointDTO);
     }
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.DELETE_CHECKPOINT)
