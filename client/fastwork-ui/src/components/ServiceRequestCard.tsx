@@ -189,7 +189,7 @@ const ServiceRequestCard = ({
                                 {serviceRequest?.work_category}
                             </p>
                         </div>
-                        <div className="flex flex-row items-center text-gray-700">
+                        <div className="flex flex-row items-center mt-1 text-gray-700">
                             <MapPinIcon
                                 className="w-5 h-5"
                             />
@@ -254,7 +254,7 @@ const ServiceRequestCard = ({
                                 </button>
                             </Link>
                             <button
-                                className="bg-[#0B2147] text-white rounded-2xl font-semibold text-sm px-4 py-2 hover:bg-[#D0693B]"
+                                className="bg-[#0B2147] text-white rounded-lg font-semibold text-sm px-4 py-2 hover:bg-[#D0693B]"
                                 onClick={handleApply}
                                 style={{ borderColor: "transparent" }}
                             >

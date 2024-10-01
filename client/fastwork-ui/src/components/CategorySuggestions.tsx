@@ -44,7 +44,7 @@ const CategorySuggestions = (): React.ReactElement => {
                     Here are some services available
                 </p>
                 <Link href="/serviceList">
-                    <button className="bg-[#0B2147] text-white py-2 px-4 rounded-lg hover:bg-[#D0693B]">
+                    <button className="bg-[#0B2147] text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-[#D0693B]">
                         More
                     </button>
                 </Link>

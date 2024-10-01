@@ -1,5 +1,5 @@
 import httpClient from '@/client/httpClient';
-import { Category, Contract, Attachment, Milestone, MilestoneStatus } from '@/types/general';
+import { Category, Contract, Attachment, Milestone, MilestoneStatus, Payment } from '@/types/general';
 import { ServiceApiResponse, ServicePayload } from '@/types/service';
 import axios from 'axios';
 
@@ -267,24 +267,6 @@ export const getCategoryName = async (categoryId: string) => {
             }
         }
     };
-    
-
-    export const fetchPayment = async (
-        transactionId: string | number,
-        signal?: AbortSignal
-    ): Promise<Contract | undefined> => {
-        try {
-            //get_payment
-            const res = await httpClient.get(`payment/${transactionId}`, { signal });
-            return res.data;
-        } catch (error: any) {
-            if (error.name === 'AbortError') {
-                console.log('Fetch contract aborted');
-            } else {
-                console.error('Fetch contract error:', error);
-            }
-        }
-    }
 
     export const updateMilestoneStatus = async (
         milestoneId: string | number,
@@ -307,7 +289,10 @@ export const getCategoryName = async (categoryId: string) => {
         }
     }
 
-    export const downloadFile = async (fileId: string, fileName: string) => {
+    export const downloadFile = async (
+        fileId: string, 
+        fileName: string
+    ) => {
         try {
             const res = await httpClient.get(`attachment/download?id=${fileId}`, {
                 responseType: 'blob',
@@ -332,3 +317,41 @@ export const getCategoryName = async (categoryId: string) => {
             console.error('Error downloading file:', error);
         }
     };
+
+    export const fetchPayment = async (
+        paymentId: string,
+        signal?: AbortSignal
+    ): Promise<Payment | undefined>  => {
+        try{
+            const paymentRes = await httpClient.get(`payment/${paymentId}`, { signal });
+            const payment: Payment = paymentRes.data;
+
+            let contract = null;
+            let milestone = null;
+
+            if(payment.payableType === 'CONTRACT'){
+                const contractRes = await httpClient.get(`contract/${payment.payableId}`);
+                contract = contractRes.data;
+            } else {
+                const milestoneRes = await httpClient.get(`checkpoint?id=${payment.payableId}`);
+                milestone = milestoneRes.data;
+            }
+
+            const sender = await getProfileByProfileId(payment.senderId);
+            const receiver = await getProfileByProfileId(payment.receiverId);
+
+            return {
+                ...payment,
+                milestone,
+                contract,
+                sender,
+                receiver
+            }
+        } catch (error: any) {
+            if (error.name === 'AbortError') {
+                console.log('Fetch payment aborted');
+            } else {
+                console.error('Fetch payment error:', error);
+            }
+        }
+    }

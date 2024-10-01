@@ -7,16 +7,21 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { ArrowPathIcon } from "@heroicons/react/24/solid";
 import { supabase } from "@/config/supabaseClient";
+import DateParser from "@/functions/dateParser";
+import { fetchPayment } from "@/functions/helperFunctions";
 
 interface InChatPaymentCardProps {
-    transactionId: string;
+    paymentId: string;
     transactionType: 'sent' | 'received';
+    createdAt: string;
 }
 
 const InChatPaymentCard = ({
-    transactionId,
-    transactionType
+    paymentId,
+    transactionType,
+    createdAt
 }: InChatPaymentCardProps) => {
+    const dateParser = new DateParser();
     const numberFormater = new Intl.NumberFormat();
     const { authUser } = useSelector((state: RootState) => state.auth );
     const { activeChatRoom, createNewChatRoom, loadChatRoomData, changeChatRoom } = useChat();
@@ -25,30 +30,21 @@ const InChatPaymentCard = ({
 
     //on mounted
     useEffect(() => {
-        fetchPayment();
+        const controller = new AbortController();
+        const signal = controller.signal;
+        getPayment(signal);
+
+        return () => controller.abort();
     }, []);
 
     //methods
-        const fetchPayment = async () => {
-            const controller = new AbortController();
-            const signal = controller.signal;
-
+        const getPayment = async (signal?: AbortSignal) => {
             setIsLoading(true);
             try{
-                //get_payment
-                // const contractRes = await fetchPayment(transactionId, signal);
-                const paymentRes: Payment = {
-                    transactionId: transactionId,
-                    amount: 123,
-                    date: "31/12/2024",
-                    paymentMethod: "Payni",
-                    senderName: "Feelancer Dummy",
-                    receiverName: "Jobonic"
-                };
-
+                const paymentRes = await fetchPayment(paymentId, signal); 
                 if(paymentRes) setPayment(paymentRes);
             } catch (error) {
-                console.log('error fetching contract', error);
+                console.log('error fetching payment', error);
             } finally {
                 setIsLoading(false);
             }
@@ -102,7 +98,7 @@ const InChatPaymentCard = ({
                         <div className="flex items-center justify-center absolute top-0 right-0 left-0 bottom-0">
                             <button 
                                 className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-300"
-                                onClick={fetchPayment}    
+                                onClick={() => getPayment()}    
                             >
                                 <span className="">
                                     <ArrowPathIcon className={`size-5 font-bold text-gray-600 ${isLoading ? 'animate-spin' : ''}`}/>
@@ -122,15 +118,18 @@ const InChatPaymentCard = ({
                             <div className="font-semibold text-gray-800">
                                 { transactionType === 'sent' ? 'Payment Sent' : 'Payment Received'}
                             </div>
-                            <div className="text-xs text-gray-500">{payment.date}</div>
+                            <div className="text-xs text-gray-500">{dateParser.getFormattedDate(createdAt)}</div>
                         </div>
                         <hr className="my-2 border-gray-300" />
 
                         <div className="mt-3">
                             <div className="flex justify-between text-gray-600 mt-2">
                                 <span className="text-sm">For:</span>
-                                <span className="font-bold text-sm">
-                                    All Milestone
+                                <span className="font-bold text-sm text-ellipsis whitespace-nowrap max-w-32 overflow-hidden">
+                                    { payment.payableType === 'CONTRACT' 
+                                        ? 'All Milestone' 
+                                        : payment?.milestone?.title
+                                    }
                                 </span>
                             </div>
                             <div className="flex justify-between items-center text-gray-600 mt-2">
@@ -139,10 +138,10 @@ const InChatPaymentCard = ({
                                     ${numberFormater.format(payment.amount)}
                                 </span>
                             </div>
-                            <div className="flex justify-between text-gray-600 mt-2">
+                            <div className="flex justify-between items-center text-gray-600 mt-2">
                                 <span className="text-sm">Transaction ID:</span>
-                                <span className="font-mono text-xs">
-                                    {payment.transactionId}
+                                <span className="font-mono text-xs max-w-32 overflow-auto whitespace-nowrap">
+                                    {paymentId}
                                 </span>
                             </div>
                             <div className="flex justify-between text-gray-600 mt-2">
@@ -157,12 +156,12 @@ const InChatPaymentCard = ({
                             { transactionType === 'sent' ? (
                                 <div className="flex justify-between">
                                     <span className="text-sm font-semibold text-gray-800">Billed To:</span>
-                                    <span className="text-sm text-gray-600">{payment.receiverName}</span>
+                                    <span className="text-sm text-gray-600 capitalize">{payment?.receiver?.lastName}</span>
                                 </div>
                             ) : (
                                 <div className="flex justify-between">
                                     <span className="text-sm font-semibold text-gray-800">Received From:</span>
-                                    <span className="text-sm text-gray-600">{payment.senderName}</span>
+                                    <span className="text-sm text-gray-600 capitalize">{payment?.sender?.lastName}</span>
                                 </div>
                             )}
                         </div>

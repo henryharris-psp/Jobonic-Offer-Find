@@ -72,7 +72,7 @@ const defaultFilters = {
 
 const defaultPagination = {
     currentPage: 1,
-    itemsPerPage: 12,
+    itemsPerPage: 50,
     totalPages: 0,
     totalElements: 0
 }
@@ -240,7 +240,7 @@ const OfferService = () => {
                     />
                     <button
                         type="submit"
-                        className="text-white absolute right-2.5 bottom-2.5 bg-[#0B2147] hover:bg-[#D0693B] focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-black dark:hover:bg-gray-700 dark:focus:ring-gray-800"
+                        className="text-white absolute font-semibold right-2.5 bottom-2.5 bg-[#0B2147] hover:bg-[#D0693B] focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-lg text-sm px-4 py-2 dark:bg-black dark:hover:bg-gray-700 dark:focus:ring-gray-800"
                     >
                         Search
                     </button>
@@ -256,7 +256,7 @@ const OfferService = () => {
                                 ? '/customiseService'
                                 : '/register'
                         }
-                        className="text-white py-2 px-4 rounded-lg inline-block hover:bg-[#D0693B] bg-[#0B2147]"
+                        className="text-white py-2 font-semibold px-4 rounded-lg inline-block hover:bg-[#D0693B] bg-[#0B2147]"
                     >
                         Personalise your service offer
                     </Link>
@@ -274,21 +274,6 @@ const OfferService = () => {
                         </span>
 
                         <div className="flex flex-row items-center space-x-2">
-                            {/* Search filter dropdown */}
-                            <SearchFilterDropDown
-                                minPricePerHour={filters.minPricePerHour}
-                                maxPricePerHour={filters.maxPricePerHour}
-                                deadlineDate={filters.deadlineDate}
-                                onChange={handleOnFilterChange}
-                            />
-
-                            {/* Sorting dropdown */}
-                            <SortingDropDown
-                                selectedSorting={sorting}
-                                sortings={sortings}
-                                onChange={handleOnSortingChange}
-                            />
-
                             {/* Work Category Dropdown */}
                             <div className="relative">
                                 <select
@@ -304,6 +289,20 @@ const OfferService = () => {
                                     ))}
                                 </select>
                             </div>
+                            {/* Search filter dropdown */}
+                            <SearchFilterDropDown
+                                minPricePerHour={filters.minPricePerHour}
+                                maxPricePerHour={filters.maxPricePerHour}
+                                deadlineDate={filters.deadlineDate}
+                                onChange={handleOnFilterChange}
+                            />
+
+                            {/* Sorting dropdown */}
+                            <SortingDropDown
+                                selectedSorting={sorting}
+                                sortings={sortings}
+                                onChange={handleOnSortingChange}
+                            />
                         </div>
                     </div>
 
