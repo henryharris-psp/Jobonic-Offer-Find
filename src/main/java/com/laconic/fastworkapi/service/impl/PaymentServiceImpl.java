@@ -1,11 +1,15 @@
 package com.laconic.fastworkapi.service.impl;
 
 import com.laconic.fastworkapi.dto.PaymentDTO;
+import com.laconic.fastworkapi.dto.PaymentResponseDTO;
+import com.laconic.fastworkapi.dto.ProfileDTO;
+import com.laconic.fastworkapi.dto.UserProfileDTO;
 import com.laconic.fastworkapi.dto.pagination.Pagination;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.entity.Checkpoint;
 import com.laconic.fastworkapi.entity.Contract;
 import com.laconic.fastworkapi.entity.Payment;
+import com.laconic.fastworkapi.entity.Profile;
 import com.laconic.fastworkapi.exception.NotFoundException;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.helper.PaginationHelper;
@@ -13,6 +17,7 @@ import com.laconic.fastworkapi.repo.ICheckpointRepo;
 import com.laconic.fastworkapi.repo.IContractRepo;
 import com.laconic.fastworkapi.repo.IUserRepo;
 import com.laconic.fastworkapi.repo.PaymentRepo;
+import com.laconic.fastworkapi.service.IProfileService;
 import com.laconic.fastworkapi.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -30,6 +36,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final IContractRepo contractRepo;
     private final ICheckpointRepo checkpointRepo;
     private final IUserRepo userRepo;
+    private final IProfileService profileService;
 
     @Override
     public UUID save(PaymentDTO paymentDTO) {
@@ -43,8 +50,15 @@ public class PaymentServiceImpl implements PaymentService {
             default -> throw new NotFoundException("Incorrect Payable type");
         };
 
-        Long senderId = userRepo.findById(paymentDTO.getSenderId()).get().getId();
-        Long receiverId = userRepo.findById(paymentDTO.getReceiverId()).get().getId();
+
+        Profile senderId = userRepo.findById(paymentDTO.getSenderId())
+                .orElseThrow(() -> new NotFoundException("Sender not found"));
+
+        Profile receiverId = userRepo.findById(paymentDTO.getReceiverId())
+                .orElseThrow(() -> new NotFoundException("Receiver not found"));
+
+//        Optional<Profile> senderId = userRepo.findById(paymentDTO.getSenderId());
+//        Optional<Profile> receiverId = userRepo.findById(paymentDTO.getReceiverId());
 
         Payment payment = Payment.builder()
                 .paymentMethod(paymentDTO.getPaymentMethod())
@@ -101,19 +115,23 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentDTO getById(UUID id) {
+    public PaymentResponseDTO getById(UUID id) {
         Payment payment = paymentRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException("Payment ", "id", id.toString()));
-        return PaymentDTO.builder()
+
+        UserProfileDTO sender = profileService.getUserProfileDto(payment.getSenderId().getId(), "profile");
+        UserProfileDTO receiver = profileService.getUserProfileDto(payment.getReceiverId().getId(), "profile");
+
+        return PaymentResponseDTO.builder()
+                .id(payment.getId())
                 .paymentMethod(payment.getPaymentMethod())
                 .paymentDate(payment.getPaymentDate())
                 .amount(payment.getAmount())
                 .payableType(payment.getPayableType())
                 .payableId(payment.getPayableId())
                 .remarks(payment.getRemarks())
-                .senderId(payment.getSenderId())
-                .receiverId(payment.getReceiverId())
+                .sender(sender)
+                .receiver(receiver)
                 .build();
-
     }
 
     @Override

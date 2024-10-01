@@ -10,14 +10,12 @@ import { RootState } from "@/store";
 interface EndContractConfirmationDialogProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: () => void;
     onCancel: () => void;
 }
 
 const EndContractConfirmationDialog = ({
     isOpen,
     onClose,
-    onConfirm,
     onCancel,
 }: EndContractConfirmationDialogProps) => {
     const { authUser } = useSelector((state: RootState) => state.auth );
@@ -88,13 +86,15 @@ const EndContractConfirmationDialog = ({
                     </span>
 
                     <div className="flex flex-row items-center gap-3">
-                        <span className="text-xs text-gray-600 font-semibold text-center max-w-96">
+                        <span className="text-sm text-gray-600 font-semibold text-center max-w-96">
                             What is your first offer for this ongoing milestone to negotiate ending the contract?
                         </span>
                         <div className="max-w-32 min-w-20 overflow-hidden">
                             <SafeInput
-                                placeholder="Appeal Price"
+                                placeholder="Appeal Payout"
                                 type="decimal"
+                                min={1}
+                                max={60}
                                 value={price}
                                 onChange={handleOnChangePrice}
                             />

@@ -14,25 +14,38 @@ const skeletonCount = Array.from({ length: 15 }, (_, index) => index);
 const CategorySuggestions = (): React.ReactElement => {
     const [categoryList, setCategoryList] = useState<Category[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-
+    const [error, setError] = useState(null)
+    
     useEffect(() => {
         const controller = new AbortController();
         const signal = controller.signal;
         setIsLoading(true);
-        (async () => {
+
+        const fetchCategories = async () => {
+            const payload = {
+                pageNumber: 1,
+                pageSize: 100,
+                sortBy: "",
+                sortOrder: "DESC",
+                filter: {
+                    searchKeyword: ""
+                }
+            };
             try {
-                const res = await httpClient.get("/category/all", { signal });
-                console.log('Category ', res);
-                setCategoryList(res.data);
+                const res = await httpClient.post('/category/all', payload, { signal });
+                console.log('Category Response: ', res.data.content);
+                setCategoryList(res.data.content);
             } catch (error) {
-                console.log(error);
+                
             } finally {
                 setIsLoading(false);
             }
-        })();
+        };
+
+        fetchCategories();
 
         return () => controller.abort();
-    }, []);
+    }, []); 
 
     return (
         <div className="flex flex-row flex-wrap p-10 md:p-20">
@@ -44,7 +57,7 @@ const CategorySuggestions = (): React.ReactElement => {
                     Here are some services available
                 </p>
                 <Link href="/serviceList">
-                    <button className="bg-[#0B2147] text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-[#D0693B]">
+                    <button className="bg-[#0B2147] text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-[#D0693B]">
                         More
                     </button>
                 </Link>

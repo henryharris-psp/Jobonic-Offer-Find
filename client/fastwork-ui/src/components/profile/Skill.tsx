@@ -29,8 +29,16 @@ const Skills = () => {
     }, []);
     const fetchSkills = async () => {
         try {
-            const response = await httpClient.get("skill/all");
-            setSkillsList(response.data);
+            const res = await httpClient.post('skill/page-all', {
+                pageNumber: 1,
+                pageSize: 100,
+                sortBy: 'id',
+                sortOrder: 'DESC',
+                filter: {
+                    searchKeyword: ''
+                }
+            });
+            setSkillsList(res.data.content);
         } catch (error) {
             console.error("Error fetching skills:", error);
         }

@@ -12,8 +12,17 @@ const initialiseSkills = async () => {
         const skills = await parseCSVFile(file);
 
         // Fetch existing skills from the database
-        const existingSkillsResponse = await httpClient.get("skill/all");
-        const existingSkills = existingSkillsResponse.data.map((skill: { name: string }) => skill.name );
+        const existingSkillsResponse = await httpClient.post('skill/page-all', {
+            pageNumber: 1,
+            pageSize: 100,
+            sortBy: 'id',
+            sortOrder: 'DESC',
+            filter: {
+                searchKeyword: ''
+            }
+        });
+        
+        const existingSkills = existingSkillsResponse.data.content.map((skill: { name: string }) => skill.name );
 
         const newSkills = skills.filter( skill => !existingSkills.includes(skill));
 

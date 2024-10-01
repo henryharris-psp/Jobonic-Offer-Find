@@ -115,14 +115,14 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
                             <div className="flex flex-row space-x-1 items-center">
                                 <StarRating value={averageRating} />
                             </div>
-                            <span className="text-gray-500 font-semibold text-xs">
+                            <span className="text-gray-500 font-medium text-xs">
                                 {reviews.length} reviews | {profile?.numSold ?? 0} sold
                             </span>
                         </div>
                     </div>
 
                 </div>
-                <div className="font-semibold text-gray-700 my-2 overflow-y-scroll">
+                <div className="font-medium text-gray-700 my-2 overflow-y-scroll">
                     <ul className="list-disc pl-5 space-y-1 overflow-y-auto h-[70px]">
                         {service?.description1 && (
                             <li className="job-description text-xs">
@@ -143,7 +143,7 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
                 </div>
                 <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center space-x-3">
-                        <span className="text-xs font-semibold text-gray-800">
+                        <span className="text-xs font-medium text-gray-800">
                             ${service.price}/{service.priceUnit}
                         </span>
                         <Link
@@ -206,7 +206,7 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
                 </div>
                 <div className="flex justify-center items-center">
                     <button
-                        className="w-40 text-white text-sm font-semibold py-2 px-4 rounded-lg bg-[#0B2147] hover:bg-[#D0693B] transition-colors duration-200"
+                        className="w-40 text-white text-sm font-medium py-2 px-4 rounded-lg bg-[#0B2147] hover:bg-[#D0693B] transition-colors duration-200"
                         onClick={handleEngageService}
                     >
                         Engage in service

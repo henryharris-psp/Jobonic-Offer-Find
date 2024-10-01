@@ -58,22 +58,22 @@ const ServiceOfferCard: React.FC<ServiceOfferCardProps> = ({
         <div className="flex items-center mr-2">
           {renderStars(rating)} {/* Display star rating */}
         </div>
-        <span className="font-semibold">{reviews} reviews | {sold} sold</span>
+        <span className="font-medium">{reviews} reviews | {sold} sold</span>
       </div>
 
       {/* Description */}
-      <ul className="list-disc list-inside text-gray-700 font-semibold text-sm mb-4 overflow-y-auto space-y-1">
+      <ul className="list-disc list-inside text-gray-700 font-medium text-sm mb-4 overflow-y-auto space-y-1">
         {description1 && <li>{description1}</li>}
         {description2 && <li>{description2}</li>}
         {description3 && <li>{description3}</li>}
       </ul>
 
       {/* Price */}
-      <p className="font-semibold text-gray-800 text-md mb-4">{formattedPrice}</p>
+      <p className="font-medium text-gray-800 text-md mb-4">{formattedPrice}</p>
 
       {/* Engage button */}
       <div className="flex items-center justify-center">
-        <button className="px-6 py-3 bg-[#0B2147] hover:bg-[#D0693B] text-white rounded-2xl text-sm font-semibold transition-colors duration-200">
+        <button className="px-6 py-3 bg-[#0B2147] hover:bg-[#D0693B] text-white rounded-2xl text-sm font-medium transition-colors duration-200">
           Engage in Service
         </button>
       </div>

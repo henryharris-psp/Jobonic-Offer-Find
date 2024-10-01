@@ -34,13 +34,11 @@ public class PaymentDTO {
         this.payableType = payment.getPayableType();
         this.payableId = payment.getPayableId();
         this.remarks = payment.getRemarks();
-        this.senderId = payment.getSenderId();
-        this.receiverId = payment.getReceiverId();
+        this.senderId = payment.getSenderId().getId();
+        this.receiverId = payment.getReceiverId().getUserId();
     }
 
     public record PaymentSearchDTO(UUID payableId, PayableType payableType,
                                    int pageNumber, int pageSize) {
     }
-
-    ;
 }

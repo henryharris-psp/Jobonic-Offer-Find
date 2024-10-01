@@ -20,12 +20,12 @@ const CreateServiceRequestCard: React.FC<CreateServiceRequestCardProps> = ({ tit
             alt={description[0].username}
           />
           <div className="text-gray-700 leading-tight">
-            <h4 className="text-lg font-semibold">{description[0].username}</h4>
+            <h4 className="text-lg font-medium">{description[0].username}</h4>
             <p className="text-sm text-gray-600">is looking for</p>
           </div>
         </div>
-        <h3 className="text-md font-semibold text-gray-800 mb-4">{title}</h3>
-        <ul className="list-disc list-inside text-gray-600 font-semibold text-sm space-y-1 mb-4 overflow-y-auto max-h-16">
+        <h3 className="text-md font-medium text-gray-800 mb-4">{title}</h3>
+        <ul className="list-disc list-inside text-gray-600 font-medium text-sm space-y-1 mb-4 overflow-y-auto max-h-16">
           {details.map((detail, index) => (
             <li key={index} className="truncate">{detail}</li>
           ))}

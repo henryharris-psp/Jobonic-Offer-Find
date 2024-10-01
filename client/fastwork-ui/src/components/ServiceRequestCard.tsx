@@ -170,9 +170,9 @@ const ServiceRequestCard = ({
                                     className="h-8 w-8 border rounded-full mr-1"
                                 />
                             </span>
-                            <p className="font-semibold text-sm">is looking for</p>
+                            <p className="font-medium text-sm">is looking for</p>
                         </div>
-                        <p className="text-xs font-semibold" style={styles.chip}>
+                        <p className="text-xs font-medium" style={styles.chip}>
                             {serviceRequest?.employment_type}
                         </p>
                     </div>
@@ -185,7 +185,7 @@ const ServiceRequestCard = ({
 
                     <div className="flex justify-start flex-col items-start">
                         <div className="flex justify-start items-center flex-col space-x-2">
-                            <p className="text-sm font-semibold ml-1 text-gray-700 ">
+                            <p className="text-sm font-medium ml-1 text-gray-700 ">
                                 {serviceRequest?.work_category}
                             </p>
                         </div>
@@ -193,17 +193,17 @@ const ServiceRequestCard = ({
                             <MapPinIcon
                                 className="w-5 h-5"
                             />
-                            <p className="text-xs font-semibold">
+                            <p className="text-xs font-medium">
                                 {serviceRequest?.location}
                             </p>
                         </div>
                     </div>
                     <div>
-                        <span className="font-semibold text-sm underline">
+                        <span className="font-medium text-sm underline">
                             {serviceRequest?.company}
                         </span>
                     </div>
-                    <div className="font-semibold text-gray-700 my-2 overflow-y-scroll">
+                    <div className="font-medium text-gray-700 my-2 overflow-y-scroll">
                         <ul className="list-disc pl-5 space-y-1 overflow-y-auto h-[70px]">
                             {serviceRequest?.description_1 && (
                                 <li className="job-description text-xs">
@@ -224,7 +224,7 @@ const ServiceRequestCard = ({
                     </div>
 
                     <div>
-                        <p className="text-xs font-semibold pl-2">
+                        <p className="text-xs font-medium pl-2">
                             <span className="text-xs">Budget:</span>{serviceRequest?.budget}$
                         </p>
                     </div>
@@ -254,7 +254,7 @@ const ServiceRequestCard = ({
                                 </button>
                             </Link>
                             <button
-                                className="bg-[#0B2147] text-white rounded-lg font-semibold text-sm px-4 py-2 hover:bg-[#D0693B]"
+                                className="bg-[#0B2147] text-white rounded-lg font-medium text-sm px-4 py-2 hover:bg-[#D0693B]"
                                 onClick={handleApply}
                                 style={{ borderColor: "transparent" }}
                             >
@@ -320,7 +320,7 @@ const ServiceRequestCard = ({
                                 alt="Profile Pic"
                                 className="h-12 w-12 rounded-full mr-4"
                             />
-                            <h3 className="text-lg font-semibold">
+                            <h3 className="text-lg font-medium">
                                 Logo designer
                             </h3>
                         </div>
@@ -496,13 +496,13 @@ const ServiceRequestCard = ({
                         />
                         <div className="flex space-x-2">
                             <button
-                                className="px-4 py-2 bg-[#0C2348] text-white rounded-lg font-semibold hover:bg-[#D0693B]"
+                                className="px-4 py-2 bg-[#0C2348] text-white rounded-lg font-medium hover:bg-[#D0693B]"
                                 onClick={handleEditOfferSubmit}
                             >
                                 Submit
                             </button>
                             <button
-                                className="px-4 py-2 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600"
+                                className="px-4 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600"
                                 onClick={handleCloseEditModal}
                             >
                                 Cancel

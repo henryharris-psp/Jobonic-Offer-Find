@@ -1,5 +1,6 @@
 package com.laconic.fastworkapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.laconic.fastworkapi.entity.audit.Auditable;
 import com.laconic.fastworkapi.enums.PaymentType;
 import jakarta.persistence.*;
@@ -66,6 +67,14 @@ public class Profile extends Auditable<UUID> {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile", orphanRemoval = true, fetch = FetchType.EAGER)
     private List<CustomerReview> customerReviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "senderId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference("payment-sent")
+    private Set<Payment> sentPayments = new HashSet<>();
+
+    @OneToMany(mappedBy = "receiverId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference("payment-received")
+    private Set<Payment> receivedPayments = new HashSet<>();
 
     public void addEducation(UserEducation education) {
         this.userEducationList.add(education);
