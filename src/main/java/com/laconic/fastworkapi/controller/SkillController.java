@@ -52,7 +52,7 @@ public class SkillController {
     }
 
     @Operation(summary = APIDocsHelper.SkillAPI.GET_ALL_SKILLS)
-    @PostMapping("/all")
+    @PostMapping("/page-all")
     public PaginationDTO<SkillDTO> getAllSkill(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         return this.skillService.getAll(pageAndFilterDTO);
     }

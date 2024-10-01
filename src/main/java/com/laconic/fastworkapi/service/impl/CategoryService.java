@@ -2,14 +2,25 @@ package com.laconic.fastworkapi.service.impl;
 
 import com.laconic.fastworkapi.constants.AppMessage;
 import com.laconic.fastworkapi.dto.CategoryDTO;
+import com.laconic.fastworkapi.dto.JobDTO;
+import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
+import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
+import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
 import com.laconic.fastworkapi.entity.Category;
+import com.laconic.fastworkapi.entity.Job;
+import com.laconic.fastworkapi.entity.ServiceManagement;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
+import com.laconic.fastworkapi.helper.PaginationHelper;
 import com.laconic.fastworkapi.repo.ICategoryRepo;
+import com.laconic.fastworkapi.repo.specification.GenericSpecification;
 import com.laconic.fastworkapi.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -20,6 +31,7 @@ public class CategoryService implements ICategoryService {
     public CategoryService(ICategoryRepo categoryRepo) {
         this.categoryRepo = categoryRepo;
     }
+
     @Override
     public CategoryDTO save(CategoryDTO categoryDTO) {
         return new CategoryDTO(this.categoryRepo.save(categoryDTO.updateCategory(new Category())));
@@ -38,8 +50,13 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
-    public List<CategoryDTO> getAll() {
-        return this.categoryRepo.findAll().stream().map(CategoryDTO::new).toList();
+    public PaginationDTO<CategoryDTO> getAll(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        var searchColumns = Set.of("name");
+        Specification<Category> specification =
+                GenericSpecification.hasKeyword(pageAndFilterDTO.getFilter().getSearchKeyword(), searchColumns);
+        var result = this.categoryRepo.findAll(specification, pageAndFilterDTO.getPageRequest());
+        return PaginationHelper.getResponse(result, result.getContent().stream().map(CategoryDTO::new).toList());
+//        return this.categoryRepo.findAll().stream().map(CategoryDTO::new).toList();
     }
 
     @Override
@@ -52,6 +69,6 @@ public class CategoryService implements ICategoryService {
 
     private Category getCategory(UUID id) {
         return this.categoryRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.CATEGORY, "id",
-                                                                                                  id.toString()));
+                id.toString()));
     }
 }
