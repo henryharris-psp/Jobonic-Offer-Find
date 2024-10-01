@@ -263,18 +263,40 @@ public class ManagementService implements IManagementService {
     public PaginationDTO<ServiceDTO.WithProfile> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
 
-        Specification<ServiceManagement> specs =
-                GenericSpecification.hasKeyword((String) keyword, Set.of("title"));
+        var minPrice = pageAndFilterDTO.getFilter().getMinPricePerHour();
+        var maxPrice = pageAndFilterDTO.getFilter().getMaxPricePerHour();
 
+        Specification<ServiceManagement> specs =
+                GenericSpecification.hasKeyword(keyword, Set.of("title"));
+
+        if (minPrice != null && !minPrice.isEmpty()) {
+            try {
+                Double minPriceValue = Double.parseDouble(minPrice);
+                specs = specs.and((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("price"), minPriceValue));
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid minPrice: " + minPrice);
+            }
+        }
+
+        if (maxPrice != null && !maxPrice.isEmpty()) {
+            try {
+                Double maxPriceValue = Double.parseDouble(maxPrice);
+                specs = specs.and((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("price"), maxPriceValue));
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid maxPrice: " + maxPrice);
+            }
+        }
+
+        // Perform the query based on the built specs
         Page<ServiceManagement> servicePage = keyword != null
-            ? this.serviceRepo.findAll(Specification.where(specs).and((root, query, criteriaBuilder) -> {
-                if (pageAndFilterDTO.getPostedByAuthUser() != null && pageAndFilterDTO.getPostedByAuthUser()) {
-                    return criteriaBuilder.equal(root.get("profile").get("id"), pageAndFilterDTO.getAuthId());
-                } else {
-                    return criteriaBuilder.notEqual(root.get("profile").get("id"), pageAndFilterDTO.getAuthId());
-                }
-            }), pageAndFilterDTO.getPageRequest())
-            : (pageAndFilterDTO.getAuthId() == null || pageAndFilterDTO.getAuthId() == 0)
+                ? this.serviceRepo.findAll(Specification.where(specs).and((root, query, criteriaBuilder) -> {
+            if (pageAndFilterDTO.getPostedByAuthUser() != null && pageAndFilterDTO.getPostedByAuthUser()) {
+                return criteriaBuilder.equal(root.get("profile").get("id"), pageAndFilterDTO.getAuthId());
+            } else {
+                return criteriaBuilder.notEqual(root.get("profile").get("id"), pageAndFilterDTO.getAuthId());
+            }
+        }), pageAndFilterDTO.getPageRequest())
+                : (pageAndFilterDTO.getAuthId() == null || pageAndFilterDTO.getAuthId() == 0)
                 ? this.serviceRepo.findAll(pageAndFilterDTO.getPageRequest())
                 : this.serviceRepo.findAllExceptAuthUser(pageAndFilterDTO.getAuthId(), pageAndFilterDTO.getPageRequest());
 
@@ -284,6 +306,7 @@ public class ManagementService implements IManagementService {
 
         return PaginationHelper.getResponse(servicePage, servicesWithProfile);
     }
+
 
     @Override
     public PaginationDTO<ServiceDTO.GetRequestService> getAllRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
@@ -351,18 +374,43 @@ public class ManagementService implements IManagementService {
     @Override
     public PaginationDTO getAllExtendedRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
+        var minPriceStr = pageAndFilterDTO.getFilter().getMinPricePerHour(); // Assume it's a String
+        var maxPriceStr = pageAndFilterDTO.getFilter().getMaxPricePerHour(); // Assume it's a String
 
-        // Build the specification for keyword and join with serviceRequest
+        Double minPrice = null;
+        Double maxPrice = null;
+
+        // Safely parse minPrice and maxPrice
+        try {
+            if (minPriceStr != null && !minPriceStr.isEmpty()) {
+                minPrice = Double.parseDouble(minPriceStr);
+            }
+            if (maxPriceStr != null && !maxPriceStr.isEmpty()) {
+                maxPrice = Double.parseDouble(maxPriceStr);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid minPrice or maxPrice: " + minPriceStr + ", " + maxPriceStr);
+        }
+
+        Double finalMinPrice = minPrice;
+        Double finalMaxPrice = maxPrice;
         Specification<ServiceManagement> specs = (root, query, criteriaBuilder) -> {
-            // Join with the ServiceRequest entity
             Join<ServiceManagement, ServiceRequest> serviceRequestJoin = root.join("serviceRequest", JoinType.INNER);
 
-            // Predicate to check if serviceRequestId is not null
             Predicate serviceRequestNotNull = criteriaBuilder.isNotNull(serviceRequestJoin.get("id"));
 
             Predicate keywordPredicate = null;
             if (keyword != null) {
                 keywordPredicate = criteriaBuilder.like(root.get("title"), "%" + keyword + "%");
+            }
+
+            Predicate pricePredicate = null;
+            if (finalMinPrice != null && finalMaxPrice != null) {
+                pricePredicate = criteriaBuilder.between(root.get("price"), finalMinPrice, finalMaxPrice);
+            } else if (finalMinPrice != null) {
+                pricePredicate = criteriaBuilder.greaterThanOrEqualTo(root.get("price"), finalMinPrice);
+            } else if (finalMaxPrice != null) {
+                pricePredicate = criteriaBuilder.lessThanOrEqualTo(root.get("price"), finalMaxPrice);
             }
 
             Predicate combinedPredicate = criteriaBuilder.conjunction();
@@ -372,11 +420,13 @@ public class ManagementService implements IManagementService {
             if (keywordPredicate != null) {
                 combinedPredicate = criteriaBuilder.and(combinedPredicate, keywordPredicate);
             }
+            if (pricePredicate != null) {
+                combinedPredicate = criteriaBuilder.and(combinedPredicate, pricePredicate);
+            }
 
             return combinedPredicate;
         };
 
-        // Perform the query with the updated specifications
         Page<ServiceManagement> servicePage = keyword != null
                 ? this.serviceRepo.findAll(Specification.where(specs).and((root, query, criteriaBuilder) -> {
             if (pageAndFilterDTO.getPostedByAuthUser() != null && pageAndFilterDTO.getPostedByAuthUser()) {
