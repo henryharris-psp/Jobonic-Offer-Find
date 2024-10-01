@@ -34,6 +34,13 @@ interface CategoryDTO {
 
 const sortings: Sorting[] = [
     {
+        label: 'Best Match',
+        value: {
+            sortBy: '',
+            sortOrder: 'DESC'
+        }
+    },
+    {
         label: 'Price: Lowest to Highest',
         value: {
             sortBy: 'price',
@@ -53,16 +60,8 @@ const sortings: Sorting[] = [
             sortBy: 'rating',
             sortOrder: 'DESC'
         }
-    },
-    {
-        label: 'Best Match',
-        value: {
-            sortBy: '',
-            sortOrder: 'DESC'
-        }
-    }
+    } 
 ]
-
 const defaultFilters = {
     searchKeyword: '',
     minPricePerHour: '',
@@ -249,7 +248,7 @@ const OfferService = () => {
                     />
                     <button
                         type="submit"
-                        className="text-white absolute font-semibold right-2.5 bottom-2.5 bg-[#0B2147] hover:bg-[#D0693B] focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-lg text-sm px-4 py-2 dark:bg-black dark:hover:bg-gray-700 dark:focus:ring-gray-800"
+                        className="text-white absolute font-medium right-2.5 bottom-2.5 bg-[#0B2147] hover:bg-[#D0693B] focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-lg text-sm px-4 py-2 dark:bg-black dark:hover:bg-gray-700 dark:focus:ring-gray-800"
                     >
                         Search
                     </button>
@@ -265,7 +264,7 @@ const OfferService = () => {
                                 ? '/customiseService'
                                 : '/register'
                         }
-                        className="text-white py-2 font-semibold px-4 rounded-lg inline-block hover:bg-[#D0693B] bg-[#0B2147]"
+                        className="text-white py-2 font-medium px-4 rounded-lg inline-block hover:bg-[#D0693B] bg-[#0B2147]"
                     >
                         Personalise your service offer
                     </Link>
@@ -286,11 +285,11 @@ const OfferService = () => {
                             {/* Work Category Dropdown */}
                             <div className="relative">
                                 <select
-                                    className="border-gray-300 bg-gray-100 font-semibold text-sm rounded p-2"
+                                    className="border-gray-300 bg-gray-100 font-medium text-sm rounded p-2"
                                     value={selectedWorkCategory}
                                     onChange={handleOnCategoryChange} // Handle category selection
                                 >
-                                    <option value="" className="font-semibold text-sm">All Categories</option>
+                                    <option value="" className="font-medium text-sm">All Categories</option>
                                     {categories.map(category => (
                                         <option key={category.id} value={category.name}>
                                             {category.name}

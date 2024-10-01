@@ -25,12 +25,12 @@ public class PaymentOutController {
         return ResponseEntity.ok(agreementService.update(id, dto));
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(agreementService.getAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get-by-id/{id}")
     public ResponseEntity<?> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(agreementService.getById(id));
     }

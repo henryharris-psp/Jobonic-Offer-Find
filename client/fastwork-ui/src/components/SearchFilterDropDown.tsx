@@ -85,13 +85,13 @@ const SearchFilterDropDown = ({
                 onClick={handleOnClickToggle}
             >
                 <FunnelIcon className="size-5 text-white" />
-                <span className="font-semibold">Filter</span>
+                <span className="font-medium">Filter</span>
                 {isFilterApplied && <CheckIcon className="size-5 text-white" />}
             </button>
 
             {show && (
                 <div className="absolute space-y-3 right-0 mt-1 w-64 bg-white border border-gray-200 rounded-md shadow-lg z-20 p-4">
-                    <h3 className="font-semibold mb-2">Filter by:</h3>
+                    <h3 className="font-medium mb-2">Filter by:</h3>
 
                     <div className="flex flex-col">
                         <label className="block text-sm font-medium text-gray-700">

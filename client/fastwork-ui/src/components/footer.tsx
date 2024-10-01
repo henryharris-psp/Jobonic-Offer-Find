@@ -7,7 +7,7 @@ const Footer = (): React.ReactNode => {
       <div className='max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-8 py-8'>
         {/* How to Use Column */}
         <div>
-          <h3 className='text-md font-semibold mb-4'>How to Use</h3>
+          <h3 className='text-md font-medium mb-4'>How to Use</h3>
           <ul className='space-y-2 text-sm'>
             <li><a href='/createProfile' className='hover:underline'>Apply to be a freelancer</a></li>
             <li><a href='/start-selling' className='hover:underline'>How to start selling work</a></li>
@@ -20,7 +20,7 @@ const Footer = (): React.ReactNode => {
         </div>
         {/* Product Column */}
         <div>
-          <h3 className='text-md font-semibold mb-4'>Product</h3>
+          <h3 className='text-md font-medium mb-4'>Product</h3>
           <ul className='space-y-2 text-sm'>
             <li><a href='/' className='hover:underline'>Jobonic</a></li>
             {/*<li><a href='/jobonic-business' className='hover:underline'>Jobonic for Business</a></li>*/}
@@ -28,7 +28,7 @@ const Footer = (): React.ReactNode => {
         </div>
         {/* About Us Column */}
         <div>
-          <h3 className='text-md font-semibold mb-4'>About Us</h3>
+          <h3 className='text-md font-medium mb-4'>About Us</h3>
           <ul className='space-y-2 text-sm'>
             {/*<li><a href='/company' className='hover:underline'>Feedback</a></li>*/}
             <li><a href='/careers' className='hover:underline'>Careers</a></li>
@@ -38,7 +38,7 @@ const Footer = (): React.ReactNode => {
         </div>
         {/* Contact Us Column */}
         <div>
-          <h3 className='text-md font-semibold mb-4'>Contact Us</h3>
+          <h3 className='text-md font-medium mb-4'>Contact Us</h3>
           <ul className='space-y-2 text-sm'>
             <li><a href='/contact' className='hover:underline'>Drop us a message or feedback</a></li>
             <li><a href='mailto:jobonic@gmail.com' className='hover:underline'>Email</a></li>

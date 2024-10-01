@@ -59,7 +59,7 @@ const SortingDropDown = ({
         onClick={handleOnClickToggle}
       >
         <BarsArrowDownIcon className="size-5 text-white" />
-        <span className="font-semibold">Sort</span>
+        <span className="font-medium">Sort</span>
       </button>
 
       {/* Sorting dropdown list */}
