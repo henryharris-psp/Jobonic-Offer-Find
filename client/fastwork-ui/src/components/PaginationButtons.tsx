@@ -1,7 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
-import React, { useMemo, useState } from "react";
-import SafeInput, { SafeInputChangeEvent } from "./SafeInput";
-import Button from "./Button";
+import React, { useMemo } from "react";
 
 interface PaginationButtonsProps {
     currentPage: number;
@@ -20,108 +18,70 @@ const PaginationButtons = ({
     totalElements,
     onItemsPerPageChange,
     onClickNext,
-    onClickPrevious
+    onClickPrevious,
 }: PaginationButtonsProps) => {
-    const [isEditable, setIsEditable] = useState(false);
-    const [count, setCount] = useState<number>(itemsPerPage);
 
     const showingRange = useMemo(() => {
         const from = (currentPage - 1) * itemsPerPage + 1;
         const to = Math.min(currentPage * itemsPerPage, totalElements);
-    
+
         return {
             from: totalElements === 0 ? 0 : from,
             to: totalElements === 0 ? 0 : to,
         };
-    }, [currentPage, itemsPerPage, totalElements, totalPages]);    
+    }, [currentPage, itemsPerPage, totalElements, totalPages]);
 
-    //methods
-        const handleOnCountChange = (event: SafeInputChangeEvent) => {
-            const { value } = event.target;
-            setCount(Number(value));
-        }
-
-        const handleOnSubmit = () => {
-            onItemsPerPageChange(count);
-            setIsEditable(false);
-        }
-
-        const handleOnCancelEdit = () => {
-            setCount(itemsPerPage);
-            setIsEditable(false);
-        }
+    // Handling dropdown value change
+    const handleOnItemsPerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const newItemsPerPage = Number(event.target.value);
+        onItemsPerPageChange(newItemsPerPage); // Pass the selected value back to the parent
+    };
 
     return (
         <div className="flex flex-row flex-wrap items-center gap-3 space-x-2 justify-end">
-
             <div className="flex flex-row items-center space-x-2">
-                <span>
+                <span className="font-semibold text-sm">
                     Items Per Page
                 </span>
 
-                { isEditable ? (
-                    <div className="min-w-12 max-w-20">
-                        <SafeInput
-                            size="xs"
-                            value={count}
-                            onChange={handleOnCountChange}
-                        />
-                    </div>
-                ) : (
-                    <div className="flex items-center justify-center bg-white border border-gray-200 rounded-lg h-10">
-                        <span className="px-3 text-gray-500">
-                            { count }
-                        </span>
-                    </div>
-                )}
-                
-                { isEditable ? (
-                    <div className="flex flex-row items-center space-x-1">
-                        <Button
-                            size="sm"
-                            color="secondary"
-                            title="Cancel"
-                            onClick={handleOnCancelEdit}
-                        />
-                        <Button
-                            size="sm"
-                            color="warning"
-                            title="Set"
-                            onClick={handleOnSubmit}
-                        />
-                    </div>
-                ) : (
-                    <Button
-                        size="sm"
-                        color="primary"
-                        title="Change"
-                        onClick={() => setIsEditable(true)}
-                    />
-                )}
+                {/* Dropdown for selecting items per page */}
+                <select
+                    className="border-gray-300 bg-gray-100 font-semibold text-sm rounded py-1"
+                    value={itemsPerPage}
+                    onChange={handleOnItemsPerPageChange}
+                >
+                    {/* Option values for items per page */}
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={15}>15</option>
+                    <option value={20}>20</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                </select>
             </div>
 
             <div className="flex flex-row items-center space-x-4">
-                <span className="text-center whitespace-nowrap">
+                <span className="text-center font-semibold text-sm whitespace-nowrap">
                     {showingRange.from} – {showingRange.to} of {totalElements}
                 </span>
                 <div className="flex flex-row items-center space-x-2">
                     <button
                         className="flex items-center space-x-2 justify-center w-full text-white bg-[#0B2147] disabled:bg-[#a2b5d8] hover:bg-[#D0693B] rounded-lg py-2 px-4 text-sm"
                         onClick={onClickPrevious}
-                        disabled={ currentPage <= 1 }
+                        disabled={currentPage <= 1}
                     >
-                        <ChevronLeftIcon className="size-6 text-white"/>
+                        <ChevronLeftIcon className="size-4 font-semibold text-white" />
                     </button>
                     <button
                         className="flex items-center space-x-2 justify-center w-full text-white bg-[#0B2147] disabled:bg-[#a2b5d8] hover:bg-[#D0693B] rounded-lg py-2 px-4 text-sm"
                         onClick={onClickNext}
-                        disabled={ currentPage >= totalPages }
+                        disabled={currentPage >= totalPages}
                     >
-                        <ChevronRightIcon className="size-6 text-white"/>
+                        <ChevronRightIcon className="size-4 font-semibold text-white" />
                     </button>
                 </div>
             </div>
-            
         </div>
     );
 };

@@ -41,7 +41,7 @@ const TotalPaymentPreviewCard = ({
         
     return (
         <>
-            <div className="flex items-center justify-center bg-white rounded-xl max-w-96 min-w-80">
+            <div className="flex items-center justify-center bg-white rounded-xl min-w-72">
                 <div className="flex flex-col space-y-5 p-5">
 
                     {/* title */}
@@ -74,14 +74,13 @@ const TotalPaymentPreviewCard = ({
                                     ${numberFormater.format(milestone.price)}
                                 </span>
                             )}
-                            <span className="text-gray-500 text-sm whitespace-nowrap font-bold pt-2">
+                            <span className="text-green-600 text-sm whitespace-nowrap font-bold pt-2">
                                 ${numberFormater.format(totalAmount)}
                             </span>
                         </div>
                     </div>
 
                     <Button
-                        size="sm"
                         title="Proceed"
                         onClick={handleOnClickProceed}
                     />
@@ -94,6 +93,7 @@ const TotalPaymentPreviewCard = ({
             >
                 <PaymentCard
                     totalAmount={totalAmount}
+                    isPaid={Boolean(latestContract?.payment)}
                     onPaid={handleOnPaid}
                 />
             </Modal>

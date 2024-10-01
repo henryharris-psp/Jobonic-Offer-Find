@@ -139,7 +139,6 @@ const ContractCard = ({
                         for (const milestone of milestones) {
                             const newlyCreatedMilestone = await uploadMilestone({
                                 ...milestone,
-                                id: null!,
                                 contractId: contractId,
                                 tasks: [],
                                 dueDate: ''
@@ -147,8 +146,11 @@ const ContractCard = ({
 
                             const milestoneId = newlyCreatedMilestone.id;
 
+                            console.log("milestoneId : ", milestoneId);
+
                             //sequential upload for tasks
                             for(const task of milestone.tasks){
+                                console.log("milestone : ", milestone);
                                 await uploadTask({
                                     ...task,
                                     checkpointId: milestoneId
@@ -256,15 +258,15 @@ const ContractCard = ({
                                     </div>
                                 </div>
 
-                                <div className="flex flex-row items-center justify-end space-x-1">
-                                    <div className="flex w-32">
+                                <div className="flex flex-row justify-end space-x-1">
+                                    <div className="flex w-32 pt-3">
                                         <span className={`text-${size} text-gray-600`}>
                                             Deliverable
                                         </span>
                                     </div>
                                     <SafeInput
                                         size={size}
-                                        type="text"
+                                        type="textarea"
                                         name="deliverable"
                                         placeholder="eg. 3 set of logo design"
                                         value={inputs.deliverable}

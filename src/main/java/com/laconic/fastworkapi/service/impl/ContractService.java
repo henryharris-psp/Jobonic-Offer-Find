@@ -4,8 +4,10 @@ import com.laconic.fastworkapi.dto.CheckResponseDTO;
 import com.laconic.fastworkapi.dto.ContractDTO;
 import com.laconic.fastworkapi.dto.ContractResponseDTO;
 import com.laconic.fastworkapi.dto.TaskDTO;
+import com.laconic.fastworkapi.entity.Checkpoint;
 import com.laconic.fastworkapi.entity.Contract;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
+import com.laconic.fastworkapi.repo.ICheckpointRepo;
 import com.laconic.fastworkapi.repo.IContractRepo;
 import com.laconic.fastworkapi.repo.TaskRepo;
 import com.laconic.fastworkapi.service.ICheckpointService;
@@ -27,6 +29,7 @@ public class ContractService implements IContractService {
     private final IProfileService profileService;
     private final TaskRepo taskRepo;
     private final ICheckpointService checkpointService;
+    private final ICheckpointRepo checkpointRepo;
 
     private ContractDTO set(Contract contract, ContractDTO dto) {
         dto.getAcceptBy().forEach(profileService::get);
@@ -50,6 +53,7 @@ public class ContractService implements IContractService {
     @Override
     public ContractDTO update(UUID id, ContractDTO contractDTO) {
         Contract contract = getContract(id);
+
         return set(contract, contractDTO);
     }
 
@@ -86,13 +90,13 @@ public class ContractService implements IContractService {
 
 
     @Override
-    public List<ContractDTO> getAll() {
-        return contractRepo.findAll().stream().map(ContractDTO::new).toList();
+    public List<ContractResponseDTO> getAll() {
+        return contractRepo.findAll().stream().map(ContractResponseDTO::new).toList();
     }
 
     @Override
-    public List<ContractDTO> getContractByMatchId(UUID id) {
-        return contractRepo.findByMatches_Id(id).stream().map(ContractDTO::new).toList();
+    public List<ContractResponseDTO> getContractByMatchId(UUID id) {
+        return contractRepo.findByMatches_Id(id).stream().map(ContractResponseDTO::new).toList();
     }
 
     public Contract getContract(UUID uuid) {

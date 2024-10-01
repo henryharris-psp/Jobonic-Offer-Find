@@ -22,7 +22,7 @@ const ProgressList = () => {
     //computed
         const allMilestonesCompleted = useMemo( () => {
             const allMilestones = latestContract?.milestones ?? [];
-            return allMilestones.every( e => e.description === 'paid' );
+            return allMilestones.every( e => e.status === 'paid' );
         }, [latestContract]);
 
     //methods
@@ -79,10 +79,13 @@ const ProgressList = () => {
                     <>
                         <div className="flex-1 overflow-auto">
                             <div className="flex flex-col space-y-4 my-3">
-                                <ContractProgressSection 
-                                    isDisabled={false}
-                                    isCurrent={false}
-                                />
+                                
+                                { latestContract ? (
+                                    <ContractProgressSection 
+                                        isDisabled={false}
+                                        isCurrent={false}
+                                    />
+                                ) : ''}
 
                                 {/* milestone section */}
                                 { milestones.length === 0 ? (
@@ -96,8 +99,8 @@ const ProgressList = () => {
                                         { milestones.map((milestone: Milestone) => 
                                             <MilestoneProgressSection
                                                 key={milestone.id}
-                                                isDisabled={['not_started'].includes(milestone.description)}
-                                                isCurrent={!['not_started', 'paid'].includes(milestone.description)}
+                                                isDisabled={['not_started'].includes(milestone.status)}
+                                                isCurrent={milestone.id === latestContract?.currentMilestone?.id}
                                                 {...milestone}
                                             />
                                         )}

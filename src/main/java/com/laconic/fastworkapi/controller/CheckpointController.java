@@ -8,6 +8,7 @@ import com.laconic.fastworkapi.service.ICheckpointService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -29,8 +30,8 @@ public class CheckpointController {
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.UPDATE_CHECKPOINT)
     @PutMapping
-    public CheckpointDTO update(@RequestParam UUID id, @RequestBody CheckpointDTO checkpointDTO) {
-        return this.checkpointService.update(id, checkpointDTO);
+    public ResponseEntity<?> update(@RequestParam UUID id, @RequestBody CheckpointDTO checkpointDTO) {
+        return ResponseEntity.ok(checkpointService.update(id, checkpointDTO));
     }
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.DELETE_CHECKPOINT)
@@ -53,7 +54,7 @@ public class CheckpointController {
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.GET_ALL_CHECKPOINT)
     @GetMapping("/all")
-    public List<CheckResponseDTO> getAll() {
-        return this.checkpointService.getAll();
+    public ResponseEntity<List<CheckResponseDTO>> getAll() {
+        return ResponseEntity.ok(checkpointService.getAll());
     }
 }

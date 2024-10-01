@@ -1,5 +1,5 @@
 import httpClient from '@/client/httpClient';
-import { Category, Contract, Attachment, Milestone, MilestoneStatus } from '@/types/general';
+import { Category, Contract, Attachment, Milestone, MilestoneStatus, Payment } from '@/types/general';
 import { ServiceApiResponse, ServicePayload } from '@/types/service';
 import axios from 'axios';
 
@@ -157,10 +157,31 @@ export const getCategoryName = async (categoryId: string) => {
         type: 'offer' | 'request',
         payload: ServicePayload,
         signal: AbortSignal,
+        searchKeyword?: string,
+        applyFilters: boolean = false, // New parameter to determine if filters should be applied
     ): Promise<ServiceApiResponse | undefined> => {
         try {
-            const res = await httpClient.post<ServiceApiResponse>(`service/${type}/all`, payload, { signal });
-            return res.data;
+            if (searchKeyword) {
+                // Call the Python API for search
+                const response = await fetch(`http://127.0.0.1:5000/search?query=${encodeURIComponent(searchKeyword)}`, {
+                    signal
+                });
+    
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+    
+                const data = await response.json();
+                return data;  // Return the data from the Python API
+            } else if (applyFilters) {
+                // Call the filters API for fetching filtered services
+                const res = await httpClient.post<ServiceApiResponse>(`service/filters`, payload, { signal });
+                return res.data; // Return the filtered services data
+            } else {
+                // Call the service API for fetching all services
+                const res = await httpClient.post<ServiceApiResponse>(`service/${type}/all`, payload, { signal });
+                return res.data;
+            }
         } catch (error: any) {
             if (error.name === 'AbortError') {
                 console.log('Fetch services aborted');
@@ -169,6 +190,24 @@ export const getCategoryName = async (categoryId: string) => {
             }
         }
     };
+    
+    //old fetchServices func
+    // export const fetchServices = async (
+    //     type: 'offer' | 'request',
+    //     payload: ServicePayload,
+    //     signal: AbortSignal,
+    // ): Promise<ServiceApiResponse | undefined> => {
+    //     try {
+    //         const res = await httpClient.post<ServiceApiResponse>(`service/${type}/all`, payload, { signal });
+    //         return res.data;
+    //     } catch (error: any) {
+    //         if (error.name === 'AbortError') {
+    //             console.log('Fetch services aborted');
+    //         } else {
+    //             console.error('Fetch services error:', error);
+    //         }
+    //     }
+    // };
 
     export const fetchCategories = async (
         signal: AbortSignal,
@@ -214,7 +253,7 @@ export const getCategoryName = async (categoryId: string) => {
 
             //sort the first one on the top
             const sortedMilestones = contract.milestones.reverse();
-            const currentMilestone = sortedMilestones.find((milestone: Milestone) => !['not_started', 'paid'].includes(milestone.description));
+            const currentMilestone = sortedMilestones.find((milestone: Milestone) => !['not_started', 'paid'].includes(milestone.status));
 
             return {
                 ...contract,
@@ -228,36 +267,16 @@ export const getCategoryName = async (categoryId: string) => {
             }
         }
     };
-    
-
-    export const fetchPayment = async (
-        transactionId: string | number,
-        signal?: AbortSignal
-    ): Promise<Contract | undefined> => {
-        try {
-            //get_payment
-            const res = await httpClient.get(`payment/${transactionId}`, { signal });
-            return res.data;
-        } catch (error: any) {
-            if (error.name === 'AbortError') {
-                console.log('Fetch contract aborted');
-            } else {
-                console.error('Fetch contract error:', error);
-            }
-        }
-    }
 
     export const updateMilestoneStatus = async (
-        milestone: Milestone,
+        milestoneId: string | number,
         newStatus: MilestoneStatus,
         signal?: AbortSignal
     ): Promise<Milestone | undefined> => {
         try {
             //update_milestone
-            const res = await httpClient.put(`checkpoint?id=${milestone.id}`, {
-                ...milestone,
-                description: newStatus,
-                tasks: []
+            const res = await httpClient.put(`checkpoint?id=${milestoneId}`, {
+                status: newStatus,
             }, { signal });
 
             return res.data;
@@ -270,12 +289,16 @@ export const getCategoryName = async (categoryId: string) => {
         }
     }
 
-    export const downloadFile = async (fileId: string, fileName: string) => {
+    export const downloadFile = async (
+        fileId: string, 
+        fileName: string
+    ) => {
         try {
-            const { data, status, headers } = await axios.get(`/attachment/download`, {
-                params: { id: fileId },
+            const res = await httpClient.get(`attachment/download?id=${fileId}`, {
                 responseType: 'blob',
             });
+            
+            const { data, headers, status } = res;
     
             if (status === 200) {
                 const blob = new Blob([data], { type: headers['content-type'] });
@@ -294,3 +317,41 @@ export const getCategoryName = async (categoryId: string) => {
             console.error('Error downloading file:', error);
         }
     };
+
+    export const fetchPayment = async (
+        paymentId: string,
+        signal?: AbortSignal
+    ): Promise<Payment | undefined>  => {
+        try{
+            const paymentRes = await httpClient.get(`payment/${paymentId}`, { signal });
+            const payment: Payment = paymentRes.data;
+
+            let contract = null;
+            let milestone = null;
+
+            if(payment.payableType === 'CONTRACT'){
+                const contractRes = await httpClient.get(`contract/${payment.payableId}`);
+                contract = contractRes.data;
+            } else {
+                const milestoneRes = await httpClient.get(`checkpoint?id=${payment.payableId}`);
+                milestone = milestoneRes.data;
+            }
+
+            const sender = await getProfileByProfileId(payment.senderId);
+            const receiver = await getProfileByProfileId(payment.receiverId);
+
+            return {
+                ...payment,
+                milestone,
+                contract,
+                sender,
+                receiver
+            }
+        } catch (error: any) {
+            if (error.name === 'AbortError') {
+                console.log('Fetch payment aborted');
+            } else {
+                console.error('Fetch payment error:', error);
+            }
+        }
+    }

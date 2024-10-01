@@ -19,19 +19,26 @@ const InChatServiceOfferCard = ({
     const { activeChatRoom } = useChat();
     const [service, setService] = useState<Service | null>(null);
 
-    useEffect( () => {
+    useEffect(() => {
         const controller = new AbortController();
         const signal = controller.signal;
+    
         ( async () => {
-            try{
-                const res = await httpClient.get(`/service/get?serviceId=${serviceId}`, { signal })
+            try {
+                const res = await httpClient.get(`/service/get?serviceId=${serviceId}`, { signal });
                 setService(res.data);
             } catch (error) {
-                console.log(error);
+                try {
+                    const res = await httpClient.get(`/service/request/get?serviceRequestId=${serviceId}`, { signal });
+                    setService(res.data);
+                } catch (error) {
+                    console.error("Failed to fetch service request", error);
+                }
             }
-        })();
+        })();    
         return () => controller.abort();
-    }, []);
+    }, [serviceId]);
+    
 
     return (
         !service ? (

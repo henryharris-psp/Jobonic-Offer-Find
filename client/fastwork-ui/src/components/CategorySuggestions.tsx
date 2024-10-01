@@ -22,7 +22,7 @@ const CategorySuggestions = (): React.ReactElement => {
         (async () => {
             try {
                 const res = await httpClient.get("/category/all", { signal });
-                console.log('Category ',res);
+                console.log('Category ', res);
                 setCategoryList(res.data);
             } catch (error) {
                 console.log(error);
@@ -44,7 +44,7 @@ const CategorySuggestions = (): React.ReactElement => {
                     Here are some services available
                 </p>
                 <Link href="/serviceList">
-                    <button className="bg-[#0B2147] text-white py-2 px-4 rounded-lg hover:bg-[#D0693B]">
+                    <button className="bg-[#0B2147] text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-[#D0693B]">
                         More
                     </button>
                 </Link>
@@ -53,7 +53,7 @@ const CategorySuggestions = (): React.ReactElement => {
             <div className="flex-1 flex flex-wrap items-center min-w-96">
                 {isLoading
                     ? skeletonCount.map((id) => <CategorySkeleton key={id} />)
-                    : categoryList.map((category: Category) => (
+                    : categoryList.map((category) => (
                         <CategoryItem
                             key={category.id}
                             id={category.id}
@@ -62,6 +62,7 @@ const CategorySuggestions = (): React.ReactElement => {
                     ))}
             </div>
         </div>
+
     );
 };
 

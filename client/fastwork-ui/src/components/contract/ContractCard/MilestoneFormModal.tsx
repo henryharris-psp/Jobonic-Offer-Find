@@ -99,13 +99,14 @@ const MilestoneFormModal = ({
                     ...inputs,
                     id: isEdit ? milestone.id : uuid(),
                     price: Number(inputs.price),
-                    tasks,
-                    description: "not_started",
+                    tasks: tasks,
+                    status: "not_started",
 
                     //not_required
                     serviceId: activeChatRoom?.service_id,
                     matchId: activeChatRoom?.match_id,
                     numberOfHoursCompleted: 0,
+                    description: 'not_required'
                 }
 
                 isEdit ? onUpdated(submitData) : onAdded(submitData);

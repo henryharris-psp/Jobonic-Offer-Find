@@ -1,9 +1,8 @@
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
-import SafeInput, { SafeInputChangeEvent } from "@/components/SafeInput";
-import StopIcon from "@heroicons/react/24/solid/StopIcon";
 import React, { useState } from "react";
 import { useChat } from "@/contexts/chat";
+import { BanknotesIcon } from "@heroicons/react/24/solid";
 
 interface TerminationContractButtonProps {
     role: "employer" | "freelancer";
@@ -41,11 +40,9 @@ const TerminationContractButton: React.FC<TerminationContractButtonProps> = ({ r
         <>
             <div>
                 <Button
-                    title="View Termination Contract Payout"
+                    title="View Payout Negotiation"
                     size="sm"
-                    icon={
-                        <StopIcon className="size-5 text-white"/>
-                    }
+                    icon={<BanknotesIcon className="size-5 text-white"/>}
                     onClick={() => setShowTerminateContractModal(true)}
                 >
                 </Button>

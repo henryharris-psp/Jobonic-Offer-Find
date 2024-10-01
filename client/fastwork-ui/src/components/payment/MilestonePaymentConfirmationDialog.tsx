@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import Modal from "../Modal";
 import Button from "../Button";
 import { useChat } from "@/contexts/chat";
-import httpClient from "@/client/httpClient";
 import { updateMilestoneStatus } from "@/functions/helperFunctions";
-import testClient from "@/client/testClient";
 
 interface MilestonePaymentConfirmationDialogProps {
     milestoneId: string,
@@ -42,30 +40,26 @@ const MilestonePaymentConfirmationDialog = ({
             // });
 
             const allMilestones = latestContract?.milestones ?? [];
-            const targetMilestone = allMilestones.find( e => e.id === milestoneId );
             
-            if(targetMilestone){
-                await updateMilestoneStatus(targetMilestone, 'paid');
-                const newlySentMessage = await sendMessage('milestone_payment', 'transaction_id', 'system');
+            await updateMilestoneStatus(milestoneId, 'paid');
+            const newlySentMessage = await sendMessage('milestone_payment', 'transaction_id', 'system');
 
-                //TODO: change after api update
-                const upcomingMilestones = allMilestones.filter( e => e.id !== milestoneId && e.description === 'not_started' );
-                
-                //if all milestone are completed
-                if(upcomingMilestones.length === 0){
-                    if(newlySentMessage){
-                        await updateChatRoom(newlySentMessage.room_id, {
-                            status: 'to_review'
-                        });
-                    }
-                } else {
-                    //or switch to next milestone
-                    const nextMilestone = upcomingMilestones[0];
-                    if(nextMilestone){
-                        await updateMilestoneStatus(nextMilestone, 'waiting_for_submission');
-                    }
+            //TODO: change after api update
+            const upcomingMilestones = allMilestones.filter( e => e.id !== milestoneId && e.status === 'not_started' );
+            
+            //if all milestone are completed, jump to to_review state
+            if(upcomingMilestones.length === 0){
+                if(newlySentMessage){
+                    await updateChatRoom(newlySentMessage.room_id, {
+                        status: 'to_review'
+                    });
                 }
-
+            } else {
+                //or switch to next milestone
+                const nextMilestone = upcomingMilestones[0];
+                if(nextMilestone){
+                    await updateMilestoneStatus(nextMilestone.id, 'waiting_for_submission');
+                }
             }
             onClose();
         } catch (error) {

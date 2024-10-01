@@ -61,8 +61,14 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 }
             
                 try {
-                    const contract = await fetchContract(contractId, signal);
-                    if (contract) setLatestContract({...contract, payoutNegotiations: []});
+                    const contract = await fetchContract(contractId, signal);                    
+                    if (contract) {
+                        const latestPayoutNegotiation = contract.payoutNegotiations[0];
+                        setLatestContract({
+                            ...contract,
+                            latestPayoutNegotiation
+                        });
+                    }
                 } catch (error) {
                     console.error('Error fetching latest contract:', error);
                 }
@@ -84,16 +90,12 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                                     serviceId: chatRoom.service_id
                                 }
                             });
-
-                            console.log('offer : ', serviceRes);
                         } catch (error) {
                             serviceRes = await httpClient.get('/service/request/get', {
                                 params: {
                                     serviceRequestId: chatRoom.service_id
                                 }
                             })
-                            
-                            console.log('request : ', serviceRes);
                         }
                         
                         service = serviceRes.data;

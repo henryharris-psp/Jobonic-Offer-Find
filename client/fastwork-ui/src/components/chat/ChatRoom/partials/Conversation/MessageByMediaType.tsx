@@ -12,19 +12,13 @@ import InChatSystemMessage from "./InChatSystemMessage";
 import InChatShareChatRoomCard from "@/components/admin/chat/AdminChatRoom/partials/Conversation/InChatShareChatRoomCard";
 import InChatMilestoneSubmissionCard from "./InChatMilestoneSubmissionCard";
 import InChatPaymentCard from "./InChatPaymentCard";
+import InChatPayoutNegotiationCard from "./InChatPayoutNegotiationCard";
 
 const MessageByMediaType = (message: Message) => {
     const { authUserType } = useChat();
     const { authUser } = useSelector((state: RootState) => state.auth );
     const isSentByAuthUser = message.sender_id == authUser?.profile?.id;
 
-    //TODO: temporary, remove later
-    const generateRandomTransitionId = () => {
-        const randomNum = Math.floor(100000000 + Math.random() * 900000000);
-        return `#TRX${randomNum}`;
-    }
-    const transitionId = generateRandomTransitionId();
-    
     const messageComponentMap: Record<MediaType, ReactNode> = {
         text:
             message.sender_id === 'system' ? (
@@ -43,7 +37,7 @@ const MessageByMediaType = (message: Message) => {
             <InChatContractCard
                 contractId={message.content}
                 isSentByAuthUser={isSentByAuthUser}
-                updatedAt={message.created_at}
+                createdAt={message.created_at}
             />,
         service: 
             <InChatServiceOfferCard 
@@ -81,20 +75,20 @@ const MessageByMediaType = (message: Message) => {
                 />
                 <div className="flex justify-center">
                     <InChatPaymentCard
-                        transactionId={transitionId}
+                        paymentId={message.content}
                         transactionType="sent"
+                        createdAt={message.created_at}
                     />
                 </div>
             </div>,
         milestone_payment:
             <InChatPaymentCard
-                transactionId={transitionId}
+                paymentId={message.content}
                 transactionType={ authUserType === 'freelancer' ? 'received' : 'sent'}
+                createdAt={message.created_at}
             />,
-        price_negotiation: 
-            <div>
-                price_negotiation
-            </div>
+        payout_negotiation: 
+            <InChatPayoutNegotiationCard/>
     };
 
     return (

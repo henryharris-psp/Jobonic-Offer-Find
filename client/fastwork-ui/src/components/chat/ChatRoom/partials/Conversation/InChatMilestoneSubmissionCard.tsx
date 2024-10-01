@@ -5,7 +5,7 @@ import Button from "@/components/Button";
 import { useChat } from "@/contexts/chat";
 import { ArrowPathIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import httpClient from "@/client/httpClient";
-import { downloadFile, fetchAttachmentsByMilestoneId, updateMilestoneStatus } from "@/functions/helperFunctions";
+import { downloadFile, updateMilestoneStatus } from "@/functions/helperFunctions";
 import MilestonePaymentConfirmationDialog from "@/components/payment/MilestonePaymentConfirmationDialog";
 
 interface InChatMilestoneSubmissionCardProps {
@@ -78,11 +78,8 @@ const InChatMilestoneSubmissionCard = ({
         const handleOnReject = async () => {
             if(confirm("Are you sure to accept?")){
                 try{
-                    const targetMilestone = latestContract?.milestones.find( e => e.id === milestoneId );
-                    if(targetMilestone){
-                        await updateMilestoneStatus(targetMilestone, 'waiting_for_submission');
-                        await sendMessage('text', `Unfortunately, your submission for ${milestone?.title} has been rejected.`);
-                    }
+                    await updateMilestoneStatus(milestoneId, 'waiting_for_submission');
+                    await sendMessage('text', `Unfortunately, your submission for ${milestone?.title} has been rejected.`);
                 } catch (error) {
                     console.log('error on reject', error);
                 }
@@ -163,7 +160,7 @@ const InChatMilestoneSubmissionCard = ({
                                     <div key={file.id}>
                                         <button 
                                             key={file.id}
-                                            onClick={() => handleOnDownload(file.id, file.name)}
+                                            onClick={() => handleOnDownload(file.id, file.originalName ?? 'unknown_file')}
                                         >
                                             <span className="text-blue-500 underline">
                                                 { file.originalName ?? 'no_file_name' }

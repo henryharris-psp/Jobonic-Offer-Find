@@ -1,3 +1,5 @@
+import { Profile } from "./users";
+
 export type TailwindSizes = "xs" | "sm" | "" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl";
 export type AttachmentStatus = "pending" | "uploaded" | "failed";
 
@@ -37,18 +39,40 @@ export interface Milestone {
     price: number,
     tasks: Task[],
     attachments?: Attachment[];
-    description: MilestoneStatus
-    //TODO: currently, description column is used as status bcoz api is not ready for this
+    status: MilestoneStatus
 
     //not_required
-    serviceId?: string | number,
-    matchId?: string | number,
-    numberOfHoursCompleted?: number,
+    serviceId?: string | number;
+    matchId?: string | number;
+    numberOfHoursCompleted?: number;
+    description?: string;
 }
 
-// export interface PriceNegotiation {
-    
-// }
+export interface PayoutNegotiation {
+    id: string;
+    milestoneId: string;
+    milestone: Milestone;
+    contractId: string;
+    acceptBy: number[];
+    profileId: number;
+    price: number;
+}
+
+export interface Payment {
+    id: string;
+    paymentMethod: string;
+    amount: number;
+    paymentDate: number;
+    payableType: "CONTRACT" | "CHECKPOINT";
+    payableId: string;
+    remarks: string;
+    senderId: string;
+    receiverId: string;
+    sender: Profile;
+    receiver: Profile;
+    milestone?: Milestone;
+    contract?: Contract;
+}
 
 export interface Contract {
     id: string | number;
@@ -59,16 +83,10 @@ export interface Contract {
     currentMilestone: Milestone | null;
     profileId: string | number;
     matchesId: string | number;
-    payoutNegotiations: string[]
-}
-
-export interface Payment {
-    transactionId: string; //otherwise, paymentId
-    amount: number;
-    date: string;
-    paymentMethod: string;
-    senderName: string;
-    receiverName: string;
+    payoutNegotiations: PayoutNegotiation[];
+    latestPayoutNegotiation: PayoutNegotiation;
+    payment: Payment | null;
+    createdDate?: number;
 }
 
 export interface Attachment {

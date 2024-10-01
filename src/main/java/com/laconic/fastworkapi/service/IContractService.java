@@ -13,9 +13,9 @@ public interface IContractService {
 
     ContractResponseDTO getById(UUID id);
 
-    List<ContractDTO> getAll();
+    List<ContractResponseDTO> getAll();
 
-    List<ContractDTO> getContractByMatchId(UUID id);
+    List<ContractResponseDTO> getContractByMatchId(UUID id);
 
     List<ContractResponseDTO> listAll(UUID matchId);
 
