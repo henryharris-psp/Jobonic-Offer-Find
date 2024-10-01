@@ -48,8 +48,8 @@ public class CheckpointController {
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.GET_CHECKPOINT_BY_SERVICE_ID)
     @GetMapping("/serviceId")
-    public List<CheckResponseDTO> getByServiceId(@RequestParam UUID serviceId) {
-        return this.checkpointService.getCheckPointByServiceId(serviceId);
+    public ResponseEntity<List<CheckResponseDTO>> getByServiceId(@RequestParam UUID serviceId) {
+        return ResponseEntity.ok(checkpointService.getCheckPointByServiceId(serviceId));
     }
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.GET_ALL_CHECKPOINT)

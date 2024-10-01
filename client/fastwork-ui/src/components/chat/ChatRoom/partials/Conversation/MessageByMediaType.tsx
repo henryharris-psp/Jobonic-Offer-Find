@@ -18,7 +18,7 @@ const MessageByMediaType = (message: Message) => {
     const { authUserType } = useChat();
     const { authUser } = useSelector((state: RootState) => state.auth );
     const isSentByAuthUser = message.sender_id == authUser?.profile?.id;
-    
+
     const messageComponentMap: Record<MediaType, ReactNode> = {
         text:
             message.sender_id === 'system' ? (
@@ -37,7 +37,7 @@ const MessageByMediaType = (message: Message) => {
             <InChatContractCard
                 contractId={message.content}
                 isSentByAuthUser={isSentByAuthUser}
-                updatedAt={message.created_at}
+                createdAt={message.created_at}
             />,
         service: 
             <InChatServiceOfferCard 
@@ -75,15 +75,17 @@ const MessageByMediaType = (message: Message) => {
                 />
                 <div className="flex justify-center">
                     <InChatPaymentCard
-                        transactionId={message.content}
+                        paymentId={message.content}
                         transactionType="sent"
+                        createdAt={message.created_at}
                     />
                 </div>
             </div>,
         milestone_payment:
             <InChatPaymentCard
-                transactionId={message.content}
+                paymentId={message.content}
                 transactionType={ authUserType === 'freelancer' ? 'received' : 'sent'}
+                createdAt={message.created_at}
             />,
         payout_negotiation: 
             <InChatPayoutNegotiationCard/>

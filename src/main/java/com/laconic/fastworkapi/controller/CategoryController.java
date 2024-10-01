@@ -1,6 +1,9 @@
 package com.laconic.fastworkapi.controller;
 
 import com.laconic.fastworkapi.dto.CategoryDTO;
+import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
+import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
+import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
 import com.laconic.fastworkapi.entity.Category;
 import com.laconic.fastworkapi.helper.APIDocsHelper;
 import com.laconic.fastworkapi.service.ICategoryService;
@@ -45,9 +48,9 @@ public class CategoryController {
     }
 
     @Operation(summary = APIDocsHelper.CategoryAPI.GET_ALL_CATEGORY)
-    @GetMapping("/all")
-    public Collection<CategoryDTO> getAllCategories() {
-        return this.categoryService.getAll();
+    @PostMapping("/all")
+    public PaginationDTO<CategoryDTO> getAllCategories(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+        return this.categoryService.getAll(pageAndFilterDTO);
     }
 
     @Operation(summary = APIDocsHelper.CategoryAPI.DELETE_CATEGORY)

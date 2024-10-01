@@ -11,12 +11,14 @@ import httpClient from "@/client/httpClient";
 
 interface PaymentCardProps {
     totalAmount: number;
+    isPaid: boolean;
     onPaid: () => void;
 }
 
 const PaymentCard = ({
     totalAmount,
-    onPaid
+    isPaid,
+    onPaid,
 }: PaymentCardProps) => {
     const numberFormater = new Intl.NumberFormat();
     const { 
@@ -30,7 +32,6 @@ const PaymentCard = ({
 
     const [errorCheckable, setErrorCheckable] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [isPaid, setIsPaid] = useState(false);
 
     //methods
         const handleInputChange = (e: SafeInputChangeEvent) => {
@@ -63,6 +64,8 @@ const PaymentCard = ({
                         senderId: authUser?.profile?.id,
                         receiverId: 1 //default admin profile id
                     });
+
+                    console.log(res.data);
 
                     const firstMilestone = latestContract?.milestones[0];
                     if(firstMilestone){

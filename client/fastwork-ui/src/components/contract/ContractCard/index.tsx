@@ -258,15 +258,15 @@ const ContractCard = ({
                                     </div>
                                 </div>
 
-                                <div className="flex flex-row items-center justify-end space-x-1">
-                                    <div className="flex w-32">
+                                <div className="flex flex-row justify-end space-x-1">
+                                    <div className="flex w-32 pt-3">
                                         <span className={`text-${size} text-gray-600`}>
                                             Deliverable
                                         </span>
                                     </div>
                                     <SafeInput
                                         size={size}
-                                        type="text"
+                                        type="textarea"
                                         name="deliverable"
                                         placeholder="eg. 3 set of logo design"
                                         value={inputs.deliverable}

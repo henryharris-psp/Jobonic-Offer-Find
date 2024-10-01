@@ -90,12 +90,13 @@ const SafeInput = ({
 
             { type === 'textarea' ? (
                 <textarea
-                    className={`pl-3 pt-3 rounded-lg placeholder:text-dim-gray focus:outline-none w-full h-14 border 
+                    className={`p-3 rounded-lg placeholder:text-dim-gray focus:outline-none w-full min-h-14 border 
                         text-${size}
                         placeholder:text-${size}
                         ${showError ? 'border-red-500' : 'border-gray-300' }
-                        ${disabled ? 'border-none outline-none' : 'focus:outline'}
+                        ${disabled ? 'border-none outline-none focus:ring-0 resize-none' : 'focus:outline ring:outline-blue-500'}
                     `}
+                    name={name}
                     placeholder={placeholder}
                     value={ value ? value.toString() : ''}
                     onChange={onChange}

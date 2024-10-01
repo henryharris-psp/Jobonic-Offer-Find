@@ -3,10 +3,7 @@ package com.laconic.fastworkapi.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.laconic.fastworkapi.entity.Profile;
 import com.laconic.fastworkapi.enums.PaymentType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -17,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class ProfileDTO implements Serializable {
 
     @Serial

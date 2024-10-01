@@ -105,7 +105,6 @@ public class ContractService implements IContractService {
 
     @Override
     public List<ContractResponseDTO> listAll(UUID matchId) {
-        // Step 1: Fetch contracts by matchId and map them to DTO
         List<ContractResponseDTO> contractResponseDTOs = contractRepo.findByMatches_Id(matchId)
                 .stream()
                 .map(ContractResponseDTO::new)
@@ -116,7 +115,6 @@ public class ContractService implements IContractService {
     }
 
     public List<ContractResponseDTO> getContractDto(List<ContractResponseDTO> contractResponseDTOs) {
-        // Step 2: Fetch checkpoints by contract IDs and map them to DTOs
         List<UUID> contractIds = contractResponseDTOs.stream()
                 .map(ContractResponseDTO::getId)
                 .toList();
@@ -126,7 +124,6 @@ public class ContractService implements IContractService {
                 .map(CheckResponseDTO::new)
                 .toList();
 
-        // Step 3: Fetch tasks by checkpoint IDs and map them to DTOs
         List<UUID> checkpointIds = checkResponseDTOs.stream()
                 .map(CheckResponseDTO::getId)
                 .toList();
@@ -139,24 +136,19 @@ public class ContractService implements IContractService {
         Map<UUID, List<TaskDTO>> tasksGroupedByCheckpoint = taskDTOs.stream()
                 .collect(Collectors.groupingBy(TaskDTO::getCheckpointId));
 
-        // Add checkpoints and tasks to the respective contracts
         for (ContractResponseDTO contractResponse : contractResponseDTOs) {
-            // Get the checkpoints for this contract
             List<CheckResponseDTO> relatedCheckpoints = checkResponseDTOs.stream()
                     .filter(check -> check.getContractId().equals(contractResponse.getId()))
                     .toList();
 
-            // Add tasks to each checkpoint
             for (CheckResponseDTO checkResponse : relatedCheckpoints) {
                 List<TaskDTO> relatedTasks = tasksGroupedByCheckpoint.getOrDefault(checkResponse.getId(), new ArrayList<>());
                 checkResponse.setTasks(relatedTasks);
             }
 
-            // Set the milestones (checkpoints) for the contract
             contractResponse.setMilestones(relatedCheckpoints);
         }
 
-        // Return the combined result
         return contractResponseDTOs;
     }
 
