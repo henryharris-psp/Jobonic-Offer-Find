@@ -1,6 +1,7 @@
 package com.laconic.fastworkapi.controller;
 
 import com.laconic.fastworkapi.dto.PaymentDTO;
+import com.laconic.fastworkapi.dto.PaymentResponseDTO;
 import com.laconic.fastworkapi.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +22,12 @@ public class PaymentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable UUID id) {
+    public ResponseEntity<PaymentResponseDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(paymentService.getById(id));
     }
 
     @PostMapping("/get-by-page")
     public ResponseEntity<?> getByPage(@RequestBody PaymentDTO.PaymentSearchDTO filterDTO) {
         return ResponseEntity.ok(paymentService.filter(filterDTO));
-
     }
 }

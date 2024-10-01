@@ -1,11 +1,13 @@
 package com.laconic.fastworkapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.laconic.fastworkapi.entity.audit.Auditable;
 import com.laconic.fastworkapi.enums.PayableType;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 @Entity
@@ -16,7 +18,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class Payment extends Auditable<UUID> {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -28,10 +29,18 @@ public class Payment extends Auditable<UUID> {
 
     @Enumerated(EnumType.STRING)
     private PayableType payableType;
+
     private UUID payableId;
+
     private String remarks;
-    private Long senderId; // profile Id
-    private Long receiverId; // profileId
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "sender_id")
+    @JsonBackReference
+    private Profile senderId;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "receiver_id")
+    @JsonBackReference
+    private Profile receiverId;
 }

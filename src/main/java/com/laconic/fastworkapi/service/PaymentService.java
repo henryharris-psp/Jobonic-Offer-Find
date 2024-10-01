@@ -1,6 +1,7 @@
 package com.laconic.fastworkapi.service;
 
 import com.laconic.fastworkapi.dto.PaymentDTO;
+import com.laconic.fastworkapi.dto.PaymentResponseDTO;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import org.springframework.data.domain.PageRequest;
 
@@ -10,7 +11,7 @@ public interface PaymentService {
 
     UUID save(PaymentDTO paymentDTO);
 
-    PaymentDTO getById(UUID id);
+    PaymentResponseDTO getById(UUID id);
 
     PaginationDTO<?> filter(PaymentDTO.PaymentSearchDTO filterDTO);
 }
