@@ -17,8 +17,8 @@ public class PaymentResponseDTO {
     private PayableType payableType;
     private UUID payableId;
     private String remarks;
-    private UserProfileDTO senderId;
-    private UserProfileDTO receiverId;
+    private UserProfileDTO sender;
+    private UserProfileDTO receiver;
 
     public PaymentResponseDTO(UUID id, String paymentMethod, Double amount, Date paymentDate, PayableType payableType, UUID payableId, String remarks, UserProfileDTO senderId, UserProfileDTO receiverId) {
         this.id = id;
@@ -28,7 +28,7 @@ public class PaymentResponseDTO {
         this.payableType = payableType;
         this.payableId = payableId;
         this.remarks = remarks;
-        this.senderId = senderId;
-        this.receiverId = receiverId;
+        this.sender = senderId;
+        this.receiver = receiverId;
     }
 }

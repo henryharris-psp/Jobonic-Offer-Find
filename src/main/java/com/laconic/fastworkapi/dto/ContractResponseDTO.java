@@ -1,6 +1,7 @@
 package com.laconic.fastworkapi.dto;
 
 import com.laconic.fastworkapi.entity.Contract;
+import com.laconic.fastworkapi.entity.Payment;
 import com.laconic.fastworkapi.entity.PaymentOut;
 import lombok.*;
 
@@ -31,6 +32,8 @@ public class ContractResponseDTO {
     private Instant createdDate;
     private List<CheckResponseDTO> milestones;
     private Long profileId;
+
+    private Payment payment;
 
     private CheckResponseDTO currentCheckpoint;
 

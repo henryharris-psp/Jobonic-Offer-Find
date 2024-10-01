@@ -129,8 +129,8 @@ public class PaymentServiceImpl implements PaymentService {
                 .payableType(payment.getPayableType())
                 .payableId(payment.getPayableId())
                 .remarks(payment.getRemarks())
-                .senderId(sender)
-                .receiverId(receiver)
+                .sender(sender)
+                .receiver(receiver)
                 .build();
     }
 

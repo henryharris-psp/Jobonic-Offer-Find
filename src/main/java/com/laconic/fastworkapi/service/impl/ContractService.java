@@ -1,14 +1,14 @@
 package com.laconic.fastworkapi.service.impl;
 
-import com.laconic.fastworkapi.dto.CheckResponseDTO;
-import com.laconic.fastworkapi.dto.ContractDTO;
-import com.laconic.fastworkapi.dto.ContractResponseDTO;
-import com.laconic.fastworkapi.dto.TaskDTO;
+import com.laconic.fastworkapi.dto.*;
 import com.laconic.fastworkapi.entity.Checkpoint;
 import com.laconic.fastworkapi.entity.Contract;
+import com.laconic.fastworkapi.entity.Payment;
+import com.laconic.fastworkapi.enums.PayableType;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.repo.ICheckpointRepo;
 import com.laconic.fastworkapi.repo.IContractRepo;
+import com.laconic.fastworkapi.repo.PaymentRepo;
 import com.laconic.fastworkapi.repo.TaskRepo;
 import com.laconic.fastworkapi.service.ICheckpointService;
 import com.laconic.fastworkapi.service.IContractService;
@@ -30,6 +30,7 @@ public class ContractService implements IContractService {
     private final TaskRepo taskRepo;
     private final ICheckpointService checkpointService;
     private final ICheckpointRepo checkpointRepo;
+    private final PaymentRepo paymentRepo;
 
     private ContractDTO set(Contract contract, ContractDTO dto) {
         dto.getAcceptBy().forEach(profileService::get);
@@ -60,6 +61,10 @@ public class ContractService implements IContractService {
     @Override
     public ContractResponseDTO getById(UUID id) {
         ContractResponseDTO contractResponseDTO = new ContractResponseDTO(getContract(id));
+
+        Payment payment = paymentRepo.findPaymentByPayableIdAndPayableType(id, PayableType.CONTRACT);
+
+        contractResponseDTO.setPayment(payment);
 
         List<CheckResponseDTO> checkResponseDTOs = checkpointService.getCheckPointByContractIdIn(Collections.singletonList(contractResponseDTO.getId()))
                 .stream()
