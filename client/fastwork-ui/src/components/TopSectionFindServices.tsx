@@ -37,7 +37,7 @@ const TopSectionFindServices = (): React.ReactElement => {
                         />
                         <button 
                             type="submit" 
-                            className="text-white absolute right-2.5 bottom-2.5 bg-[#0B2147] hover:bg-[#D0693B] focus:ring-4 focus:outline-none focus:ring-[#D0693B] font-medium rounded-lg text-sm px-4 py-2 dark:bg-[#0B2147] dark:hover:bg-[#D0693B] dark:focus:ring-[#D0693B]"
+                            className="text-white absolute font-semibold right-2.5 bottom-2.5 bg-[#0B2147] hover:bg-[#D0693B] focus:ring-4 focus:outline-none focus:ring-[#D0693B] rounded-lg text-sm px-4 py-2 dark:bg-[#0B2147] dark:hover:bg-[#D0693B] dark:focus:ring-[#D0693B]"
                         >
                             Let&apos;s collab!
                         </button>

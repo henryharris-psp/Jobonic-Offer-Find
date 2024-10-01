@@ -85,7 +85,7 @@ const SearchFilterDropDown = ({
                 onClick={handleOnClickToggle}
             >
                 <FunnelIcon className="size-5 text-white" />
-                <span>Filter</span>
+                <span className="font-semibold">Filter</span>
                 {isFilterApplied && <CheckIcon className="size-5 text-white" />}
             </button>
 

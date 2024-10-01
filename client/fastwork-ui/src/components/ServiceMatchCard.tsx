@@ -206,7 +206,7 @@ const ServiceMatchCard: React.FC<ServiceMatchCardProps> = ({
                 </div>
                 <div className="flex justify-center items-center">
                     <button
-                        className="w-40 text-white text-sm font-semibold py-2 px-4 rounded-full bg-[#0B2147] hover:bg-[#D0693B] transition-colors duration-200"
+                        className="w-40 text-white text-sm font-semibold py-2 px-4 rounded-lg bg-[#0B2147] hover:bg-[#D0693B] transition-colors duration-200"
                         onClick={handleEngageService}
                     >
                         Engage in service

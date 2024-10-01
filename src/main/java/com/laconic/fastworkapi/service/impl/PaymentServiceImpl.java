@@ -3,6 +3,8 @@ package com.laconic.fastworkapi.service.impl;
 import com.laconic.fastworkapi.dto.PaymentDTO;
 import com.laconic.fastworkapi.dto.pagination.Pagination;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
+import com.laconic.fastworkapi.entity.Checkpoint;
+import com.laconic.fastworkapi.entity.Contract;
 import com.laconic.fastworkapi.entity.Payment;
 import com.laconic.fastworkapi.exception.NotFoundException;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -39,6 +42,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .getId();
             default -> throw new NotFoundException("Incorrect Payable type");
         };
+
         Long senderId = userRepo.findById(paymentDTO.getSenderId()).get().getId();
         Long receiverId = userRepo.findById(paymentDTO.getReceiverId()).get().getId();
 
@@ -52,6 +56,47 @@ public class PaymentServiceImpl implements PaymentService {
                 .senderId(senderId)
                 .receiverId(receiverId)
                 .build();
+
+        if ("CONTRACT".equalsIgnoreCase(String.valueOf(paymentDTO.getPayableType()))) {
+            Contract contract = contractRepo.findById(paymentDTO.getPayableId())
+                    .orElseThrow(() -> new NotFoundException("Contract not found"));
+
+            List<Checkpoint> checkpoints = checkpointRepo.findCheckpointByContractIdIn(List.of(paymentDTO.getPayableId()));
+
+            checkpoints.forEach(checkpoint -> {
+                checkpoint.setStatus("waiting_for_submission");
+                checkpointRepo.save(checkpoint);
+            });
+
+            contract.setCurrentCheckpoint(checkpoints.getFirst());
+
+            contractRepo.save(contract);
+        } else if("CHECKPOINT".equalsIgnoreCase(String.valueOf(paymentDTO.getPayableType()))) {
+            Checkpoint checkpoint = checkpointRepo.findById(paymentDTO.getPayableId())
+                    .orElseThrow(() -> new NotFoundException("Checkpoint not found"));
+
+            checkpoint.setStatus("paid");
+
+            checkpointRepo.save(checkpoint);
+
+            Contract contract = contractRepo.findById(checkpoint.getContract().getId())
+                    .orElseThrow(() -> new NotFoundException("Contract not found"));
+
+            List<Checkpoint> checkpoints = checkpointRepo.findCheckpointByContractIdIn(List.of(contract.getId()));
+
+            Checkpoint lastCheckpoint = checkpoints.stream().filter(c -> c.getStatus().equalsIgnoreCase("waiting_for_submission")).findFirst().orElse(null);
+
+            System.out.println("Last Checkpoint: " + lastCheckpoint.getTitle());
+
+            if (Objects.nonNull(lastCheckpoint)) {
+                contract.setCurrentCheckpoint(lastCheckpoint);
+            } else {
+                contract.setCurrentCheckpoint(null);
+            }
+
+            contractRepo.save(contract);
+        }
+
         return paymentRepo.save(payment).getId();
     }
 
