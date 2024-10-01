@@ -21,9 +21,16 @@ const CategorySuggestions = (): React.ReactElement => {
         setIsLoading(true);
         (async () => {
             try {
-                const res = await httpClient.get("/category/all", { signal });
-                console.log('Category ', res);
-                setCategoryList(res.data);
+                const res = await httpClient.post('category/all', {
+                    pageNumber: 1,
+                    pageSize: 100,
+                    sortBy: 'id',
+                    sortOrder: 'DESC',
+                    filter: {
+                        searchKeyword: ''
+                    }
+                } ,{ signal });
+                setCategoryList(res.data.content);
             } catch (error) {
                 console.log(error);
             } finally {

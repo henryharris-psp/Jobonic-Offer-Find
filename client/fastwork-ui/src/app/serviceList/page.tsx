@@ -1,7 +1,7 @@
 'use client'
 import ServiceMatchCard from "@/components/ServiceMatchCard";
 import SearchFilterDropDown from "@/components/SearchFilterDropDown";
-import { fetchCategories, fetchServices } from "@/functions/helperFunctions";
+import { fetchServices } from "@/functions/helperFunctions";
 import { Category } from "@/types/general";
 import { Service, ServiceFilter, ServicePayload } from "@/types/service";
 import Link from "next/link";
@@ -12,6 +12,7 @@ import PaginationButtons from "@/components/PaginationButtons";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import ServiceMatchCardSkeleton from "@/components/ServiceMatchCardSkeleton";
+import httpClient from "@/client/httpClient";
 
 const sortings: Sorting[] = [
     {
@@ -101,8 +102,16 @@ const ServiceList = () => {
         setIsCategoriesFetching(true);
 
         (async () => {
-            const categoriesData = await fetchCategories(signal);
-            if (categoriesData) setCategories(categoriesData);
+            const res = await httpClient.post('category/all', {
+                pageNumber: 1,
+                pageSize: 100,
+                sortBy: 'id',
+                sortOrder: 'DESC',
+                filter: {
+                    searchKeyword: ''
+                }
+            } ,{ signal });
+            setCategories(res.data.content);
             setIsCategoriesFetching(false);
         })();
 
