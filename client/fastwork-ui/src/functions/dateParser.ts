@@ -13,8 +13,25 @@ class DateParser {
 
         month = month < 10 ? '0' + month : month;
 
-        return `${day}-${month}-${year}`;
+        return `${day}/${month}/${year}`;
     };
+
+    getFormattedDate = (dateString: string): string => {
+        const dateObj = new Date(moment.utc(dateString, 'YYYY-MM-DD HH:mm:ss').toISOString());
+    
+        let day: number | string = dateObj.getDate();
+        const shortMonthNames: string[] = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+        const month: string = shortMonthNames[dateObj.getMonth()];
+        const year: string = dateObj.getFullYear().toString();
+    
+        day = day < 10 ? '0' + day : day;
+    
+        return `${day} ${month} ${year}`;
+    };
+    
 
     getTime = (dateString: string): string => {
         const dateObj = new Date(moment.utc(dateString).toISOString());

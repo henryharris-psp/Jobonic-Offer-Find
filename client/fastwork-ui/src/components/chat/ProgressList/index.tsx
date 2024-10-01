@@ -80,7 +80,7 @@ const ProgressList = () => {
                         <div className="flex-1 overflow-auto">
                             <div className="flex flex-col space-y-4 my-3">
                                 
-                                { activeChatRoom.latestContract ? (
+                                { latestContract ? (
                                     <ContractProgressSection 
                                         isDisabled={false}
                                         isCurrent={false}

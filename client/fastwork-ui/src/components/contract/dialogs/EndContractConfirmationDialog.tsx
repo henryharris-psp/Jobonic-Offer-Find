@@ -78,23 +78,23 @@ const EndContractConfirmationDialog = ({
                     Are you sure you want to end contract?
                 </span>
 
-                <div className="flex flex-col space-y-3 items-center">
+                <div className="flex flex-col space-y-5 items-center">
                     <span className="text-md text-[#71BAC7] font-semibold text-center">
                         The milestone
                         <span className="underline mx-1">
                             { currentMilestone?.title }
                         </span>
-                        is in progress.
+                        is in progress
                     </span>
 
                     <div className="flex flex-row items-center gap-3">
                         <span className="text-xs text-gray-600 font-semibold text-center max-w-96">
                             What is your first offer for this ongoing milestone to negotiate ending the contract?
                         </span>
-                        <div className="w-32">
+                        <div className="max-w-32 min-w-20 overflow-hidden">
                             <SafeInput
-                                placeholder="price"
-                                type="text"
+                                placeholder="Appeal Price"
+                                type="decimal"
                                 value={price}
                                 onChange={handleOnChangePrice}
                             />
@@ -103,11 +103,11 @@ const EndContractConfirmationDialog = ({
                 </div>
                 
                 <div className="flex flex-col space-y-1">
-                    <span className="text-xs text-gray-500 font-semibold text-center">
+                    <span className="text-xs text-gray-400 font-semibold text-center">
                         If you confrim to end the contract, a form to negotiate payout price will be generated.
                     </span>
 
-                    <span className="text-xs text-gray-500 font-semibold text-center">
+                    <span className="text-xs text-gray-400 font-semibold text-center">
                         Both users must agree on the payout price for the current milestone in order to end the contract.
                     </span>
                 </div>

@@ -16,7 +16,7 @@ import { ArrowPathIcon, CheckCircleIcon, CheckIcon, PencilSquareIcon } from '@he
 interface InChatContractCardProps {
     contractId: string | number;
     isSentByAuthUser: boolean;
-    updatedAt: string;
+    createdAt: string;
 }
 
 const acceptContractMsg = `I satisfied with your updated contract and have signed.`;
@@ -24,7 +24,7 @@ const acceptContractMsg = `I satisfied with your updated contract and have signe
 const InChatContractCard = ({
     contractId,
     isSentByAuthUser,
-    updatedAt
+    createdAt
 }: InChatContractCardProps) => {
     const dateParser = new DateParser();
     const { authUser } = useSelector((state: RootState) => state.auth );
@@ -128,12 +128,14 @@ const InChatContractCard = ({
                                 <span className="text-yellow-400 text-sm font-semibold">
                                     { isSentByAuthUser ? 'You' : activeChatRoom?.sender.firstName } just updated the contract
                                 </span>
-                                <div className="flex flex-row items-center space-x-1 min-w-16">
-                                    <ClockIcon className="size-3 text-gray-400"/>
-                                    <span className="text-xs text-gray-400">
-                                        { dateParser.getTime(updatedAt) }
-                                    </span>
-                                </div>
+                                { contract.createdDate ? (
+                                    <div className="flex flex-row items-center space-x-1 min-w-16">
+                                        <ClockIcon className="size-3 text-gray-400"/>
+                                        <span className="text-xs text-gray-400">
+                                            { dateParser.getTime(createdAt)}
+                                        </span>
+                                    </div>
+                                ) : ''}
                             </div>  
                         )}
                         <ContractCard
