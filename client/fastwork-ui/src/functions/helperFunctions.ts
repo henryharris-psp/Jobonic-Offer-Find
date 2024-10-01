@@ -208,22 +208,7 @@ export const getCategoryName = async (categoryId: string) => {
     //         }
     //     }
     // };
-
-    export const fetchCategories = async (
-        signal: AbortSignal,
-    ): Promise<Category[] | undefined>  => {
-        try {
-            const res = await httpClient.get('/category/all', { signal });
-            return res.data;
-        } catch (error: any) {
-            if (error.name === 'AbortError') {
-                console.log('Fetch categories aborted');
-            } else {
-                console.error('Fetch categories error:', error);
-            }
-        }
-    };
-
+    
     export const fetchAttachmentsByMilestoneId = async (
         milestoneId: string | number,
         signal?: AbortSignal
