@@ -13,7 +13,6 @@ import com.laconic.fastworkapi.repo.IMatchesRepo;
 import com.laconic.fastworkapi.repo.IServiceRepo;
 import com.laconic.fastworkapi.service.ICheckpointService;
 import jakarta.transaction.Transactional;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -86,7 +85,7 @@ public class CheckpointService implements ICheckpointService {
     }
 
     @Override
-    public ResponseEntity<CheckpointDTO> update(UUID id, CheckpointDTO checkpointDTO) {
+    public CheckpointDTO update(UUID id, CheckpointDTO checkpointDTO) {
         var existingCheckpoint = this.checkpointRepo.findById(id)
                 .orElseThrow(ExceptionHelper.throwNotFoundException(AppMessage.CHECKPOINT, "id", id.toString()));
 
@@ -124,7 +123,7 @@ public class CheckpointService implements ICheckpointService {
 
         var updatedCheckpoint = this.checkpointRepo.save(existingCheckpoint);
 
-        return ResponseEntity.ok(new CheckpointDTO(updatedCheckpoint));
+        return new CheckpointDTO(updatedCheckpoint);
     }
 
     @Override

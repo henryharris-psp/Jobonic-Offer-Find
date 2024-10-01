@@ -30,7 +30,7 @@ public class CheckpointController {
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.UPDATE_CHECKPOINT)
     @PutMapping
-    public ResponseEntity<CheckpointDTO> update(@RequestParam UUID id, @RequestBody CheckpointDTO checkpointDTO) {
+    public CheckpointDTO update(@RequestParam UUID id, @RequestBody CheckpointDTO checkpointDTO) {
         return checkpointService.update(id, checkpointDTO);
     }
 
@@ -48,13 +48,13 @@ public class CheckpointController {
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.GET_CHECKPOINT_BY_SERVICE_ID)
     @GetMapping("/serviceId")
-    public ResponseEntity<List<CheckResponseDTO>> getByServiceId(@RequestParam UUID serviceId) {
-        return ResponseEntity.ok(checkpointService.getCheckPointByServiceId(serviceId));
+    public List<CheckResponseDTO> getByServiceId(@RequestParam UUID serviceId) {
+        return checkpointService.getCheckPointByServiceId(serviceId);
     }
 
     @Operation(summary = APIDocsHelper.CheckpointAPI.GET_ALL_CHECKPOINT)
     @GetMapping("/all")
-    public ResponseEntity<List<CheckResponseDTO>> getAll() {
-        return ResponseEntity.ok(checkpointService.getAll());
+    public List<CheckResponseDTO> getAll() {
+        return checkpointService.getAll();
     }
 }

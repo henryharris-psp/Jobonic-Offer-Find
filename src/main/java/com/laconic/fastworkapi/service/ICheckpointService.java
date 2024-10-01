@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface ICheckpointService {
     CheckpointDTO save(CheckpointDTO checkpointDTO) throws IOException;
 
-    ResponseEntity<CheckpointDTO> update(UUID id, CheckpointDTO checkpointDTO);
+    CheckpointDTO update(UUID id, CheckpointDTO checkpointDTO);
 
     CheckResponseDTO getById(UUID id);
 
