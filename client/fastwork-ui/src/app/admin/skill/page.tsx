@@ -13,13 +13,13 @@ interface Skill extends BaseSkill {
 
 const AdminSkillManagementPage = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [categories, setCategories] = useState<Skill[]>([]);
+    const [skills, setSkills] = useState<Skill[]>([]);
     const [showSkillFormModal, setShowSkillFormModal] = useState(false);
 
     const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
     const [deletingSkillId, setDeletingSkillId] = useState<string | number | null>(null);
 
-    // Fetch all categories on mount
+    // Fetch all skills on mount
     useEffect(() => {
         const controller = new AbortController();
         const signal = controller.signal;
@@ -28,18 +28,21 @@ const AdminSkillManagementPage = () => {
     
         (async () => {
             try {
-                const res = await httpClient.get('skill/all', { signal });
-                if (res.status === 200) {
-                    const allCategories = res.data;
-                    setCategories(allCategories);
-                } else {
-                    console.log('Failed to fetch categories', res.status);
-                }
+                const res = await httpClient.post('skill/page-all', {
+                        pageNumber: 1,
+                        pageSize: 100,
+                        sortBy: 'id',
+                        sortOrder: 'DESC',
+                        filter: {
+                            searchKeyword: ''
+                        }
+                },{ signal });
+                setSkills(res.data.content);
             } catch (error: any) {
                 if (error.name === 'AbortError') {
                     console.log('Fetch aborted');
                 } else {
-                    console.log('Error fetching categories', error);
+                    console.log('Error fetching skills', error);
                 }
             } finally {
                 setIsLoading(false);
@@ -72,7 +75,7 @@ const AdminSkillManagementPage = () => {
         const handleOnClickEdit = (skillId: string | number) => {
             setShowSkillFormModal( () => {
                 setEditingSkill( () => {
-                    const targetSkill = categories.find( skill => skill.id === skillId); 
+                    const targetSkill = skills.find( skill => skill.id === skillId); 
                     return targetSkill ?? null;
                 });
                 return true;
@@ -81,7 +84,7 @@ const AdminSkillManagementPage = () => {
 
         //CRUD methods for local state update
             const handleOnSkillAdded = (newSkill: Skill) => {
-                setCategories( prev => {
+                setSkills( prev => {
                     const newSkillWithNewStatus = {
                         ...newSkill,
                         isNew: true
@@ -95,14 +98,14 @@ const AdminSkillManagementPage = () => {
             }
 
             const handleOnSkillUpdated = (updatedSkill: Skill) => {
-                setCategories( prev => {
+                setSkills( prev => {
                     return prev.map( skill => skill.id === updatedSkill.id ? updatedSkill : skill );
                 });
                 setShowSkillFormModal(false);
             }
 
             const handleOnSkillDeleted = (skillId: string | number) => {
-                setCategories( prev => prev.filter(skill => skill.id !== skillId));
+                setSkills( prev => prev.filter(skill => skill.id !== skillId));
             }
         
     return (
@@ -132,7 +135,7 @@ const AdminSkillManagementPage = () => {
                         </span>
                     </div>
                 ) : (
-                    categories.length === 0 ? (
+                    skills.length === 0 ? (
                         <div className="flex-1 flex items-center justify-center">
                             <span>
                                 No Categories Found
@@ -141,7 +144,7 @@ const AdminSkillManagementPage = () => {
                     ) : (
                         <div className="flex-1 overflow-auto">
                             <div className="flex flex-col">
-                                { categories.map( (skill) => 
+                                { skills.map( (skill) => 
                                     <SkillItem
                                         key={skill.id}
                                         isDeleting={skill.id === deletingSkillId }

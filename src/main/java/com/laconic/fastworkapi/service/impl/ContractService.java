@@ -88,7 +88,6 @@ public class ContractService implements IContractService {
         return contractResponseDTO;
     }
 
-
     @Override
     public List<ContractResponseDTO> getAll() {
         return contractRepo.findAll().stream().map(ContractResponseDTO::new).toList();

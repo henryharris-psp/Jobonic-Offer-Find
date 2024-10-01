@@ -1,6 +1,6 @@
 'use client';
 import SearchFilterDropDown from "@/components/SearchFilterDropDown";
-import { fetchCategories, fetchServices } from "@/functions/helperFunctions";
+import { fetchServices } from "@/functions/helperFunctions";
 import { Category } from "@/types/general";
 import { Service, ServiceFilter, ServicePayload } from "@/types/service";
 import Link from "next/link";
@@ -13,6 +13,7 @@ import { RootState } from "@/store";
 import ServiceRequestCard from "@/components/ServiceRequestCard";
 import ServiceMatchCardSkeleton from "@/components/ServiceMatchCardSkeleton";
 import ServiceModal from "@/components/ServiceModal";
+import httpClient from "@/client/httpClient";
 
 type UserData = {
     id?: number;
@@ -113,8 +114,16 @@ const OfferService = () => {
         const signal = controller.signal;
         setIsCategoriesFetching(true);
         (async () => {
-            const categoriesData = await fetchCategories(signal);
-            if (categoriesData) setCategories(categoriesData);
+            const res = await httpClient.post('category/all', {
+                pageNumber: 1,
+                pageSize: 100,
+                sortBy: 'id',
+                sortOrder: 'DESC',
+                filter: {
+                    searchKeyword: ''
+                }
+            } ,{ signal });
+            setCategories(res.data.content);
             setIsCategoriesFetching(false);
         })();
         return () => controller.abort();

@@ -69,11 +69,11 @@ public class Profile extends Auditable<UUID> {
     private List<CustomerReview> customerReviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "senderId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JsonManagedReference
+    @JsonManagedReference("payment-sent")
     private Set<Payment> sentPayments = new HashSet<>();
 
     @OneToMany(mappedBy = "receiverId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JsonManagedReference
+    @JsonManagedReference("payment-received")
     private Set<Payment> receivedPayments = new HashSet<>();
 
     public void addEducation(UserEducation education) {

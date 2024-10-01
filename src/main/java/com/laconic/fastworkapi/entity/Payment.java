@@ -36,11 +36,11 @@ public class Payment extends Auditable<UUID> {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sender_id")
-    @JsonBackReference
+    @JsonBackReference("payment-sent")
     private Profile senderId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "receiver_id")
-    @JsonBackReference
+    @JsonBackReference("payment-received")
     private Profile receiverId;
 }

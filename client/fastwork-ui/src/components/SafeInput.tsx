@@ -7,7 +7,7 @@ interface Error {
 
 export type SafeInputChangeEvent = ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>;
 
-type SafeInputProps = {
+interface SafeInputProps {
     id?: string | undefined;
     name?: string;
     size?: '' | 'lg' | 'sm' | 'xs';

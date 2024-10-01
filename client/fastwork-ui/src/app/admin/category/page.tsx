@@ -28,13 +28,16 @@ const AdminCategoryManagementPage = () => {
     
         (async () => {
             try {
-                const res = await httpClient.get('category/all', { signal });
-                if (res.status === 200) {
-                    const allCategories = res.data;
-                    setCategories(allCategories);
-                } else {
-                    console.log('Failed to fetch categories', res.status);
-                }
+                const res = await httpClient.post('category/all', {
+                    pageNumber: 1,
+                    pageSize: 100,
+                    sortBy: 'id',
+                    sortOrder: 'DESC',
+                    filter: {
+                        searchKeyword: ''
+                    }
+                } ,{ signal });
+                setCategories(res.data.content);
             } catch (error: any) {
                 if (error.name === 'AbortError') {
                     console.log('Fetch aborted');
