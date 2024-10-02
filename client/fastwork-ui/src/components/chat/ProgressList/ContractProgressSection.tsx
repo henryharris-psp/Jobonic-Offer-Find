@@ -5,7 +5,6 @@ import LatestContractModal from "@/components/contract/LatestContractModal";
 import { DocumentIcon } from "@heroicons/react/24/outline";
 import { ArrowDownTrayIcon, BanknotesIcon, EyeIcon, StopIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import EndContractConfirmationDialog from "@/components/contract/dialogs/EndContractConfirmationDialog";
-import PayoutConfirmationDialog from "@/components/contract/dialogs/PayoutConfirmationDialog";
 import ProgressSectionRoot from "./ProgressSectionRoot";
 import LatestPayoutNegotiationModal from "@/components/contract/payout-negotiation/LatestPayoutNegotiationModal";
 
@@ -23,7 +22,6 @@ const ContractProgressSection = ({
     const [showLatestContractModal, setShowLatestContractModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
-    const [showPayoutConfirmationDialog, setPayoutConfirmationDialog] = useState(false);
     const [showLatestPayoutNegotiationModal, setShowLatestPayoutNegotiationModal] = useState(false);
 
     //methods
@@ -36,11 +34,6 @@ const ContractProgressSection = ({
         
         const handleOnClickEndContract = () => {
             setShowConfirmationDialog(true);
-        }
-
-        const closeConfirmationDialog = () => {
-            setShowConfirmationDialog(false);
-            setPayoutConfirmationDialog(true);
         }
 
         const handleOnClickViewPayout = () => {
@@ -117,13 +110,7 @@ const ContractProgressSection = ({
             <EndContractConfirmationDialog
                 isOpen={showConfirmationDialog}
                 onClose={() => setShowConfirmationDialog(false)}
-                onConfirm={closeConfirmationDialog}
                 onCancel={() => setShowConfirmationDialog(false)}
-            />
-
-            <PayoutConfirmationDialog
-                isOpen={showPayoutConfirmationDialog}
-                onClose={() => setPayoutConfirmationDialog(false)}
             />
 
             <LatestContractModal

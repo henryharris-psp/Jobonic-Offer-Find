@@ -88,7 +88,9 @@ const MessageByMediaType = (message: Message) => {
                 createdAt={message.created_at}
             />,
         payout_negotiation: 
-            <InChatPayoutNegotiationCard/>
+            <InChatPayoutNegotiationCard
+                payoutNegotiationId={message.content}
+            />
     };
 
     return (
