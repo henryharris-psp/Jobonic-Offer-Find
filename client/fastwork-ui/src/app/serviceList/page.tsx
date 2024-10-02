@@ -61,12 +61,15 @@ const defaultPagination = {
 }
 
 const skeletonCount = Array.from({ length: 6 }, (_, index) => index);
+
 const ServiceList = () => {
     const { authUser } = useSelector((state: RootState) => state.auth);
     const [categories, setCategories] = useState<Category[]>([]);
     const [isCategoriesFetching, setIsCategoriesFetching] = useState<boolean>(false);
+
     const [services, setServices] = useState<Service[]>([]);
     const [isServicesFetching, setIsServicesFetching] = useState<boolean>(false);
+
     const [sorting, setSorting] = useState<SortingValue>(sortings[0].value);
     const [filters, setFilters] = useState<ServiceFilter>(defaultFilters);
     const [pagination, setPagination] = useState(defaultPagination);
@@ -82,6 +85,7 @@ const ServiceList = () => {
         const urlParams = new URLSearchParams(window.location.search);
         const searchKeyword = urlParams.get("searchKeyword");
         const categoryId = urlParams.get("categoryId"); // Changed from "category" to "categoryId"
+
         // Set filters based on search keyword and category
         if (searchKeyword || categoryId) {
             setFilters(prev => ({
@@ -91,23 +95,28 @@ const ServiceList = () => {
             }));
             setSelectedWorkCategory(categoryId ?? ''); // Set the selected category based on the categoryId from URL
         }
+
         // Fetch categories
         const controller = new AbortController();
         const signal = controller.signal;
         setIsCategoriesFetching(true);
 
         (async () => {
-            const res = await httpClient.post('category/all', {
-                pageNumber: 1,
-                pageSize: 100,
-                sortBy: 'id',
-                sortOrder: 'DESC',
-                filter: {
-                    searchKeyword: ''
-                }
-            } ,{ signal });
-            setCategories(res.data.content);
-            setIsCategoriesFetching(false);
+            try{
+                const res = await httpClient.post('category/all', {
+                    pageNumber: 1,
+                    pageSize: 100,
+                    sortBy: 'id',
+                    sortOrder: 'DESC',
+                    filter: {
+                        searchKeyword: ''
+                    }
+                } ,{ signal });
+                setCategories(res.data.content);
+                setIsCategoriesFetching(false);
+            } catch (error) {
+                console.log('error', error);
+            }
         })();
 
         return () => controller.abort();
@@ -213,7 +222,7 @@ const ServiceList = () => {
                             ? '/customiseJobRequestForm'
                             : '/register'
                     }
-                    className="text-white py-3 px-4 text-sm font-medium rounded-lg inline-block hover:bg-[#D0693B] bg-[#0B2147]"
+                    className="text-white py-2 px-4 text-sm font-semibold rounded-lg inline-block hover:bg-[#D0693B] bg-[#0B2147]"
                 >
                     Not what you are looking for?
                 </Link>
@@ -230,11 +239,11 @@ const ServiceList = () => {
                             {/* Work Category Dropdown */}
                             <div className="relative">
                                 <select
-                                    className="border-gray-300 bg-gray-100 font-medium text-sm rounded p-2"
+                                    className="border-gray-300 bg-gray-100 font-semibold text-sm rounded p-2"
                                     value={selectedWorkCategory}
                                     onChange={handleOnCategoryChange} // Handle category selection
                                 >
-                                    <option value="" className="font-medium text-sm">All Categories</option>
+                                    <option value="" className="font-semibold text-sm">All Categories</option>
                                     {categories.map(category => (
                                         <option key={category.id} value={category.name}>
                                             {category.name}

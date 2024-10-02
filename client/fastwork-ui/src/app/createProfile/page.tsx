@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import axios from 'axios';
 import httpClient from '@/client/httpClient';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import { updateAuthUser } from '@/store/reducers/authReducer';
 
 const countryCodes = [
     { code: '+65', name: 'Singapore' },
@@ -17,6 +18,7 @@ const countryCodes = [
 
 export default function CreateProfile(): React.ReactNode {
     const router = useRouter();
+    const dispatch = useDispatch();
 
     const { authUser } = useSelector((state: RootState) => state.auth);
     const [userId, setUserId] = useState<string | null>(null);
@@ -144,8 +146,12 @@ export default function CreateProfile(): React.ReactNode {
         };
     
         try {
-            const response = await httpClient.post(`/user`, userData);
-            console.log('User created successfully:', response.data);
+            const res = await httpClient.post(`/user`, userData);
+            const newProfile = res.data;
+            dispatch(updateAuthUser({
+                ...authUser,
+                profile: newProfile
+            }))
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error('Error updating user from Axios:', error.response?.data || error.message);

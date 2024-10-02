@@ -36,7 +36,7 @@ const ChatPage = () => {
     const { isMobile, screenSize } = useSelector((state: RootState) => state.ui);
     const { authUser } = useSelector((state: RootState) => state.auth );
     const [isLoadingChatRooms, setIsLoadingChatRooms] = useState(false);
-
+    
     //methods
         //fetch chatrooms from server and create new room if requested chat room is not existed
         const fetchChatRooms = async () => {

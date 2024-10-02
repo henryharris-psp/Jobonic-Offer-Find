@@ -6,6 +6,7 @@ import SafeInput, { SafeInputChangeEvent } from "@/components/SafeInput";
 import httpClient from "@/client/httpClient";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import { updateMilestoneStatus } from "@/functions/helperFunctions";
 
 interface EndContractConfirmationDialogProps {
     isOpen: boolean;
@@ -23,6 +24,8 @@ const EndContractConfirmationDialog = ({
     const currentMilestone = latestContract?.currentMilestone;
 
     const [price, setPrice] = useState<string>('0');
+    const [hasPriceError, setHasPriceError] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     //to set default price
         useEffect( () => {
@@ -34,28 +37,41 @@ const EndContractConfirmationDialog = ({
 
     //methods
         const handleOnChangePrice = (event: SafeInputChangeEvent) => {
-            setPrice(event.target.value);
+            const price = event.target.value;
+            const min = 0;
+            const max = currentMilestone?.price ?? 0;
+
+            const isInRange = Number(price) >= min && Number(price) <= max
+
+            setHasPriceError(!isInRange);
+            if(isInRange) setPrice(price);
         }
 
         const handleOnClickConfrim = async () => {
             if(currentMilestone){
-                const res = await httpClient.post('payment-out', {
-                    checkpointId: currentMilestone.id,
-                    contractId: latestContract.id,
-                    acceptBy: [authUser?.profile.id],
-                    profileId: authUser?.profile.id,
-                    price: price
-                });
-
-                const payoutNegotiationId = res.data;
-
-                console.log(res.data);
-
-                const newlySentMessage = await sendMessage('payout_negotiation', payoutNegotiationId);
-                if(newlySentMessage){
-                    await updateChatRoom(newlySentMessage.room_id, {
-                        status: 'contract_termination'
+                setIsLoading(true);
+                try{
+                    const res = await httpClient.post('payment-out', {
+                        checkpointId: currentMilestone.id,
+                        contractId: latestContract.id,
+                        acceptBy: [authUser?.profile.id],
+                        profileId: authUser?.profile.id,
+                        price: price
                     });
+    
+                    await updateMilestoneStatus(currentMilestone.id, 'not_started');
+
+                    const payoutNegotiationId = res.data;
+                    const newlySentMessage = await sendMessage('payout_negotiation', payoutNegotiationId);
+                    if(newlySentMessage){
+                        await updateChatRoom(newlySentMessage.room_id, {
+                            status: 'contract_termination'
+                        });
+                    }
+                } catch (error) {
+                    console.log('error on ending contract', error);
+                } finally {
+                    setIsLoading(false);
                 }
 
                 onClose();
@@ -93,10 +109,14 @@ const EndContractConfirmationDialog = ({
                             <SafeInput
                                 placeholder="Appeal Payout"
                                 type="decimal"
-                                min={1}
-                                max={60}
                                 value={price}
                                 onChange={handleOnChangePrice}
+                                errors={[
+                                    {
+                                        show: hasPriceError,
+                                        msg: `Maximum fare is ${currentMilestone?.price}`
+                                    }
+                                ]}
                             />
                         </div>
                     </div>
@@ -116,8 +136,9 @@ const EndContractConfirmationDialog = ({
                     <Button
                         fullWidth
                         size="sm"
-                        title="Yes, end collaboration"
+                        title={isLoading ? 'Requesting...' : 'Yes, end collaboration'}
                         onClick={handleOnClickConfrim}
+                        disabled={isLoading}
                     />
                     <Button
                         fullWidth
@@ -125,6 +146,7 @@ const EndContractConfirmationDialog = ({
                         size="sm"
                         title="No, continue collaboration"
                         onClick={handleOnClickCancel}
+                        disabled={isLoading}
                     />
                 </div>
             </div>

@@ -13,7 +13,7 @@ const MediaSkeleton = ({
     onReload
 }: MediaSkeletonProps) => {
     return (
-        <div className="relative w-full">
+        <div className="relative">
             <div className="h-48 w-full min-w-72 max-w-96 rounded-xl bg-gray-200 animate-pulse" />
 
             { isReloadable ? (

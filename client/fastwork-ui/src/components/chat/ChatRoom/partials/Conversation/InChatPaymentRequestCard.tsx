@@ -3,29 +3,26 @@ import Modal from "@/components/Modal";
 import TotalPaymentPreviewCard from "@/components/payment/TotalPaymentPreviewCard";
 import { useChat } from "@/contexts/chat";
 import { CreditCardIcon } from "@heroicons/react/24/solid";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 const InChatPaymentRequestCard = () => {
     const numberFormater = new Intl.NumberFormat();
     const { latestContract } = useChat();
     const [showTotalPaymentPreviewCardModal, setShowTotalPaymentPreviewCardModal] = useState(false);
-    const [isPaid, setIsPaid] = useState(false);
 
-    const handleOnClickPayNow = () => {
-        setShowTotalPaymentPreviewCardModal(true);
-    }
+    //computed
+        const isPaid = useMemo(() => {
+            return !!(latestContract?.payment);
+        }, [latestContract?.payment]);
 
-    const handleOnPaid = () => {
-        setShowTotalPaymentPreviewCardModal(false);
-        setIsPaid(true);
-        //refresh current chat room with updated data
-        // if(activeChatRoom) insertOrUpdateLocalChatRoom(activeChatRoom);
-    }
+    //methods
+        const handleOnClickPayNow = () => {
+            setShowTotalPaymentPreviewCardModal(true);
+        }
 
-    // const isPaid = useMemo(() => {
-    //     const match = activeChatRoom?.match;
-    //     return !!match?.payment;
-    // }, [activeChatRoom]);
+        const handleOnPaid = () => {
+            setShowTotalPaymentPreviewCardModal(false);
+        }
       
     return (
         <>
