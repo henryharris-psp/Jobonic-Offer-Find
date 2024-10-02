@@ -160,14 +160,10 @@ const CustomiseJobRequestForm: React.FC = () => {
       price: parseInt(formState.budget),
       priceUnit: formState.priceUnit,
     };
-
-    console.log('Service Data:', JSON.stringify(serviceData, null, 2));
-
+    
     try {
       const response = await httpClient.post('service', serviceData);
       const savedService = response.data;
-
-      console.log('Response Data:', savedService);
 
       const serviceForCSV = {
         id: savedService.id,
@@ -482,7 +478,7 @@ const CustomiseJobRequestForm: React.FC = () => {
           </div>
           <div className="flex justify-center pb-6 text-center items-center">
             <button type="submit" className="bg-[#0B2147] hover:bg-[#D0693B] text-white font-semibold py-3 px-12 text-sm rounded-2xl">
-              Submit
+              Submitxxx
             </button>
           </div>
         </form>
