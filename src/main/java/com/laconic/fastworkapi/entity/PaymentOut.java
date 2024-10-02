@@ -35,5 +35,4 @@ public class PaymentOut extends Auditable<UUID> {
     private Profile profile;
 
     private Double price;
-
 }

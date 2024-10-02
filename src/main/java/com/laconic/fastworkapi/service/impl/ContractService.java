@@ -4,12 +4,10 @@ import com.laconic.fastworkapi.dto.*;
 import com.laconic.fastworkapi.entity.Checkpoint;
 import com.laconic.fastworkapi.entity.Contract;
 import com.laconic.fastworkapi.entity.Payment;
+import com.laconic.fastworkapi.entity.PaymentOut;
 import com.laconic.fastworkapi.enums.PayableType;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
-import com.laconic.fastworkapi.repo.ICheckpointRepo;
-import com.laconic.fastworkapi.repo.IContractRepo;
-import com.laconic.fastworkapi.repo.PaymentRepo;
-import com.laconic.fastworkapi.repo.TaskRepo;
+import com.laconic.fastworkapi.repo.*;
 import com.laconic.fastworkapi.service.ICheckpointService;
 import com.laconic.fastworkapi.service.IContractService;
 import com.laconic.fastworkapi.service.IMatchesService;
@@ -31,6 +29,7 @@ public class ContractService implements IContractService {
     private final ICheckpointService checkpointService;
     private final ICheckpointRepo checkpointRepo;
     private final PaymentRepo paymentRepo;
+    private final IPaymentOutRepo paymentOutRepo;
 
     private ContractDTO set(Contract contract, ContractDTO dto) {
         dto.getAcceptBy().forEach(profileService::get);
@@ -60,10 +59,10 @@ public class ContractService implements IContractService {
 
     @Override
     public ContractResponseDTO getById(UUID id) {
-        ContractResponseDTO contractResponseDTO = new ContractResponseDTO(getContract(id));
+        Contract contract = contractRepo.findById(id).orElseThrow(() -> new RuntimeException("Contract not found"));
+        ContractResponseDTO contractResponseDTO = new ContractResponseDTO(contract);
 
         Payment payment = paymentRepo.findPaymentByPayableIdAndPayableType(id, PayableType.CONTRACT);
-
         contractResponseDTO.setPayment(payment);
 
         List<CheckResponseDTO> checkResponseDTOs = checkpointService.getCheckPointByContractIdIn(Collections.singletonList(contractResponseDTO.getId()))
@@ -90,12 +89,60 @@ public class ContractService implements IContractService {
 
         contractResponseDTO.setMilestones(checkResponseDTOs);
 
+        PaymentOut paymentOut = paymentOutRepo.findByContractId(id);
+        if (paymentOut != null) {
+            contractResponseDTO.setPayoutNegotiations(Collections.singletonList(new PaymentOutDTO(paymentOut)));
+        }
+
         return contractResponseDTO;
     }
 
     @Override
     public List<ContractResponseDTO> getAll() {
-        return contractRepo.findAll().stream().map(ContractResponseDTO::new).toList();
+        return contractRepo.findAll().stream().map(contract -> {
+            // Initialize ContractResponseDTO from the contract entity
+            ContractResponseDTO contractResponseDTO = new ContractResponseDTO(contract);
+
+            // Fetch and set payment information
+            Payment payment = paymentRepo.findPaymentByPayableIdAndPayableType(contract.getId(), PayableType.CONTRACT);
+            contractResponseDTO.setPayment(payment);
+
+            // Fetch checkpoints related to the contract
+            List<CheckResponseDTO> checkResponseDTOs = checkpointService.getCheckPointByContractIdIn(Collections.singletonList(contractResponseDTO.getId()))
+                    .stream()
+                    .map(CheckResponseDTO::new)
+                    .toList();
+
+            // Fetch tasks related to checkpoints using checkpoint IDs
+            List<UUID> checkpointIds = checkResponseDTOs.stream()
+                    .map(CheckResponseDTO::getId)
+                    .toList();
+
+            List<TaskDTO> taskDTOs = taskRepo.findByCheckpointIdIn(checkpointIds)
+                    .stream()
+                    .map(TaskDTO::new)
+                    .toList();
+
+            // Group tasks by checkpoint and set them in CheckResponseDTO
+            Map<UUID, List<TaskDTO>> tasksGroupedByCheckpoint = taskDTOs.stream()
+                    .collect(Collectors.groupingBy(TaskDTO::getCheckpointId));
+
+            for (CheckResponseDTO checkResponseDTO : checkResponseDTOs) {
+                List<TaskDTO> relatedTasks = tasksGroupedByCheckpoint.getOrDefault(checkResponseDTO.getId(), new ArrayList<>());
+                checkResponseDTO.setTasks(relatedTasks);
+            }
+
+            // Set milestones in ContractResponseDTO
+            contractResponseDTO.setMilestones(checkResponseDTOs);
+
+            // Fetch PaymentOut related to the contract
+            PaymentOut paymentOut = paymentOutRepo.findByContractId(contract.getId());
+            if (paymentOut != null) {
+                contractResponseDTO.setPayoutNegotiations(Collections.singletonList(new PaymentOutDTO(paymentOut)));
+            }
+
+            return contractResponseDTO;
+        }).toList();
     }
 
     @Override

@@ -8,4 +8,6 @@ import java.util.UUID;
 
 @Repository
 public interface IPaymentOutRepo extends JpaRepository<PaymentOut, UUID> {
+    PaymentOut findByContractId(UUID contractId);
+
 }

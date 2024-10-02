@@ -16,7 +16,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class ContractResponseDTO {
-
     private UUID id;
 
     private UUID matchesId;
@@ -49,9 +48,5 @@ public class ContractResponseDTO {
         this.createdDate = contract.getCreatedDate();
         this.profileId=contract.getProfile().getId();
         this.currentCheckpoint = contract.getCurrentCheckpoint() != null ? new CheckResponseDTO(contract.getCurrentCheckpoint()) : null;
-        this.payoutNegotiations = contract.getPaymentOuts().stream()
-            .sorted(Comparator.comparing(PaymentOut::getCreatedDate).reversed())
-            .map(PaymentOutDTO::new)
-            .toList();
     }
 }
