@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import MyServiceCard from '@/components/MyServiceCard';
 import { useSelector } from 'react-redux';
@@ -15,7 +15,7 @@ interface ServiceData {
     rating?: number;
 }
 
-export default function AIServiceMatches() {
+const AIServiceMatches = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -65,3 +65,11 @@ export default function AIServiceMatches() {
         </div>
     );
 }
+
+const AIServiceMatchesWithSuspense = () => (
+    <Suspense>
+        <AIServiceMatches/>
+    </Suspense>
+);
+
+export default AIServiceMatchesWithSuspense;
