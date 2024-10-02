@@ -40,16 +40,10 @@ public class Contract extends Auditable<UUID> {
     @JoinColumn(name = "profile_id")
     private Profile profile;
 
-    @OneToMany(mappedBy = "contract", cascade = CascadeType.ALL)
-    private List<Checkpoint> milestones;
-
     private boolean isActive = true;
 
     @OneToOne
     @JoinColumn(name = "current_checkpoint_id")
     private Checkpoint currentCheckpoint;
-
-    @OneToMany(mappedBy = "contract", cascade = CascadeType.ALL)
-    private List<PaymentOut> paymentOuts;
 }
 

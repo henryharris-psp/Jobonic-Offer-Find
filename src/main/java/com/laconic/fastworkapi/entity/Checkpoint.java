@@ -60,7 +60,7 @@ public class Checkpoint extends Auditable<UUID> {
     @OneToMany(mappedBy = "checkpoint", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Task> tasks;
 
-    @OneToMany(mappedBy = "checkPoint", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "checkPoint", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Attachment> attachments = new ArrayList<>();
 
     @OneToOne(mappedBy = "currentCheckpoint")
