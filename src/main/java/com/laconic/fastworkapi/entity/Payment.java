@@ -34,12 +34,12 @@ public class Payment extends Auditable<UUID> {
 
     private String remarks;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
     @JsonBackReference("payment-sent")
     private Profile senderId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id")
     @JsonBackReference("payment-received")
     private Profile receiverId;
