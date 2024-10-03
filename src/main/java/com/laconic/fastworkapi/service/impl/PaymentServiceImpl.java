@@ -49,16 +49,12 @@ public class PaymentServiceImpl implements PaymentService {
                     .getId();
             default -> throw new NotFoundException("Incorrect Payable type");
         };
-
-
+        
         Profile senderId = userRepo.findById(paymentDTO.getSenderId())
                 .orElseThrow(() -> new NotFoundException("Sender not found"));
 
         Profile receiverId = userRepo.findById(paymentDTO.getReceiverId())
                 .orElseThrow(() -> new NotFoundException("Receiver not found"));
-
-//        Optional<Profile> senderId = userRepo.findById(paymentDTO.getSenderId());
-//        Optional<Profile> receiverId = userRepo.findById(paymentDTO.getReceiverId());
 
         Payment payment = Payment.builder()
                 .paymentMethod(paymentDTO.getPaymentMethod())
@@ -75,14 +71,12 @@ public class PaymentServiceImpl implements PaymentService {
             Contract contract = contractRepo.findById(paymentDTO.getPayableId())
                     .orElseThrow(() -> new NotFoundException("Contract not found"));
 
-            List<Checkpoint> checkpoints = checkpointRepo.findCheckpointByContractIdIn(List.of(paymentDTO.getPayableId()));
+            Checkpoint checkpoint = checkpointRepo.findFirstByMatchesIdOrderByCreatedDateAsc(contract.getMatches().getId());
 
-            checkpoints.forEach(checkpoint -> {
-                checkpoint.setStatus("waiting_for_submission");
-                checkpointRepo.save(checkpoint);
-            });
+            checkpoint.setStatus("waiting_for_submission");
+            checkpointRepo.save(checkpoint);
 
-            contract.setCurrentCheckpoint(checkpoints.getFirst());
+            contract.setCurrentCheckpoint(checkpoint);
 
             contractRepo.save(contract);
         } else if("CHECKPOINT".equalsIgnoreCase(String.valueOf(paymentDTO.getPayableType()))) {
