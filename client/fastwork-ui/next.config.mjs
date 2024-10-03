@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
+
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin();
+
 const nextConfig = {
     reactStrictMode: false,
     eslint: {
@@ -6,7 +11,11 @@ const nextConfig = {
     },
     typescript: {
         ignoreBuildErrors: true, //TODO: temporary
-      },
+    },
+    i18n: {
+        locales: ['en', 'zh', 'th'],
+        defaultLocale: 'en',
+    },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

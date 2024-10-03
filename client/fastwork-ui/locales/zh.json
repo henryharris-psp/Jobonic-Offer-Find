@@ -1,0 +1,74 @@
+{
+    "LandingPage": {
+      "title": "技能与需求相结合的地方",
+      "subtitle": "满足您在 Jobonic 的服务需求",
+      "findService": "寻找服务",
+      "offerService": "提供服务",
+      "findAService": "寻找服务",
+      "viewServiceOffers": "查看服务提供",
+      "haveServiceToOffer": "有服务要提供吗？",
+      "offerYourServices": "在 Jobonic 免费提供您的服务！",
+      "viewServiceRequests": "查看服务请求",
+      "satisfiedCollaborators": "100 位满意的合作者",
+      "joinNow": "立即加入"
+    },
+
+    "AboutPage": {
+        "findService": "寻找服务",
+        "offerService": "提供服务",
+        "who_are_we": "我们是谁？",
+        "description": "作为我们母公司Laconic的骄傲子公司，我们承载着使专业互动简洁流畅的传统。“Laconic”指的是简洁的表达。我们在Jobonic体现了技能和需求之间匹配合作的简单性。",
+        "description_two": "在當今世界，購買產品變得非常方便，所有人都可以 觸手可及的電子商務平台。至於服務？這並不像 簡單的。要雇用一名自由工作者，人們必須仔細閱讀合約中的長文本，條款和協議。我們想讓這個過程變得簡潔——簡單 並且無縫",
+        "shopping_services": "购物服务应该像购物产品一样方便！提供服务也是如此！",
+        "offering_services": "提供服务吗？",
+        "ask_needs": "询问他们的服务需求。",
+        "understand_employer": "了解雇主正在寻找什么。",
+        "build_proposal": "建立您的提案。",
+        "select_skills": "选择您相关的技能和经验以满足他们的需求。",
+        "highlight_work": "强调相关的过去工作并提供清晰的计划，说明您将如何完成项目。",
+        "collaborate_effectively": "有效地合作。",
+        "maintain_communication": "与您的雇主保持定期沟通。",
+        "provide_updates": "提供更新，寻求反馈，进行必要的编辑。",
+        "release_payment": "完成后，Jobonic将向您付款。",
+        "looking_for_services": "寻找服务吗？",
+        "ask_experience": "询问他们的经验和技能。",
+        "understand_background": "了解他们的背景，过去的项目和技能。",
+        "buy_service": "购买服务。",
+        "make_payment": "为他们的服务付款，Jobonic将保留付款，直到服务提供商完成工作。",
+        "when_you_approve": "当您批准该工作时，Jobonic将向自由职业者支付。",
+        "respond_in_48": "如果您在48小时内未作出回应，Jobonic将自动向自由职业者支付。",
+        "simple_isnt_it": "简单，不是吗？",
+        "register_now": "今天注册一个帐户并开始购买服务。"
+    },
+    
+    "FindServicePage": {
+        "what_would_you_like_to_do": "您想做什麼?",
+        "meet_your_needs_with_skills": "用技能满足您的需求",
+        "no_idea_what_youd_like": "不知道您想要什麼嗎?",
+        "here_are_some_services_available": "這裡有一些可用的服務",
+        "more": "更多",
+        "services_list": "服務列表",
+        "not_what_you_are_looking_for": "不是您在尋找的嗎?",
+        "work_category": "工作類別",
+        "match_services": "对应的服务",
+        "filter": "篩選",
+        "sort": "排序"
+    },
+
+    "ServiceRequestPage": {
+        "no_request_match_your_skills?": "沒有請求與您的技能匹配嗎？",
+        "personalise_your_service_offer": "個性化您的服務提供"
+    },
+
+    "SignUpPage": {
+        "sign_up": "註冊",
+        "first_name": "名字",
+        "last_name": "姓氏",
+        "email": "電子郵件",
+        "username": "用戶名",
+        "password": "密碼",
+        "confirm_password": "確認密碼",
+        "create_user": "創建用戶",
+        "already_have_an_account_login_here": "已經有帳戶了嗎？在這裡登錄"
+    } 
+}

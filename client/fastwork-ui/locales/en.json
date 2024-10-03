@@ -1,0 +1,78 @@
+{
+    "LandingPage": {
+      "title": "Where skills meet needs",
+      "subtitle": "Meet your service needs with Jobonic",
+      "findService": "Find Service",
+      "offerService": "Offer Service",
+      "findAService": "Find a service",
+      "viewServiceOffers": "View service offers",
+      "haveServiceToOffer": "Have a service to offer?",
+      "offerYourServices": "Offer your services at Jobonic at no cost!",
+      "viewServiceRequests": "View service requests",
+      "satisfiedCollaborators": "100 satisfied collaborators",
+      "joinNow": "Join now"
+    },
+
+    "AboutPage": {
+        "findService": "Find Service",
+        "offerService": "Offer Service",
+        "who_are_we": "Who are we?",
+        "description": "As a proud subsidiary of our parent company, Laconic, we carry forward the legacy of making professional interactions straightforward and smooth. \"Laconic\" refers to a concise expression. Here at Jobonic, we embody the simplicity in matching collaborations between skills and needs.",
+        "description_two": "In today's world, shopping for products has been so covenient, with all ecommerce platforms at your fingertips. As for services? It's not as simple. To hire a freelancer, one has to go through long texts in contracts, terms and agreements. We want to make this process laconic -- simple and seamless.",
+        "shopping_services": "Shopping for services ought to be as convenient as shopping for products! Same goes for offering services!",
+        "offering_services": "Offering services?",
+        "ask_needs": "Ask about their service needs.",
+        "understand_employer": "Understand what your employer is looking for.",
+        "build_proposal": "Build your proposal.",
+        "select_skills": "Select your relevant skills and experience that meet their needs.",
+        "highlight_work": "Highlight relevant past work and provide a clear plan for how you will complete the project.",
+        "collaborate_effectively": "Collaborate effectively.",
+        "maintain_communication": "Maintain regular communication with your employer.",
+        "provide_updates": "Provide updates, ask for feedback, make necessary edits.",
+        "release_payment": "Upon completion, Jobonic will release payment to you.",
+        "looking_for_services": "Looking for services?",
+        "ask_experience": "Ask about their experience and skills.",
+        "understand_background": "Understand their background, past projects, and skills.",
+        "buy_service": "Buy the service.",
+        "make_payment": "Make payment for their services and Jobonic will hold onto the payment until the service provider completes the work.",
+        "when_you_approve": "When you approve of the work, Jobonic will release payment to the freelancer.",
+        "respond_in_48": "If you do not respond in 48 hours, Jobonic will automatically release payment to the freelancer.",
+        "simple_isnt_it": "Simple, isn't it?",
+        "register_now": "Register for an account today and start shopping for services."
+    },
+
+    "TopSectionFindServices": {
+        "what_would_you_like_to_do": "What would you like to do?"
+    },
+    
+    "FindServicePage": {
+        "what_would_you_like_to_do": "What would you like to do?",
+        "meet_your_needs_with_skills": "Meet your needs with skills",
+        "no_idea_what_youd_like": "No idea what you'd like?",
+        "here_are_some_services_available": "Here are some services available",
+        "more": "More",
+        "services_list": "Services List",
+        "not_what_you_are_looking_for": "Not what you are looking for?",
+        "work_category": "Work Category",
+        "match_services": "Match Services",
+        "filter": "Filter",
+        "sort": "Sort"
+    },      
+
+    "ServiceRequestPage": {
+        "no_request_match_your_skills?": "No request match your skills?",
+        "personalise_your_service_offer": "Personalise your service offer"
+    },
+
+    "SignUpPage": {
+        "sign_up": "Sign Up",
+        "first_name": "First Name",
+        "last_name": "Last Name",
+        "email": "Email",
+        "username": "Username",
+        "password": "Password",
+        "confirm_password": "Confirm Password",
+        "create_user": "Create User",
+        "already_have_an_account_login_here": "Already have an account? Login here"
+    }
+}
