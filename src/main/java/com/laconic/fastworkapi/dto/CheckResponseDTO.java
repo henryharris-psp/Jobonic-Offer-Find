@@ -2,6 +2,7 @@ package com.laconic.fastworkapi.dto;
 
 import com.laconic.fastworkapi.entity.Attachment;
 import com.laconic.fastworkapi.entity.Checkpoint;
+import com.laconic.fastworkapi.entity.Payment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class CheckResponseDTO {
     private List<TaskDTO> tasks;
     private List<AttachmentDTO> attachments;
     private String status;
+    private Payment payment;
 
     public CheckResponseDTO(Checkpoint checkpoint) {
         this.serviceId=checkpoint.getService().getId();

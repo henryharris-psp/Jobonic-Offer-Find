@@ -100,13 +100,11 @@ public class PaymentServiceImpl implements PaymentService {
 
             Checkpoint lastCheckpoint = checkpoints.stream().filter(c -> c.getStatus().equalsIgnoreCase("waiting_for_submission")).findFirst().orElse(null);
 
-            System.out.println("Last Checkpoint: " + lastCheckpoint.getTitle());
-
             if (Objects.nonNull(lastCheckpoint)) {
                 contract.setCurrentCheckpoint(lastCheckpoint);
-            } else {
-                contract.setCurrentCheckpoint(null);
             }
+
+            contract.setCurrentCheckpoint(null);
 
             contractRepo.save(contract);
         }
