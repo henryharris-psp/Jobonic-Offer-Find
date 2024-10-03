@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { BookmarkSquareIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
 import { RootState } from "@/store";
 import httpClient from "@/client/httpClient";
 import { useSelector } from "react-redux";
+import { Skill } from "@/types/general";
 
 type SkillInstance = {
     id: string;
@@ -20,7 +21,7 @@ const Skills = () => {
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
     const [userId, setUserId] = useState(0);
-    const [skillName , setSkillName] = useState<string>("");
+    const [skillName, setSkillName] = useState<string>("");
     const [feedbackMessage, setFeedbackMessage] = useState<{ [key: string]: string | null }>({
         skills: "",
     });
@@ -44,32 +45,46 @@ const Skills = () => {
         }
     };
     const fetchUserSkills = async () => {
-
-        if(!authUser?.profile.id) {
-            console.log("user profile id is missing...");
+        if (!authUser?.profile.id) {
+            console.log("User profile ID is missing...");
             return;
         }
         try {
             const response = await httpClient.get(`/user-skill/all?profileId=${authUser?.profile.id}`);
             const displayData = response.data;
-            // Check if displayData is an array and has at least one item
-        if (Array.isArray(displayData) && displayData.length > 0) {
-            // Access the skillList from the first item in the array
-            const skills = displayData[0]?.skillList || [];
-            // Extract only the skill names
-            const namesOnly = skills.map((skill: any) => ({ id : skill.id , name : skill.name}));
-            console.log('Skill Names:', namesOnly);
-            setSelectedSkills(namesOnly); // Update state with only the names
-        } else {
-            console.error("Unexpected API response structure:", displayData);
-        }
+
+            // Check if displayData is an array and contains valid data
+            if (Array.isArray(displayData) && displayData.length > 0) {
+                const skills = displayData[0]?.skillList || [];
+                const namesOnly = skills.map((skill: any) => ({ id: skill.id, name: skill.name }));
+                console.log('Skill Names:', namesOnly);
+                setSelectedSkills(namesOnly); // Update the state with the skills
+            } else {
+                console.error("Unexpected API response structure:", displayData);
+            }
         } catch (error) {
             console.error("Error fetching user skills:", error);
         }
     };
+
+    // Fetch the skills when the component mounts
+    useEffect(() => {
+        fetchUserSkills();
+    }, []);
+
     const filteredSkills = skills.filter((skill) =>
         skill.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const handleSkillClick = (skill: SkillInstance) => {
+        // Check if the skill is already selected to prevent duplicates
+        if (!selectedSkills.some((s) => s.id === skill.id)) {
+            setSelectedSkills((prevSelectedSkills) => [...prevSelectedSkills, skill]);
+        }
+
+        // Hide the dropdown after selecting a skill
+        setShowDropdown(false);
+    };
 
     // Remove skill
     const removeSkill = (skillToRemove: SkillInstance) => {
@@ -79,20 +94,7 @@ const Skills = () => {
         setSelectedSkills(updatedSkills);
     };
 
-    useEffect(() => {
-        fetchSkills();
-    }, []);
 
-    const handleSkillClick = (skill: SkillInstance) => {
-        setSelectedSkills((prevSelectedSkills) => {
-            if (prevSelectedSkills.some((s) => s.id === skill.id)) {
-                return prevSelectedSkills.filter((s) => s.id !== skill.id);
-            } else {
-                return [...prevSelectedSkills, skill];
-            }
-        });
-        setShowDropdown(false);
-    };
     const handleSave = async () => {
         try {
             const skillIdsParams = selectedSkills
@@ -107,11 +109,11 @@ const Skills = () => {
         }
     };
     return (
-        <section className="flex flex-col w-[60%] justify-start ml-16 mt-4 pb-4">
+        <section className="flex flex-col justify-start lg:w-[60%] mt-4 pb-4">
             <div className="flex space-x-3 justify-start items-center mb-6">
-                <h2 className="text-2xl font-bold text-cyan-950">Skills</h2>
+                <h2 className="text-xl font-bold text-cyan-950">Skills</h2>
                 <PencilSquareIcon
-                    className="w-6 h-6 cursor-pointer text-yellow-700"
+                    className="w-5 h-5 cursor-pointer text-black"
                     onClick={() => setIsEditing(!isEditing)}
                 />
             </div>
@@ -122,7 +124,7 @@ const Skills = () => {
                         {selectedSkills.map((skill) => (
                             <div
                                 key={skill.id}
-                                className={`bg-gray-100 text-cyan-950 px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-300 flex items-center space-x-2`}
+                                className="bg-gray-100 text-cyan-950 px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-300 flex items-center space-x-2"
                                 onClick={() => removeSkill(skill)}
                             >
                                 <span className="text-cyan-950 font-bold">{skill.name}</span>
@@ -135,6 +137,7 @@ const Skills = () => {
                             </div>
                         ))}
                     </div>
+
                     <div className="relative mt-4">
                         <input
                             type="text"
@@ -142,9 +145,10 @@ const Skills = () => {
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             onFocus={() => setShowDropdown(true)}
-                            onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
-                            className="mb-2 rounded-lg border-none bg-gray-100 shadow-lg w-full p-4"
+                            onBlur={() => setTimeout(() => setShowDropdown(false), 300)}  // Increase timeout to ensure click is registered
+                            className="mb-2 rounded-lg bg-gray-50 border-gray-300 shadow-md w-full p-3"
                         />
+
                         {showDropdown && filteredSkills.length > 0 && (
                             <div
                                 ref={dropdownRef}
@@ -154,8 +158,8 @@ const Skills = () => {
                                     <button
                                         key={skill.id}
                                         className={`w-full text-left px-4 py-2 mb-1 rounded-lg ${selectedSkills.some((s) => s.id === skill.id)
-                                                ? "bg-white text-black"
-                                                : "bg-white text-gray-900"
+                                            ? "bg-white text-black"
+                                            : "bg-white text-gray-900"
                                             } hover:bg-gray-100`}
                                         onClick={() => handleSkillClick(skill)}
                                     >
@@ -165,30 +169,34 @@ const Skills = () => {
                             </div>
                         )}
                     </div>
-                    <div
+                    <button
                         onClick={handleSave}
-                        className="flex justify-center items-center mt-2 p-2 w-28 shadow-lg bg-[#0B2147] text-white font-bold rounded-md cursor-pointer"
+                        className="flex justify-center items-center mt-2 p-3 w-28 shadow-lg bg-[#0B2147] text-white text-sm font-medium rounded-2xl cursor-pointer"
                     >
-                       <BookmarkSquareIcon className="w-6 h-6 mr-2" />
-                       <span>Save</span>
-                    </div>
+                        <BookmarkSquareIcon className="w-5 h-5 mr-2" />
+                        <span>Save</span>
+                    </button>
                 </>
             ) : (
                 <div className="flex flex-wrap gap-2 mt-4 mb-4">
-                    {selectedSkills.map((skill) => (
-                        <div
-                            key={skill.id}
-                            className="bg-gray-100 text-cyan-950 px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-300 flex items-center space-x-2"
-                        >
-                            <span className="text-cyan-950 font-bold">{skill.name}</span> {/* Display skill name */}
-                            <button
-                                onClick={() => removeSkill(skill)}
-                                className="text-red-500 hover:text-red-700"
+                    {selectedSkills.length > 0 ? (
+                        selectedSkills.map((skill) => (
+                            <div
+                                key={skill.id}
+                                className="bg-sky-100 text-cyan-950 px-3 py-2 rounded-full cursor-pointer hover:bg-gray-300 flex items-center space-x-2"
                             >
-                                ×
-                            </button>
-                        </div>
-                    ))}
+                                <span className="text-cyan-950 font-bold">{skill.name}</span> {/* Display skill name */}
+                                <button
+                                    onClick={() => removeSkill(skill)}
+                                    className="text-red-500 hover:text-red-700"
+                                >
+                                    ×
+                                </button>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No skills found</p>
+                    )}
                 </div>
             )}
 
