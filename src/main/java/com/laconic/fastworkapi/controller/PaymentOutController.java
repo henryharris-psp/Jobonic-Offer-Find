@@ -35,4 +35,8 @@ public class PaymentOutController {
         return ResponseEntity.ok(agreementService.getById(id));
     }
 
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable UUID id) {
+        return agreementService.delete(id);
+    }
 }

@@ -13,4 +13,6 @@ public interface PaymentOutService {
     List<PaymentOutDTO> getAll();
 
     PaymentOutDTO getById(UUID id);
+
+    String delete(UUID id);
 }
