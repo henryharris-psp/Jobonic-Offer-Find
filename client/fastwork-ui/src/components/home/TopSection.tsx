@@ -4,6 +4,7 @@ import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import httpClient from "@/client/httpClient";
+import { useTranslations } from "next-intl";
 
 interface CombinedSearchResults {
     offers: any[];
@@ -83,9 +84,9 @@ const TopSection: React.FC = (): React.ReactNode => {
         }
         
         router.push(`/offerServices?searchKeyword=${searchKeyword}`);
-    
     };
-    
+
+    const t = useTranslations("LandingPage");
 
     return (
         <section className="flex flex-col items-center justify-center py-14 text-black">
@@ -95,7 +96,7 @@ const TopSection: React.FC = (): React.ReactNode => {
                 width={600}
                 height={600}
             />
-            <p className="mt-3 text-lg md:text-xl mb-12">Where skills meet needs</p>
+            <p className="mt-3 text-lg md:text-xl mb-12">{t("title")}</p>
 
             <div className="w-full md:w-2/3 lg:w-1/2 flex flex-col rounded-l-lg overflow-hidden sm:flex-row space-y-1 sm:space-y-0">
                 <div className="flex-1 flex flex-row min-h-14">

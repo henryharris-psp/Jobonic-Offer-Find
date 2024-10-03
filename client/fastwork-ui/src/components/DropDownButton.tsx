@@ -1,9 +1,11 @@
+"use client";
 import React, { useMemo, useState } from "react";
 import CaretDownIcon from "../../public/icons/CaretDownIcon";
 
 export interface DropDownButtonOption {
     value: string;
     label: string;
+    code: string;
 }
 
 interface DropDownButtonProps {
@@ -23,6 +25,8 @@ const DropDownButton = ({
         return options.find( option => option.value === value );
     }, [value]);
 
+    const language = localStorage.getItem('lang') || 'en';
+
     return (
         <div 
             className="relative"
@@ -30,7 +34,7 @@ const DropDownButton = ({
             onMouseLeave={() => setIsHover(false)}
         >
             <button className="flex items-center space-x-1 text-white p-2 rounded">
-                <p>{ selectedOption?.label }</p>
+                <p>{ language === 'en' ? "English" : language === 'zh' ? "中文" : "ไทย" }</p>
                 <CaretDownIcon className={`size-2 transition-transform ${
                     isHover ? '-rotate-180' : ''
                 }`}/>

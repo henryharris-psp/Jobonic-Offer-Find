@@ -11,17 +11,15 @@ import { usePathname } from "next/navigation";
 import AdminRoot from "@/components/admin/AdminRoot";
 import Notifications from "@/components/Notifications";
 import "./globals.css";
-
-// import ChatBox from "../components/ChatBox";
-// import Footer from "../components/footer";
-// import initialiseCategories from "@/utils/initialiseCategories";
-// import initializeSkills from "@/utils/initialiseSkills";
+import { NextIntlClientProvider } from "next-intl";
+import { useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
 interface RootLayoutProps {
     children: React.ReactNode;
     showFooter?: boolean;
+    messages: Record<string, string>;
 }
 
 const authenticate = async (accessToken: string, refreshToken: string) => {
@@ -46,12 +44,22 @@ const authenticate = async (accessToken: string, refreshToken: string) => {
 const RootLayout = ({
     children,
     showFooter = true,
+    messages,
 }: Readonly<RootLayoutProps>) => {
+    const [locale, setLocale] = useState('en'); // Default to 'en'
 
     useWindowResize();
     const dispatch = useDispatch();
     const pathname = usePathname();
     const isAdminRoute = pathname.includes('admin');
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            // Now safe to access localStorage
+            const storedLocale = localStorage.getItem('locale') || 'en';
+            setLocale(storedLocale);
+        }
+    }, []);
 
     //boot method
     useEffect(() => {
@@ -87,7 +95,7 @@ const RootLayout = ({
     }, []);
 
     return (
-        <html lang="en">
+        <html lang={locale}>
             <script
                 src="https://accounts.google.com/gsi/client"
                 async
@@ -97,7 +105,7 @@ const RootLayout = ({
 
                 {/* TODO: temporary, just to load colors */}
                 <div className="hidden">
-                    <div className="text-xs text-sm text-lg text-2xl placeholder:text-xs placeholder:text-sm placeholder:text-lg placeholder:text-2xl hidden"/>
+                    <div className=""/>
                     <div className="text-[#0B2147] bg-[#0B2147] hidden"/>
                     <div className="text-[#B0B0B0] bg-[#B0B0B0] hidden"/>
                     <div className="text-[#5A9E4A] bg-[#5A9E4A] hidden"/>
@@ -127,12 +135,26 @@ const RootLayout = ({
 const RootLayoutWithRedux = ({
     children,
     showFooter =true,
+    messages,
 }: Readonly<RootLayoutProps>) => {
+    
+    const [locale, setLocale] = useState('en'); // Default to 'en'
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            // Now safe to access localStorage
+            const storedLocale = localStorage.getItem('locale') || 'en';
+            setLocale(storedLocale);
+        }
+    }, []);
+
     return (
         <Provider store={store}>
-            <RootLayout showFooter={showFooter}>
-                {children}
-            </RootLayout>
+            <NextIntlClientProvider locale={locale} messages={messages}>
+                <RootLayout messages={messages} showFooter={showFooter}>
+                    {children}
+                </RootLayout>
+            </NextIntlClientProvider>
         </Provider>
     );
 };

@@ -1,8 +1,11 @@
 import { PageLink } from '@/types/general';
-import { Language } from '@/types/ui';
 import { v4 as uuid } from 'uuid';
 
-export const availableLanguages: Language[] = ['English', '中文', 'ไทย'];
+export const availableLanguages: { label: string, code: string }[] = [
+    { label: 'English', code: 'en' },
+    { label: '中文', code: 'zh' },
+    { label: 'ไทย', code: 'th' }
+];
 
 export const pageLinks: PageLink[] = [
     {

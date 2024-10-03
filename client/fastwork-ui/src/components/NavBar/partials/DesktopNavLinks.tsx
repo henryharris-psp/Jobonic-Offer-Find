@@ -1,29 +1,37 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import DropDownButton, { DropDownButtonOption } from "@/components/DropDownButton";
 import { availableLanguages, pageLinks } from "@/data/nav-bar";
-import { RootState } from "@/store";
 import Link from "next/link";
-import { useDispatch, useSelector } from "react-redux";
-import { usePathname } from 'next/navigation';
-import { setSelectedLanguage } from "@/store/reducers/uiReducer";
-import { Language } from "@/types/ui";
+import { usePathname, useRouter } from 'next/navigation';
 import { PageLink } from "@/types/general";
 
 const DesktopNavLinks = () => {
     const currentPathName = usePathname();
-    const dispatch = useDispatch();
-    const { selectedLanguage } = useSelector((state: RootState) => state.ui);
+    const router = useRouter();
+    const [language, setLanguage] = useState({}); 
 
-    //methods
-        const isActiveLink = (page: PageLink) => {
-            return page.path === currentPathName    
-        }
+    // Methods
+    const isActiveLink = (page: PageLink) => {
+        return page.path === currentPathName;
+    };
 
-        const handleOnAppLanguageChange = (option: DropDownButtonOption) => {
-            dispatch(setSelectedLanguage(option.value as Language));
-        }
+    useEffect(() => {
+        const getLocalLanguage = localStorage.getItem('lang') || 'en';
+        setLanguage(getLocalLanguage);
+    });
+
+    const handleOnAppLanguageChange = (option: DropDownButtonOption) => {
+        localStorage.setItem('lang', option.code);
+        document.cookie = `lang=${option.code}; path=/`;
+        setLanguage(option.code);
+        
+        router.refresh();
+    };
 
     return (
-        //desktop nav links
+        // Desktop nav links
         <div className="flex items-center space-x-4 text-sm">
             <ul className="flex space-x-3 text-white items-center font-medium">
                 {pageLinks.map((page) => (
@@ -39,10 +47,11 @@ const DesktopNavLinks = () => {
                 ))}
 
                 <DropDownButton
-                    value={selectedLanguage}
-                    options={availableLanguages.map((language) => ({
-                        label: language,
-                        value: language,
+                    value={language}
+                    options={availableLanguages.map(({ label, code }) => ({
+                        value: label,
+                        label: label,
+                        code: code
                     }))}
                     onChange={handleOnAppLanguageChange}
                 />
