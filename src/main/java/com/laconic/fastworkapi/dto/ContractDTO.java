@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.laconic.fastworkapi.entity.Contract;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -13,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ContractDTO extends Contract {
+public class ContractDTO implements Serializable {
 
     private UUID id;
     private UUID matchesId;
