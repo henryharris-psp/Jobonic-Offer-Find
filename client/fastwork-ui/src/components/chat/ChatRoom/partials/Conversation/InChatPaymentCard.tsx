@@ -148,7 +148,7 @@ const InChatPaymentCard = ({
                             </div>
                             <div className="flex justify-between text-gray-600 mt-2">
                                 <span className="text-sm">Payment Method:</span>
-                                <span className="text-sm">{payment.paymentMethod}</span>
+                                <span className="text-sm capitalize">{payment.paymentMethod}</span>
                             </div>
                         </div>
 

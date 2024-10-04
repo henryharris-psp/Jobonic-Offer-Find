@@ -6,7 +6,6 @@ import SafeInput, { SafeInputChangeEvent } from "@/components/SafeInput";
 import httpClient from "@/client/httpClient";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { updateMilestoneStatus } from "@/functions/helperFunctions";
 
 interface EndContractConfirmationDialogProps {
     isOpen: boolean;
@@ -59,8 +58,6 @@ const EndContractConfirmationDialog = ({
                         price: price
                     });
     
-                    await updateMilestoneStatus(currentMilestone.id, 'not_started');
-
                     const payoutNegotiationId = res.data;
                     const newlySentMessage = await sendMessage('payout_negotiation', payoutNegotiationId);
                     if(newlySentMessage){

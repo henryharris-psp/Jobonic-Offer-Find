@@ -47,7 +47,7 @@ const MessageByMediaType = (message: Message) => {
         milestone: 
             <InChatMilestoneSubmissionCard 
                 milestoneId={message.content}
-                isSentByAuthUser={isSentByAuthUser}    
+                isSentByAuthUser={isSentByAuthUser}
             />,
         chat_room:
             <InChatShareChatRoomCard

@@ -1,27 +1,28 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Modal from "../Modal";
 import Button from "../Button";
 import { useChat } from "@/contexts/chat";
 import { updateMilestoneStatus } from "@/functions/helperFunctions";
+import httpClient from "@/client/httpClient";
+import moment from "moment";
 
 interface MilestonePaymentConfirmationDialogProps {
-    milestoneId: string,
     isOpen: boolean;
     onClose: () => void;
-    leftAmount: number;
-    amountToPay: number;
 }
 
 const MilestonePaymentConfirmationDialog = ({
-    milestoneId,
     isOpen,
-    onClose,
-    leftAmount,
-    amountToPay
+    onClose
 }: MilestonePaymentConfirmationDialogProps) => {
-    const { latestContract } = useChat();
+    const { latestContract, activeChatRoom } = useChat();
+    const currentMilestone = latestContract?.currentMilestone;
     const { sendMessage, updateChatRoom } = useChat();
     const [ isLoading, setIsLoading ] = useState(false);
+
+    const leftCreditAmountOnJobonic = useMemo( () => {
+        return latestContract?.payment?.amount;
+    }, [latestContract]);
 
     const processPayment = async () => {
         return new Promise(resolve => setTimeout(resolve, 3000));
@@ -31,21 +32,23 @@ const MilestonePaymentConfirmationDialog = ({
         setIsLoading(true);
         try{
             await processPayment();
-            // await testClient.post('payments/payout', {
-            //     amount: 123,
-            //     paymentMethod: 'payni',
-            //     payableType: 'match', // match & milestone
-            //     payableId: activeChatRoom?.match_id,
-            //     note: 'some dummy note'
-            // });
-
+            const res = await httpClient.post('payment', {
+                paymentMethod: 'payni',
+                amount: currentMilestone?.price,
+                paymentDate: moment().format('YYYY-MM-DD'),//today
+                payableType: "CHECKPOINT",
+                payableId: currentMilestone?.id,//milestoneid
+                remarks: 'From Jobonic to Freelancer',
+                senderId: 1, // admin profile id
+                receiverId: activeChatRoom?.freelancer_id //default admin profile id
+            });
             const allMilestones = latestContract?.milestones ?? [];
             
-            await updateMilestoneStatus(milestoneId, 'paid');
-            const newlySentMessage = await sendMessage('milestone_payment', 'transaction_id', 'system');
+            await updateMilestoneStatus(currentMilestone?.id, 'paid');
+            const newlySentMessage = await sendMessage('milestone_payment', res.data , 'system');
 
             //TODO: change after api update
-            const upcomingMilestones = allMilestones.filter( e => e.id !== milestoneId && e.status === 'not_started' );
+            const upcomingMilestones = allMilestones.filter( e => e.id !== currentMilestone?.id && e.status === 'not_started' );
             
             //if all milestone are completed, jump to to_review state
             if(upcomingMilestones.length === 0){
@@ -86,7 +89,7 @@ const MilestonePaymentConfirmationDialog = ({
                                 Your credit on Jobonic:
                             </span>
                             <span className="text-[#D0693B] font-semibold text-center">
-                                ${leftAmount}
+                                ${ leftCreditAmountOnJobonic }
                             </span>
                         </div>
                         
@@ -95,14 +98,14 @@ const MilestonePaymentConfirmationDialog = ({
                                 Payment for the current milestone:
                             </span>
                             <span className="text-[#71BAC7] font-semibold text-center">
-                                ${amountToPay}
+                                ${currentMilestone?.price}
                             </span>
                         </div>
                     </div>
 
                     <div className="flex flex-col space-y-5">
                         <span className="text-xs text-gray-500 font-semibold text-center">
-                            By confirming, Jobonic will release ${amountToPay} to your service provider for the current milestone.
+                            By confirming, Jobonic will release ${currentMilestone?.price} to your service provider for the current milestone.
                         </span>
 
                         <div className="flex flex-row items-center gap-2 flex-wrap">
