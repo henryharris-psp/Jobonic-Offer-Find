@@ -89,9 +89,10 @@ public class ContractService implements IContractService {
 
         contractResponseDTO.setMilestones(checkResponseDTOs);
 
-        PaymentOut paymentOut = paymentOutRepo.findByContractId(id);
-        if (paymentOut != null) {
-            contractResponseDTO.setPayoutNegotiations(Collections.singletonList(new PaymentOutDTO(paymentOut)));
+        List<PaymentOut> paymentOuts = paymentOutRepo.findByContractId(id);
+
+        if (paymentOuts != null) {
+            contractResponseDTO.setPayoutNegotiations(paymentOuts.stream().map(PaymentOutDTO::new).toList());
         }
 
         return contractResponseDTO;
@@ -136,9 +137,10 @@ public class ContractService implements IContractService {
             contractResponseDTO.setMilestones(checkResponseDTOs);
 
             // Fetch PaymentOut related to the contract
-            PaymentOut paymentOut = paymentOutRepo.findByContractId(contract.getId());
-            if (paymentOut != null) {
-                contractResponseDTO.setPayoutNegotiations(Collections.singletonList(new PaymentOutDTO(paymentOut)));
+            List<PaymentOut> paymentOuts = paymentOutRepo.findByContractId(contract.getId());
+
+            if (paymentOuts != null) {
+                contractResponseDTO.setPayoutNegotiations(paymentOuts.stream().map(PaymentOutDTO::new).toList());
             }
 
             return contractResponseDTO;
