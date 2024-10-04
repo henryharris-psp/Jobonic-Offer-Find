@@ -65,12 +65,10 @@ const PaymentCard = ({
                         receiverId: 1 //default admin profile id
                     });
 
-                    console.log(res.data);
-
-                    const firstMilestone = latestContract?.milestones[0];
-                    if(firstMilestone){
-                        await updateMilestoneStatus(firstMilestone.id, 'waiting_for_submission');
-                    }
+                    // const firstMilestone = latestContract?.milestones[0];
+                    // if(firstMilestone){
+                    //     await updateMilestoneStatus(firstMilestone.id, 'waiting_for_submission');
+                    // }
 
                     //send message to supabase and update chatroom state
                     const newlySentMessage = await sendMessage('full_payment', res.data, 'system');

@@ -8,6 +8,7 @@ import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import ContractCard from "../ContractCard";
 import ContractAcceptStatus from "@/components/chat/ChatRoom/partials/DetailsHeader/ContractAcceptStatus";
+import InChatPayoutNegotiationCard from "@/components/chat/ChatRoom/partials/Conversation/InChatPayoutNegotiationCard";
 
 interface LatestPayoutNegotiationModalProps {
     isOpen: boolean;
@@ -24,6 +25,7 @@ const LatestPayoutNegotiationModal = ({
 }: LatestPayoutNegotiationModalProps) => {
     const { authUser } = useSelector((state: RootState) => state.auth);
     const { activeChatRoom, latestContract, sendMessage, updateChatRoom } = useChat();
+    const latestPayoutNegotiation = latestContract?.latestPayoutNegotiation;
     const [isEditMode, setIsEditMode] = useState(defaultEditMode);
 
     //methods
@@ -64,10 +66,13 @@ const LatestPayoutNegotiationModal = ({
 
     return (
         <Modal
-            isOpen={isOpen} 
+            isOpen={isOpen}
             onClose={onClose}
         >
-            <div>payout model</div>
+            <InChatPayoutNegotiationCard
+                payoutNegotiationId={latestPayoutNegotiation?.id}
+                onClose={onClose}
+            />
         </Modal>
     );
 };

@@ -17,7 +17,7 @@ const ContractProgressSection = ({
     isCurrent,
     isDisabled
 }: ContractProgressSectionProps) => {
-    const { latestContract, activeChatRoom } = useChat();
+    const { latestContract, activeChatRoom, updateChatRoom, sendMessage } = useChat();
     const payoutNegotiations = latestContract?.payoutNegotiations ?? [];
     const [showLatestContractModal, setShowLatestContractModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -40,8 +40,17 @@ const ContractProgressSection = ({
             setShowLatestPayoutNegotiationModal(true);
         }
 
-        const handleOnClickCancel = () => {
-            
+        const handleOnClickCancel = async () => {
+            try {
+                const newlySentMessage = await sendMessage('text', 'Rejected to cancel contract.');
+                if(newlySentMessage){
+                    await updateChatRoom(newlySentMessage.room_id, {
+                        status: 'to_submit'
+                    });
+                }
+            } catch (error) {
+                console.log(error);
+            }
         }
 
     return (
@@ -70,8 +79,12 @@ const ContractProgressSection = ({
                         </div>
                     </div>
 
-                    {/* if end contract inititated */}
-                        { payoutNegotiations.length !== 0 ? (
+                    { activeChatRoom?.status === 'cancelled' ? (
+                        <span className="text-sm">
+                            Contract Cancelled
+                        </span>
+                    ) : (
+                        payoutNegotiations.length !== 0 ? (
                             <div className="flex flex-row gap-1">
                                 <Button
                                     size="2xs"
@@ -103,7 +116,8 @@ const ContractProgressSection = ({
                                     disabled={activeChatRoom?.status !== 'to_submit'}
                                 />
                             </div>
-                        )}
+                        )
+                    ) }
                 </div>
             </ProgressSectionRoot>
 

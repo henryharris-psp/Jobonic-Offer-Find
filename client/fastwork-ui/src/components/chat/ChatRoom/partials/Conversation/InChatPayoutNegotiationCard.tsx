@@ -5,18 +5,26 @@ import { PayoutNegotiation } from "@/types/general";
 import { ArrowLongRightIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
 import React, { useEffect, useState } from "react";
 import MediaSkeleton from "./MediaSkeleton";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import Modal from "@/components/Modal";
+import SafeInput, { SafeInputChangeEvent } from "@/components/SafeInput";
 
 interface InChatPayoutNegotiationCardProps {
     payoutNegotiationId: string;
+    onClose?: () => void
 }
 
 const InChatPayoutNegotiationCard = ({
-    payoutNegotiationId
+    payoutNegotiationId,
+    onClose
 }: InChatPayoutNegotiationCardProps) => {
-    const { activeChatRoom, latestContract } = useChat();
-
+    const { activeChatRoom, latestContract, sendMessage, updateChatRoom } = useChat();
+    const latestPayoutNegotiation = latestContract?.latestPayoutNegotiation;
+    const { authUser } = useSelector((state: RootState) => state.auth );
     const [isLoading, setIsLoading] = useState(false);
     const [payoutNegotiation, setPayoutNegotiation] = useState<PayoutNegotiation | null>(null);
+    const [showNewPayoutOfferModal, setShowNewPayoutOfferModal] = useState(false);
 
     //on mounted
     useEffect(() => {
@@ -31,7 +39,7 @@ const InChatPayoutNegotiationCard = ({
         const getPayoutNegotiation = async (signal?: AbortSignal) => {
             setIsLoading(true);
             try{
-                const payoutNegotiationRes = await httpClient.get(`payment-out/${payoutNegotiationId}`, { signal });
+                const payoutNegotiationRes = await httpClient.get(`payment-out/get-by-id/${payoutNegotiationId}`, { signal });
                 console.log(payoutNegotiationRes.data); 
                 setPayoutNegotiation(payoutNegotiationRes.data);
             } catch (error) {
@@ -41,111 +49,211 @@ const InChatPayoutNegotiationCard = ({
             }
         }
 
-    //methods
-        const handleOnClickAccept = () => {
-            console.log('accept');
+    //methods                    
+        //accept_contract
+        const handleOnClickAccept = async () => {
+            if(payoutNegotiation){
+                if(confirm("Are you sure to accept end the contract?")){
+                    try{
+                        //on_accept_to_end
+                        await httpClient.put(`payment-out/${payoutNegotiationId}`, {
+                            ...payoutNegotiation,
+                            acceptBy: [...payoutNegotiation.acceptBy, authUser?.profile?.id]
+                        });
+
+                        //TODO: tranfer payment
+                        const newlySentMessage = await sendMessage('text', 'Jobonic has transfered your approved payout to freelancer and also your left credit back to your bank account.');
+                        // const newlySentMessage = await sendMessage('payment_request', activeChatRoom?.match_id.toString(), 'system');
+                        if(newlySentMessage){
+                            await updateChatRoom(newlySentMessage.room_id, {
+                                status: 'cancelled'
+                            });
+                        }
+
+                        onClose?.();
+                    } catch (error) {
+                        console.log('error', error);
+                    }
+                }
+            }
         }
 
-        const handleOnClickReject = () => {
-            console.log('reject');
+        const handleOnClickReject = async () => {
+            try {
+                const newlySentMessage = await sendMessage('text', 'Rejected to cancel contract.');
+                if(newlySentMessage){
+                    await updateChatRoom(newlySentMessage.room_id, {
+                        status: 'to_submit'
+                    });
+                }
+            } catch (error) {
+                console.log(error);
+            }
         }
 
         const handleOnClickNegotiate = () => {
-            console.log('negotiate')
+            setShowNewPayoutOfferModal(true);
         }
 
-    return (
-        <>
-            { isLoading ? (
-                <MediaSkeleton />
-            ) : (
-                !payoutNegotiation ? (
-                    <div className="relative">
-                        <MediaSkeleton />
-                        <div className="flex items-center justify-center absolute top-0 right-0 left-0 bottom-0">
-                            <button 
-                                className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-300"
-                                onClick={() => getPayoutNegotiation()}    
-                            >
-                                <span className="">
-                                    <ArrowPathIcon className={`size-5 font-bold text-gray-600 ${isLoading ? 'animate-spin' : ''}`}/>
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="min-w-72 bg-white shadow-md rounded-lg border border-gray-200 space-y-4">                        
-                        <div className="flex flex-col space-y-5 p-4">
-                            
-                            <div className="flex flex-col space-y-2">
-                                <h3 className="text-lg font-semibold text-gray-800">
-                                    { payoutNegotiation?.profileId === activeChatRoom?.employer_id ? 'Freelancer': 'Employer' } Wants to End Contract
-                                </h3>
-                                <div className="text-sm text-gray-500 space-x-1">
-                                    <span>Custom amount offered for in-progress milestone:</span>
-                                    <span className="font-medium text-[#71BAC7]">$450</span>
-                                </div>
-                            </div>
+        const [newOfferPrice, setNewOfferPrice] = useState('');
+        const handleOnInputChange = (event: SafeInputChangeEvent) => {
+            const { value } = event.target;
+            setNewOfferPrice(value);
+        }
 
-                            <div className="flex flex-col space-y-1">
-                            { latestContract?.milestones.map( milestone => 
-                                <div 
-                                    key={milestone.id} 
-                                        className={`flex flex-row text-sm items-center space-x-1 font-semibold ${
-                                            milestone.status === 'waiting_for_submission' ? 'text-[#D0693B]' : 'text-gray-500'
-                                            
-                                        } ${ milestone.status === 'not_started' ? 'opacity-50' : 'opacity-1' }`}
+        const submit = async () => {
+            if(payoutNegotiation){
+                setIsLoading(true);
+                try{
+                    const res = await httpClient.post('payment-out', {
+                        checkpointId: payoutNegotiation.checkpointId,
+                        contractId: payoutNegotiation.contractId,
+                        acceptBy: [authUser?.profile.id],
+                        profileId: authUser?.profile.id,
+                        price: newOfferPrice
+                    });
+    
+                    const payoutNegotiationId = res.data;
+                    const newlySentMessage = await sendMessage('payout_negotiation', payoutNegotiationId);
+
+                    //TODO: not needed
+                    if(newlySentMessage){
+                        await updateChatRoom(newlySentMessage.room_id, {
+                            status: 'contract_termination'
+                        });
+                    }
+                } catch (error) {
+                    console.log('error on ending contract', error);
+                } finally {
+                    setIsLoading(false);
+                }
+
+                onClose?.();
+            }
+        }
+
+        return (
+            <>
+                { isLoading ? (
+                    <MediaSkeleton />
+                ) : (
+                    !payoutNegotiation ? (
+                        <div className="relative">
+                            <MediaSkeleton />
+                            <div className="flex items-center justify-center absolute top-0 right-0 left-0 bottom-0">
+                                <button 
+                                    className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-300"
+                                    onClick={() => getPayoutNegotiation()}    
                                 >
-                                    { milestone.status === 'waiting_for_submission' ? (
-                                        <ArrowLongRightIcon className="size-3"/>
-                                    ) : ''}
-                                    <span>
-                                        { milestone.title }
+                                    <span className="">
+                                        <ArrowPathIcon className={`size-5 font-bold text-gray-600 ${isLoading ? 'animate-spin' : ''}`}/>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="min-w-72 bg-white shadow-md rounded-lg border border-gray-200 space-y-4">                        
+                            <div className="flex flex-col space-y-5 p-4">
+                                
+                                <div className="flex flex-col space-y-2">
+                                    <h3 className="text-lg font-semibold text-gray-800">
+                                        { payoutNegotiation?.profileId === activeChatRoom?.employer_id ? 'Freelancer': 'Employer' } Wants to End Contract
+                                    </h3>
+                                    <div className="text-sm text-gray-500 space-x-1">
+                                        <span>Custom amount offered for in-progress milestone:</span>
+                                        <span className="font-medium text-[#71BAC7]">$450</span>
+                                    </div>
+                                </div>
+    
+                                <div className="flex flex-col space-y-1">
+                                { latestContract?.milestones.map( milestone => 
+                                    <div 
+                                        key={milestone.id} 
+                                            className={`flex flex-row text-sm items-center space-x-1 font-semibold ${
+                                                milestone.status === 'waiting_for_submission' ? 'text-[#D0693B]' : 'text-gray-500'
+                                                
+                                            } ${ milestone.status === 'not_started' ? 'opacity-50' : 'opacity-1' }`}
+                                    >
+                                        { milestone.status === 'waiting_for_submission' ? (
+                                            <ArrowLongRightIcon className="size-3"/>
+                                        ) : ''}
+                                        <span>
+                                            { milestone.title }
+                                        </span>
+                                    </div>
+                                )}
+                                    
+                                </div>
+    
+                                <div className="flex flex-col space-y-2">
+                                    <span className="text-xs text-gray-600">
+                                        The employer has offered to end the contract and pay the custom
+                                        amount for the in-progress milestone.
+                                    </span>
+                                    <span className="text-xs text-gray-500">
+                                        Do you want to accept or negotiate?
                                     </span>
                                 </div>
-                            )}
-                                
+    
+                                {/* buttons */}
+                                { latestPayoutNegotiation?.id === payoutNegotiationId && latestPayoutNegotiation.acceptBy.length < 2 ? (
+                                    <div className="flex flex-row justify-between items-center space-x-1">
+                                        <Button
+                                            size="sm"
+                                            title="Negotitate"
+                                            onClick={handleOnClickNegotiate}
+                                        />
+                                        <div className="flex flex-row justify-between space-x-1 items-center">
+                                            <Button
+                                                size="sm"
+                                                color="success"
+                                                title="Accept & End"
+                                                onClick={handleOnClickAccept}
+                                            />
+                                            <Button
+                                                size="sm"
+                                                color="danger"
+                                                title="Decline"
+                                                onClick={handleOnClickReject}
+                                            />
+                                        </div>
+                                    </div>
+                                ) : ''}
+    
                             </div>
+                        </div>
+                    )
+                )}
 
-                            <div className="flex flex-col space-y-2">
-                                <span className="text-xs text-gray-600">
-                                    The employer has offered to end the contract and pay the custom
-                                    amount for the in-progress milestone.
-                                </span>
-                                <span className="text-xs text-gray-500">
-                                    Do you want to accept or negotiate?
-                                </span>
-                            </div>
+                <Modal
+                    isOpen={showNewPayoutOfferModal}
+                    onClose={() => setShowNewPayoutOfferModal(false)}
+                >
+                    <div className="bg-white rounded-xl">
+                        <div className="flex flex-col justify-center p-5 space-y-5">
+                            <span className="font-bold text-2xl text-center">
+                                Update Payout Price to End Contact
+                            </span>
 
-                            {/* buttons */}
-                            <div className="flex flex-row justify-between items-center space-x-1">
-                                <Button
-                                    size="sm"
-                                    title="Negotitate"
-                                    onClick={handleOnClickNegotiate}
+                            <div className="flex flex-col space-y-3">
+                                <SafeInput
+                                    title="New Payout Price"
+                                    value={newOfferPrice}
+                                    onChange={handleOnInputChange}
+                                    placeholder="Enter Price"
                                 />
-                                <div className="flex flex-row justify-between space-x-1 items-center">
-                                    <Button
-                                        size="sm"
-                                        color="success"
-                                        title="Accept & End"
-                                        onClick={handleOnClickAccept}
-                                    />
-                                    <Button
-                                        size="sm"
-                                        color="danger"
-                                        title="Decline"
-                                        onClick={handleOnClickReject}
-                                    />
-                                </div>
+                                <Button
+                                    color="success"
+                                    title="Offer With New Price"
+                                    onClick={submit}
+                                />
                             </div>
-
                         </div>
                     </div>
-                )
-            )}
-        </>
-    );
+                </Modal>
+
+            </>
+        );
 };
 
 export default InChatPayoutNegotiationCard;

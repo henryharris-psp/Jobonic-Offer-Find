@@ -20,7 +20,6 @@ const InChatMilestoneSubmissionCard = ({
     const { 
         activeChatRoom, 
         authUserType,
-        latestContract,
         sendMessage,
         setShowProgressList
     } = useChat();
@@ -207,9 +206,6 @@ const InChatMilestoneSubmissionCard = ({
             <MilestonePaymentConfirmationDialog
                 isOpen={showMilestonePaymentConfirmationDialog}
                 onClose={() => setShowMilestonePaymentConfirmationDialog(false)}
-                milestoneId={milestoneId}
-                leftAmount={600}
-                amountToPay={123}
             />
         </>
     );
