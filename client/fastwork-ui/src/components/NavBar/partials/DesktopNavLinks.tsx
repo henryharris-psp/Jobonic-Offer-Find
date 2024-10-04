@@ -18,8 +18,11 @@ const DesktopNavLinks = () => {
     };
 
     useEffect(() => {
-        const getLocalLanguage = localStorage.getItem('lang') || 'en';
-        setLanguage(getLocalLanguage);
+        if (typeof window !== 'undefined') {
+            const getLocalLanguage = localStorage.getItem('lang') || 'en';
+            console.log('getLocalLanguage', getLocalLanguage);
+            setLanguage(getLocalLanguage);
+        }
     });
 
     const handleOnAppLanguageChange = (option: DropDownButtonOption) => {
