@@ -478,7 +478,7 @@ const CustomiseJobRequestForm: React.FC = () => {
           </div>
           <div className="flex justify-center pb-6 text-center items-center">
             <button type="submit" className="bg-[#0B2147] hover:bg-[#D0693B] text-white font-semibold py-3 px-12 text-sm rounded-2xl">
-              Submitxxx
+              Submit
             </button>
           </div>
         </form>

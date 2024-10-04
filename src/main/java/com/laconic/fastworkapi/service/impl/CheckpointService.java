@@ -5,12 +5,11 @@ import com.laconic.fastworkapi.dto.CheckResponseDTO;
 import com.laconic.fastworkapi.dto.CheckpointDTO;
 import com.laconic.fastworkapi.entity.Checkpoint;
 import com.laconic.fastworkapi.entity.Contract;
+import com.laconic.fastworkapi.entity.Payment;
+import com.laconic.fastworkapi.enums.PayableType;
 import com.laconic.fastworkapi.exception.NotFoundException;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
-import com.laconic.fastworkapi.repo.ICheckpointRepo;
-import com.laconic.fastworkapi.repo.IContractRepo;
-import com.laconic.fastworkapi.repo.IMatchesRepo;
-import com.laconic.fastworkapi.repo.IServiceRepo;
+import com.laconic.fastworkapi.repo.*;
 import com.laconic.fastworkapi.service.ICheckpointService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -25,12 +24,14 @@ public class CheckpointService implements ICheckpointService {
     private final IServiceRepo serviceRepo;
     private final IMatchesRepo matchesRepo;
     private final IContractRepo contractRepo;
+    private final PaymentRepo paymentRepo;
 
-    public CheckpointService(ICheckpointRepo checkpointRepo, IServiceRepo serviceRepo, IMatchesRepo matchesRepo, IContractRepo contractRepo) {
+    public CheckpointService(ICheckpointRepo checkpointRepo, IServiceRepo serviceRepo, IMatchesRepo matchesRepo, IContractRepo contractRepo, PaymentRepo paymentRepo) {
         this.checkpointRepo = checkpointRepo;
         this.serviceRepo = serviceRepo;
         this.matchesRepo = matchesRepo;
         this.contractRepo = contractRepo;
+        this.paymentRepo = paymentRepo;
     }
 
 //    @Override
@@ -130,12 +131,25 @@ public class CheckpointService implements ICheckpointService {
     public CheckResponseDTO getById(UUID id) {
         var existingCheckpoint = getCheckpoint(id);
 
-        return new CheckResponseDTO(existingCheckpoint);
+        CheckResponseDTO checkResponseDTO = new CheckResponseDTO(existingCheckpoint);
+
+        Payment payment = paymentRepo.findPaymentByPayableIdAndPayableType(id, PayableType.CHECKPOINT);
+
+        checkResponseDTO.setPayment(payment);
+
+        return checkResponseDTO;
     }
 
     @Override
     public List<CheckResponseDTO> getAll() {
-        return this.checkpointRepo.findAll().stream().map(CheckResponseDTO::new).toList();
+        return checkpointRepo.findAll().stream().map(checkpoint -> {
+            CheckResponseDTO checkResponseDTO = new CheckResponseDTO(checkpoint);
+
+            Payment payment = paymentRepo.findPaymentByPayableIdAndPayableType(checkpoint.getId(), PayableType.CHECKPOINT);
+            checkResponseDTO.setPayment(payment);
+
+            return checkResponseDTO;
+        }).toList();
     }
 
     @Override

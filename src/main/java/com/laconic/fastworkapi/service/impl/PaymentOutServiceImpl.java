@@ -56,4 +56,9 @@ public class PaymentOutServiceImpl implements PaymentOutService {
         return new PaymentOutDTO(getByIdByRepo(id));
     }
 
+    @Override
+    public String delete(UUID id) {
+        paymentAgreementRepo.deleteById(id);
+        return "Deleted";
+    }
 }
