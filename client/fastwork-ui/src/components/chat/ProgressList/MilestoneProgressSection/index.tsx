@@ -129,7 +129,7 @@ const MilestoneProgressSection = ({
             const completedCount = pendingFilesCount - pendingFiles.length;
             return (completedCount / pendingFilesCount) * 100;
         }, [pendingFilesCount, pendingFiles.length]);
-        
+
     //sequential uploader
         useEffect( () => {
             const targetFile = pendingFiles[0];
@@ -143,6 +143,7 @@ const MilestoneProgressSection = ({
                 if(uploadedFiles.length !== 0) {
                     submit();
                 }
+                setCurrentUploadingFileId(null);
             };
 
             if(isUploading && targetFile){
@@ -196,6 +197,8 @@ const MilestoneProgressSection = ({
                 isDisabled={isDisabled}
             >
                 <div className="flex-1 flex flex-col space-y-2 overflow-hidden">
+
+                    <input type="text" value={id} />
 
                     {/* tasks list */}
                     <div className="flex flex-col space-y-1">
@@ -411,9 +414,6 @@ const MilestoneProgressSection = ({
             <MilestonePaymentConfirmationDialog
                 isOpen={showMilestonePaymentConfirmationDialog}
                 onClose={() => setShowMilestonePaymentConfirmationDialog(false)}
-                milestoneId={id}
-                leftAmount={600}
-                amountToPay={123}
             />
         </>
     );

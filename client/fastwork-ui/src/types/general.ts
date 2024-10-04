@@ -84,7 +84,7 @@ export interface Contract {
     profileId: string | number;
     matchesId: string | number;
     payoutNegotiations: PayoutNegotiation[];
-    latestPayoutNegotiation: PayoutNegotiation;
+    latestPayoutNegotiation: PayoutNegotiation | null;
     payment: Payment | null;
     createdDate?: number;
 }

@@ -297,8 +297,53 @@ body {
 }
 
 
+.border-rainbow {
+  background: linear-gradient(
+    45deg,
+    #ff9ed4, 
+    #9d99f5, 
+    #ffc0c2,
+    #85f0b7,
+    #73c3e6, 
+    #fcf5a3
+  );
+  background-size: 300% 300%;
+  animation: gradient-animation 3s ease infinite;
+}
 
+@keyframes gradient-animation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 
+@keyframes rainbow-shadow {
+    0% {
+        box-shadow: 0 0 20px rgba(255, 102, 102, 0.6), 0 0 40px rgba(255, 102, 102, 0.4), 0 0 60px rgba(255, 102, 102, 0.3);
+    }
+    14% {
+        box-shadow: 0 0 22px rgba(255, 178, 102, 0.6), 0 0 44px rgba(255, 178, 102, 0.4), 0 0 66px rgba(255, 178, 102, 0.3);
+    }
+    28% {
+        box-shadow: 0 0 24px rgba(255, 255, 153, 0.6), 0 0 48px rgba(255, 255, 153, 0.4), 0 0 72px rgba(255, 255, 153, 0.3);
+    }
+    42% {
+        box-shadow: 0 0 22px rgba(153, 255, 153, 0.6), 0 0 44px rgba(153, 255, 153, 0.4), 0 0 66px rgba(153, 255, 153, 0.3);
+    }
+    57% {
+        box-shadow: 0 0 26px rgba(153, 204, 255, 0.6), 0 0 52px rgba(153, 204, 255, 0.4), 0 0 78px rgba(153, 204, 255, 0.3);
+    }
+    71% {
+        box-shadow: 0 0 24px rgba(178, 153, 255, 0.6), 0 0 48px rgba(178, 153, 255, 0.4), 0 0 72px rgba(178, 153, 255, 0.3);
+    }
+    85% {
+        box-shadow: 0 0 22px rgba(255, 153, 204, 0.6), 0 0 44px rgba(255, 153, 204, 0.4), 0 0 66px rgba(255, 153, 204, 0.3);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(255, 102, 102, 0.6), 0 0 40px rgba(255, 102, 102, 0.4), 0 0 60px rgba(255, 102, 102, 0.3);
+    }
+  }
 
-
-
+  .shadow-rainbow {
+      animation: rainbow-shadow 1s linear infinite;
+  }

@@ -2,10 +2,13 @@ import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import TotalPaymentPreviewCard from "@/components/payment/TotalPaymentPreviewCard";
 import { useChat } from "@/contexts/chat";
+import DateParser from "@/functions/dateParser";
 import { CreditCardIcon } from "@heroicons/react/24/solid";
 import React, { useMemo, useState } from "react";
 
 const InChatPaymentRequestCard = () => {
+    const dateParser = new DateParser();
+    const today = new Date().toISOString();
     const numberFormater = new Intl.NumberFormat();
     const { latestContract } = useChat();
     const [showTotalPaymentPreviewCardModal, setShowTotalPaymentPreviewCardModal] = useState(false);
@@ -35,7 +38,9 @@ const InChatPaymentRequestCard = () => {
                 
                 <div className="flex items-center justify-between space-x-3">
                     <div className="font-semibold text-gray-800">Payment Request</div>
-                    <div className="text-xs text-gray-500">Due: 12 Oct 2024</div>
+                    <div className="text-xs text-gray-500">
+                        Due: {dateParser.getFormattedDate(today)}
+                    </div>
                 </div>
                 <hr className="my-2 border-gray-300"/>
                 

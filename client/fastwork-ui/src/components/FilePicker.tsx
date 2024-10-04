@@ -65,6 +65,7 @@ const FilePicker = ({
             const pickedFile: Attachment = {
                 id: uuid(),
                 name: selectedFile.name,
+                originalName: selectedFile.name,
                 fileSize: stringParser.convertBytesToMB(selectedFile.size) + ' MB',
                 source: selectedFile,
                 status: 'pending'

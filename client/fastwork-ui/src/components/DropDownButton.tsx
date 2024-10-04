@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import CaretDownIcon from "../../public/icons/CaretDownIcon";
 
 export interface DropDownButtonOption {
@@ -20,12 +20,18 @@ const DropDownButton = ({
     onChange
 }: DropDownButtonProps) => {
     const [isHover, setIsHover] = useState<boolean>(false);
+    const [language, setLanguage] = useState<string>('en');
 
     const selectedOption = useMemo( () => {
         return options.find( option => option.value === value );
     }, [value]);
 
-    const language = localStorage.getItem('lang') || 'en';
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const language = localStorage.getItem('lang') || 'en';
+            setLanguage(language);
+        }
+    });
 
     return (
         <div 

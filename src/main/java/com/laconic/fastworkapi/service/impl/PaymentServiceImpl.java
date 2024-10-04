@@ -21,12 +21,11 @@ import com.laconic.fastworkapi.service.IProfileService;
 import com.laconic.fastworkapi.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +38,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final IProfileService profileService;
 
     @Override
-    public UUID save(PaymentDTO paymentDTO) {
+    public ResponseEntity<?> save(PaymentDTO paymentDTO) {
         UUID payableId = switch (paymentDTO.getPayableType()) {
             case CHECKPOINT -> checkpointRepo.findById(paymentDTO.getPayableId())
                     .orElseThrow(() -> new NotFoundException("Checkpoint not found"))
@@ -103,7 +102,23 @@ public class PaymentServiceImpl implements PaymentService {
             contractRepo.save(contract);
         }
 
-        return paymentRepo.save(payment).getId();
+        var paymentData = paymentRepo.save(payment);
+
+        var data = new HashMap<String, Object>();
+        data.put("id", "6fc1bf31-97ab-47ef-bd12-e45aa5cc59f2");
+        data.put("apiSecret", "jj9QMGrIsGSQTxTvhPNT5yoUXQY4eLDbrzGDU8o3gMU=");
+        data.put("currencyCode", "USD"); // Now Support (USD, THB)
+        data.put("amount", paymentData.getAmount()); // This amount is number
+
+        var payniUri = "http://api-payni.laconic.co.th/api/external/generate-redirect-url";
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate.postForObject(payniUri, data, String.class);
+
+        Object responseData = new HashMap<>();
+        ((HashMap<String, Object>) responseData).put("paymentId", paymentData.getId());
+        ((HashMap<String, Object>) responseData).put("payni", result);
+
+        return ResponseEntity.ok(responseData);
     }
 
     @Override

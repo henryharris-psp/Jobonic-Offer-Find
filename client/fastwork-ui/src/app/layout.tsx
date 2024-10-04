@@ -55,7 +55,6 @@ const RootLayout = ({
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            // Now safe to access localStorage
             const storedLocale = localStorage.getItem('locale') || 'en';
             setLocale(storedLocale);
         }
