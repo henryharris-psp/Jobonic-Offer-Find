@@ -1,15 +1,14 @@
 package com.laconic.fastworkapi.service.impl;
 
-import com.laconic.fastworkapi.dto.PaymentDTO;
-import com.laconic.fastworkapi.dto.PaymentResponseDTO;
-import com.laconic.fastworkapi.dto.ProfileDTO;
-import com.laconic.fastworkapi.dto.UserProfileDTO;
+import com.laconic.fastworkapi.config.EnvConfig;
+import com.laconic.fastworkapi.dto.*;
 import com.laconic.fastworkapi.dto.pagination.Pagination;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import com.laconic.fastworkapi.entity.Checkpoint;
 import com.laconic.fastworkapi.entity.Contract;
 import com.laconic.fastworkapi.entity.Payment;
 import com.laconic.fastworkapi.entity.Profile;
+import com.laconic.fastworkapi.enums.PaymentStatus;
 import com.laconic.fastworkapi.exception.NotFoundException;
 import com.laconic.fastworkapi.helper.ExceptionHelper;
 import com.laconic.fastworkapi.helper.PaginationHelper;
@@ -17,13 +16,13 @@ import com.laconic.fastworkapi.repo.ICheckpointRepo;
 import com.laconic.fastworkapi.repo.IContractRepo;
 import com.laconic.fastworkapi.repo.IUserRepo;
 import com.laconic.fastworkapi.repo.PaymentRepo;
+import com.laconic.fastworkapi.service.IPayniService;
 import com.laconic.fastworkapi.service.IProfileService;
 import com.laconic.fastworkapi.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
@@ -36,9 +35,20 @@ public class PaymentServiceImpl implements PaymentService {
     private final ICheckpointRepo checkpointRepo;
     private final IUserRepo userRepo;
     private final IProfileService profileService;
+    private final IPayniService payniService;
+    private final EnvConfig envConfig;
 
     @Override
     public ResponseEntity<?> save(PaymentDTO paymentDTO) {
+        PayniRequestDTO payniRequestDTO = PayniRequestDTO.builder()
+                .id(envConfig.getEnvValue("payniAppId"))
+                .apiSecret(envConfig.getEnvValue("payniSecret"))
+                .currencyCode("USD")
+                .amount(paymentDTO.getAmount())
+                .build();
+
+        PayniResponseDTO payniResponse = payniService.createPayment(payniRequestDTO);
+
         UUID payableId = switch (paymentDTO.getPayableType()) {
             case CHECKPOINT -> checkpointRepo.findById(paymentDTO.getPayableId())
                     .orElseThrow(() -> new NotFoundException("Checkpoint not found"))
@@ -48,7 +58,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .getId();
             default -> throw new NotFoundException("Incorrect Payable type");
         };
-        
+
         Profile senderId = userRepo.findById(paymentDTO.getSenderId())
                 .orElseThrow(() -> new NotFoundException("Sender not found"));
 
@@ -64,6 +74,8 @@ public class PaymentServiceImpl implements PaymentService {
                 .remarks(paymentDTO.getRemarks())
                 .senderId(senderId)
                 .receiverId(receiverId)
+                .status(PaymentStatus.PENDING)
+                .transactionId(payniResponse.getTransactionId())
                 .build();
 
         if ("CONTRACT".equalsIgnoreCase(String.valueOf(paymentDTO.getPayableType()))) {
@@ -104,19 +116,9 @@ public class PaymentServiceImpl implements PaymentService {
 
         var paymentData = paymentRepo.save(payment);
 
-        var data = new HashMap<String, Object>();
-        data.put("id", "6fc1bf31-97ab-47ef-bd12-e45aa5cc59f2");
-        data.put("apiSecret", "jj9QMGrIsGSQTxTvhPNT5yoUXQY4eLDbrzGDU8o3gMU=");
-        data.put("currencyCode", "USD"); // Now Support (USD, THB)
-        data.put("amount", paymentData.getAmount()); // This amount is number
-
-        var payniUri = "http://api-payni.laconic.co.th/api/external/generate-redirect-url";
-        RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.postForObject(payniUri, data, String.class);
-
-        Object responseData = new HashMap<>();
-        ((HashMap<String, Object>) responseData).put("paymentId", paymentData.getId());
-        ((HashMap<String, Object>) responseData).put("payni", result);
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("paymentId", paymentData.getId());
+        responseData.put("payni", payniResponse);
 
         return ResponseEntity.ok(responseData);
     }

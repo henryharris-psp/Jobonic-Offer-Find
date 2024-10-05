@@ -2,6 +2,7 @@ package com.laconic.fastworkapi.controller;
 
 import com.laconic.fastworkapi.dto.PaymentDTO;
 import com.laconic.fastworkapi.dto.PaymentResponseDTO;
+import com.laconic.fastworkapi.dto.PayniResponseDTO;
 import com.laconic.fastworkapi.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class PaymentController {
 
     @PostMapping
     public ResponseEntity<?> save(@RequestBody PaymentDTO paymentDTO) {
-        return ResponseEntity.ok(paymentService.save(paymentDTO));
+        return paymentService.save(paymentDTO);
     }
 
     @GetMapping("/{id}")

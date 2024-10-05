@@ -3,6 +3,7 @@ package com.laconic.fastworkapi.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.laconic.fastworkapi.entity.audit.Auditable;
 import com.laconic.fastworkapi.enums.PayableType;
+import com.laconic.fastworkapi.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -43,4 +44,8 @@ public class Payment extends Auditable<UUID> {
     @JoinColumn(name = "receiver_id")
     @JsonBackReference("payment-received")
     private Profile receiverId;
+
+    private UUID transactionId;
+
+    private Enum<PaymentStatus> status;
 }

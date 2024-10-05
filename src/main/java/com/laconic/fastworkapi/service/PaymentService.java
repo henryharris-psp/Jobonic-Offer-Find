@@ -2,6 +2,7 @@ package com.laconic.fastworkapi.service;
 
 import com.laconic.fastworkapi.dto.PaymentDTO;
 import com.laconic.fastworkapi.dto.PaymentResponseDTO;
+import com.laconic.fastworkapi.dto.PayniResponseDTO;
 import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
