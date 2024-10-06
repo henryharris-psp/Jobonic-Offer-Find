@@ -70,7 +70,7 @@ export interface Service {
 }
 
 export interface ServiceFilter {
-    searchKeyword: string,
+    searchKeywords: string[],
     minPricePerHour: string,
     maxPricePerHour: string,
     deadlineDate: string,

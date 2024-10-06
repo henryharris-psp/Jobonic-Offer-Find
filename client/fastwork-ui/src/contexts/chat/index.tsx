@@ -61,7 +61,7 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 }
             
                 try {
-                    const contract = await fetchContract(contractId, signal);    
+                    const contract = await fetchContract(contractId, signal);   
                     if (contract) {
                         const latestPayoutNegotiation = contract.payoutNegotiations ? contract.payoutNegotiations[0] : null;
                         setLatestContract({

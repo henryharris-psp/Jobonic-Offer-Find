@@ -39,8 +39,6 @@ const InChatPaymentCard = ({
 
     //methods
         const getPayment = async (signal?: AbortSignal) => {
-
-            console.log('gg')
             setIsLoading(true);
             try{
                 const paymentRes = await fetchPayment(paymentId, signal); 

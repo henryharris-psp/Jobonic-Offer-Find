@@ -16,12 +16,12 @@ export const pageLinks: PageLink[] = [
     {
         id: uuid(),
         path: '/findServices',
-        name: 'Find Services'
+        name: 'Hire'
     },
     {
         id: uuid(),
         path: '/offerServices',
-        name: 'Offer Services'
+        name: 'Apply Job'
     },
     {
         id: uuid(),

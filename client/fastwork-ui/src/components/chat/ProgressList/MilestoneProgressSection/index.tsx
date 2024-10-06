@@ -198,8 +198,6 @@ const MilestoneProgressSection = ({
             >
                 <div className="flex-1 flex flex-col space-y-2 overflow-hidden">
 
-                    <input type="text" value={id} />
-
                     {/* tasks list */}
                     <div className="flex flex-col space-y-1">
                         { tasks.length === 0 ? (

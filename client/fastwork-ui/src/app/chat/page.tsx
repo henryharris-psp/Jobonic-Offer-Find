@@ -160,6 +160,8 @@ const ChatPage = () => {
                     async (payload: { new: ChatRoom }) => {
                         const updatedChatRoom = payload.new;
                         
+                        console.log(updatedChatRoom);
+                        
                         // Fetch related messages
                         const { data: messages, error } = await supabase
                             .from("messages")

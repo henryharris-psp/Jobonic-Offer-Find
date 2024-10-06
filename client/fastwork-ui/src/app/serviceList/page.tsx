@@ -5,7 +5,7 @@ import { fetchServices } from "@/functions/helperFunctions";
 import { Category } from "@/types/general";
 import { Service, ServiceFilter, ServicePayload } from "@/types/service";
 import Link from "next/link";
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import SortingDropDown from "@/components/SortingDropDown";
 import { Sorting, SortingValue } from "@/types/Sorting";
 import PaginationButtons from "@/components/PaginationButtons";
@@ -13,8 +13,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import ServiceMatchCardSkeleton from "@/components/ServiceMatchCardSkeleton";
 import httpClient from "@/client/httpClient";
-import { MagnifyingGlassIcon, SparklesIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
+import SearchInput from "@/components/SearchInput";
 
 const sortings: Sorting[] = [
     {
@@ -48,7 +48,7 @@ const sortings: Sorting[] = [
 ]
 
 const defaultFilters = {
-    searchKeyword: '',
+    searchKeywords: [],
     minPricePerHour: '',
     maxPricePerHour: '',
     deadlineDate: '',
@@ -136,11 +136,11 @@ const ServiceList = () => {
                 sortBy: sorting.sortBy,
                 sortOrder: sorting.sortOrder,
                 filter: {
-                    ...filters,  // Includes minPricePerHour and maxPricePerHour
-                    categoryId: selectedWorkCategory, // Use selectedWorkCategory for filtering
-                    minPricePerHour: filters.minPricePerHour || '', // Passes min price
-                    maxPricePerHour: filters.maxPricePerHour || '', // Passes max price
-                    deadlineDate: filters.deadlineDate || ''
+                    ...filters,
+                    categoryId: selectedWorkCategory,
+                    
+                    //change to array when api ready
+                    searchKeyword: filters.searchKeywords.length !== 0 ? filters.searchKeywords[0] : ''
                 },
                 authId: authUser?.profile?.id || 0,
                 postedByAuthUser: false
@@ -162,119 +162,101 @@ const ServiceList = () => {
     }, [filters, sorting, pagination.currentPage, pagination.itemsPerPage, selectedWorkCategory]);
 
     // Methods
-    const handleOnFilterChange = (newFilters: object) => {
-        setFilters(prev => ({
-            ...prev,
-            ...newFilters
-        }));
-    };    
+        const handleOnFilterChange = (newFilters: object) => {
+            setFilters(prev => ({
+                ...prev,
+                ...newFilters
+            }));
+        };    
 
-    const handleOnSortingChange = (newSorting: SortingValue) => {
-        setSorting(newSorting);  // Updates the state correctly
-    };
+        const handleOnSortingChange = (newSorting: SortingValue) => {
+            setSorting(newSorting);  // Updates the state correctly
+        };
 
-    // Pagination handler
-    const handleOnItemsPerPageChange = (newItemsPerPage: number) => {
-        setPagination(prev => ({
-            ...prev,
-            currentPage: 1,
-            itemsPerPage: newItemsPerPage
-        }));
-    }
-
-    const handleOnClickNextPage = () => {
-        setPagination(prev => ({
-            ...prev,
-            currentPage: prev.currentPage + 1
-        }));
-    }
-
-    const handleOnClickPreviousPage = () => {
-        setPagination(prev => ({
-            ...prev,
-            currentPage: prev.currentPage - 1
-        }));
-    }
-
-    const handleOnCategoryChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        const selectedValue = e.target.value;
-        setSelectedWorkCategory(selectedValue);
-
-        // Reset pagination and filters when switching to All Categories
-        setFilters(prev => ({
-            ...prev,
-            categoryId: selectedValue ? selectedValue : ''
-        }));
-
-        // Reset pagination to the first page
-        setPagination(defaultPagination);
-    };
-
-    //new
-    const [searchMode, setSearchMode] = useState<'keyword' | 'ai'>('keyword');
-    const [searchKeywordInput, setSearchKeywordInput] = useState('');
-
-
-    const handleOnSearchKeywordChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setSearchKeywordInput(event.target.value);
-    }
-
-    const handleOnAiSearch = async (e) => {
-        e.preventDefault();
-        setIsServicesFetching(true);
-        setServices([]);
-
-        try {
-            const aiRes = await axios.post('http://localhost:4000', {
-                prompt: searchKeywordInput
-            });
-            const searchKeywords = aiRes.data.keywords ?? [];
-
-            console.log('searchKeywords', searchKeywords);
-            let results: Service[]= [];
-
-            //sequential search
-            for(const keyword of searchKeywords){
-                console.log('searching' , keyword)
-                const payload: ServicePayload = {
-                    pageNumber: 1,
-                    pageSize: 100,
-                    sortBy: "price",
-                    sortOrder: "DESC",
-                    filter: {
-                        searchKeyword: keyword,
-                        categoryId: "",
-                        minPricePerHour: "",
-                        maxPricePerHour: "",
-                        deadlineDate: ""
-                    },
-                    authId: authUser?.profile?.id || 0,
-                    postedByAuthUser: false
+        const setSearchKeywords = (searchKeywords: string[]) => {
+            setFilters(() => {
+                setPagination(defaultPagination);
+                return {
+                    ...defaultFilters,
+                    searchKeywords: searchKeywords
                 }
-                const servicesData = await fetchServices('offer', payload);
-                const gg = servicesData?.content;
-                results = [...results, ...gg];
-            }
-
-            setServices(results);
-        } catch (error) {
-            console.log('error on AI Search', error);
-        } finally { 
-            setIsServicesFetching(false);
+            });
         }
 
-    }
+        const handleOnCategoryChange = (e: ChangeEvent<HTMLSelectElement>) => {
+            const selectedValue = e.target.value;
+            setSelectedWorkCategory(selectedValue);
 
-    const handleOnSearch = (event: FormEvent) => {
-        event.preventDefault();
-        setFilters(() => {
+            // Reset pagination and filters when switching to All Categories
+            setFilters(prev => ({
+                ...prev,
+                categoryId: selectedValue ? selectedValue : ''
+            }));
+
+            // Reset pagination to the first page
             setPagination(defaultPagination);
-            return {
-                ...defaultFilters,
-                searchKeyword: searchKeywordInput
+        };
+
+        const handleOnNormalSearch = (keyword: string) => {
+            setSearchKeywords([keyword]);
+        }
+
+        const mockApiCall = () => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({
+                        data: {
+                            keywords: ['web', 'designer'],
+                        },
+                    });
+                }, 2000);
+            });
+        };
+
+        const handleOnAiSearch = async (keyword: string) => {
+            setIsServicesFetching(true);
+            setServices([]);
+
+            try {
+                const aiServerUrl = process.env.NEXT_PUBLIC_AI_SERVER_URL;
+                if(!aiServerUrl) throw new Error("Cannot find AI server URL");
+                
+                // const aiRes = await axios.post(aiServerUrl, {
+                //     prompt: keyword
+                // });
+
+                const aiRes = await mockApiCall();
+                const searchKeywords = aiRes.data.keywords ?? [];
+                setSearchKeywords(searchKeywords);
+            } catch (error) {
+                console.log('error on AI Search', error);
+            } finally { 
+                setIsServicesFetching(false);
             }
-        });
-    }
+        }
+
+        // Pagination handler
+            const handleOnItemsPerPageChange = (newItemsPerPage: number) => {
+                setPagination(prev => ({
+                    ...prev,
+                    currentPage: 1,
+                    itemsPerPage: newItemsPerPage
+                }));
+            }
+
+            const handleOnClickNextPage = () => {
+                setPagination(prev => ({
+                    ...prev,
+                    currentPage: prev.currentPage + 1
+                }));
+            }
+
+            const handleOnClickPreviousPage = () => {
+                setPagination(prev => ({
+                    ...prev,
+                    currentPage: prev.currentPage - 1
+                }));
+            }
 
     return (
         <div className="flex flex-col min-h-screen mx-auto">
@@ -285,83 +267,11 @@ const ServiceList = () => {
                     Services List
                 </h1>
 
-                <div className="flex flex-row items-center space-x-5">
-                    { searchMode === 'ai' ? (
-                        <form onSubmit={handleOnAiSearch}>
-                            <div className={`relative border-rainbow shadow bg-red-400 h-12 w-96 rounded-full overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed ${
-                                isServicesFetching ? 'shadow-rainbow' : ''
-                            }`}>
-                                <input 
-                                    type="text" 
-                                    value={searchKeywordInput}
-                                    onChange={handleOnSearchKeywordChange}
-                                    className={`absolute focus: top-0 right-0 left-0 bottom-0 m-[2px] border-none rounded-full font-thin text-sm px-5 ${
-                                        isServicesFetching ? 'animate-pulse' : ''
-                                    }`}
-                                    placeholder="eg. I am sick"
-                                    readOnly={isServicesFetching}
-                                />
-                                <button
-                                    className="flex disabled:opacity-70 disabled:cursor-not-allowed items-center space-x-1 absolute m-[5px] px-4 top-0 bottom-0 right-0 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full"
-                                    disabled={isServicesFetching}
-                                >
-                                    <SparklesIcon className="size-4 text-white"/>
-                                    <span className="font-semibold text-sm text-white">
-                                        AI Search
-                                    </span>   
-                                </button>
-                            </div>
-                        </form>
-                    ) : (
-                        <form className="relative" onSubmit={handleOnSearch}>
-                            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                                </svg>
-                            </div>
-                            <input
-                                type="search"
-                                id="default-search"
-                                className="block min-w-96 w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50
-                                focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
-                                dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="e.g. I have a service to offer"
-                                value={searchKeywordInput}
-                                onChange={handleOnSearchKeywordChange}
-                                required
-                            />
-                            <button
-                                type="submit"
-                                className="text-white absolute font-semibold right-2.5 bottom-2.5 bg-[#0B2147] hover:bg-[#D0693B] focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-lg text-sm px-4 py-2 dark:bg-black dark:hover:bg-gray-700 dark:focus:ring-gray-800"
-                                disabled={isServicesFetching}  
-                            >
-                                Search
-                            </button>
-                        </form>
-                    )}
-
-                    <div className="flex">
-                        { searchMode === 'ai' ? (
-                            <button 
-                                className="flex disabled:opacity-70 disabled:cursor-not-allowed space-x-1 h-8 px-3 items-center to-sky-500 rounded-xl shadow border border-gray-300"
-                                onClick={() => setSearchMode('keyword')} 
-                                disabled={isServicesFetching}   
-                            >
-                                <MagnifyingGlassIcon className="size-4"/>
-                                <span className="text-xs">Search by Keyword</span>
-                            </button>
-                        ) : (
-                            <button 
-                                className="flex disabled:opacity-70 disabled:cursor-not-allowed space-x-2 h-8 px-3 items-center bg-gradient-to-tr from-indigo-500 to-sky-500 rounded-full"
-                                onClick={() => setSearchMode('ai')}
-                                disabled={isServicesFetching}  
-                            >
-                                <SparklesIcon className="size-4 text-white"/>
-                                <span className="text-xs text-white">Search with AI</span>
-                            </button>
-                        )}
-                    </div>
-                </div>
+                <SearchInput
+                    isSearching={isServicesFetching}
+                    onAiSearch={handleOnAiSearch}
+                    onNormalSearch={handleOnNormalSearch}
+                />
                 
                 <Link
                     href={

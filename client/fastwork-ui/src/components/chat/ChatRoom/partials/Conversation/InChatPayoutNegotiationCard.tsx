@@ -3,7 +3,7 @@ import Button from "@/components/Button";
 import { useChat } from "@/contexts/chat";
 import { PayoutNegotiation } from "@/types/general";
 import { ArrowLongRightIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import MediaSkeleton from "./MediaSkeleton";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
@@ -12,11 +12,13 @@ import SafeInput, { SafeInputChangeEvent } from "@/components/SafeInput";
 
 interface InChatPayoutNegotiationCardProps {
     payoutNegotiationId: string;
+    isSentByAuthUser: boolean;
     onClose?: () => void
 }
 
 const InChatPayoutNegotiationCard = ({
     payoutNegotiationId,
+    isSentByAuthUser,
     onClose
 }: InChatPayoutNegotiationCardProps) => {
     const { activeChatRoom, latestContract, sendMessage, updateChatRoom } = useChat();
@@ -132,6 +134,11 @@ const InChatPayoutNegotiationCard = ({
             }
         }
 
+        const showActionButtons = useMemo( () => {
+            if(!latestPayoutNegotiation) return false;
+            return !isSentByAuthUser && latestPayoutNegotiation?.id === payoutNegotiationId && latestPayoutNegotiation.acceptBy.length < 2;
+        }, [isSentByAuthUser, latestPayoutNegotiation, payoutNegotiationId]);
+
         return (
             <>
                 { isLoading ? (
@@ -161,7 +168,7 @@ const InChatPayoutNegotiationCard = ({
                                     </h3>
                                     <div className="text-sm text-gray-500 space-x-1">
                                         <span>Custom amount offered for in-progress milestone:</span>
-                                        <span className="font-medium text-[#71BAC7]">$450</span>
+                                        <span className="font-medium text-[#71BAC7]">$ { payoutNegotiation.price }</span>
                                     </div>
                                 </div>
     
@@ -170,11 +177,11 @@ const InChatPayoutNegotiationCard = ({
                                     <div 
                                         key={milestone.id} 
                                             className={`flex flex-row text-sm items-center space-x-1 font-semibold ${
-                                                milestone.status === 'waiting_for_submission' ? 'text-[#D0693B]' : 'text-gray-500'
+                                                milestone.id === payoutNegotiation.checkpointId ? 'text-[#D0693B]' : 'text-gray-500'
                                                 
                                             } ${ milestone.status === 'not_started' ? 'opacity-50' : 'opacity-1' }`}
                                     >
-                                        { milestone.status === 'waiting_for_submission' ? (
+                                        { milestone.id === payoutNegotiation.checkpointId ? (
                                             <ArrowLongRightIcon className="size-3"/>
                                         ) : ''}
                                         <span>
@@ -196,7 +203,8 @@ const InChatPayoutNegotiationCard = ({
                                 </div>
     
                                 {/* buttons */}
-                                { latestPayoutNegotiation?.id === payoutNegotiationId && latestPayoutNegotiation.acceptBy.length < 2 ? (
+                                {/* TODO: urgent */}
+                                { showActionButtons ? (
                                     <div className="flex flex-row justify-between items-center space-x-1">
                                         <Button
                                             size="sm"

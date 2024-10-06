@@ -90,6 +90,7 @@ const MessageByMediaType = (message: Message) => {
         payout_negotiation: 
             <InChatPayoutNegotiationCard
                 payoutNegotiationId={message.content}
+                isSentByAuthUser={isSentByAuthUser}
             />
     };
 

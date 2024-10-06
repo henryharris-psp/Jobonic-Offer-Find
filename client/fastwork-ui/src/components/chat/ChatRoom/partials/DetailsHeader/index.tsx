@@ -9,7 +9,7 @@ const DetailsHeader = () => {
     const { authUser } = useSelector((state: RootState) => state.auth);
     const { activeChatRoom, latestContract } = useChat();
     const stringParser = new StringParser();
-
+    
     return (
         //if receiver is a Jobonic Admin (Customer Support)
         activeChatRoom && activeChatRoom?.receiver?.id === 1 ? (

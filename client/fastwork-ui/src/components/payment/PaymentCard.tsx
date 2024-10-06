@@ -3,7 +3,6 @@ import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { useChat } from "@/contexts/chat";
 import SafeInput, { SafeInputChangeEvent } from "../SafeInput";
 import Button from "../Button";
-import { updateMilestoneStatus } from "@/functions/helperFunctions";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import moment from "moment";
@@ -43,8 +42,24 @@ const PaymentCard = ({
             setPaymentMethod(e.target.value);
         };
 
-        const timerToClose = async () => {
-            return new Promise(resolve => setTimeout(resolve, 1000));
+        const openNewWindow = (payniUrl) => {
+            const url = payniUrl;
+            const windowName = '_blank';
+            const windowFeatures = 'width=800,height=600,scrollbars=yes,resizable=yes';
+    
+            const newWindow = window.open(url, windowName, windowFeatures);
+            if (newWindow) newWindow.opener = window;
+        };
+
+        const handleOnPaymentSucceed = async (paymentId: string) => {
+            //send message to supabase and update chatroom state
+            const newlySentMessage = await sendMessage('full_payment', paymentId, 'system');
+            if (newlySentMessage) {
+                await updateChatRoom(newlySentMessage.room_id, {
+                    status: 'to_submit'
+                });
+            }
+            onPaid();
         }
 
         const submit = async () => {
@@ -65,21 +80,12 @@ const PaymentCard = ({
                         receiverId: 1 //default admin profile id
                     });
 
-                    // const firstMilestone = latestContract?.milestones[0];
-                    // if(firstMilestone){
-                    //     await updateMilestoneStatus(firstMilestone.id, 'waiting_for_submission');
-                    // }
+                    const { paymentId, payni } = res.data.body;
+                    const jsonString = payni.toString();
+                    const data = JSON.parse(jsonString);
+                    const url = data.url;
 
-                    //send message to supabase and update chatroom state
-                    const newlySentMessage = await sendMessage('full_payment', res.data, 'system');
-                    if (newlySentMessage) {
-                        await updateChatRoom(newlySentMessage.room_id, {
-                            status: 'to_submit'
-                        });
-                    }
-
-                    await timerToClose();
-                    onPaid();
+                    openNewWindow(url);
                 } catch (error) {
                     //TODO: handle payment fail errors such as unsufficient balance or payment rejected
                     console.error('Error during submit process:', error);
