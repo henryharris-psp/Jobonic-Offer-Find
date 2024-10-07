@@ -30,4 +30,14 @@ public class PaymentController {
     public ResponseEntity<?> getByPage(@RequestBody PaymentDTO.PaymentSearchDTO filterDTO) {
         return ResponseEntity.ok(paymentService.filter(filterDTO));
     }
+
+    @GetMapping("/get-all-payment")
+    public ResponseEntity<?> getAll() {
+        return paymentService.getAll();
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public String deletePayment(@PathVariable UUID id){
+        return paymentService.deleteById(id);
+    }
 }

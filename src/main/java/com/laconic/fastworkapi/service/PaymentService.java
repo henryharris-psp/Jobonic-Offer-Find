@@ -16,4 +16,8 @@ public interface PaymentService {
     PaymentResponseDTO getById(UUID id);
 
     PaginationDTO<?> filter(PaymentDTO.PaymentSearchDTO filterDTO);
+
+    ResponseEntity<?> getAll();
+
+    String deleteById(UUID id);
 }

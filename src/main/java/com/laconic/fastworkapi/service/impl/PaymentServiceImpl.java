@@ -154,4 +154,17 @@ public class PaymentServiceImpl implements PaymentService {
         }
         return PaginationHelper.getResponse(payments, payments.getContent().stream().map(PaymentDTO::new).toList());
     }
+
+    @Override
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.ok(paymentRepo.findAll());
+    }
+
+    @Override
+    public String deleteById(UUID id) {
+        Payment payment = paymentRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException("Payment ", "id", id.toString()));
+        paymentRepo.delete(payment);
+
+        return "Payment deleted successfully";
+    }
 }
