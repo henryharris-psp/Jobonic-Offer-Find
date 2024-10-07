@@ -26,6 +26,11 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.getById(id));
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody PaymentDTO paymentDTO) {
+        return paymentService.update(id, paymentDTO);
+    }
+
     @PostMapping("/get-by-page")
     public ResponseEntity<?> getByPage(@RequestBody PaymentDTO.PaymentSearchDTO filterDTO) {
         return ResponseEntity.ok(paymentService.filter(filterDTO));

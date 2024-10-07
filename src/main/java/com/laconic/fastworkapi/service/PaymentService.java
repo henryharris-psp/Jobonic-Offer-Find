@@ -20,4 +20,6 @@ public interface PaymentService {
     ResponseEntity<?> getAll();
 
     String deleteById(UUID id);
+
+    ResponseEntity<?> update(UUID id, PaymentDTO paymentDTO);
 }

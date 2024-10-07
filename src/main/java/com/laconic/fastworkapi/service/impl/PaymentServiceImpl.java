@@ -156,6 +156,24 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    public ResponseEntity<?> update(UUID id, PaymentDTO paymentDTO) {
+        Payment payment = paymentRepo.findById(id).orElseThrow(ExceptionHelper.throwNotFoundException("Payment ", "id", id.toString()));
+
+        payment.setPaymentMethod(paymentDTO.getPaymentMethod());
+        payment.setPaymentDate(paymentDTO.getPaymentDate());
+        payment.setAmount(paymentDTO.getAmount());
+        payment.setPayableType(paymentDTO.getPayableType());
+        payment.setPayableId(paymentDTO.getPayableId());
+        payment.setRemarks(paymentDTO.getRemarks());
+        payment.setSenderId(userRepo.findById(paymentDTO.getSenderId()).orElseThrow(() -> new NotFoundException("Sender not found")));
+        payment.setReceiverId(userRepo.findById(paymentDTO.getReceiverId()).orElseThrow(() -> new NotFoundException("Receiver not found")));
+
+        paymentRepo.save(payment);
+
+        return ResponseEntity.ok(payment);
+    }
+
+    @Override
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(paymentRepo.findAll());
     }
