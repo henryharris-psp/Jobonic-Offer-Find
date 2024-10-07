@@ -141,7 +141,7 @@ const InChatPaymentCard = ({
                             <div className="flex justify-between items-center text-gray-600 mt-2">
                                 <span className="text-sm">Transaction ID:</span>
                                 <span className="font-mono text-xs max-w-32 overflow-auto whitespace-nowrap">
-                                    {paymentId}
+                                    { payment.transactionId }
                                 </span>
                             </div>
                             <div className="flex justify-between text-gray-600 mt-2">

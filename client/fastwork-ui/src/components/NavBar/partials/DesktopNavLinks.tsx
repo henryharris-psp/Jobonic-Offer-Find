@@ -20,7 +20,6 @@ const DesktopNavLinks = () => {
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const getLocalLanguage = localStorage.getItem('lang') || 'en';
-            console.log('getLocalLanguage', getLocalLanguage);
             setLanguage(getLocalLanguage);
         }
     });

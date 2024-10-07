@@ -26,7 +26,6 @@ const ServiceOfferModal = ({
     };
 
     const handleNewServiceRequest = () => {
-        
         window.location.href = "/customiseJobRequestForm";
     };
 
@@ -44,7 +43,7 @@ const ServiceOfferModal = ({
                     sortBy: "",
                     sortOrder: "DESC",
                     filter: {
-                        searchKeyword: "",
+                        searchKeyword: [],
                         minPricePerHour: "",
                         maxPricePerHour: "",
                         deadlineDate: "",

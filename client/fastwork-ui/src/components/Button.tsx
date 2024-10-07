@@ -1,4 +1,4 @@
-import { TailwindSizes } from "@/types/general";
+import { TailwindSize } from "@/types/general";
 import { ReactNode, MouseEvent } from "react";
 
 export interface ButtonProps {
@@ -6,7 +6,7 @@ export interface ButtonProps {
     title: string;
     color?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info';
     fullWidth?: boolean;
-    size?: TailwindSizes | '2xs';
+    size?: TailwindSize | '2xs';
     icon?: ReactNode;
     iconPositon?: 'start' | 'end';
     disabled?: boolean,

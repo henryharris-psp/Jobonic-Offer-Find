@@ -53,6 +53,7 @@ const DetailsHeader = () => {
             </div>
         ) : (
             <div className="flex flex-col bg-white">
+                <input type="text" value={activeChatRoom.id} />
                 <div className="flex flex-row flex-wrap gap-5 items-center border-b border-b-gray-200 py-4 px-6">
                     {/* receiver details */}
                     <div className="flex flex-1 flex-row mb-1 min-w-48 space-x-3 overflow-hidden">

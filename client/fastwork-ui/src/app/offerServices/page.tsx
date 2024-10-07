@@ -66,7 +66,7 @@ const sortings: Sorting[] = [
 ]
 
 const defaultFilters = {
-    searchKeywords: [],
+    searchKeyword: [],
     minPricePerHour: '',
     maxPricePerHour: '',
     deadlineDate: '',
@@ -108,7 +108,7 @@ const OfferService = () => {
         if (searchKeyword || category) {
             setFilters(prev => ({
                 ...prev,
-                searchKeyword: searchKeyword ?? '',
+                searchKeyword: searchKeyword ? [searchKeyword] : [],
                 categoryId: category ?? ''
             }))
         }
@@ -148,9 +148,7 @@ const OfferService = () => {
                 sortOrder: sorting.sortOrder,
                 filter: { 
                     ...filters, 
-                    categoryId: selectedWorkCategory,
-                    //change to array when api ready
-                    searchKeyword: filters.searchKeywords.length !== 0 ? filters.searchKeywords[0] : ''
+                    categoryId: selectedWorkCategory
                 },
                 authId: authUser?.profile?.id || 0,
                 postedByAuthUser: false
@@ -188,7 +186,7 @@ const OfferService = () => {
                 setPagination(defaultPagination);
                 return {
                     ...defaultFilters,
-                    searchKeywords: searchKeywords
+                    searchKeyword: searchKeywords
                 }
             });
         }
@@ -216,7 +214,7 @@ const OfferService = () => {
                 setTimeout(() => {
                     resolve({
                         data: {
-                            keywords: ['web', 'designer'],
+                            keywords: ['nurse', 'content']
                         },
                     });
                 }, 2000);
@@ -231,11 +229,10 @@ const OfferService = () => {
                 const aiServerUrl = process.env.NEXT_PUBLIC_AI_SERVER_URL;
                 if(!aiServerUrl) throw new Error("Cannot find AI server URL");
                 
-                // const aiRes = await axios.post(aiServerUrl, {
-                //     prompt: keyword
-                // });
+                const aiRes = await axios.post(aiServerUrl, {
+                    prompt: keyword
+                });
 
-                const aiRes = await mockApiCall();
                 const searchKeywords = aiRes.data.keywords ?? [];
                 setSearchKeywords(searchKeywords);
             } catch (error) {

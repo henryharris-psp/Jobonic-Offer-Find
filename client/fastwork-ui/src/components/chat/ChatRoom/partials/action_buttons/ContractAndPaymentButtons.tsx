@@ -6,8 +6,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import ContractAcceptStatus from "../DetailsHeader/ContractAcceptStatus";
 import Button from "@/components/Button";
-import TotalPaymentPreviewCard from "@/components/payment/TotalPaymentPreviewCard";
 import LatestContractModal from "@/components/contract/LatestContractModal";
+import PaymentCard from "@/components/payment/PaymentCard";
 
 const ContractAndPaymentButtons = () => {
     const { authUser } = useSelector((state: RootState) => state.auth );
@@ -36,10 +36,14 @@ const ContractAndPaymentButtons = () => {
         }
 
     //payment modal controller
-        const [showTotalPaymentPreviewCardModal, setShowTotalPaymentPreviewModal] = useState(false);
+        const [showPaymentCardModal, setshowPaymentCardModal] = useState(false);
                 
-        const handleOnClickPayNow = () => {
-            setShowTotalPaymentPreviewModal(true);
+        const handleOnClickPayment = () => {
+            setshowPaymentCardModal(true);
+        }
+
+        const handleOnPaid = () => {
+            setshowPaymentCardModal(false);
         }
 
     return (
@@ -60,7 +64,7 @@ const ContractAndPaymentButtons = () => {
                                 icon={<CreditCardIcon className="size-5 font-bold text-bold"/>}
                                 iconPositon="start"
                                 size="sm"
-                                onClick={handleOnClickPayNow} 
+                                onClick={handleOnClickPayment} 
                             />
                         ) : ''}
                         <ContractAcceptStatus
@@ -89,11 +93,11 @@ const ContractAndPaymentButtons = () => {
                     />
 
                     <Modal
-                        isOpen={showTotalPaymentPreviewCardModal}
-                        onClose={() => setShowTotalPaymentPreviewModal(false)}
+                        isOpen={showPaymentCardModal}
+                        onClose={() => setshowPaymentCardModal(false)}
                     >
-                        <TotalPaymentPreviewCard
-                            onPaid={() => setShowTotalPaymentPreviewModal(false)}
+                        <PaymentCard
+                            onPaid={handleOnPaid}
                         />
                     </Modal>
                 </>

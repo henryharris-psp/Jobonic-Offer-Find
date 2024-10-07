@@ -55,7 +55,7 @@ const InChatPayoutNegotiationCard = ({
         //accept_contract
         const handleOnClickAccept = async () => {
             if(payoutNegotiation){
-                if(confirm("Are you sure to accept end the contract?")){
+                if(confirm("Are you sure to accept and end the contract?")){
                     try{
                         //on_accept_to_end
                         await httpClient.put(`payment-out/${payoutNegotiationId}`, {
@@ -64,7 +64,7 @@ const InChatPayoutNegotiationCard = ({
                         });
 
                         //TODO: tranfer payment
-                        const newlySentMessage = await sendMessage('text', 'Jobonic has transfered your approved payout to freelancer and also your left credit back to your bank account.');
+                        const newlySentMessage = await sendMessage('text', 'Jobonic has transfered your approved payout to freelancer and you can withdraw your left credit on Payni');
                         // const newlySentMessage = await sendMessage('payment_request', activeChatRoom?.match_id.toString(), 'system');
                         if(newlySentMessage){
                             await updateChatRoom(newlySentMessage.room_id, {

@@ -1,8 +1,8 @@
-import { TailwindSizes } from "@/types/general";
+import { TailwindSize } from "@/types/general";
 import { useState } from "react";
 
 interface StarRatingProps {
-    size?: TailwindSizes;
+    size?: TailwindSize;
     totalStars?: number;
     value?: number,
     onChange?: (starValue: number) => void

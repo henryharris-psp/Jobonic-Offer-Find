@@ -48,7 +48,7 @@ const sortings: Sorting[] = [
 ]
 
 const defaultFilters = {
-    searchKeywords: [],
+    searchKeyword: [],
     minPricePerHour: '',
     maxPricePerHour: '',
     deadlineDate: '',
@@ -92,7 +92,7 @@ const ServiceList = () => {
         if (searchKeyword || categoryId) {
             setFilters(prev => ({
                 ...prev,
-                searchKeyword: searchKeyword ?? '',
+                searchKeyword: searchKeyword ? [searchKeyword] : [],
                 categoryId: categoryId ?? ''
             }));
             setSelectedWorkCategory(categoryId ?? ''); // Set the selected category based on the categoryId from URL
@@ -137,10 +137,8 @@ const ServiceList = () => {
                 sortOrder: sorting.sortOrder,
                 filter: {
                     ...filters,
-                    categoryId: selectedWorkCategory,
-                    
-                    //change to array when api ready
-                    searchKeyword: filters.searchKeywords.length !== 0 ? filters.searchKeywords[0] : ''
+                    searchKeyword: filters.searchKeyword, 
+                    categoryId: selectedWorkCategory
                 },
                 authId: authUser?.profile?.id || 0,
                 postedByAuthUser: false
@@ -178,7 +176,7 @@ const ServiceList = () => {
                 setPagination(defaultPagination);
                 return {
                     ...defaultFilters,
-                    searchKeywords: searchKeywords
+                    searchKeyword: searchKeywords
                 }
             });
         }
@@ -206,7 +204,7 @@ const ServiceList = () => {
                 setTimeout(() => {
                     resolve({
                         data: {
-                            keywords: ['web', 'designer'],
+                            keywords: ['nurse', 'content']
                         },
                     });
                 }, 2000);
@@ -221,11 +219,10 @@ const ServiceList = () => {
                 const aiServerUrl = process.env.NEXT_PUBLIC_AI_SERVER_URL;
                 if(!aiServerUrl) throw new Error("Cannot find AI server URL");
                 
-                // const aiRes = await axios.post(aiServerUrl, {
-                //     prompt: keyword
-                // });
+                const aiRes = await axios.post(aiServerUrl, {
+                    prompt: keyword
+                });
 
-                const aiRes = await mockApiCall();
                 const searchKeywords = aiRes.data.keywords ?? [];
                 setSearchKeywords(searchKeywords);
             } catch (error) {
