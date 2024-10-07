@@ -2,9 +2,7 @@ package com.laconic.fastworkapi.service.impl;
 
 import com.laconic.fastworkapi.constants.AppMessage;
 import com.laconic.fastworkapi.dto.*;
-import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
-import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
-import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
+import com.laconic.fastworkapi.dto.pagination.*;
 import com.laconic.fastworkapi.entity.Profile;
 import com.laconic.fastworkapi.entity.ServiceManagement;
 import com.laconic.fastworkapi.entity.ServiceRequest;
@@ -260,14 +258,13 @@ public class ManagementService implements IManagementService {
 
     // get employer offer services
     @Override
-    public PaginationDTO<ServiceDTO.WithProfile> getAllServices(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+    public PaginationDTO<ServiceDTO.WithProfile> getAllServices(PageAndFilterMultipleKeywordDTO<SearchAndFilterMultipleKeywordDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
 
         var minPrice = pageAndFilterDTO.getFilter().getMinPricePerHour();
         var maxPrice = pageAndFilterDTO.getFilter().getMaxPricePerHour();
 
-        Specification<ServiceManagement> specs =
-                GenericSpecification.hasKeyword(keyword, Set.of("title"));
+        Specification<ServiceManagement> specs = GenericSpecification.hasKeywords(keyword, Set.of("title"));
 
         if (minPrice != null && !minPrice.isEmpty()) {
             try {
@@ -372,7 +369,7 @@ public class ManagementService implements IManagementService {
     }
 
     @Override
-    public PaginationDTO getAllExtendedRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+    public PaginationDTO getAllExtendedRequestService(PageAndFilterMultipleKeywordDTO<SearchAndFilterMultipleKeywordDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
 
         var minPriceStr = pageAndFilterDTO.getFilter().getMinPricePerHour();
@@ -395,17 +392,20 @@ public class ManagementService implements IManagementService {
 
         Double finalMinPrice = minPrice;
         Double finalMaxPrice = maxPrice;
+
         Specification<ServiceManagement> specs = (root, query, criteriaBuilder) -> {
             Join<ServiceManagement, ServiceRequest> serviceRequestJoin = root.join("serviceRequest", JoinType.INNER);
 
             Predicate serviceRequestNotNull = criteriaBuilder.isNotNull(serviceRequestJoin.get("id"));
 
             Predicate keywordPredicate = null;
+
             if (keyword != null) {
-                keywordPredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + keyword.toLowerCase() + "%");
+                keywordPredicate = GenericSpecification.hasKeywords(keyword, Set.of("title")).toPredicate(root, query, criteriaBuilder);
             }
 
             Predicate pricePredicate = null;
+
             if (finalMinPrice != null && finalMaxPrice != null) {
                 pricePredicate = criteriaBuilder.between(root.get("price"), finalMinPrice, finalMaxPrice);
             } else if (finalMinPrice != null) {
@@ -415,6 +415,7 @@ public class ManagementService implements IManagementService {
             }
 
             Predicate combinedPredicate = criteriaBuilder.conjunction();
+
             if (serviceRequestNotNull != null) {
                 combinedPredicate = criteriaBuilder.and(combinedPredicate, serviceRequestNotNull);
             }

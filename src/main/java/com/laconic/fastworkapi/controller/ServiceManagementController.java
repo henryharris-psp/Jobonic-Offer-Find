@@ -4,9 +4,7 @@ import com.laconic.fastworkapi.dto.ExtendedServiceRequestDTO;
 import com.laconic.fastworkapi.dto.ServiceDTO;
 import com.laconic.fastworkapi.dto.ServiceFilterDTO;
 import com.laconic.fastworkapi.dto.ServiceRequestDTO;
-import com.laconic.fastworkapi.dto.pagination.PageAndFilterDTO;
-import com.laconic.fastworkapi.dto.pagination.PaginationDTO;
-import com.laconic.fastworkapi.dto.pagination.SearchAndFilterDTO;
+import com.laconic.fastworkapi.dto.pagination.*;
 import com.laconic.fastworkapi.entity.ServiceManagement;
 import com.laconic.fastworkapi.helper.APIDocsHelper;
 import com.laconic.fastworkapi.service.IManagementService;
@@ -50,7 +48,7 @@ public class ServiceManagementController {
     // get employer offer services
     @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL)
     @PostMapping("/offer/all")
-    public PaginationDTO<ServiceDTO.WithProfile> getAllServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+    public PaginationDTO<ServiceDTO.WithProfile> getAllServices(@RequestBody PageAndFilterMultipleKeywordDTO<SearchAndFilterMultipleKeywordDTO> pageAndFilterDTO) {
         return this.managementService.getAllServices(pageAndFilterDTO);
     }
 
@@ -106,7 +104,7 @@ public class ServiceManagementController {
     // get freelancer request services
     @Operation(summary = APIDocsHelper.ServiceAPI.GET_ALL_REQUEST_SERVICE)
     @PostMapping("/request/all")
-    public PaginationDTO<ExtendedServiceRequestDTO> getAllRequestServices(@RequestBody PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
+    public PaginationDTO<ExtendedServiceRequestDTO> getAllRequestServices(@RequestBody PageAndFilterMultipleKeywordDTO<SearchAndFilterMultipleKeywordDTO> pageAndFilterDTO) {
         return this.managementService.getAllExtendedRequestService(pageAndFilterDTO);
     }
 
