@@ -11,7 +11,7 @@ const Conversation = () => {
 
     const messages = useMemo( () => {
         const results = activeChatRoom && activeChatRoom.messages ? activeChatRoom.messages : [];
-        return results.sort((a: Message, b: Message) => a.id - b.id); //TODO: add type
+        return results.filter( e => e.media_type !== 'signal').sort((a: Message, b: Message) => a.id - b.id);
     }, [activeChatRoom]);
 
     //scroll to bottom on append new message

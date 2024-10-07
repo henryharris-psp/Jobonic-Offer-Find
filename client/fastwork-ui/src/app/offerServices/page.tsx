@@ -209,18 +209,6 @@ const OfferService = () => {
             setSearchKeywords([keyword]);
         }
 
-        const mockApiCall = () => {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve({
-                        data: {
-                            keywords: ['nurse', 'content']
-                        },
-                    });
-                }, 2000);
-            });
-        };
-
         const handleOnAiSearch = async (keyword: string) => {
             setIsServicesFetching(true);
             setServices([]);
@@ -353,7 +341,7 @@ const OfferService = () => {
                                         serviceRequest={{
                                             title: service.title,
                                             work_category: service.categoryDTO?.name,
-                                            company: service.profileDTO.firstName,
+                                            company: 'Jobonic', // TODO: replace with real company name
                                             location: service.location ?? 'a',
                                             employment_type: service.employmentType ?? 'a',
                                             description_1: service.description1 ?? '',
