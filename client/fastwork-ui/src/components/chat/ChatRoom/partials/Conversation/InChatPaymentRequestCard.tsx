@@ -1,6 +1,6 @@
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
-import TotalPaymentPreviewCard from "@/components/payment/TotalPaymentPreviewCard";
+import PaymentCard from "@/components/payment/PaymentCard";
 import { useChat } from "@/contexts/chat";
 import DateParser from "@/functions/dateParser";
 import { CreditCardIcon } from "@heroicons/react/24/solid";
@@ -11,20 +11,20 @@ const InChatPaymentRequestCard = () => {
     const today = new Date().toISOString();
     const numberFormater = new Intl.NumberFormat();
     const { latestContract } = useChat();
-    const [showTotalPaymentPreviewCardModal, setShowTotalPaymentPreviewCardModal] = useState(false);
+    const [showPaymentCardModal, setShowPaymentCardModal] = useState(false);
 
     //computed
         const isPaid = useMemo(() => {
-            return !!(latestContract?.payment);
+            return latestContract?.payment && latestContract?.payment.status === 'SUCCESS';
         }, [latestContract?.payment]);
 
     //methods
         const handleOnClickPayNow = () => {
-            setShowTotalPaymentPreviewCardModal(true);
+            setShowPaymentCardModal(true);
         }
 
         const handleOnPaid = () => {
-            setShowTotalPaymentPreviewCardModal(false);
+            setShowPaymentCardModal(false);
         }
       
     return (
@@ -79,10 +79,10 @@ const InChatPaymentRequestCard = () => {
             </div>
 
             <Modal
-                isOpen={showTotalPaymentPreviewCardModal}
-                onClose={() => setShowTotalPaymentPreviewCardModal(false)}
+                isOpen={showPaymentCardModal}
+                onClose={() => setShowPaymentCardModal(false)}
             >
-                <TotalPaymentPreviewCard
+                <PaymentCard
                     onPaid={handleOnPaid}
                 />
             </Modal>

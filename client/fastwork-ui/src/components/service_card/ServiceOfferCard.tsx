@@ -2,7 +2,7 @@
 import Image from "next/image";
 import React, { useMemo } from "react";
 import StarRating from "../StarRating";
-import { TailwindSizes } from "@/types/general";
+import { TailwindSize } from "@/types/general";
 
 interface ServiceCardProps {
     id: string
@@ -10,14 +10,14 @@ interface ServiceCardProps {
     description: string[];
     rating: number;
     image: string;
-    size?: TailwindSizes;
+    size?: TailwindSize;
     onClick?: (serviceId: string) => void
 }
 
 interface ServiceOfferCardSizeProps {
     image: number;
     title: string;
-    star: TailwindSizes;
+    star: TailwindSize;
     description: string;
 }
 

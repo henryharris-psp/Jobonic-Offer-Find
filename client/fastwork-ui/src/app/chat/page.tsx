@@ -22,7 +22,8 @@ const ChatPage = () => {
         activeChatRoom,
         chatRooms,
         showChatList, 
-        showProgressList, 
+        showProgressList,
+        latestContract,
         setShowChatList,
         setShowProgressList,
         setChatRooms,
@@ -37,6 +38,9 @@ const ChatPage = () => {
     const { authUser } = useSelector((state: RootState) => state.auth );
     const [isLoadingChatRooms, setIsLoadingChatRooms] = useState(false);
     
+    console.log('activeChatRoom', activeChatRoom)
+    console.log('latestContract', latestContract)
+
     //methods
         //fetch chatrooms from server and create new room if requested chat room is not existed
         const fetchChatRooms = async () => {
@@ -159,6 +163,8 @@ const ChatPage = () => {
                     },
                     async (payload: { new: ChatRoom }) => {
                         const updatedChatRoom = payload.new;
+                        
+                        console.log(updatedChatRoom);
                         
                         // Fetch related messages
                         const { data: messages, error } = await supabase

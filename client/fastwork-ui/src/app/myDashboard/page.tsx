@@ -358,7 +358,7 @@ const MyDashboard = () => {
                 } rounded-lg font-semibold`}
                 onClick={() => setActiveTab("findServices")}
             >
-              Find Services
+              Hire
             </button>
             <button
                 className={`px-4 py-2 mx-2 ${
@@ -366,7 +366,7 @@ const MyDashboard = () => {
                 } rounded-lg font-semibold`}
                 onClick={() => setActiveTab("offerServices")}
             >
-              Offer Services
+              Apply Job
             </button>
           </div>
 

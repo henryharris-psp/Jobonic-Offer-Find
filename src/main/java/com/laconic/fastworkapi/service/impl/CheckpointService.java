@@ -133,9 +133,9 @@ public class CheckpointService implements ICheckpointService {
 
         CheckResponseDTO checkResponseDTO = new CheckResponseDTO(existingCheckpoint);
 
-        Payment payment = paymentRepo.findPaymentByPayableIdAndPayableType(id, PayableType.CHECKPOINT);
+        List<Payment> payment = paymentRepo.findPaymentByPayableIdAndPayableType(id, PayableType.CHECKPOINT);
 
-        checkResponseDTO.setPayment(payment);
+        if(!payment.isEmpty()) checkResponseDTO.setPayment(payment.getFirst());
 
         return checkResponseDTO;
     }
@@ -145,8 +145,9 @@ public class CheckpointService implements ICheckpointService {
         return checkpointRepo.findAll().stream().map(checkpoint -> {
             CheckResponseDTO checkResponseDTO = new CheckResponseDTO(checkpoint);
 
-            Payment payment = paymentRepo.findPaymentByPayableIdAndPayableType(checkpoint.getId(), PayableType.CHECKPOINT);
-            checkResponseDTO.setPayment(payment);
+            List<Payment> payment = paymentRepo.findPaymentByPayableIdAndPayableType(checkpoint.getId(), PayableType.CHECKPOINT);
+
+            if(!payment.isEmpty()) checkResponseDTO.setPayment(payment.getFirst());
 
             return checkResponseDTO;
         }).toList();

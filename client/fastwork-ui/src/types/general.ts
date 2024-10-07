@@ -1,6 +1,7 @@
 import { Profile } from "./users";
 
-export type TailwindSizes = "xs" | "sm" | "" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl";
+export type BootstrapColor = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info';
+export type TailwindSize = "xs" | "sm" | "" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl";
 export type AttachmentStatus = "pending" | "uploaded" | "failed";
 
 export interface Category {
@@ -72,6 +73,8 @@ export interface Payment {
     receiver: Profile;
     milestone?: Milestone;
     contract?: Contract;
+    status: 'NOT_PAID' | 'PENDING' | 'SUCCESS' | 'CANCELLED';
+    transactionId: string
 }
 
 export interface Contract {

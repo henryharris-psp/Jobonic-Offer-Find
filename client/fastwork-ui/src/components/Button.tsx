@@ -1,16 +1,16 @@
-import { TailwindSizes } from "@/types/general";
-import { ReactNode,MouseEventHandler } from "react";
+import { TailwindSize } from "@/types/general";
+import { ReactNode, MouseEvent } from "react";
 
 export interface ButtonProps {
     variant?: 'contained' | 'outlined',
     title: string;
     color?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info';
     fullWidth?: boolean;
-    size?: TailwindSizes | '2xs';
+    size?: TailwindSize | '2xs';
     icon?: ReactNode;
     iconPositon?: 'start' | 'end';
     disabled?: boolean,
-    onClick: MouseEventHandler<HTMLButtonElement>;
+    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
 const colorMap = {
@@ -45,6 +45,13 @@ const Button = ({
     disabled = false,
     onClick
 }: ButtonProps) => {
+    const handleOnClick = (event: MouseEvent<HTMLButtonElement>) => {
+        if(!disabled) {
+            onClick?.(event);
+        }
+    };
+    
+
     return (
         <button
             className={`flex items-center justify-center space-x-1 whitespace-nowrap text-center shadow rounded-lg text-white 
@@ -55,7 +62,7 @@ const Button = ({
                 ${variant === 'outlined' ? 'bg-opacity-20' : ''}
                 bg-[${colorMap[color].main}]
             `}
-            onClick={onClick}
+            onClick={handleOnClick}
             disabled={disabled}
         >
             { icon && iconPositon === 'start' ? (

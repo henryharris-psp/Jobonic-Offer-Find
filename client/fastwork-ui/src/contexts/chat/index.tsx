@@ -40,6 +40,7 @@ interface ChatContextProps extends ChatState {
     updateChatRoom: (chatRoomId: string | number, newValues: object) => Promise<void>;
     deleteChatRoom: (chatRoomId: string | number) => Promise<void>;
     sendMessage: (mediaType: MediaType, newMessage: string | null | undefined, senderId?: string | number ) => Promise<Message | null>;
+    sendSignal: () => void;
 
     latestContract: Contract | null;
     authUserType: 'freelancer' | 'employer';
@@ -61,9 +62,9 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 }
             
                 try {
-                    const contract = await fetchContract(contractId, signal);    
+                    const contract = await fetchContract(contractId, signal);   
                     if (contract) {
-                        const latestPayoutNegotiation = contract.payoutNegotiations ? contract.payoutNegotiations[0] : null;
+                        const latestPayoutNegotiation = contract.payoutNegotiations.length !== 0 ? contract.payoutNegotiations[0] : null;
                         setLatestContract({
                             ...contract,
                             latestPayoutNegotiation
@@ -143,20 +144,11 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             }
             
             //to switch active chat room
-            const changeChatRoom = async (chatRoom: ChatRoom) => {
-                const contractMessages = chatRoom.messages.filter(message => message.media_type === 'contract');
-                
-                if (contractMessages.length) {
-                    const latestContractMessage = contractMessages.reduce((max, message) => message.id > max.id ? message : max, contractMessages[0]);
-                    const latestContract = await fetchContract(latestContractMessage.content);
-            
-                    dispatch({
-                        type: 'SET_ACTIVE_CHAT_ROOM',
-                        payload: latestContract ? { ...chatRoom, latestContract } : chatRoom
-                    });
-                } else {
-                    dispatch({ type: 'SET_ACTIVE_CHAT_ROOM', payload: chatRoom });
-                }
+            const changeChatRoom = async (chatRoom: ChatRoom) => {                
+                dispatch({
+                    type: 'SET_ACTIVE_CHAT_ROOM',
+                    payload: chatRoom
+                });
             };            
             
             //to append new message in local chatroom
@@ -270,7 +262,11 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 }
             }
         
-            const sendMessage = async (mediaType: MediaType, content: string | null | undefined, senderId?: string | number ): Promise<Message | null> => {
+            const sendMessage = async (
+                mediaType: MediaType, 
+                content: string | null | undefined, 
+                senderId?: string | number 
+            ): Promise<Message | null> => {
                 const { activeChatRoom } = state;
             
                 if (!authUser?.profile?.id || !activeChatRoom?.id || !content) return null;
@@ -299,6 +295,30 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                     throw error;
                 } finally {
                     dispatch({ type: 'SET_IS_SENDING', payload: false });
+                }
+            };
+
+            const sendSignal = async () => {
+                const { activeChatRoom } = state;
+            
+                if (!authUser?.profile?.id || !activeChatRoom?.id) return null;
+                        
+                try {
+                    const { error } = await supabase
+                        .from("messages")
+                        .insert({
+                            room_id: activeChatRoom.id,
+                            media_type: 'signal',
+                            content: '',
+                            sender_id: authUser.profile.id,
+                        });
+
+                    if (error) {
+                        console.error('Error sending signal:', error);
+                        throw new Error(`Error sending signal: ${error.message}`);
+                    }
+                } catch (error) {
+                    console.error('Error sending signal:', error);
                 }
             };
 
@@ -350,6 +370,7 @@ const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
                 updateChatRoom,
                 deleteChatRoom,
                 sendMessage,
+                sendSignal,
 
                 //extended or calculated props
                 latestContract,

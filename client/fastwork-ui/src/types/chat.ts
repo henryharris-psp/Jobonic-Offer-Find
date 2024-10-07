@@ -75,7 +75,8 @@ export type MediaType =
     'payment_request' |
     'full_payment' | 
     'milestone_payment' |
-    'payout_negotiation';
+    'payout_negotiation' |
+    'signal';
 
 export interface Message {
     id: string | number;
@@ -132,6 +133,5 @@ export interface ChatRoom {
     created_at: string;
     messages: Message[],
     isNew?: boolean,
-    latestContract: Contract,
     authUserType: 'freelancer' | 'employer'
 }

@@ -62,8 +62,11 @@ public class ContractService implements IContractService {
         Contract contract = contractRepo.findById(id).orElseThrow(() -> new RuntimeException("Contract not found"));
         ContractResponseDTO contractResponseDTO = new ContractResponseDTO(contract);
 
-        Payment payment = paymentRepo.findPaymentByPayableIdAndPayableType(id, PayableType.CONTRACT);
-        contractResponseDTO.setPayment(payment);
+        List<Payment> payment = paymentRepo.findPaymentByPayableIdAndPayableType(id, PayableType.CONTRACT);
+
+        if (!payment.isEmpty()) {
+            contractResponseDTO.setPayment(payment.getFirst());
+        }
 
         List<CheckResponseDTO> checkResponseDTOs = checkpointService.getCheckPointByContractIdIn(Collections.singletonList(contractResponseDTO.getId()))
                 .stream()
@@ -101,20 +104,19 @@ public class ContractService implements IContractService {
     @Override
     public List<ContractResponseDTO> getAll() {
         return contractRepo.findAll().stream().map(contract -> {
-            // Initialize ContractResponseDTO from the contract entity
             ContractResponseDTO contractResponseDTO = new ContractResponseDTO(contract);
 
-            // Fetch and set payment information
-            Payment payment = paymentRepo.findPaymentByPayableIdAndPayableType(contract.getId(), PayableType.CONTRACT);
-            contractResponseDTO.setPayment(payment);
+            List<Payment> payment = paymentRepo.findPaymentByPayableIdAndPayableType(contract.getId(), PayableType.CONTRACT);
 
-            // Fetch checkpoints related to the contract
+            if (!payment.isEmpty()) {
+                contractResponseDTO.setPayment(payment.getFirst());
+            }
+
             List<CheckResponseDTO> checkResponseDTOs = checkpointService.getCheckPointByContractIdIn(Collections.singletonList(contractResponseDTO.getId()))
                     .stream()
                     .map(CheckResponseDTO::new)
                     .toList();
 
-            // Fetch tasks related to checkpoints using checkpoint IDs
             List<UUID> checkpointIds = checkResponseDTOs.stream()
                     .map(CheckResponseDTO::getId)
                     .toList();
@@ -124,7 +126,6 @@ public class ContractService implements IContractService {
                     .map(TaskDTO::new)
                     .toList();
 
-            // Group tasks by checkpoint and set them in CheckResponseDTO
             Map<UUID, List<TaskDTO>> tasksGroupedByCheckpoint = taskDTOs.stream()
                     .collect(Collectors.groupingBy(TaskDTO::getCheckpointId));
 
@@ -133,10 +134,8 @@ public class ContractService implements IContractService {
                 checkResponseDTO.setTasks(relatedTasks);
             }
 
-            // Set milestones in ContractResponseDTO
             contractResponseDTO.setMilestones(checkResponseDTOs);
 
-            // Fetch PaymentOut related to the contract
             List<PaymentOut> paymentOuts = paymentOutRepo.findByContractId(contract.getId());
 
             if (paymentOuts != null) {

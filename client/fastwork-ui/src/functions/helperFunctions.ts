@@ -236,11 +236,8 @@ export const getCategoryName = async (categoryId: string) => {
             const res = await httpClient.get(`contract/${contractId}`, { signal });
             const contract = res.data;
 
-            const milestones = contract.milestones;
-
             //sort the first one on the top
-            const sortedMilestones = milestones.reverse();
-            const currentMilestone = sortedMilestones.find((milestone: Milestone) => !['not_started', 'paid'].includes(milestone.status));
+            const currentMilestone = contract.milestones.find((milestone: Milestone) => !['not_started', 'paid'].includes(milestone.status));
 
             return {
                 ...contract,
