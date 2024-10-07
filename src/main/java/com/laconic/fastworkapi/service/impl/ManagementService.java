@@ -374,8 +374,9 @@ public class ManagementService implements IManagementService {
     @Override
     public PaginationDTO getAllExtendedRequestService(PageAndFilterDTO<SearchAndFilterDTO> pageAndFilterDTO) {
         var keyword = pageAndFilterDTO.getFilter().getSearchKeyword();
-        var minPriceStr = pageAndFilterDTO.getFilter().getMinPricePerHour(); // Assume it's a String
-        var maxPriceStr = pageAndFilterDTO.getFilter().getMaxPricePerHour(); // Assume it's a String
+
+        var minPriceStr = pageAndFilterDTO.getFilter().getMinPricePerHour();
+        var maxPriceStr = pageAndFilterDTO.getFilter().getMaxPricePerHour();
 
         Double minPrice = null;
         Double maxPrice = null;
@@ -401,7 +402,7 @@ public class ManagementService implements IManagementService {
 
             Predicate keywordPredicate = null;
             if (keyword != null) {
-                keywordPredicate = criteriaBuilder.like(root.get("title"), "%" + keyword + "%");
+                keywordPredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + keyword.toLowerCase() + "%");
             }
 
             Predicate pricePredicate = null;
