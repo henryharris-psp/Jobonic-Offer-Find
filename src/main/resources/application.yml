@@ -25,9 +25,8 @@ springdoc:
 server:
   port: 8081
   file:
-    basePath: /Users/bibek/Desktop/workspace/photo/
+    basePath: /Users/bibek¬/Desktop/workspace/photo/
 authorize:
-  url: http://localhost:8765
+  url: https://192.168.0.132:8766
   password: sso_laconic
-  file: /Users/bibek/Downloads/sso.p12
-
+  file: /C:/Users/laconic_24/Desktop/Jobonic/src/main/resources/sso.p12

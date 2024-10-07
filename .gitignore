@@ -17,6 +17,8 @@
 /build
 /target
 /target/**
+/New folder
+/photos
 
 # misc
 .DS_Store
