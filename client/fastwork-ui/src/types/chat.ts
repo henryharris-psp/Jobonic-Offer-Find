@@ -75,9 +75,8 @@ export type MediaType =
     'payment_request' |
     'full_payment' | 
     'milestone_payment' |
-    'payout_negotiation' |
-    'signal';
-
+    'payout_negotiation';
+    
 export interface Message {
     id: string | number;
     room_id: number;

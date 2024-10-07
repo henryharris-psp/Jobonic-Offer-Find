@@ -42,10 +42,11 @@ const ServiceModal: React.FC<ServiceModalProps> = ({ service, onClose }) => {
                         </p>
                     </div>
 
+                    {/* TODO: replace with real company name */}
                     <div className="p-4 border border-gray-200 rounded-lg shadow-sm">
                         <p className="text-gray-600 flex items-center">
                             <strong className="mr-2">Company:</strong>
-                            <span>{service.profileDTO.firstName || 'N/A'}</span>
+                            <span>Jobonic</span>
                         </p>
                     </div>
 

@@ -67,7 +67,6 @@ const PaymentCard = ({
 
     const { authUser } = useSelector((state: RootState) => state.auth);
     const [note, setNote] = useState('');
-    const [statusMessage, setStatusMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     //computed
@@ -146,34 +145,11 @@ const PaymentCard = ({
                 setIsLoading(true);
 
                 try {
-                    const res = await axios.get(`https://api-payni.laconic.co.th/api/external/status/${payment?.transactionId}`)
-                    const status: 'PENDING' | 'SUCCESS' | 'CANCELLED' = res.data.Status;
-
-                    switch (status) {
-                        case 'PENDING': {
-                            setStatusMessage('Payment is still pending');
-                            break;
-                        }
-                        case 'SUCCESS': {
-                            handleOnPaymentSucceed();
-                            break;
-                        }
-                        case 'CANCELLED': {
-                            setStatusMessage('Payment Operation Failed!');
-                            break;
-                        }
-                                                
-                        default:
-                            break;
-                    }
-                    
+                    await httpClient.get(`payment/${payment?.transactionId}`)
+                    sendSignal();
                 } catch {
-                    if(payment){
-                        
-                    } else {
-                        //if payment not found, reopen window to make payment
-                        initiatePayment();
-                    }
+                    //if payment not found, reopen window to make payment
+                    initiatePayment();
                 } finally {
                     setIsLoading(false);
                 }

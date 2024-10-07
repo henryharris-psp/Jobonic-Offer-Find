@@ -199,18 +199,6 @@ const ServiceList = () => {
             setSearchKeywords([keyword]);
         }
 
-        const mockApiCall = () => {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve({
-                        data: {
-                            keywords: ['nurse', 'content']
-                        },
-                    });
-                }, 2000);
-            });
-        };
-
         const handleOnAiSearch = async (keyword: string) => {
             setIsServicesFetching(true);
             setServices([]);
